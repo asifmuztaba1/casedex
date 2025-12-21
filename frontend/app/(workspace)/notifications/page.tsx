@@ -1,0 +1,20 @@
+export default function NotificationsPage() {
+  return (
+    <section className="space-y-6">
+      <header className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          Notifications
+        </p>
+        <h1 className="text-3xl font-semibold text-slate-900">
+          Alerts and reminders
+        </h1>
+        <p className="text-sm text-slate-600">
+          Opt-in push notifications will surface hearing updates.
+        </p>
+      </header>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <p className="text-sm text-slate-600">No notifications yet.</p>
+      </div>
+    </section>
+  );
+}
