@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,35 +24,35 @@ const participantSchema = z.object({
 
 const caseSchema = z
   .object({
-  title: z.string().min(2),
-  court: z.string().min(2),
-  case_number: z.string().optional(),
-  story: z.string().min(2),
-  petition_draft: z.string().min(2),
-  client_id: z.preprocess(
-    (value) => (value === \"\" || value === undefined ? undefined : Number(value)),
-    z.number().int().optional()
-  ),
-  client: z
-    .object({
-      name: z.string().min(2),
-      phone: z.string().optional(),
-      email: z.string().email().optional(),
-      address: z.string().optional(),
-      identity_number: z.string().optional(),
-      notes: z.string().optional(),
-    })
-    .optional(),
-  participants: z.array(participantSchema).optional(),
-  first_hearing: z
-    .object({
-      hearing_at: z.string().min(2),
-      type: z.enum(["mention", "hearing", "trial", "order"]),
-      agenda: z.string().optional(),
-      location: z.string().optional(),
-    })
-    .optional(),
-})
+    title: z.string().min(2),
+    court: z.string().min(2),
+    case_number: z.string().optional(),
+    story: z.string().min(2),
+    petition_draft: z.string().min(2),
+    client_id: z.preprocess(
+      (value) => (value === "" || value === undefined ? undefined : Number(value)),
+      z.number().int().optional()
+    ),
+    client: z
+      .object({
+        name: z.string().min(2),
+        phone: z.string().optional(),
+        email: z.string().email().optional(),
+        address: z.string().optional(),
+        identity_number: z.string().optional(),
+        notes: z.string().optional(),
+      })
+      .optional(),
+    participants: z.array(participantSchema).optional(),
+    first_hearing: z
+      .object({
+        hearing_at: z.string().min(2),
+        type: z.enum(["mention", "hearing", "trial", "order"]),
+        agenda: z.string().optional(),
+        location: z.string().optional(),
+      })
+      .optional(),
+  })
   .superRefine((values, ctx) => {
     if (!values.client_id && !values.client?.name) {
       ctx.addIssue({
@@ -113,7 +114,7 @@ export default function NewCasePage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-sm uppercase tracking-wide text-slate-500">
+        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
           New case
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">
@@ -125,184 +126,203 @@ export default function NewCasePage() {
         </p>
       </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-        <Card>
+      <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
+        <Card className="h-fit">
           <CardHeader className="space-y-2">
-            <CardTitle>Client</CardTitle>
-            <p className="text-sm text-slate-600">
-              Select an existing client or enter new client details.
-            </p>
+            <CardTitle className="text-base">Sections</CardTitle>
+            <CardDescription>Follow the intake checklist.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <label className="flex items-center gap-2 text-sm text-slate-600">
-              <input
-                type="checkbox"
-                checked={useExistingClient}
-                onChange={(event) => setUseExistingClient(event.target.checked)}
-              />
-              Use existing client ID
-            </label>
+          <CardContent className="space-y-2 text-sm text-slate-600">
+            <div>1. Client</div>
+            <div>2. Case basics</div>
+            <div>3. Story notes</div>
+            <div>4. Petition draft</div>
+            <div>5. Team</div>
+            <div>6. First hearing</div>
+          </CardContent>
+        </Card>
 
-            {useExistingClient ? (
-              <Input placeholder="Client ID" {...register("client_id")} />
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2">
-                <Input placeholder="Client name" {...register("client.name")} />
-                <Input placeholder="Phone" {...register("client.phone")} />
-                <Input placeholder="Email" {...register("client.email")} />
-                <Input placeholder="Address" {...register("client.address")} />
-                <Input
-                  placeholder="NID or passport"
-                  {...register("client.identity_number")}
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>Client</CardTitle>
+              <CardDescription>
+                Select an existing client or enter new client details.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <label className="flex items-center gap-2 text-sm text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={useExistingClient}
+                  onChange={(event) =>
+                    setUseExistingClient(event.target.checked)
+                  }
                 />
-                <Input placeholder="Notes" {...register("client.notes")} />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                Use existing client ID
+              </label>
 
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>Case basics</CardTitle>
-            <p className="text-sm text-slate-600">
-              Title, court, and reference details for the matter.
-            </p>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <Input placeholder="Case title" {...register("title")} />
-            <Input placeholder="Court" {...register("court")} />
-            <Input placeholder="Case number" {...register("case_number")} />
-          </CardContent>
-        </Card>
+              {useExistingClient ? (
+                <Input placeholder="Client ID" {...register("client_id")} />
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input placeholder="Client name" {...register("client.name")} />
+                  <Input placeholder="Phone" {...register("client.phone")} />
+                  <Input placeholder="Email" {...register("client.email")} />
+                  <Input placeholder="Address" {...register("client.address")} />
+                  <Input
+                    placeholder="NID or passport"
+                    {...register("client.identity_number")}
+                  />
+                  <Input placeholder="Notes" {...register("client.notes")} />
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>Story and intake notes</CardTitle>
-            <p className="text-sm text-slate-600">
-              Summarize the story so the team has shared context.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <textarea
-              className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
-              placeholder="Story and intake notes"
-              {...register("story")}
-            />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>Case basics</CardTitle>
+              <CardDescription>
+                Title, court, and reference details for the matter.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <Input placeholder="Case title" {...register("title")} />
+              <Input placeholder="Court" {...register("court")} />
+              <Input placeholder="Case number" {...register("case_number")} />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>Petition draft</CardTitle>
-            <p className="text-sm text-slate-600">
-              Keep the latest draft accessible to the entire case team.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <textarea
-              className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
-              placeholder="Petition draft"
-              {...register("petition_draft")}
-            />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>Story and intake notes</CardTitle>
+              <CardDescription>
+                Summarize the story so the team has shared context.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <textarea
+                className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                placeholder="Story and intake notes"
+                {...register("story")}
+              />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>Team</CardTitle>
-            <p className="text-sm text-slate-600">
-              Add participants and assign a role for the case.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="grid gap-3 md:grid-cols-[2fr_1fr_auto]"
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>Petition draft</CardTitle>
+              <CardDescription>
+                Keep the latest draft accessible to the entire case team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <textarea
+                className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                placeholder="Petition draft"
+                {...register("petition_draft")}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>Team</CardTitle>
+              <CardDescription>
+                Add participants and assign a role for the case.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="grid gap-3 md:grid-cols-[2fr_1fr_auto]"
+                >
+                  <Input
+                    placeholder="User public ID"
+                    {...register(`participants.${index}.user_public_id`)}
+                  />
+                  <select
+                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                    {...register(`participants.${index}.role`)}
+                  >
+                    <option value="lead_lawyer">Lead lawyer</option>
+                    <option value="lawyer">Lawyer</option>
+                    <option value="associate">Associate</option>
+                    <option value="assistant">Assistant</option>
+                    <option value="viewer">Viewer</option>
+                  </select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => remove(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => append({ user_public_id: "", role: "associate" })}
               >
-                <Input
-                  placeholder="User public ID"
-                  {...register(`participants.${index}.user_public_id`)}
+                Add participant
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>First hearing</CardTitle>
+              <CardDescription>
+                Schedule the first hearing now or add it later.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <label className="flex items-center gap-2 text-sm text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={includeFirstHearing}
+                  onChange={(event) => setIncludeFirstHearing(event.target.checked)}
                 />
-                <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
-                  {...register(`participants.${index}.role`)}
-                >
-                  <option value="lead_lawyer">Lead lawyer</option>
-                  <option value="lawyer">Lawyer</option>
-                  <option value="associate">Associate</option>
-                  <option value="assistant">Assistant</option>
-                  <option value="viewer">Viewer</option>
-                </select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => remove(index)}
-                >
-                  Remove
-                </Button>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => append({ user_public_id: "", role: "associate" })}
-            >
-              Add participant
+                Add first hearing details
+              </label>
+              {includeFirstHearing && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input
+                    type="datetime-local"
+                    {...register("first_hearing.hearing_at")}
+                  />
+                  <select
+                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                    {...register("first_hearing.type")}
+                  >
+                    <option value="mention">Mention</option>
+                    <option value="hearing">Hearing</option>
+                    <option value="trial">Trial</option>
+                    <option value="order">Order</option>
+                  </select>
+                  <Input placeholder="Agenda" {...register("first_hearing.agenda")} />
+                  <Input
+                    placeholder="Location"
+                    {...register("first_hearing.location")}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" disabled={createCase.isPending}>
+              {createCase.isPending ? "Saving..." : "Create case"}
             </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>First hearing</CardTitle>
-            <p className="text-sm text-slate-600">
-              Schedule the first hearing now or add it later.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <label className="flex items-center gap-2 text-sm text-slate-600">
-              <input
-                type="checkbox"
-                checked={includeFirstHearing}
-                onChange={(event) => setIncludeFirstHearing(event.target.checked)}
-              />
-              Add first hearing details
-            </label>
-            {includeFirstHearing && (
-              <div className="grid gap-4 md:grid-cols-2">
-                <Input
-                  type="datetime-local"
-                  {...register("first_hearing.hearing_at")}
-                />
-                <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
-                  {...register("first_hearing.type")}
-                >
-                  <option value="mention">Mention</option>
-                  <option value="hearing">Hearing</option>
-                  <option value="trial">Trial</option>
-                  <option value="order">Order</option>
-                </select>
-                <Input placeholder="Agenda" {...register("first_hearing.agenda")} />
-                <Input
-                  placeholder="Location"
-                  {...register("first_hearing.location")}
-                />
-              </div>
+            {Object.keys(formState.errors).length > 0 && (
+              <Badge variant="subtle">Please review required fields</Badge>
             )}
-          </CardContent>
-        </Card>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" disabled={createCase.isPending}>
-            {createCase.isPending ? "Saving..." : "Create case"}
-          </Button>
-          {Object.keys(formState.errors).length > 0 && (
-            <Badge variant="subtle">Please review required fields</Badge>
-          )}
-        </div>
-      </form>
+          </div>
+        </form>
+      </div>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -9,25 +9,18 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 const statusOptions = [
   { label: "All", value: "all" },
@@ -63,12 +56,12 @@ export default function CasesPage() {
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-sm uppercase tracking-wide text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
             Cases
           </p>
           <h1 className="text-2xl font-semibold text-slate-900">Case list</h1>
           <p className="text-sm text-slate-600">
-            Review all matters and jump into the case workspace.
+            Review every matter and jump directly into the case workspace.
           </p>
         </div>
         <Button asChild>
@@ -76,106 +69,123 @@ export default function CasesPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader className="space-y-4">
-          <CardTitle>Filters</CardTitle>
-          <div className="flex flex-wrap gap-3">
-            <Input
-              placeholder="Search by case title"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="w-[260px]"
-            />
-            <Input
-              placeholder="Filter by court"
-              value={courtFilter}
-              onChange={(event) => setCourtFilter(event.target.value)}
-              className="w-[220px]"
-            />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  Status
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                {statusOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    onClick={() => setStatusFilter(option.value)}
-                  >
-                    {option.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-sm text-slate-600">Loading cases...</div>
-          ) : isError ? (
-            <div className="text-sm text-rose-600">
-              Unable to load cases right now.
+      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+        <Card className="h-fit">
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-base">Filters</CardTitle>
+            <CardDescription>Refine by status, court, and name.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Search
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Case title"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  className="pl-9"
+                />
+              </div>
             </div>
-          ) : filteredCases.length === 0 ? (
-            <EmptyState
-              title="No cases found"
-              description="Create your first case to start tracking hearings, diary entries, and documents."
-              action={
-                <Button asChild>
-                  <Link href="/cases/new">Create case</Link>
-                </Button>
-              }
-            />
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Case</TableHead>
-                  <TableHead>Court</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Court
+              </label>
+              <Input
+                placeholder="Search by court"
+                value={courtFilter}
+                onChange={(event) => setCourtFilter(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Status
+              </label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {statusOptions.find((opt) => opt.value === statusFilter)
+                      ?.label ?? "Status"}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {statusOptions.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      onClick={() => setStatusFilter(option.value)}
+                    >
+                      {option.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="space-y-2">
+            <CardTitle>All cases</CardTitle>
+            <CardDescription>
+              Open a case to view hearings, diary entries, and documents.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isLoading ? (
+              <div className="text-sm text-slate-600">Loading cases...</div>
+            ) : isError ? (
+              <div className="text-sm text-rose-600">
+                Unable to load cases right now.
+              </div>
+            ) : filteredCases.length === 0 ? (
+              <EmptyState
+                title="No cases found"
+                description="Create your first case to start tracking hearings, diary entries, and documents."
+                action={
+                  <Button asChild>
+                    <Link href="/cases/new">Create case</Link>
+                  </Button>
+                }
+              />
+            ) : (
+              <div className="grid gap-4">
                 {filteredCases.map((caseItem) => (
-                  <TableRow key={caseItem.public_id}>
-                    <TableCell>
+                  <Card key={caseItem.public_id} className="border-slate-200">
+                    <CardContent className="flex flex-wrap items-center justify-between gap-4 p-4">
                       <div className="space-y-1">
-                        <div className="font-medium text-slate-900">
+                        <div className="text-sm font-semibold text-slate-900">
                           {caseItem.title}
                         </div>
                         <div className="text-xs text-slate-500">
-                          {caseItem.case_number ?? "Case number pending"}
+                          {caseItem.case_number ?? "Case number pending"} Â·{" "}
+                          {caseItem.court ?? "Court TBD"}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Client: {caseItem.client?.name ?? "Not set"}
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell>{caseItem.court ?? "Court TBD"}</TableCell>
-                    <TableCell>
-                      {caseItem.client?.name ?? "Client not set"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="subtle">
-                        {caseItem.status ?? "open"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/cases/${caseItem.public_id}`}>
-                          Open
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="subtle">
+                          {caseItem.status ?? "open"}
+                        </Badge>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/cases/${caseItem.public_id}`}>
+                            Open
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </section>
   );
 }

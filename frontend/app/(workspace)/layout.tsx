@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Bell,
@@ -29,13 +30,13 @@ export default function WorkspaceLayout({
   return (
     <div className="min-h-screen bg-slate-50">
       <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col border-r border-slate-200 bg-white px-5 py-6 md:flex">
-        <div className="space-y-1">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
             Workspace
           </div>
           <div className="text-lg font-semibold text-slate-900">CaseDex</div>
         </div>
-        <nav className="mt-6 space-y-1">
+        <nav className="mt-8 space-y-1">
           {navItems.map((item) => (
             <a
               key={item.href}
@@ -53,8 +54,8 @@ export default function WorkspaceLayout({
       </aside>
 
       <div className="md:pl-[260px]">
-        <header className="sticky top-0 z-20 h-14 border-b border-slate-200 bg-white/90 backdrop-blur">
-          <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between px-6">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3">
               <Sheet>
                 <SheetTrigger asChild>
@@ -65,7 +66,7 @@ export default function WorkspaceLayout({
                 <SheetContent>
                   <div className="space-y-6">
                     <div>
-                      <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                         Workspace
                       </div>
                       <div className="text-lg font-semibold text-slate-900">
@@ -88,7 +89,7 @@ export default function WorkspaceLayout({
                 </SheetContent>
               </Sheet>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                   Workspace
                 </div>
                 <div className="text-sm font-medium text-slate-900">
@@ -96,7 +97,8 @@ export default function WorkspaceLayout({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <Input className="w-[220px]" placeholder="Search cases" />
               <Badge variant="subtle">Tenant: Demo</Badge>
               <Button size="sm" asChild>
                 <a href="/cases/new">New case</a>

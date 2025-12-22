@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import EmptyState from "@/components/empty-state";
@@ -26,7 +26,7 @@ export default function DocumentsPage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-sm uppercase tracking-wide text-slate-500">
+        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
           Documents
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">

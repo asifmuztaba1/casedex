@@ -13,7 +13,9 @@ export default function LoginPage() {
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-sm uppercase tracking-wide text-slate-500">Log in</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+            Log in
+          </p>
           <CardTitle className="text-2xl font-semibold">
             Access your case workspace
           </CardTitle>

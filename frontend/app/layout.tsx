@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { IBM_Plex_Sans, Spectral } from "next/font/google";
 import Providers from "./providers";
 import ServiceWorkerRegister from "@/pwa/sw-register";

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { format } from "date-fns";
@@ -27,7 +27,7 @@ export default function DiaryPage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-sm uppercase tracking-wide text-slate-500">Diary</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Diary</p>
         <h1 className="text-2xl font-semibold text-slate-900">
           Case diary entries
         </h1>

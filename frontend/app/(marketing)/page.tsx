@@ -8,45 +8,58 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   ArrowRight,
-  Bell,
-  BookOpen,
   CalendarClock,
   FileText,
   ShieldCheck,
+  Sparkles,
   Users,
 } from "lucide-react";
 
+const signalCards = [
+  {
+    label: "Tomorrow 9:30 AM",
+    title: "Motion hearing",
+    meta: "Patel v. State",
+  },
+  {
+    label: "Jan 24, 2026",
+    title: "Diary entry",
+    meta: "Filed reply and shared",
+  },
+  {
+    label: "Jan 21, 2026",
+    title: "Order sheet uploaded",
+    meta: "Court order - Signed link",
+  },
+  {
+    label: "Jan 18, 2026",
+    title: "Research note",
+    meta: "Precedent summary ready",
+  },
+];
+
 export default function Home() {
   return (
-    <section className="space-y-16">
-      <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="space-y-6">
+    <section className="space-y-24">
+      <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="space-y-8">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="subtle">Structured case workspace</Badge>
             <Badge variant="subtle">Sources-first summaries</Badge>
           </div>
-          <div className="space-y-4">
-            <p className="text-sm uppercase tracking-wide text-slate-500">
-              Trustworthy legal workflow
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+              CaseDex
             </p>
-            <h1 className="text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
-              A structured case workspace for legal professionals and students.
+            <h1 className="text-5xl font-semibold leading-tight text-slate-900 md:text-6xl">
+              The case workspace that keeps legal teams calm and prepared.
             </h1>
-            <p className="text-base text-slate-600">
-              CaseDex keeps cases, hearings, diary entries, documents, and
-              research notes tied to one calm system. Maintain institutional
-              memory without losing sources or context.
+            <p className="text-lg text-slate-600">
+              CaseDex is a structured case workspace for legal professionals and
+              law students. Track hearings, diary entries, and documents with a
+              clear, consistent record that never loses context.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -69,7 +82,7 @@ export default function Home() {
               Tenant isolation by default
             </div>
             <div className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-slate-500" />
+              <Sparkles className="h-4 w-4 text-slate-500" />
               AI assists, never decides
             </div>
             <div className="flex items-center gap-2">
@@ -79,169 +92,105 @@ export default function Home() {
           </div>
         </div>
 
-        <Card className="overflow-hidden border-slate-200 shadow-sm">
-          <CardHeader className="space-y-4 border-b border-slate-200">
-            <div className="flex items-start justify-between gap-4">
+        <div className="space-y-4">
+          {signalCards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm"
+            >
+              <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                {card.label}
+              </div>
+              <div className="mt-2 text-base font-semibold text-slate-900">
+                {card.title}
+              </div>
+              <div className="text-xs text-slate-500">{card.meta}</div>
+            </div>
+          ))}
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
+            CaseDex keeps AI output clearly labeled, editable, and tied to
+            sources.
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-6">
+          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+            Workspace signal
+          </p>
+          <h2 className="text-3xl font-semibold text-slate-900">
+            One case record, shared across every module.
+          </h2>
+          <p className="text-sm text-slate-600">
+            Hearings, diary entries, and documents stay connected to the case.
+            Everyone sees the same timeline, the same sources, and the same next
+            steps.
+          </p>
+          <div className="grid gap-3">
+            {[
+              "Case intake and story",
+              "Hearing minutes and outcomes",
+              "Document metadata and downloads",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-900" />
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <Card className="border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-200">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
                   Case workspace preview
                 </p>
-                <CardTitle className="text-lg">Patel v. State</CardTitle>
-                <CardDescription>Motion hearing • Tomorrow 9:30 AM</CardDescription>
+                <CardTitle className="text-xl">Patel v. State</CardTitle>
+                <CardDescription>
+                  Hearings, diary entries, and documents in one place.
+                </CardDescription>
               </div>
               <Badge variant="subtle">Live view</Badge>
             </div>
-            <Tabs defaultValue="hearings">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="hearings">Hearings</TabsTrigger>
-                <TabsTrigger value="diary">Diary</TabsTrigger>
-                <TabsTrigger value="docs">Docs</TabsTrigger>
-                <TabsTrigger value="research">Research</TabsTrigger>
-              </TabsList>
-              <TabsContent value="hearings" className="pt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Next step</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      {
-                        date: "Tomorrow 9:30 AM",
-                        type: "Motion",
-                        next: "Prepare brief",
-                      },
-                      {
-                        date: "Feb 12, 2026",
-                        type: "Status",
-                        next: "Upload order sheet",
-                      },
-                    ].map((row) => (
-                      <TableRow key={row.date}>
-                        <TableCell>{row.date}</TableCell>
-                        <TableCell>{row.type}</TableCell>
-                        <TableCell>{row.next}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              <TabsContent value="diary" className="pt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Entry</TableHead>
-                      <TableHead>Owner</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      {
-                        date: "Jan 24",
-                        entry: "Filed reply and shared with team",
-                        owner: "Senior associate",
-                      },
-                      {
-                        date: "Jan 21",
-                        entry: "Client check-in and evidence list",
-                        owner: "Paralegal",
-                      },
-                    ].map((row) => (
-                      <TableRow key={row.date}>
-                        <TableCell>{row.date}</TableCell>
-                        <TableCell>{row.entry}</TableCell>
-                        <TableCell>{row.owner}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              <TabsContent value="docs" className="pt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Document</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      {
-                        name: "Order sheet",
-                        type: "Court order",
-                        status: "Signed link",
-                      },
-                      {
-                        name: "Evidence bundle",
-                        type: "Exhibit",
-                        status: "Indexed",
-                      },
-                    ].map((row) => (
-                      <TableRow key={row.name}>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell>{row.type}</TableCell>
-                        <TableCell>{row.status}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-              <TabsContent value="research" className="pt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Note</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Tag</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      {
-                        note: "Key precedent summary ready",
-                        source: "Case law",
-                        tag: "Cited",
-                      },
-                      {
-                        note: "Draft argument outline",
-                        source: "Internal",
-                        tag: "Review",
-                      },
-                    ].map((row) => (
-                      <TableRow key={row.note}>
-                        <TableCell>{row.note}</TableCell>
-                        <TableCell>{row.source}</TableCell>
-                        <TableCell>{row.tag}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-            </Tabs>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Tomorrow reminder
-                </p>
-                <p className="text-sm text-slate-900">
-                  Motion hearing at 9:30 AM
-                </p>
+          <CardContent className="grid gap-4 py-6">
+            {[
+              {
+                title: "Next hearing",
+                body: "Motion hearing - Tomorrow 9:30 AM",
+                icon: CalendarClock,
+              },
+              {
+                title: "Diary focus",
+                body: "Prepare brief and confirm witness list",
+                icon: FileText,
+              },
+              {
+                title: "Recent document",
+                body: "Order sheet uploaded - Signed link",
+                icon: FileText,
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+              >
+                <item.icon className="h-4 w-4 text-slate-500" />
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {item.title}
+                  </div>
+                  <div className="text-sm text-slate-900">{item.body}</div>
+                </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Summary panel
-                </p>
-                <p className="text-sm text-slate-700">
-                  AI-assisted summaries stay editable and sourced.
-                </p>
-              </div>
+            ))}
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600">
+              AI-assisted summaries are clearly labeled and always editable.
             </div>
           </CardContent>
         </Card>
@@ -250,19 +199,22 @@ export default function Home() {
       <div className="grid gap-6 md:grid-cols-3">
         {[
           {
-            icon: BookOpen,
             title: "Case workspace",
-            description: "Everything tied to a case stays in one view.",
-          },
-          {
-            icon: Bell,
-            title: "Hearings and reminders",
-            description: "Never miss dates, outcomes, or next steps.",
-          },
-          {
+            description:
+              "Every document, note, and hearing anchored to the case.",
             icon: FileText,
-            title: "Diary and summaries",
-            description: "Structured memory with editable summaries.",
+          },
+          {
+            title: "Hearing timelines",
+            description:
+              "Track agendas, minutes, outcomes, and next steps without noise.",
+            icon: CalendarClock,
+          },
+          {
+            title: "Team coordination",
+            description:
+              "Add participants per case with roles and clear accountability.",
+            icon: Users,
           },
         ].map((item) => (
           <Card key={item.title} className="h-full">
@@ -277,29 +229,36 @@ export default function Home() {
 
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-sm uppercase tracking-wide text-slate-500">
-            How it works
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
+            Workflow
           </p>
           <CardTitle className="text-2xl font-semibold">
-            Build the case record once, reuse everywhere.
+            Everything starts with the case.
           </CardTitle>
+          <CardDescription>
+            Case intake drives hearings, diary entries, documents, and
+            notifications. Nothing is orphaned.
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 md:grid-cols-3">
           {[
             {
               step: "01",
-              title: "Create a case",
-              description: "Start with the client record and case basics.",
+              title: "Intake and client",
+              description:
+                "Capture client details, story notes, and petition drafts.",
             },
             {
               step: "02",
-              title: "Add hearings and documents",
-              description: "Track dates, upload orders, and capture notes.",
+              title: "Hearings and diary",
+              description:
+                "Record agendas, minutes, and diary entries linked to hearings.",
             },
             {
               step: "03",
-              title: "Summarize and plan",
-              description: "Generate summaries, keep sources, and assign tasks.",
+              title: "Documents and alerts",
+              description:
+                "Store filings and notify participants before key dates.",
             },
           ].map((item) => (
             <div key={item.step} className="space-y-3">
@@ -313,38 +272,9 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        {[
-          {
-            title: "Advocates",
-            copy: "Keep hearings and filings on a single timeline.",
-          },
-          {
-            title: "Chambers assistants",
-            copy: "Track updates without chasing documents.",
-          },
-          {
-            title: "Law students",
-            copy: "Organize notes and research in context.",
-          },
-          {
-            title: "Legal teams",
-            copy: "Coordinate tasks with shared visibility.",
-          },
-        ].map((persona) => (
-          <Card key={persona.title} className="h-full">
-            <CardHeader className="space-y-2">
-              <Users className="h-4 w-4 text-slate-500" />
-              <CardTitle className="text-base">{persona.title}</CardTitle>
-              <CardDescription>{persona.copy}</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-sm uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
             Trust and security
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -372,7 +302,7 @@ export default function Home() {
       <Card>
         <CardContent className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-3">
-            <p className="text-sm uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
               Ready to start
             </p>
             <h2 className="text-2xl font-semibold text-slate-900">

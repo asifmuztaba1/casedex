@@ -10,9 +10,9 @@ export default function MarketingLayout({
 }) {
   return (
     <div className="relative min-h-screen bg-white text-slate-900">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,23,42,0.08),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:64px_64px]" />
       <div className="relative">
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold">
@@ -20,9 +20,9 @@ export default function MarketingLayout({
               </div>
               <div>
                 <div className="text-sm font-semibold tracking-wide text-slate-900">
-                  CaseDex™
+                  {"CaseDex\u2122"}
                 </div>
-                <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                <div className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
                   Case workspace
                 </div>
               </div>
@@ -62,10 +62,10 @@ export default function MarketingLayout({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1200px] px-6 py-12">
+        <main className="mx-auto w-full max-w-[1200px] px-6 py-14">
           {children}
         </main>
-        <footer className="border-t border-slate-200 bg-white/90">
+        <footer className="border-t border-slate-200 bg-white/95">
           <div className="mx-auto w-full max-w-[1200px] px-6 py-12">
             <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
               <div className="space-y-3">
