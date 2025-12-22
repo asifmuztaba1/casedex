@@ -12,7 +12,8 @@ class ListNotificationsAction
     {
         return CaseNotification::query()
             ->where('tenant_id', TenantContext::id())
-            ->orderBy('created_at')
+            ->with('case')
+            ->orderByDesc('created_at')
             ->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
     }
 }

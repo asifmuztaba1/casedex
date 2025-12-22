@@ -8,11 +8,17 @@ use Illuminate\Pagination\CursorPaginator;
 
 class ListHearingsAction
 {
-    public function handle(int $perPage, ?string $cursor): CursorPaginator
+    public function handle(int $perPage, ?string $cursor, ?int $caseId = null): CursorPaginator
     {
-        return Hearing::query()
+        $query = Hearing::query()
             ->where('tenant_id', TenantContext::id())
-            ->orderBy('created_at')
-            ->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
+            ->with('case')
+            ->orderBy('hearing_at');
+
+        if ($caseId !== null) {
+            $query->where('case_id', $caseId);
+        }
+
+        return $query->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
     }
 }

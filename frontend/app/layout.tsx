@@ -1,6 +1,5 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { IBM_Plex_Sans, Spectral } from "next/font/google";
-import OfflineIndicator from "@/components/offline-indicator";
 import Providers from "./providers";
 import ServiceWorkerRegister from "@/pwa/sw-register";
 import "./globals.css";
@@ -26,29 +25,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${plexSans.variable} ${spectral.variable} antialiased`}
-      >
-        <Providers>
-          <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
-            <header className="border-b border-slate-200 bg-white">
-              <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-                <div className="text-lg font-semibold tracking-tight">
-                  CaseDex™
-                </div>
-                <OfflineIndicator />
-              </div>
-            </header>
-            <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
-              {children}
-            </main>
-          </div>
-        </Providers>
+      <body className={`${plexSans.variable} ${spectral.variable} antialiased`}>
+        <Providers>{children}</Providers>
         <ServiceWorkerRegister />
       </body>
     </html>

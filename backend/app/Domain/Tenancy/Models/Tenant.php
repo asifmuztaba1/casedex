@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Domain\Tenancy\Enums\TenantPlan;
 
 class Tenant extends Model
 {
@@ -14,6 +15,11 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'public_id',
+        'plan',
+    ];
+
+    protected $casts = [
+        'plan' => TenantPlan::class,
     ];
 
     protected static function booted(): void

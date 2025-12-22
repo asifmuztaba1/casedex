@@ -2,8 +2,11 @@
 
 namespace App\Domain\Documents\Models;
 
-use App\Domain\Documents\Enums\DocumentType;
+use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Documents\Enums\DocumentCategory;
+use App\Domain\Hearings\Models\Hearing;
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,15 +20,17 @@ class Document extends Model
         'public_id',
         'tenant_id',
         'case_id',
-        'document_type',
-        'title',
-        'file_path',
-        'metadata',
+        'hearing_id',
+        'category',
+        'original_name',
+        'mime',
+        'size',
+        'storage_key',
+        'uploaded_by',
     ];
 
     protected $casts = [
-        'document_type' => DocumentType::class,
-        'metadata' => 'array',
+        'category' => DocumentCategory::class,
     ];
 
     protected static function booted(): void
@@ -35,5 +40,20 @@ class Document extends Model
                 $document->public_id = (string) Str::ulid();
             }
         });
+    }
+
+    public function case()
+    {
+        return $this->belongsTo(CaseFile::class, 'case_id');
+    }
+
+    public function hearing()
+    {
+        return $this->belongsTo(Hearing::class, 'hearing_id');
+    }
+
+    public function uploader()
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 }

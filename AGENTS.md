@@ -371,3 +371,69 @@ CaseDex MUST support Progressive Web App (PWA) functionality.
 - Never block user with sync errors
 
 PWA support is considered part of MVP completeness.
+
+# 20. PUBLIC PAGES (REQUIRED)
+
+Public-facing pages must exist for SEO and compliance:
+- /about
+- /features
+- /pricing
+- /security
+- /privacy
+- /terms
+
+SEO defaults:
+- robots.txt allowed for public pages only
+- sitemap.xml includes all public pages
+
+# UI THEME & HOMEPAGE SPEC (LOCKED)
+
+## Visual Identity
+- Tone: calm, institutional, modern (trust-first)
+- Primary color: Deep Navy (single primary across app)
+- Neutrals: slate/gray scale; backgrounds white/light-gray
+- Accent: teal/indigo only for subtle highlights
+- Avoid: red/orange as primary, neon, heavy gradients
+
+## UI Stack
+- Next.js + TypeScript
+- TailwindCSS + shadcn/ui
+- TanStack Query for API data
+- Zod + react-hook-form for forms
+
+## Global UI Rules
+- Max width 1200–1280px on marketing pages
+- App layout: left sidebar + top bar + content
+- Consistent spacing scale: 4/8/12/16/24/32
+- Cards: subtle border + soft shadow
+- Tables: sticky header, hover rows, compact but readable
+- Accessibility: keyboard nav, visible focus ring in primary color
+
+## Homepage Layout (Must Match)
+1) Hero: headline + subheadline + 2 CTAs
+2) Product preview: screenshot/mock of case workspace
+3) 3 pillars: Case Workspace / Hearings / Diary & Summaries
+4) How it works (3 steps)
+5) Who it’s for (advocates, assistants, students, legal teams)
+6) Trust & safety (tenant isolation, audit logs, sources-first AI)
+7) Final CTA + footer links (Privacy, Terms, Contact)
+
+## Copy Rules
+- Never claim: legal advice, verdict prediction, judge replacement
+- Always emphasize: structure, memory, explainability, sources, review-before-save
+
+
+# MVP WORKFLOW (MANDATORY)
+
+CaseDex is CASE-CENTRIC.
+- Case is the parent entity.
+- Hearings, Diary Entries, Documents, and Participants MUST be linked to a Case.
+- Global pages may exist, but must always route back to Case detail and must not create orphan records.
+
+MVP must include:
+- Client entity (case intake requires client details + story)
+- Case detail page as the primary workspace
+- Hearing reminder notifications 1 day before
+- Case participants with roles per case
+- Free plan limit: max 5 cases per tenant; uploads limited to pdf/jpg/png
+

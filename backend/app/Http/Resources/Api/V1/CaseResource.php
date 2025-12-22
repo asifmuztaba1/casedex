@@ -15,9 +15,10 @@ class CaseResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'title' => $this->title,
+            'court' => $this->court,
+            'case_number' => $this->case_number,
             'status' => $this->status?->value,
-            'reference' => $this->reference,
-            'summary' => $this->summary,
+            'client' => new ClientResource($this->whenLoaded('client')),
             'created_at' => $this->created_at,
         ];
     }

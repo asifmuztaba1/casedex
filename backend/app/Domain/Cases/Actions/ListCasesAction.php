@@ -12,7 +12,8 @@ class ListCasesAction
     {
         return CaseFile::query()
             ->where('tenant_id', TenantContext::id())
-            ->orderBy('created_at')
+            ->with('client')
+            ->orderByDesc('created_at')
             ->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
     }
 }

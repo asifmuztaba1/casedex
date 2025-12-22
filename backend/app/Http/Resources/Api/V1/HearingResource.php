@@ -15,9 +15,15 @@ class HearingResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'case_id' => $this->case_id,
-            'hearing_type' => $this->hearing_type?->value,
-            'scheduled_at' => $this->scheduled_at,
-            'notes' => $this->notes,
+            'case_public_id' => $this->case?->public_id,
+            'case_title' => $this->case?->title,
+            'hearing_at' => $this->hearing_at,
+            'type' => $this->type?->value,
+            'agenda' => $this->agenda,
+            'location' => $this->location,
+            'outcome' => $this->outcome,
+            'minutes' => $this->minutes,
+            'next_steps' => $this->next_steps,
             'created_at' => $this->created_at,
         ];
     }
