@@ -62,7 +62,7 @@ class CreateDocumentAction
             'case_id' => $case->id,
             'hearing_id' => $hearingId,
             'category' => $data['category'],
-            'original_name' => $file->getClientOriginalName(),
+            'original_name' => $data['original_name'] ?? $file->getClientOriginalName(),
             'mime' => $file->getClientMimeType(),
             'size' => $file->getSize(),
             'storage_key' => $storageKey,

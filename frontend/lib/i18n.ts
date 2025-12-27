@@ -328,6 +328,7 @@ const en: Dictionary = {
   "document.category.notes": "Notes",
   "document.category.other": "Other",
   "document.link_hearing": "Link to hearing (optional)",
+  "document.name_placeholder": "Document name",
   "document.download": "Download",
   "documents.kicker": "Documents",
   "documents.title": "Case documents",
@@ -1368,6 +1369,7 @@ const bn: Dictionary = {
   "party.role.accused": "অভিযুক্ত",
   "party.role.state": "স্টেইট",
   "party.role.other": "অন্যান্য",
+  "document.name_placeholder": "?????????? ???",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,
@@ -1377,8 +1379,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
 export function translate(locale: Locale, key: string): string {
   return dictionaries[locale]?.[key] ?? dictionaries.en[key] ?? key;
 }
-
-
 
 
 

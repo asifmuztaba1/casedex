@@ -35,6 +35,7 @@ class StoreDocumentRequest extends FormRequest
             'case_public_id' => ['required', 'string'],
             'hearing_public_id' => ['nullable', 'string'],
             'category' => ['required', Rule::in(array_column(DocumentCategory::cases(), 'value'))],
+            'original_name' => ['nullable', 'string', 'max:255'],
             'file' => ['required', 'file', 'mimes:'.implode(',', $allowedMimes)],
         ];
     }

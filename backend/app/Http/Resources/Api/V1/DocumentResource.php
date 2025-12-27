@@ -19,7 +19,8 @@ class DocumentResource extends JsonResource
             $downloadUrl = URL::temporarySignedRoute(
                 'api.v1.documents.download',
                 now()->addMinutes(30),
-                ['publicId' => $this->public_id]
+                ['publicId' => $this->public_id],
+                false
             );
         }
 

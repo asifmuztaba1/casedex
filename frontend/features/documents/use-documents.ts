@@ -47,6 +47,7 @@ type CreateDocumentPayload = {
   case_public_id: string;
   category: string;
   file: File;
+  original_name?: string;
   hearing_public_id?: string;
 };
 
@@ -60,6 +61,9 @@ export function useCreateDocument() {
       formData.append("case_public_id", payload.case_public_id);
       formData.append("category", payload.category);
       formData.append("file", payload.file);
+      if (payload.original_name) {
+        formData.append("original_name", payload.original_name);
+      }
       if (payload.hearing_public_id) {
         formData.append("hearing_public_id", payload.hearing_public_id);
       }

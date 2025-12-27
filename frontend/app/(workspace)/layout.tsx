@@ -145,7 +145,7 @@ export default function WorkspaceLayout({
             <div className="flex flex-wrap items-center gap-3">
               <Input className="w-[220px]" placeholder={t("nav.search")} />
               <Badge variant="subtle">
-                {t("nav.tenant")}: Demo
+                {t("nav.tenant")}: {user?.tenant?.name}
               </Badge>
               <Button size="sm" asChild>
                 <a href="/cases/new">{t("nav.new_case")}</a>

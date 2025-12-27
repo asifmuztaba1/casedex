@@ -1,5 +1,4 @@
-﻿
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
@@ -67,8 +66,9 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import type { CourtLookup } from "@/features/courts/use-courts";
 
-const statusOptions = ["open", "active", "closed", "archived"];
-const hearingTypes = ["mention", "hearing", "trial", "order"];
+// Make option arrays literal so we can derive union types from them.
+const statusOptions = ["open", "active", "closed", "archived"] as const;
+const hearingTypes = ["mention", "hearing", "trial", "order"] as const;
 const documentCategories = [
   "petition",
   "evidence",
@@ -76,9 +76,9 @@ const documentCategories = [
   "client_id",
   "notes",
   "other",
-];
-const partyTypes = ["person", "organization"];
-const partySides = ["client", "opponent", "third_party"];
+] as const;
+const partyTypes = ["person", "organization"] as const;
+const partySides = ["client", "opponent", "third_party"] as const;
 const partyRoles = [
   "petitioner",
   "respondent",
@@ -90,7 +90,11 @@ const partyRoles = [
   "accused",
   "state",
   "other",
-];
+] as const;
+
+type PartyType = (typeof partyTypes)[number];
+type PartySide = (typeof partySides)[number];
+type PartyRole = (typeof partyRoles)[number];
 
 export default function CaseDetailPage() {
   const params = useParams();
@@ -144,10 +148,14 @@ export default function CaseDetailPage() {
   const [documentForm, setDocumentForm] = useState<{
     category: string;
     file: File | null;
+    name_base: string;
+    extension: string;
     hearing_public_id: string;
   }>({
     category: "petition",
     file: null,
+    name_base: "",
+    extension: "",
     hearing_public_id: "",
   });
 
@@ -156,7 +164,17 @@ export default function CaseDetailPage() {
     role: "assistant",
   });
 
-  const [partyForm, setPartyForm] = useState({
+  const [partyForm, setPartyForm] = useState<{
+    name: string;
+    type: PartyType;
+    side: PartySide;
+    role: PartyRole;
+    phone: string;
+    email: string;
+    address: string;
+    identity_number: string;
+    notes: string;
+  }>({
     name: "",
     type: "person",
     side: "opponent",
@@ -223,6 +241,13 @@ export default function CaseDetailPage() {
   }
 
   const nextHearing = caseDetail.upcoming_hearings?.[0];
+  const caseTitle =
+    caseDetail.title && caseDetail.title.trim().length > 0
+      ? caseDetail.title
+      : t("common.case");
+  const courtLabel = caseDetail.court ?? t("cases.list.court_pending");
+  const caseNumberLabel =
+    caseDetail.case_number ?? t("cases.list.case_number_pending");
 
   return (
     <section className="space-y-6">
@@ -232,12 +257,12 @@ export default function CaseDetailPage() {
             {t("case.detail.workspace")}
           </p>
           <h1 className="text-2xl font-semibold text-slate-900">
-            {caseDetail.title}
+            {caseTitle}
           </h1>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-            <span>{caseDetail.court ?? t("cases.list.court_pending")}</span>
-            <span>|</span>
-            <span>{caseDetail.case_number ?? t("cases.list.case_number_pending")}</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600">
+            <span>{courtLabel}</span>
+            <span className="text-slate-400">•</span>
+            <span>{caseNumberLabel}</span>
             <Badge variant="subtle" className="capitalize">
               {caseDetail.status
                 ? t(`case.status.${caseDetail.status}`)
@@ -639,9 +664,36 @@ export default function CaseDetailPage() {
                       setDocumentForm((prev) => ({
                         ...prev,
                         file: event.target.files?.[0] ?? null,
+                        name_base: (() => {
+                          const name = event.target.files?.[0]?.name ?? "";
+                          const lastDot = name.lastIndexOf(".");
+                          return lastDot > 0 ? name.slice(0, lastDot) : name;
+                        })(),
+                        extension: (() => {
+                          const name = event.target.files?.[0]?.name ?? "";
+                          const lastDot = name.lastIndexOf(".");
+                          return lastDot > 0 ? name.slice(lastDot + 1) : "";
+                        })(),
                       }))
                     }
                   />
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={documentForm.name_base}
+                      onChange={(event) =>
+                        setDocumentForm((prev) => ({
+                          ...prev,
+                          name_base: event.target.value,
+                        }))
+                      }
+                      placeholder={t("document.name_placeholder")}
+                    />
+                    {documentForm.extension ? (
+                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                        .{documentForm.extension}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -651,6 +703,9 @@ export default function CaseDetailPage() {
                         case_public_id: casePublicId,
                         category: documentForm.category,
                         file: documentForm.file,
+                        original_name: documentForm.extension
+                          ? `${documentForm.name_base || "document"}.${documentForm.extension}`
+                          : documentForm.name_base || undefined,
                         hearing_public_id:
                           documentForm.hearing_public_id || undefined,
                       })
@@ -814,9 +869,7 @@ export default function CaseDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle>{t("case.detail.recent_documents")}</CardTitle>
-                <CardDescription>
-                  {t("dashboard.section.documents_desc")}
-                </CardDescription>
+                <CardDescription>{t("dashboard.section.documents_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {recentDocuments.length === 0 ? (
@@ -861,13 +914,13 @@ export default function CaseDetailPage() {
                   description={t("case.detail.hearings_empty_desc")}
                 />
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("table.date")}</TableHead>
-                      <TableHead>{t("table.type")}</TableHead>
-                      <TableHead>{t("hearing.agenda")}</TableHead>
-                      <TableHead>{t("table.actions")}</TableHead>
+            <Table className="min-w-[720px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("table.date")}</TableHead>
+                  <TableHead>{t("table.type")}</TableHead>
+                  <TableHead>{t("hearing.agenda")}</TableHead>
+                  <TableHead>{t("table.actions")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -964,7 +1017,7 @@ export default function CaseDetailPage() {
                   description={t("case.detail.diary_empty_desc")}
                 />
               ) : (
-                <Table>
+                <Table className="min-w-[560px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("table.date")}</TableHead>
@@ -1004,7 +1057,7 @@ export default function CaseDetailPage() {
                   description={t("case.detail.documents_empty_desc_short")}
                 />
               ) : (
-                <Table>
+                <Table className="min-w-[560px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("table.document")}</TableHead>
@@ -1094,7 +1147,7 @@ export default function CaseDetailPage() {
                   description={t("case.detail.participants_empty_desc")}
                 />
               ) : (
-                <Table>
+                <Table className="min-w-[520px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("table.name")}</TableHead>
@@ -1163,7 +1216,7 @@ export default function CaseDetailPage() {
                       onChange={(event) =>
                         setPartyForm((prev) => ({
                           ...prev,
-                          type: event.target.value,
+                          type: event.target.value as PartyType,
                         }))
                       }
                     >
@@ -1179,7 +1232,7 @@ export default function CaseDetailPage() {
                       onChange={(event) =>
                         setPartyForm((prev) => ({
                           ...prev,
-                          side: event.target.value,
+                          side: event.target.value as PartySide,
                         }))
                       }
                     >
@@ -1195,7 +1248,7 @@ export default function CaseDetailPage() {
                       onChange={(event) =>
                         setPartyForm((prev) => ({
                           ...prev,
-                          role: event.target.value,
+                          role: event.target.value as PartyRole,
                         }))
                       }
                     >
@@ -1274,14 +1327,14 @@ export default function CaseDetailPage() {
                           notes: partyForm.notes,
                         })
                       }
-                    disabled={addParty.isPending}
-                  >
-                    {addParty.isPending
-                      ? t("common.adding")
-                      : t("cases.parties.add")}
-                  </Button>
+                      disabled={addParty.isPending}
+                    >
+                      {addParty.isPending
+                        ? t("common.adding")
+                        : t("cases.parties.add")}
+                    </Button>
+                  </div>
                 </div>
-              </div>
               )}
               {parties.length === 0 ? (
                 <EmptyState
@@ -1289,7 +1342,7 @@ export default function CaseDetailPage() {
                   description={t("case.detail.parties.empty_desc")}
                 />
               ) : (
-                <Table>
+                <Table className="min-w-[720px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("table.name")}</TableHead>
@@ -1301,13 +1354,13 @@ export default function CaseDetailPage() {
                   </TableHeader>
                   <TableBody>
                     {parties.map((party) => (
-                      <TableRow key={party.id}>
+                      <TableRow key={String(party.id)}>
                         <TableCell>
                           <div className="space-y-1">
                             <div className="text-sm font-medium text-slate-900">
                               {party.name}
                             </div>
-                            {party.is_client && (
+                            {Boolean(party.is_client) && (
                               <Badge variant="subtle">
                                 {t("case.detail.parties.client_badge")}
                               </Badge>
@@ -1315,23 +1368,27 @@ export default function CaseDetailPage() {
                           </div>
                         </TableCell>
                         <TableCell className="capitalize">
-                          {party.side ? t(`party.side.${party.side}`) : "-"}
+                          {party.side
+                            ? t(`party.side.${party.side}` as string)
+                            : "-"}
                         </TableCell>
                         <TableCell className="capitalize">
-                          {party.role ? t(`party.role.${party.role}`) : "-"}
+                          {party.role
+                            ? t(`party.role.${party.role}` as string)
+                            : "-"}
                         </TableCell>
                         <TableCell className="text-sm text-slate-600">
                           {party.phone ?? party.email ?? "-"}
                         </TableCell>
                         <TableCell>
-                          {canManageParticipants && !party.is_client && (
+                          {canManageParticipants && !Boolean(party.is_client) && (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() =>
                                 removeParty.mutate({
                                   casePublicId,
-                                  partyId: party.id,
+                                  partyId: Number(party.id),
                                 })
                               }
                               disabled={removeParty.isPending}
@@ -1356,5 +1413,3 @@ export default function CaseDetailPage() {
     </section>
   );
 }
-
-

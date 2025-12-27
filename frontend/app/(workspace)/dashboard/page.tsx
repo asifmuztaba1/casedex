@@ -34,6 +34,7 @@ import { useDiaryEntries } from "@/features/diary/use-diary-entries";
 import { useDocuments } from "@/features/documents/use-documents";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
+import {useAuth, useUsers} from "@/features/auth/use-auth";
 
 export default function DashboardPage() {
   const { t } = useLocale();
@@ -62,28 +63,6 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-            {t("dashboard.kicker")}
-          </p>
-          <h1 className="text-2xl font-semibold text-slate-900">
-            {t("dashboard.title")}
-          </h1>
-          <p className="text-sm text-slate-600">
-            {t("dashboard.description")}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge variant="subtle">
-            {t("nav.tenant")}: {t("common.demo")}
-          </Badge>
-          <Button size="sm" asChild>
-            <a href="/cases/new">{t("dashboard.new_case")}</a>
-          </Button>
-        </div>
-      </div>
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: t("dashboard.metrics.cases"), value: `${cases.length}` },
