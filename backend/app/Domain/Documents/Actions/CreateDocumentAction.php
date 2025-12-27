@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Domain\Documents\Actions;
 
@@ -40,7 +40,7 @@ class CreateDocumentAction
                 ->value('id');
 
             if ($hearingId === null) {
-                abort(422, 'Hearing not found for the provided public_id.');
+                abort(422, __('messages.hearing_not_found_public_id'));
             }
         }
 

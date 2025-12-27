@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import EmptyState from "@/components/empty-state";
+import { useLocale } from "@/components/locale-provider";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import {
   Card,
@@ -20,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function NotificationsPage() {
+  const { t } = useLocale();
   const { data, isLoading, isError } = useNotifications();
   const notifications = data?.data ?? [];
 
@@ -27,34 +29,36 @@ export default function NotificationsPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-          Notifications
+          {t("notifications.kicker")}
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">
-          Alerts and reminders
+          {t("notifications.subtitle")}
         </h1>
         <p className="text-sm text-slate-600">
-          Hearing reminders are sent one day before each hearing.
+          {t("notifications.description")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Notification log</CardTitle>
+          <CardTitle>{t("notifications.card_title")}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-sm text-slate-600">Loading notifications...</div>
+            <div className="text-sm text-slate-600">
+              {t("notifications.loading")}
+            </div>
           ) : isError ? (
             <div className="text-sm text-rose-600">
-              Unable to load notifications right now.
+              {t("notifications.error")}
             </div>
           ) : notifications.length === 0 ? (
             <EmptyState
-              title="No notifications yet"
-              description="Notifications will appear after hearings are scheduled."
+              title={t("notifications.empty_title")}
+              description={t("notifications.empty_desc")}
               action={
                 <Button asChild>
-                  <Link href="/cases">Go to cases</Link>
+                  <Link href="/cases">{t("common.go_to_cases")}</Link>
                 </Button>
               }
             />
@@ -62,9 +66,9 @@ export default function NotificationsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Notification</TableHead>
-                  <TableHead>Case</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("notifications.table.notification")}</TableHead>
+                  <TableHead>{t("table.case")}</TableHead>
+                  <TableHead>{t("notifications.table.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -84,11 +88,11 @@ export default function NotificationsPage() {
                       {note.case_public_id ? (
                         <Button variant="ghost" size="sm" asChild>
                           <Link href={`/cases/${note.case_public_id}`}>
-                            {note.case_title ?? "View case"}
+                            {note.case_title ?? t("common.view_case")}
                           </Link>
                         </Button>
                       ) : (
-                        note.case_title ?? "Case"
+                        note.case_title ?? t("common.case")
                       )}
                     </TableCell>
                     <TableCell>{note.status}</TableCell>

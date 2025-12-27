@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Database\Seeders;
 
@@ -19,6 +19,7 @@ use App\Domain\Tenancy\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,9 +28,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(CountriesSeeder::class);
+        $this->call(CourtTypesSeeder::class);
+
+        $countryId = \App\Domain\Tenancy\Models\Country::query()
+            ->where('code', 'BD')
+            ->value('id');
+
+        User::query()->firstOrCreate(
+            ['email' => 'platform.admin@casedex.app'],
+            [
+                'name' => 'CaseDex Platform Admin',
+                'password' => Hash::make('password'),
+                'role' => UserRole::PlatformAdmin,
+                'country_id' => $countryId,
+            ]
+        );
+
         $tenant = Tenant::create([
             'name' => 'Demo Law Firm',
             'plan' => TenantPlan::Free,
+            'country_id' => $countryId,
         ]);
 
         TenantContext::set($tenant->id);
@@ -39,6 +58,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@demo.casedex.app',
             'tenant_id' => $tenant->id,
             'role' => UserRole::Admin,
+            'country_id' => $countryId,
         ]);
 
         $lawyer = User::factory()->create([
@@ -46,6 +66,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'lawyer@demo.casedex.app',
             'tenant_id' => $tenant->id,
             'role' => UserRole::Lawyer,
+            'country_id' => $countryId,
         ]);
 
         $assistant = User::factory()->create([
@@ -53,6 +74,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'assistant@demo.casedex.app',
             'tenant_id' => $tenant->id,
             'role' => UserRole::Assistant,
+            'country_id' => $countryId,
         ]);
 
         $client = Client::create([

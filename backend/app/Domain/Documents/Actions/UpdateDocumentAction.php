@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Domain\Documents\Actions;
 
@@ -48,7 +48,7 @@ class UpdateDocumentAction
                 ->value('id');
 
             if ($hearingId === null) {
-                abort(422, 'Hearing not found for the provided public_id.');
+                abort(422, __('messages.hearing_not_found_public_id'));
             }
 
             $data['hearing_id'] = $hearingId;

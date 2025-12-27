@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/components/locale-provider";
 
 export const metadata: Metadata = {
   title: "CaseDex Pricing",
@@ -15,17 +18,18 @@ export const metadata: Metadata = {
 };
 
 export default function PricingPage() {
+  const { t } = useLocale();
+
   return (
     <section className="space-y-12">
       <Card>
         <CardHeader className="space-y-3">
-          <Badge variant="subtle">Pricing</Badge>
+          <Badge variant="subtle">{t("pricing.badge")}</Badge>
           <CardTitle className="text-2xl font-semibold">
-            Transparent plans for growing legal teams
+            {t("pricing.title")}
           </CardTitle>
           <CardDescription>
-            Start with the free plan and upgrade when you need more storage and
-            advanced file types.
+            {t("pricing.subtitle")}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -33,24 +37,24 @@ export default function PricingPage() {
       <div className="grid gap-6 md:grid-cols-3">
         {[
           {
-            title: "Free",
-            description: "Up to 5 cases per tenant. PDF/JPG/PNG uploads.",
+            titleKey: "pricing.free.title",
+            descriptionKey: "pricing.free.desc",
           },
           {
-            title: "Professional",
-            description: "Expanded storage, advanced file types, and audit packs.",
+            titleKey: "pricing.pro.title",
+            descriptionKey: "pricing.pro.desc",
           },
           {
-            title: "Chambers",
-            description: "Multi-team controls, priority support, and SLAs.",
+            titleKey: "pricing.chambers.title",
+            descriptionKey: "pricing.chambers.desc",
           },
         ].map((tier) => (
-          <Card key={tier.title} className="h-full">
+          <Card key={tier.titleKey} className="h-full">
             <CardHeader className="space-y-3">
-              <CardTitle className="text-base">{tier.title}</CardTitle>
-              <CardDescription>{tier.description}</CardDescription>
+              <CardTitle className="text-base">{t(tier.titleKey)}</CardTitle>
+              <CardDescription>{t(tier.descriptionKey)}</CardDescription>
               <Button variant="outline" size="sm" asChild>
-                <a href="/login">Request access</a>
+                <a href="/login">{t("pricing.cta")}</a>
               </Button>
             </CardHeader>
           </Card>

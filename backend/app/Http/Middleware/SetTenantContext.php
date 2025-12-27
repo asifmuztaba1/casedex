@@ -17,7 +17,7 @@ class SetTenantContext
         $user = $request->user();
 
         if ($user === null || $user->tenant_id === null) {
-            abort(401, 'Tenant context missing.');
+            abort(401, __('messages.tenant_context_missing'));
         }
 
         TenantContext::set($user->tenant_id);

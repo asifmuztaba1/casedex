@@ -46,7 +46,9 @@ class CaseController extends Controller
 
         $case->load([
             'client',
+            'court',
             'participants.user',
+            'parties',
             'upcomingHearings',
             'recentDiaryEntries',
             'recentDocuments',

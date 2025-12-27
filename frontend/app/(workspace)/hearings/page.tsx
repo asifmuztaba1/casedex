@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
+import { useLocale } from "@/components/locale-provider";
 import { useHearings } from "@/features/hearings/use-hearings";
 import {
   Card,
@@ -21,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function HearingsPage() {
+  const { t } = useLocale();
   const { data, isLoading, isError } = useHearings();
   const hearings = data?.data ?? [];
 
@@ -28,34 +30,36 @@ export default function HearingsPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-          Hearings
+          {t("hearings.kicker")}
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">
-          Hearing schedule
+          {t("hearings.title")}
         </h1>
         <p className="text-sm text-slate-600">
-          Upcoming hearings with direct links back to each case workspace.
+          {t("hearings.subtitle")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All hearings</CardTitle>
+          <CardTitle>{t("hearings.card_title")}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-sm text-slate-600">Loading hearings...</div>
+            <div className="text-sm text-slate-600">
+              {t("hearings.loading")}
+            </div>
           ) : isError ? (
             <div className="text-sm text-rose-600">
-              Unable to load hearings right now.
+              {t("hearings.error")}
             </div>
           ) : hearings.length === 0 ? (
             <EmptyState
-              title="No hearings scheduled"
-              description="Create a case and add the first hearing to start tracking the timeline."
+              title={t("hearings.empty_title")}
+              description={t("hearings.empty_desc")}
               action={
                 <Button asChild>
-                  <Link href="/cases">Go to cases</Link>
+                  <Link href="/cases">{t("hearings.action")}</Link>
                 </Button>
               }
             />
@@ -63,10 +67,10 @@ export default function HearingsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Case</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Next steps</TableHead>
+                  <TableHead>{t("table.date")}</TableHead>
+                  <TableHead>{t("table.case")}</TableHead>
+                  <TableHead>{t("table.type")}</TableHead>
+                  <TableHead>{t("hearing.next_steps")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -75,20 +79,24 @@ export default function HearingsPage() {
                     <TableCell>
                       {hearing.hearing_at
                         ? format(new Date(hearing.hearing_at), "PPpp")
-                        : "TBD"}
+                        : t("common.tbd")}
                     </TableCell>
                     <TableCell>
                       {hearing.case_public_id ? (
                         <Button variant="ghost" size="sm" asChild>
                           <Link href={`/cases/${hearing.case_public_id}`}>
-                            {hearing.case_title ?? "View case"}
+                            {hearing.case_title ?? t("common.view_case")}
                           </Link>
                         </Button>
                       ) : (
-                        hearing.case_title ?? "Case"
+                        hearing.case_title ?? t("common.case")
                       )}
                     </TableCell>
-                    <TableCell>{hearing.type ?? "Hearing"}</TableCell>
+                    <TableCell>
+                      {hearing.type
+                        ? t(`hearing.type.${hearing.type}`)
+                        : t("hearing.type.hearing")}
+                    </TableCell>
                     <TableCell>{hearing.next_steps ?? "-"}</TableCell>
                   </TableRow>
                 ))}

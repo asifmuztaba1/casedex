@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domain\Auth\Enums\UserRole;
+use App\Domain\Tenancy\Models\Country;
 use App\Domain\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'email',
         'password',
         'tenant_id',
+        'country_id',
+        'locale',
         'public_id',
         'role',
     ];
@@ -65,5 +68,10 @@ class User extends Authenticatable
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
     }
 }

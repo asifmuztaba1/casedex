@@ -96,7 +96,7 @@ class DocumentController extends Controller
     public function download(string $publicId, Request $request, FindDocumentAction $finder)
     {
         if (! $request->hasValidSignature()) {
-            abort(403);
+            abort(403, __('messages.invalid_download_signature'));
         }
 
         $document = $finder->handle($publicId);

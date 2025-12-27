@@ -3,10 +3,16 @@
 namespace App\Domain\Cases\Actions;
 
 use App\Domain\Auth\Actions\RecordAuditLogAction;
+use App\Domain\Cases\Enums\CaseStatus;
+use App\Domain\Cases\Enums\PartyRole;
+use App\Domain\Cases\Enums\PartySide;
+use App\Domain\Cases\Enums\PartyType;
 use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Cases\Models\CaseParty;
 use App\Domain\Cases\Models\CaseParticipant;
 use App\Domain\Cases\Enums\CaseParticipantRole;
 use App\Domain\Clients\Models\Client;
+use App\Domain\Courts\Models\Court;
 use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
@@ -35,7 +41,7 @@ class CreateCaseAction
                 ->count();
 
             if ($caseCount >= 5) {
-                abort(403, 'Free plan allows up to 5 cases.');
+                abort(403, __('messages.free_plan_case_limit'));
             }
         }
 
@@ -49,7 +55,7 @@ class CreateCaseAction
                     ->value('id');
 
                 if ($clientId === null) {
-                    abort(422, 'Client not found for the provided id.');
+                    abort(422, __('messages.client_not_found'));
                 }
             }
 
@@ -58,16 +64,73 @@ class CreateCaseAction
                 $clientId = $client->id;
             }
 
+            $court = null;
+            if (! empty($data['court_public_id'])) {
+                $court = Court::query()
+                    ->where('public_id', $data['court_public_id'])
+                    ->first();
+            }
+
+            $courtName = $data['court'] ?? null;
+            $courtId = null;
+
+            if ($court !== null) {
+                $courtId = $court->id;
+                $courtName = $court->displayName(app()->getLocale());
+            }
+
             $case = CaseFile::create([
                 'title' => $data['title'],
-                'court' => $data['court'],
+                'court' => $courtName,
+                'court_id' => $courtId,
                 'case_number' => $data['case_number'] ?? null,
-                'status' => $data['status'] ?? null,
+                'status' => $data['status'] ??  CaseStatus::Open,
                 'story' => $data['story'],
                 'petition_draft' => $data['petition_draft'],
                 'client_id' => $clientId,
                 'created_by' => $user?->id,
             ]);
+
+            if ($clientId !== null) {
+                $client = Client::query()
+                    ->where('id', $clientId)
+                    ->where('tenant_id', TenantContext::id())
+                    ->first();
+
+                if ($client) {
+                    CaseParty::create([
+                        'case_id' => $case->id,
+                        'client_id' => $client->id,
+                        'type' => $data['client_party_type'] ?? PartyType::Person->value,
+                        'name' => $client->name,
+                        'side' => PartySide::Client->value,
+                        'role' => $data['client_party_role'] ?? PartyRole::Petitioner->value,
+                        'is_client' => true,
+                        'phone' => $client->phone,
+                        'email' => $client->email,
+                        'address' => $client->address,
+                        'identity_number' => $client->identity_number,
+                        'notes' => $client->notes,
+                    ]);
+                }
+            }
+
+            $parties = $data['parties'] ?? [];
+            foreach ($parties as $party) {
+                CaseParty::create([
+                    'case_id' => $case->id,
+                    'type' => $party['type'],
+                    'name' => $party['name'],
+                    'side' => $party['side'],
+                    'role' => $party['role'] ?? null,
+                    'is_client' => false,
+                    'phone' => $party['phone'] ?? null,
+                    'email' => $party['email'] ?? null,
+                    'address' => $party['address'] ?? null,
+                    'identity_number' => $party['identity_number'] ?? null,
+                    'notes' => $party['notes'] ?? null,
+                ]);
+            }
 
             $participants = $data['participants'] ?? [];
             $participantUserIds = [];

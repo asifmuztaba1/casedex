@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useLocale } from "@/components/locale-provider";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -14,16 +17,18 @@ export const metadata: Metadata = {
 };
 
 export default function TermsPage() {
+  const { t } = useLocale();
+
   return (
     <section className="space-y-10">
       <Card>
         <CardHeader className="space-y-3">
-          <Badge variant="subtle">Terms</Badge>
+          <Badge variant="subtle">{t("terms.badge")}</Badge>
           <CardTitle className="text-2xl font-semibold">
-            Terms of service
+            {t("terms.title")}
           </CardTitle>
           <CardDescription>
-            These terms are a placeholder and will be finalized before launch.
+            {t("terms.subtitle")}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -31,30 +36,26 @@ export default function TermsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         {[
           {
-            title: "No legal advice",
-            description:
-              "CaseDex provides a structured case workspace and does not offer legal advice.",
+            titleKey: "terms.card1.title",
+            descriptionKey: "terms.card1.desc",
           },
           {
-            title: "User responsibility",
-            description:
-              "Users are responsible for the accuracy of entries and compliance with obligations.",
+            titleKey: "terms.card2.title",
+            descriptionKey: "terms.card2.desc",
           },
           {
-            title: "AI assistance",
-            description:
-              "AI output is editable, sources-first, and never a substitute for judgment.",
+            titleKey: "terms.card3.title",
+            descriptionKey: "terms.card3.desc",
           },
           {
-            title: "Account access",
-            description:
-              "Access is limited to authorized users within each tenant.",
+            titleKey: "terms.card4.title",
+            descriptionKey: "terms.card4.desc",
           },
         ].map((item) => (
-          <Card key={item.title} className="h-full">
+          <Card key={item.titleKey} className="h-full">
             <CardHeader>
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle className="text-base">{t(item.titleKey)}</CardTitle>
+              <CardDescription>{t(item.descriptionKey)}</CardDescription>
             </CardHeader>
           </Card>
         ))}

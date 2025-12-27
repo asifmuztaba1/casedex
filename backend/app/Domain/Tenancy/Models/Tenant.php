@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenancy\Models;
 
+use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,11 +17,18 @@ class Tenant extends Model
         'name',
         'public_id',
         'plan',
+        'country_id',
+        'locale',
     ];
 
     protected $casts = [
         'plan' => TenantPlan::class,
     ];
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 
     protected static function booted(): void
     {
@@ -29,5 +37,10 @@ class Tenant extends Model
                 $tenant->public_id = (string) Str::ulid();
             }
         });
+    }
+
+    protected static function newFactory(): TenantFactory
+    {
+        return TenantFactory::new();
     }
 }

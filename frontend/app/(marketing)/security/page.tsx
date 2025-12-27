@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
+import { useLocale } from "@/components/locale-provider";
 
 export const metadata: Metadata = {
   title: "Security",
@@ -15,17 +18,18 @@ export const metadata: Metadata = {
 };
 
 export default function SecurityPage() {
+  const { t } = useLocale();
+
   return (
     <section className="space-y-12">
       <Card>
         <CardHeader className="space-y-3">
-          <Badge variant="subtle">Security</Badge>
+          <Badge variant="subtle">{t("security.badge")}</Badge>
           <CardTitle className="text-2xl font-semibold">
-            Security and compliance
+            {t("security.title")}
           </CardTitle>
           <CardDescription>
-            CaseDex uses tenant isolation, audit logs, and signed downloads to
-            safeguard sensitive legal information.
+            {t("security.subtitle")}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -33,31 +37,27 @@ export default function SecurityPage() {
       <div className="grid gap-6 md:grid-cols-2">
         {[
           {
-            title: "Tenant isolation",
-            description:
-              "Every query is scoped to tenant_id with policies enforcing ownership.",
+            titleKey: "security.card1.title",
+            descriptionKey: "security.card1.desc",
           },
           {
-            title: "Audit logging",
-            description:
-              "Key actions like login, case updates, and document changes are logged.",
+            titleKey: "security.card2.title",
+            descriptionKey: "security.card2.desc",
           },
           {
-            title: "Signed access",
-            description:
-              "Document downloads use signed URLs to prevent unauthorized access.",
+            titleKey: "security.card3.title",
+            descriptionKey: "security.card3.desc",
           },
           {
-            title: "Rate limits",
-            description:
-              "Authentication endpoints are rate-limited for added protection.",
+            titleKey: "security.card4.title",
+            descriptionKey: "security.card4.desc",
           },
         ].map((item) => (
-          <Card key={item.title} className="h-full">
+          <Card key={item.titleKey} className="h-full">
             <CardHeader className="space-y-3">
               <ShieldCheck className="h-4 w-4 text-slate-500" />
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle className="text-base">{t(item.titleKey)}</CardTitle>
+              <CardDescription>{t(item.descriptionKey)}</CardDescription>
             </CardHeader>
           </Card>
         ))}

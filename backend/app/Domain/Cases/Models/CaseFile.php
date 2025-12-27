@@ -4,6 +4,8 @@ namespace App\Domain\Cases\Models;
 
 use App\Domain\Cases\Enums\CaseStatus;
 use App\Domain\Clients\Models\Client;
+use App\Domain\Cases\Models\CaseParty;
+use App\Domain\Courts\Models\Court;
 use App\Domain\Diary\Models\DiaryEntry;
 use App\Domain\Documents\Models\Document;
 use App\Domain\Hearings\Models\Hearing;
@@ -25,6 +27,7 @@ class CaseFile extends Model
         'tenant_id',
         'title',
         'court',
+        'court_id',
         'case_number',
         'client_id',
         'story',
@@ -51,9 +54,19 @@ class CaseFile extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    public function court()
+    {
+        return $this->belongsTo(Court::class, 'court_id');
+    }
+
     public function participants()
     {
         return $this->hasMany(CaseParticipant::class, 'case_id');
+    }
+
+    public function parties()
+    {
+        return $this->hasMany(CaseParty::class, 'case_id');
     }
 
     public function hearings()

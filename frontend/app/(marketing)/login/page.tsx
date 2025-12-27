@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,44 +11,82 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useLogin } from "@/features/auth/use-auth";
+import { useLocale } from "@/components/locale-provider";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const login = useLogin();
+  const { t } = useLocale();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
-            Log in
+            {t("login.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
-            Access your case workspace
+            {t("login.header")}
           </CardTitle>
           <CardDescription>
-            Sign in to review cases, hearings, diary entries, and documents.
+            {t("login.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              login.mutate(
+                { email, password },
+                {
+                  onSuccess: () => {
+                    router.push("/dashboard");
+                  },
+                }
+              );
+            }}
+          >
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Email
+                {t("login.email")}
               </label>
-              <Input placeholder="you@firm.com" type="email" />
+              <Input
+                placeholder="you@firm.com"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Password
+                {t("login.password")}
               </label>
-              <Input placeholder="********" type="password" />
+              <Input
+                placeholder="********"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
             </div>
             <div className="flex flex-col gap-3">
-              <Button className="w-full" type="button">
-                Log in
+              <Button className="w-full" type="submit" disabled={login.isPending}>
+                {login.isPending
+                  ? t("login.button_pending")
+                  : t("login.button")}
               </Button>
-              <Button className="w-full" variant="outline" type="button">
-                Request access
+              <Button className="w-full" variant="outline" asChild>
+                <a href="/register">{t("login.create_account")}</a>
               </Button>
             </div>
+            {login.isError && (
+              <div className="text-sm text-rose-600">
+                {t("login.error")}
+              </div>
+            )}
           </form>
         </CardContent>
       </Card>

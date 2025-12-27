@@ -1,6 +1,7 @@
 "use client";
 
 import EmptyState from "@/components/empty-state";
+import { useLocale } from "@/components/locale-provider";
 import {
   useCreateResearchNote,
   useDeleteResearchNote,
@@ -15,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export default function ResearchPage() {
+  const { t } = useLocale();
   const { data, isLoading, isError } = useResearchNotes();
   const notes = data?.data ?? [];
   const createNote = useCreateResearchNote();
@@ -42,17 +44,21 @@ export default function ResearchPage() {
     <section className="space-y-6">
       <header className="space-y-2">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-          Research
+          {t("research.kicker")}
         </p>
-        <h1 className="text-2xl font-semibold text-slate-900">Research notes</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          {t("research.title")}
+        </h1>
         <p className="text-sm text-slate-600">
-          Keep citations and summaries organized for each matter.
+          {t("research.subtitle")}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Add a research note</CardTitle>
+          <CardTitle className="text-base">
+            {t("research.card_title")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -60,15 +66,15 @@ export default function ResearchPage() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <Input
-              placeholder="Research note title"
+              placeholder={t("research.note_title_placeholder")}
               {...register("title")}
             />
             <Input
-              placeholder="Summary (optional)"
+              placeholder={t("research.note_summary_placeholder")}
               {...register("body")}
             />
             <Button type="submit" disabled={createNote.isPending}>
-              {createNote.isPending ? "Saving..." : "Add note"}
+              {createNote.isPending ? t("research.saving") : t("research.save")}
             </Button>
           </form>
         </CardContent>
@@ -76,16 +82,16 @@ export default function ResearchPage() {
 
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-          Loading research notes...
+          {t("research.loading")}
         </div>
       ) : isError ? (
         <div className="rounded-2xl border border-rose-200 bg-white p-6 text-sm text-rose-600">
-          Unable to load research notes right now.
+          {t("research.error")}
         </div>
       ) : notes.length === 0 ? (
         <EmptyState
-          title="No research notes yet"
-          description="Capture a research note to build institutional memory."
+          title={t("research.empty_title")}
+          description={t("research.empty_desc")}
         />
       ) : (
         <div className="space-y-3">
@@ -107,7 +113,7 @@ export default function ResearchPage() {
                     size="sm"
                     onClick={() => {
                       const body = window.prompt(
-                        "Update research note",
+                        t("research.update_prompt"),
                         note.body ?? ""
                       );
                       if (body === null) {
@@ -119,14 +125,14 @@ export default function ResearchPage() {
                       });
                     }}
                   >
-                    Edit
+                    {t("research.edit")}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => deleteNote.mutate(note.public_id)}
                   >
-                    Delete
+                    {t("research.delete")}
                   </Button>
                 </div>
               </CardContent>

@@ -46,7 +46,7 @@ class UpdateHearingAction
             ->value('id');
 
         if ($caseId === null) {
-            abort(422, 'Case not found for the provided public_id.');
+            abort(422, __('messages.case_not_found_public_id'));
         }
 
         return $caseId;

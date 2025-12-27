@@ -8,18 +8,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<Tenant>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Tenancy\Models\Tenant>
  */
 class TenantFactory extends Factory
 {
     protected $model = Tenant::class;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
             'name' => fake()->company(),
             'public_id' => (string) Str::ulid(),
             'plan' => TenantPlan::Free,
+            'country_id' => null,
         ];
     }
 }

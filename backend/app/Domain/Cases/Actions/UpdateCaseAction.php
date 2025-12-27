@@ -4,6 +4,7 @@ namespace App\Domain\Cases\Actions;
 
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Courts\Models\Court;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class UpdateCaseAction
@@ -17,7 +18,25 @@ class UpdateCaseAction
      */
     public function handle(CaseFile $case, array $data, ?Authenticatable $user): CaseFile
     {
-        $case->fill($data);
+        $payload = $data;
+
+        if (array_key_exists('court_public_id', $payload)) {
+            $court = null;
+            if (! empty($payload['court_public_id'])) {
+                $court = Court::query()
+                    ->where('public_id', $payload['court_public_id'])
+                    ->first();
+            }
+
+            if ($court !== null) {
+                $payload['court_id'] = $court->id;
+                $payload['court'] = $court->displayName(app()->getLocale());
+            }
+
+            unset($payload['court_public_id']);
+        }
+
+        $case->fill($payload);
         $case->save();
 
         $this->auditLog->handle(

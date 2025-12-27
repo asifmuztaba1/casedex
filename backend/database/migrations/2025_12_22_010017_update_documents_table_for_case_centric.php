@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Domain\Documents\Enums\DocumentCategory;
 use Illuminate\Database\Migrations\Migration;

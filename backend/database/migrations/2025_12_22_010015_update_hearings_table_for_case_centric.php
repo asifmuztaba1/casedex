@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Domain\Hearings\Enums\HearingType;
 use Illuminate\Database\Migrations\Migration;

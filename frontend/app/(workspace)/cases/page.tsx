@@ -21,16 +21,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Search } from "lucide-react";
+import { useLocale } from "@/components/locale-provider";
 
 const statusOptions = [
-  { label: "All", value: "all" },
-  { label: "Open", value: "open" },
-  { label: "Active", value: "active" },
-  { label: "Closed", value: "closed" },
-  { label: "Archived", value: "archived" },
+  { labelKey: "status.all", value: "all" },
+  { labelKey: "status.open", value: "open" },
+  { labelKey: "status.active", value: "active" },
+  { labelKey: "status.closed", value: "closed" },
+  { labelKey: "status.archived", value: "archived" },
 ];
 
 export default function CasesPage() {
+  const { t } = useLocale();
   const { data, isLoading, isError } = useCases();
   const cases = data?.data ?? [];
   const [search, setSearch] = useState("");
@@ -57,33 +59,35 @@ export default function CasesPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-            Cases
+            {t("cases.list.kicker")}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">Case list</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">
+            {t("cases.list.title")}
+          </h1>
           <p className="text-sm text-slate-600">
-            Review every matter and jump directly into the case workspace.
+            {t("cases.list.subtitle")}
           </p>
         </div>
         <Button asChild>
-          <Link href="/cases/new">New case</Link>
+          <Link href="/cases/new">{t("nav.new_case")}</Link>
         </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <Card className="h-fit">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-base">Filters</CardTitle>
-            <CardDescription>Refine by status, court, and name.</CardDescription>
+            <CardTitle className="text-base">{t("cases.list.filters")}</CardTitle>
+            <CardDescription>{t("cases.list.filters_desc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Search
+                {t("cases.list.search")}
               </label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <Input
-                  placeholder="Case title"
+                  placeholder={t("cases.list.search_placeholder")}
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   className="pl-9"
@@ -92,23 +96,25 @@ export default function CasesPage() {
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Court
+                {t("cases.list.court")}
               </label>
               <Input
-                placeholder="Search by court"
+                placeholder={t("cases.list.court_placeholder")}
                 value={courtFilter}
                 onChange={(event) => setCourtFilter(event.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Status
+                {t("cases.list.status")}
               </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
-                    {statusOptions.find((opt) => opt.value === statusFilter)
-                      ?.label ?? "Status"}
+                    {t(
+                      statusOptions.find((opt) => opt.value === statusFilter)
+                        ?.labelKey ?? "cases.list.status"
+                    )}
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -118,7 +124,7 @@ export default function CasesPage() {
                       key={option.value}
                       onClick={() => setStatusFilter(option.value)}
                     >
-                      {option.label}
+                      {t(option.labelKey)}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -129,25 +135,27 @@ export default function CasesPage() {
 
         <Card>
           <CardHeader className="space-y-2">
-            <CardTitle>All cases</CardTitle>
+            <CardTitle>{t("cases.list.all_cases")}</CardTitle>
             <CardDescription>
-              Open a case to view hearings, diary entries, and documents.
+              {t("cases.list.open_case_desc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isLoading ? (
-              <div className="text-sm text-slate-600">Loading cases...</div>
+              <div className="text-sm text-slate-600">
+                {t("cases.list.loading")}
+              </div>
             ) : isError ? (
               <div className="text-sm text-rose-600">
-                Unable to load cases right now.
+                {t("cases.list.error")}
               </div>
             ) : filteredCases.length === 0 ? (
               <EmptyState
-                title="No cases found"
-                description="Create your first case to start tracking hearings, diary entries, and documents."
+                title={t("cases.list.empty_title")}
+                description={t("cases.list.empty_desc")}
                 action={
                   <Button asChild>
-                    <Link href="/cases/new">Create case</Link>
+                    <Link href="/cases/new">{t("cases.list.empty_action")}</Link>
                   </Button>
                 }
               />
@@ -161,20 +169,21 @@ export default function CasesPage() {
                           {caseItem.title}
                         </div>
                         <div className="text-xs text-slate-500">
-                          {caseItem.case_number ?? "Case number pending"} Â·{" "}
-                          {caseItem.court ?? "Court TBD"}
+                          {caseItem.case_number ?? t("cases.list.case_number_pending")} -{" "}
+                          {caseItem.court ?? t("cases.list.court_pending")}
                         </div>
                         <div className="text-xs text-slate-500">
-                          Client: {caseItem.client?.name ?? "Not set"}
+                          {t("cases.list.client_label")}:{" "}
+                          {caseItem.client?.name ?? t("cases.list.client_empty")}
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <Badge variant="subtle">
-                          {caseItem.status ?? "open"}
+                          {t(`status.${caseItem.status ?? "open"}`)}
                         </Badge>
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/cases/${caseItem.public_id}`}>
-                            Open
+                            {t("cases.list.open")}
                           </Link>
                         </Button>
                       </div>

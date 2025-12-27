@@ -1,9 +1,10 @@
-﻿<?php
+<?php
 
 namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Api\V1\CasePartyResource;
 
 class CaseDetailResource extends JsonResource
 {
@@ -16,12 +17,15 @@ class CaseDetailResource extends JsonResource
             'public_id' => $this->public_id,
             'title' => $this->title,
             'court' => $this->court,
+            'court_id' => $this->court_id,
+            'court_public_id' => $this->whenLoaded('court', fn () => optional($this->court)->public_id),
             'case_number' => $this->case_number,
             'status' => $this->status?->value,
             'story' => $this->story,
             'petition_draft' => $this->petition_draft,
             'client' => new ClientResource($this->whenLoaded('client')),
             'participants' => CaseParticipantResource::collection($this->whenLoaded('participants')),
+            'parties' => CasePartyResource::collection($this->whenLoaded('parties')),
             'upcoming_hearings' => HearingResource::collection($this->whenLoaded('upcomingHearings')),
             'recent_diary_entries' => DiaryEntryResource::collection($this->whenLoaded('recentDiaryEntries')),
             'recent_documents' => DocumentResource::collection($this->whenLoaded('recentDocuments')),

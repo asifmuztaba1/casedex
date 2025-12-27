@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import EmptyState from "@/components/empty-state";
+import { useLocale } from "@/components/locale-provider";
 import { useDocuments } from "@/features/documents/use-documents";
 import {
   Card,
@@ -20,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function DocumentsPage() {
+  const { t } = useLocale();
   const { data, isLoading, isError } = useDocuments();
   const documents = data?.data ?? [];
 
@@ -27,34 +29,36 @@ export default function DocumentsPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-          Documents
+          {t("documents.kicker")}
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">
-          Case documents
+          {t("documents.title")}
         </h1>
         <p className="text-sm text-slate-600">
-          Document uploads remain connected to the case they belong to.
+          {t("documents.subtitle")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent documents</CardTitle>
+          <CardTitle>{t("documents.card_title")}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-sm text-slate-600">Loading documents...</div>
+            <div className="text-sm text-slate-600">
+              {t("documents.loading")}
+            </div>
           ) : isError ? (
             <div className="text-sm text-rose-600">
-              Unable to load documents right now.
+              {t("documents.error")}
             </div>
           ) : documents.length === 0 ? (
             <EmptyState
-              title="No documents yet"
-              description="Upload documents within a case to keep files organized."
+              title={t("documents.empty_title")}
+              description={t("documents.empty_desc")}
               action={
                 <Button asChild>
-                  <Link href="/cases">Go to cases</Link>
+                  <Link href="/cases">{t("common.go_to_cases")}</Link>
                 </Button>
               }
             />
@@ -62,10 +66,10 @@ export default function DocumentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Document</TableHead>
-                  <TableHead>Case</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Download</TableHead>
+                  <TableHead>{t("table.document")}</TableHead>
+                  <TableHead>{t("table.case")}</TableHead>
+                  <TableHead>{t("table.category")}</TableHead>
+                  <TableHead>{t("document.download")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -76,18 +80,24 @@ export default function DocumentsPage() {
                       {doc.case_public_id ? (
                         <Button variant="ghost" size="sm" asChild>
                           <Link href={`/cases/${doc.case_public_id}`}>
-                            {doc.case_title ?? "View case"}
+                            {doc.case_title ?? t("common.view_case")}
                           </Link>
                         </Button>
                       ) : (
-                        doc.case_title ?? "Case"
+                        doc.case_title ?? t("common.case")
                       )}
                     </TableCell>
-                    <TableCell>{doc.category ?? "Other"}</TableCell>
+                    <TableCell>
+                      {doc.category
+                        ? t(`document.category.${doc.category}`)
+                        : t("document.category.other")}
+                    </TableCell>
                     <TableCell>
                       {doc.download_url ? (
                         <Button variant="outline" size="sm" asChild>
-                          <a href={doc.download_url}>Download</a>
+                          <a href={doc.download_url}>
+                            {t("document.download")}
+                          </a>
                         </Button>
                       ) : (
                         "-"

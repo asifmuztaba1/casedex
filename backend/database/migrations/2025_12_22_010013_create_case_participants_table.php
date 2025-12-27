@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Domain\Cases\Enums\CaseParticipantRole;
 use Illuminate\Database\Migrations\Migration;

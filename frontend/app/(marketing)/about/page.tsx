@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useLocale } from "@/components/locale-provider";
 
 export const metadata: Metadata = {
   title: "About CaseDex",
@@ -16,60 +19,49 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const { t } = useLocale();
+
   return (
     <section className="space-y-12">
       <Card>
         <CardHeader className="space-y-3">
-          <Badge variant="subtle">About</Badge>
+          <Badge variant="subtle">{t("about.badge")}</Badge>
           <CardTitle className="text-2xl font-semibold">
-            Built for legal teams who value clarity
+            {t("about.title")}
           </CardTitle>
           <CardDescription>
-            CaseDex is a structured case workspace for legal professionals and law
-            students. It keeps hearings, diaries, documents, and research in one
-            place while supporting professional judgment.
+            {t("about.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-slate-600 md:grid-cols-2">
-          <div>
-            We focus on trust, calm workflows, and consistent structure. The
-            workspace is intentionally neutral to reduce distraction and keep
-            teams aligned.
-          </div>
-          <div>
-            AI assistance is limited to summaries and organization, always
-            editable and sources-first. CaseDex never offers legal advice.
-          </div>
+          <div>{t("about.body1")}</div>
+          <div>{t("about.body2")}</div>
         </CardContent>
       </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         {[
           {
-            title: "Structured by design",
-            description:
-              "Each module mirrors real hearing and research workflows.",
+            titleKey: "about.card1.title",
+            descriptionKey: "about.card1.desc",
           },
           {
-            title: "AI-assisted summaries",
-            description:
-              "Summaries are editable, source-linked, and never replace judgment.",
+            titleKey: "about.card2.title",
+            descriptionKey: "about.card2.desc",
           },
           {
-            title: "Tenant isolation",
-            description:
-              "Multi-tenant protections keep every case scoped to its organization.",
+            titleKey: "about.card3.title",
+            descriptionKey: "about.card3.desc",
           },
           {
-            title: "Calm interfaces",
-            description:
-              "Neutral color and measured typography keep the workspace focused.",
+            titleKey: "about.card4.title",
+            descriptionKey: "about.card4.desc",
           },
         ].map((item) => (
-          <Card key={item.title} className="h-full">
+          <Card key={item.titleKey} className="h-full">
             <CardHeader>
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle className="text-base">{t(item.titleKey)}</CardTitle>
+              <CardDescription>{t(item.descriptionKey)}</CardDescription>
             </CardHeader>
           </Card>
         ))}

@@ -1,5 +1,13 @@
 ﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPostForm, apiPutForm } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Something went wrong.";
+}
 
 export type DocumentSummary = {
   public_id: string;
@@ -44,6 +52,7 @@ type CreateDocumentPayload = {
 
 export function useCreateDocument() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: (payload: CreateDocumentPayload) => {
@@ -61,6 +70,18 @@ export function useCreateDocument() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.case_public_id, "documents"],
       });
+      toast({
+        title: "Document uploaded",
+        description: "The document is now stored in the case.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Upload failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
     },
   });
 }
@@ -77,6 +98,7 @@ type UpdateDocumentPayload = {
 
 export function useUpdateDocument() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateDocumentPayload) => {
@@ -97,17 +119,42 @@ export function useUpdateDocument() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
+      toast({
+        title: "Document updated",
+        description: "Changes saved successfully.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
     },
   });
 }
 
 export function useDeleteDocument() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: (publicId: string) => apiDelete(`/api/v1/documents/${publicId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
+      toast({
+        title: "Document removed",
+        description: "The document was deleted.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
     },
   });
 }

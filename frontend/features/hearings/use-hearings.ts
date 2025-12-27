@@ -1,5 +1,13 @@
 ﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Something went wrong.";
+}
 
 export type HearingSummary = {
   public_id: string;
@@ -49,6 +57,7 @@ type CreateHearingPayload = {
 
 export function useCreateHearing() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: (payload: CreateHearingPayload) =>
@@ -57,6 +66,18 @@ export function useCreateHearing() {
       queryClient.invalidateQueries({ queryKey: ["hearings"] });
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.case_public_id, "hearings"],
+      });
+      toast({
+        title: "Hearing saved",
+        description: "The hearing was added to the case.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Hearing not saved",
+        description: getErrorMessage(error),
+        variant: "error",
       });
     },
   });
@@ -69,23 +90,49 @@ type UpdateHearingPayload = {
 
 export function useUpdateHearing() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateHearingPayload) =>
       apiPut<HearingSummary>(`/api/v1/hearings/${publicId}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hearings"] });
+      toast({
+        title: "Hearing updated",
+        description: "Changes saved successfully.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
     },
   });
 }
 
 export function useDeleteHearing() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: (publicId: string) => apiDelete(`/api/v1/hearings/${publicId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hearings"] });
+      toast({
+        title: "Hearing removed",
+        description: "The hearing was deleted.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
     },
   });
 }

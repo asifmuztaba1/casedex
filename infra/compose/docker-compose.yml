@@ -16,7 +16,8 @@ services:
       context: ../../frontend
       dockerfile: ../infra/docker/frontend.Dockerfile
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=/api
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+      - NEXT_DISABLE_TURBOPACK=1
     volumes:
       - ../../frontend:/app
       - frontend_node_modules:/app/node_modules
@@ -46,6 +47,56 @@ services:
     command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
     ports:
       - "8000:8000"
+    depends_on:
+      - mysql
+      - redis
+
+  horizon:
+    build:
+      context: ../../backend/docker/8.4
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: ${WWWGROUP:-1000}
+    environment:
+      - WWWUSER=${WWWUSER:-1000}
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=casedex
+      - DB_USERNAME=casedex
+      - DB_PASSWORD=casedex
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+    volumes:
+      - ../../backend:/var/www/html
+    working_dir: /var/www/html
+    command: ["php", "artisan", "horizon"]
+    depends_on:
+      - redis
+      - mysql
+
+  scheduler:
+    build:
+      context: ../../backend/docker/8.4
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: ${WWWGROUP:-1000}
+    environment:
+      - WWWUSER=${WWWUSER:-1000}
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=casedex
+      - DB_USERNAME=casedex
+      - DB_PASSWORD=casedex
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+    volumes:
+      - ../../backend:/var/www/html
+    working_dir: /var/www/html
+    command: ["php", "artisan", "schedule:work"]
     depends_on:
       - mysql
       - redis

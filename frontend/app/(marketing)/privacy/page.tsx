@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useLocale } from "@/components/locale-provider";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -14,17 +17,18 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
+  const { t } = useLocale();
+
   return (
     <section className="space-y-10">
       <Card>
         <CardHeader className="space-y-3">
-          <Badge variant="subtle">Privacy</Badge>
+          <Badge variant="subtle">{t("privacy.badge")}</Badge>
           <CardTitle className="text-2xl font-semibold">
-            Privacy policy
+            {t("privacy.title")}
           </CardTitle>
           <CardDescription>
-            CaseDex is built to protect confidential legal work. This policy
-            will be updated with detailed practices before launch.
+            {t("privacy.subtitle")}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -32,29 +36,26 @@ export default function PrivacyPage() {
       <div className="grid gap-6 md:grid-cols-2">
         {[
           {
-            title: "Data collection",
-            description:
-              "We collect only what is needed to operate the workspace and improve reliability.",
+            titleKey: "privacy.card1.title",
+            descriptionKey: "privacy.card1.desc",
           },
           {
-            title: "Tenant boundaries",
-            description:
-              "Data is isolated per tenant and available only to authorized users.",
+            titleKey: "privacy.card2.title",
+            descriptionKey: "privacy.card2.desc",
           },
           {
-            title: "No resale",
-            description: "We do not sell personal information or client records.",
+            titleKey: "privacy.card3.title",
+            descriptionKey: "privacy.card3.desc",
           },
           {
-            title: "Security controls",
-            description:
-              "Signed downloads and audit logs support accountability.",
+            titleKey: "privacy.card4.title",
+            descriptionKey: "privacy.card4.desc",
           },
         ].map((item) => (
-          <Card key={item.title} className="h-full">
+          <Card key={item.titleKey} className="h-full">
             <CardHeader>
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle className="text-base">{t(item.titleKey)}</CardTitle>
+              <CardDescription>{t(item.descriptionKey)}</CardDescription>
             </CardHeader>
           </Card>
         ))}

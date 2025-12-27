@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Requests\Api\V1;
 
@@ -20,7 +20,8 @@ class UpdateCaseRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'required', 'string', 'max:200'],
-            'court' => ['sometimes', 'required', 'string', 'max:200'],
+            'court' => ['sometimes', 'required_without:court_public_id', 'string', 'max:200'],
+            'court_public_id' => ['sometimes', 'nullable', 'string', 'exists:courts,public_id'],
             'case_number' => ['nullable', 'string', 'max:120'],
             'status' => ['nullable', Rule::in(array_column(CaseStatus::cases(), 'value'))],
             'story' => ['sometimes', 'required', 'string'],

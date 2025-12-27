@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,78 +18,78 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-
-const signalCards = [
-  {
-    label: "Tomorrow 9:30 AM",
-    title: "Motion hearing",
-    meta: "Patel v. State",
-  },
-  {
-    label: "Jan 24, 2026",
-    title: "Diary entry",
-    meta: "Filed reply and shared",
-  },
-  {
-    label: "Jan 21, 2026",
-    title: "Order sheet uploaded",
-    meta: "Court order - Signed link",
-  },
-  {
-    label: "Jan 18, 2026",
-    title: "Research note",
-    meta: "Precedent summary ready",
-  },
-];
+import { useLocale } from "@/components/locale-provider";
 
 export default function Home() {
+  const { t } = useLocale();
+  const signalCards = [
+    {
+      label: t("home.signal.label1"),
+      title: t("home.preview.next_hearing"),
+      meta: t("home.signal.meta1"),
+    },
+    {
+      label: t("home.signal.label2"),
+      title: t("case.detail.tabs.diary"),
+      meta: t("home.signal.meta2"),
+    },
+    {
+      label: t("home.signal.label3"),
+      title: t("case.detail.tabs.documents"),
+      meta: t("home.signal.meta3"),
+    },
+    {
+      label: t("home.signal.label4"),
+      title: t("home.cards.team"),
+      meta: t("home.signal.meta4"),
+    },
+  ];
+
   return (
     <section className="space-y-24">
       <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="space-y-8">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="subtle">Structured case workspace</Badge>
-            <Badge variant="subtle">Sources-first summaries</Badge>
+            <Badge variant="subtle">{t("home.badge.workspace")}</Badge>
+            <Badge variant="subtle">{t("home.badge.sources")}</Badge>
           </div>
           <div className="space-y-6">
             <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
-              CaseDex
+              {t("home.hero.kicker")}
             </p>
             <h1 className="text-5xl font-semibold leading-tight text-slate-900 md:text-6xl">
-              The case workspace that keeps legal teams calm and prepared.
+              {t("home.hero.title")}
             </h1>
             <p className="text-lg text-slate-600">
-              CaseDex is a structured case workspace for legal professionals and
-              law students. Track hearings, diary entries, and documents with a
-              clear, consistent record that never loses context.
+              {t("home.hero.subtitle")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button size="lg" asChild>
-              <a href="/login" className="inline-flex items-center gap-2">
-                Start free
+              <a href="/register" className="inline-flex items-center gap-2">
+                {t("home.cta.start")}
                 <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <a href="/features">See demo</a>
+              <a href="/features">{t("home.cta.demo")}</a>
             </Button>
             <Button variant="ghost" size="lg" asChild>
-              <a href="/login">Log in</a>
+              <a href="/login">{t("home.cta.login")}</a>
             </Button>
           </div>
           <div className="grid gap-4 text-sm text-slate-600 sm:grid-cols-3">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-slate-500" />
-              Tenant isolation by default
+              {t("home.trust.tenant")}
             </div>
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-slate-500" />
-              AI assists, never decides
+              {t("home.trust.ai")}
             </div>
             <div className="flex items-center gap-2">
               <CalendarClock className="h-4 w-4 text-slate-500" />
-              PWA-ready access
+              {t("home.trust.pwa")}
             </div>
           </div>
         </div>
@@ -108,8 +110,7 @@ export default function Home() {
             </div>
           ))}
           <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-            CaseDex keeps AI output clearly labeled, editable, and tied to
-            sources.
+            {t("home.signal.note")}
           </div>
         </div>
       </div>
@@ -117,21 +118,19 @@ export default function Home() {
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
-            Workspace signal
+            {t("home.signal.title")}
           </p>
           <h2 className="text-3xl font-semibold text-slate-900">
-            One case record, shared across every module.
+            {t("home.signal.subtitle")}
           </h2>
           <p className="text-sm text-slate-600">
-            Hearings, diary entries, and documents stay connected to the case.
-            Everyone sees the same timeline, the same sources, and the same next
-            steps.
+            {t("home.signal.body")}
           </p>
           <div className="grid gap-3">
             {[
-              "Case intake and story",
-              "Hearing minutes and outcomes",
-              "Document metadata and downloads",
+              t("home.signal.item1"),
+              t("home.signal.item2"),
+              t("home.signal.item3"),
             ].map((item) => (
               <div
                 key={item}
@@ -148,31 +147,31 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                  Case workspace preview
+                  {t("home.preview.kicker")}
                 </p>
-                <CardTitle className="text-xl">Patel v. State</CardTitle>
+                <CardTitle className="text-xl">{t("home.preview.title")}</CardTitle>
                 <CardDescription>
-                  Hearings, diary entries, and documents in one place.
+                  {t("home.preview.subtitle")}
                 </CardDescription>
               </div>
-              <Badge variant="subtle">Live view</Badge>
+              <Badge variant="subtle">{t("home.preview.badge")}</Badge>
             </div>
           </CardHeader>
           <CardContent className="grid gap-4 py-6">
             {[
               {
-                title: "Next hearing",
-                body: "Motion hearing - Tomorrow 9:30 AM",
+                title: t("home.preview.next_hearing"),
+                body: t("home.preview.item1.body"),
                 icon: CalendarClock,
               },
               {
-                title: "Diary focus",
-                body: "Prepare brief and confirm witness list",
+                title: t("home.preview.diary_focus"),
+                body: t("home.preview.item2.body"),
                 icon: FileText,
               },
               {
-                title: "Recent document",
-                body: "Order sheet uploaded - Signed link",
+                title: t("home.preview.recent_document"),
+                body: t("home.preview.item3.body"),
                 icon: FileText,
               },
             ].map((item) => (
@@ -190,7 +189,7 @@ export default function Home() {
               </div>
             ))}
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600">
-              AI-assisted summaries are clearly labeled and always editable.
+              {t("home.preview.ai_note")}
             </div>
           </CardContent>
         </Card>
@@ -199,21 +198,21 @@ export default function Home() {
       <div className="grid gap-6 md:grid-cols-3">
         {[
           {
-            title: "Case workspace",
+            title: t("home.cards.case"),
             description:
-              "Every document, note, and hearing anchored to the case.",
+              t("home.cards.case_desc"),
             icon: FileText,
           },
           {
-            title: "Hearing timelines",
+            title: t("home.cards.hearing"),
             description:
-              "Track agendas, minutes, outcomes, and next steps without noise.",
+              t("home.cards.hearing_desc"),
             icon: CalendarClock,
           },
           {
-            title: "Team coordination",
+            title: t("home.cards.team"),
             description:
-              "Add participants per case with roles and clear accountability.",
+              t("home.cards.team_desc"),
             icon: Users,
           },
         ].map((item) => (
@@ -230,35 +229,31 @@ export default function Home() {
       <Card>
         <CardHeader className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
-            Workflow
+            {t("home.workflow.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
-            Everything starts with the case.
+            {t("home.workflow.title")}
           </CardTitle>
           <CardDescription>
-            Case intake drives hearings, diary entries, documents, and
-            notifications. Nothing is orphaned.
+            {t("home.workflow.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 md:grid-cols-3">
           {[
             {
               step: "01",
-              title: "Intake and client",
-              description:
-                "Capture client details, story notes, and petition drafts.",
+              title: t("home.workflow.step1.title"),
+              description: t("home.workflow.step1.desc"),
             },
             {
               step: "02",
-              title: "Hearings and diary",
-              description:
-                "Record agendas, minutes, and diary entries linked to hearings.",
+              title: t("home.workflow.step2.title"),
+              description: t("home.workflow.step2.desc"),
             },
             {
               step: "03",
-              title: "Documents and alerts",
-              description:
-                "Store filings and notify participants before key dates.",
+              title: t("home.workflow.step3.title"),
+              description: t("home.workflow.step3.desc"),
             },
           ].map((item) => (
             <div key={item.step} className="space-y-3">
@@ -275,18 +270,18 @@ export default function Home() {
       <Card>
         <CardHeader className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
-            Trust and security
+            {t("home.security.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
-            Designed for legal confidentiality.
+            {t("home.security.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {[
-            "Tenant isolation on every record",
-            "Signed document links and audit logs",
-            "AI assists but never decides",
-            "Clear, editable summaries with sources",
+            t("home.security.item1"),
+            t("home.security.item2"),
+            t("home.security.item3"),
+            t("home.security.item4"),
           ].map((item) => (
             <div
               key={item}
@@ -303,18 +298,18 @@ export default function Home() {
         <CardContent className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
-              Ready to start
+              {t("home.cta.kicker")}
             </p>
             <h2 className="text-2xl font-semibold text-slate-900">
-              Book a demo or request access.
+              {t("home.cta.title")}
             </h2>
             <p className="text-sm text-slate-600">
-              We will follow up with onboarding steps and a guided walkthrough.
+              {t("home.cta.subtitle")}
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Input placeholder="Work email" type="email" />
-            <Button>Book a demo</Button>
+            <Input placeholder={t("home.cta.email")} type="email" />
+            <Button>{t("home.cta.button")}</Button>
           </div>
         </CardContent>
       </Card>

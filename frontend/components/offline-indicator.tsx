@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale } from "@/components/locale-provider";
 
 export default function OfflineIndicator() {
   const [online, setOnline] = useState(true);
+  const { t } = useLocale();
 
   useEffect(() => {
     setOnline(navigator.onLine);
@@ -26,7 +28,7 @@ export default function OfflineIndicator() {
 
   return (
     <div className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
-      Offline mode
+      {t("offline.mode")}
     </div>
   );
 }

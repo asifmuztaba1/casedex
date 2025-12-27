@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Domain\Tenancy\Enums\TenantPlan;
 use Illuminate\Database\Migrations\Migration;

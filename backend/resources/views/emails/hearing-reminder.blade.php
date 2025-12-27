@@ -1,4 +1,4 @@
-﻿Hearing reminder
+Hearing reminder
 
 A hearing is scheduled for tomorrow.
 

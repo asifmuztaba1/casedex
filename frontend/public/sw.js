@@ -32,6 +32,9 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") {
     return;
   }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return;
+  }
 
   if (url.pathname.startsWith("/api/v1/")) {
     event.respondWith(networkThenCache(request));
@@ -59,6 +62,9 @@ async function cacheFirst(request) {
     return cached;
   }
   const response = await fetch(request);
+  if (!response || !response.ok) {
+    return response;
+  }
   const cache = await caches.open(STATIC_CACHE);
   cache.put(request, response.clone());
   return response;
@@ -67,6 +73,9 @@ async function cacheFirst(request) {
 async function networkThenCache(request) {
   try {
     const response = await fetch(request);
+    if (!response || !response.ok) {
+      return response;
+    }
     const cache = await caches.open(DATA_CACHE);
     cache.put(request, response.clone());
     return response;
