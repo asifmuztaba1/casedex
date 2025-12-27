@@ -1,0 +1,128 @@
+@baseUrl = http://localhost:8080
+@api = {{baseUrl}}/api/v1
+
+### 0) List countries (use one id for register/setup)
+GET {{api}}/countries
+
+### 1) Get CSRF cookies (inspect Set-Cookie for XSRF-TOKEN + laravel_session)
+GET {{baseUrl}}/api/sanctum/csrf-cookie
+
+### 2) Register user (paste cookies + X-XSRF-TOKEN from step 1)
+@xsrf = REPLACE_WITH_URL_DECODED_XSRF_TOKEN
+@laravelSession = REPLACE_WITH_LARAVEL_SESSION
+@countryId = REPLACE_WITH_COUNTRY_ID
+POST {{api}}/auth/register
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "name": "Admin User",
+  "email": "admin@example.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "country_id": {{countryId}},
+  "locale": "bn"
+}
+
+### 3) Login (same cookies + XSRF-TOKEN)
+POST {{api}}/auth/login
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+
+### 4) Me (requires auth cookies from login/register response)
+GET {{api}}/auth/me
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 5) Create tenant (firm) for current user
+POST {{api}}/tenants
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "tenant_name": "Lex & Co",
+  "country_id": {{countryId}},
+  "locale": "bn"
+}
+
+### 6) List users (admin only)
+GET {{api}}/users
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 7) Create user (admin only)
+POST {{api}}/users
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "name": "Assistant One",
+  "email": "assistant@example.com",
+  "password": "password123",
+  "role": "assistant",
+  "country_id": {{countryId}},
+  "locale": "bn"
+}
+
+### 8) List cases (tenant scoped)
+GET {{api}}/cases
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 9) Create case with parties
+POST {{api}}/cases
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "title": "State vs Rahman",
+  "court": "High Court Division",
+  "case_number": "HCD-2025-1142",
+  "status": "open",
+  "story": "Initial intake notes for the matter.",
+  "petition_draft": "Draft petition text goes here.",
+  "client": {
+    "name": "Rahman Group",
+    "phone": "+8801700000000",
+    "email": "client@rahman-group.example",
+    "address": "Dhaka, Bangladesh",
+    "identity_number": "NID-1234567",
+    "notes": "Primary contact is the CFO."
+  },
+  "client_party_role": "defendant",
+  "client_party_type": "organization",
+  "parties": [
+    {
+      "name": "State of Bangladesh",
+      "type": "organization",
+      "side": "opponent",
+      "role": "state"
+    },
+    {
+      "name": "Witness A",
+      "type": "person",
+      "side": "third_party",
+      "role": "other",
+      "phone": "+8801800000000"
+    }
+  ],
+  "participants": [
+    {
+      "user_public_id": "REPLACE_WITH_ASSISTANT_PUBLIC_ID",
+      "role": "assistant"
+    }
+  ],
+  "first_hearing": {
+    "hearing_at": "2025-12-30 10:00:00",
+    "type": "hearing",
+    "agenda": "Initial hearing",
+    "location": "Courtroom 4"
+  }
+}
