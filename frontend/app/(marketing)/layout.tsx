@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
-import LanguageSwitcher from "@/components/language-switcher";
+import dynamic from "next/dynamic";
 
 export default function MarketingLayout({
   children,
@@ -121,3 +121,7 @@ export default function MarketingLayout({
     </div>
   );
 }
+const LanguageSwitcher = dynamic(
+  () => import("@/components/language-switcher"),
+  { ssr: false }
+);

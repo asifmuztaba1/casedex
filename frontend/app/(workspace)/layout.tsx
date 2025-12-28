@@ -15,7 +15,7 @@ import {
 import { useAuth, useLogout } from "@/features/auth/use-auth";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
-import LanguageSwitcher from "@/components/language-switcher";
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import {
   Bell,
@@ -235,3 +235,7 @@ export default function WorkspaceLayout({
     </div>
   );
 }
+const LanguageSwitcher = dynamic(
+  () => import("@/components/language-switcher"),
+  { ssr: false }
+);

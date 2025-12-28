@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Settings, ShieldCheck } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
-import LanguageSwitcher from "@/components/language-switcher";
+import dynamic from "next/dynamic";
 
 const adminNav = [
   { href: "/admin", key: "admin.nav.dashboard" },
@@ -94,3 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </AdminGuard>
   );
 }
+const LanguageSwitcher = dynamic(
+  () => import("@/components/language-switcher"),
+  { ssr: false }
+);
