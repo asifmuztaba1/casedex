@@ -77,6 +77,9 @@ export function useAddCaseParty() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "parties"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.casePublicId],
+      });
       toast({
         title: "Party added",
         description: "The party was added to the case.",
@@ -113,6 +116,9 @@ export function useUpdateCaseParty() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "parties"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.casePublicId],
+      });
       toast({
         title: "Party updated",
         description: "Party details were saved.",
@@ -144,6 +150,9 @@ export function useRemoveCaseParty() {
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "parties"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.casePublicId],
       });
       toast({
         title: "Party removed",

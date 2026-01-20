@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth, useCreateTenant } from "@/features/auth/use-auth";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
+import { formatCountryLabel } from "@/features/countries/country-label";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -24,6 +25,10 @@ export default function SetupPage() {
   const countries = useMemo(() => countriesData?.data ?? [], [countriesData]);
   const [tenantName, setTenantName] = useState("");
   const [countryId, setCountryId] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const nameError = submitted && !tenantName.trim();
+  const countryError = submitted && !countryId;
 
   if (isLoading) {
     return (
@@ -62,6 +67,10 @@ export default function SetupPage() {
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
+              setSubmitted(true);
+              if (!tenantName.trim() || !countryId) {
+                return;
+              }
               createTenant.mutate(
                 {
                   tenant_name: tenantName,
@@ -81,18 +90,26 @@ export default function SetupPage() {
                 {t("setup.country")}
               </label>
               <select
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                className={`h-10 w-full rounded-lg border bg-white px-3 text-sm text-slate-900 ${
+                  countryError
+                    ? "border-rose-500 focus-visible:ring-rose-500"
+                    : "border-slate-200"
+                }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
+                aria-invalid={countryError}
               >
                 <option value="">{t("setup.country_select")}</option>
                 {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
+                  <option key={country.id} value={country.id} disabled={!country.active}>
+                    {formatCountryLabel(country, t)}
                   </option>
                 ))}
               </select>
+              {countryError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -102,7 +119,11 @@ export default function SetupPage() {
                 placeholder={t("setup.firm_placeholder")}
                 value={tenantName}
                 onChange={(event) => setTenantName(event.target.value)}
+                aria-invalid={nameError}
               />
+              {nameError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
             </div>
             <Button type="submit" disabled={createTenant.isPending}>
               {createTenant.isPending

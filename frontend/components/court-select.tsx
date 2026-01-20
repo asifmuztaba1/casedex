@@ -14,6 +14,7 @@ type CourtSelectProps = {
   onValueChange: (value: string) => void;
   onSelect: (court: CourtLookup | null) => void;
   selectedCourt?: CourtLookup | null;
+  invalid?: boolean;
 };
 
 function formatCourtLabel(court: CourtLookup, locale: "en" | "bn") {
@@ -45,6 +46,7 @@ export default function CourtSelect({
   onValueChange,
   onSelect,
   selectedCourt,
+  invalid,
 }: CourtSelectProps) {
   const { data: user } = useAuth();
   const { locale, t } = useLocale();
@@ -96,6 +98,7 @@ export default function CourtSelect({
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
+          aria-invalid={invalid}
         />
         <Button
           type="button"

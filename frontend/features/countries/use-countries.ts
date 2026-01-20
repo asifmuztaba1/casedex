@@ -5,6 +5,7 @@ export type CountryOption = {
   id: number;
   name: string;
   code: string;
+  active: boolean;
 };
 
 type CountryListResponse = {

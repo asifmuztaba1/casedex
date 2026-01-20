@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\V1\HearingController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ResearchNoteController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AuthPasswordController;
+use App\Http\Controllers\Api\V1\AuthVerificationController;
 use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -26,9 +28,18 @@ Route::prefix('v1')->group(function (): void {
     Route::get('/countries', [CountryController::class, 'index']);
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/forgot-password', [AuthPasswordController::class, 'sendResetLink'])
+        ->middleware('throttle:6,1');
+    Route::post('/auth/reset-password', [AuthPasswordController::class, 'reset'])
+        ->middleware('throttle:6,1');
+    Route::get('/auth/verify-email/{id}/{hash}', [AuthVerificationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('api.v1.auth.verify-email');
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::post('/auth/email/verification-notification', [AuthVerificationController::class, 'resend'])
+            ->middleware('throttle:6,1');
         Route::put('/profile', [ProfileController::class, 'update']);
         Route::post('/tenants', [TenantController::class, 'store']);
     });
@@ -123,4 +134,5 @@ Route::prefix('v1')
 
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{publicId}', [UserController::class, 'update']);
     });

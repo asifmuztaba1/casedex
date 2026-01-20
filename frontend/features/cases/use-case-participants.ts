@@ -48,6 +48,9 @@ export function useAddCaseParticipant() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "participants"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.casePublicId],
+      });
       toast({
         title: "Participant added",
         description: "The participant has been added to the case.",
@@ -79,6 +82,9 @@ export function useRemoveCaseParticipant() {
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "participants"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.casePublicId],
       });
       toast({
         title: "Participant removed",

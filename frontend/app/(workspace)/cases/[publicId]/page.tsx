@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@/features/auth/use-auth";
+import { useAuth, useUsers } from "@/features/auth/use-auth";
 import {
   useCaseDetail,
   useUpdateCase,
@@ -137,6 +137,7 @@ export default function CaseDetailPage() {
     minutes: "",
     next_steps: "",
   });
+  const [hearingSubmitted, setHearingSubmitted] = useState(false);
 
   const [diaryForm, setDiaryForm] = useState({
     entry_at: "",
@@ -144,6 +145,7 @@ export default function CaseDetailPage() {
     body: "",
     hearing_public_id: "",
   });
+  const [diarySubmitted, setDiarySubmitted] = useState(false);
 
   const [documentForm, setDocumentForm] = useState<{
     category: string;
@@ -158,11 +160,15 @@ export default function CaseDetailPage() {
     extension: "",
     hearing_public_id: "",
   });
+  const [documentSubmitted, setDocumentSubmitted] = useState(false);
 
   const [participantForm, setParticipantForm] = useState({
     user_public_id: "",
     role: "assistant",
   });
+  const [participantQuery, setParticipantQuery] = useState("");
+  const [participantSubmitted, setParticipantSubmitted] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   const [partyForm, setPartyForm] = useState<{
     name: string;
@@ -185,6 +191,7 @@ export default function CaseDetailPage() {
     identity_number: "",
     notes: "",
   });
+  const [partySubmitted, setPartySubmitted] = useState(false);
 
   const [editForm, setEditForm] = useState({
     title: caseDetail?.title ?? "",
@@ -229,6 +236,41 @@ export default function CaseDetailPage() {
       ) ?? false
     );
   }, [caseDetail, user]);
+
+  const hearingDateError = hearingSubmitted && !hearingForm.hearing_at;
+  const diaryDateError = diarySubmitted && !diaryForm.entry_at;
+  const diaryTitleError = diarySubmitted && !diaryForm.title.trim();
+  const diaryBodyError = diarySubmitted && !diaryForm.body.trim();
+  const documentFileError = documentSubmitted && !documentForm.file;
+  const participantError =
+    participantSubmitted && !participantForm.user_public_id;
+  const partyNameError = partySubmitted && !partyForm.name.trim();
+
+  const { data: usersData } = useUsers(canManageParticipants);
+  const tenantUsers = usersData ?? [];
+
+  const participantOptions = useMemo(() => {
+    const existing = new Set(
+      participants
+        .map((participant) => participant.user?.public_id)
+        .filter(Boolean)
+    );
+
+    return tenantUsers.filter((member) => !existing.has(member.public_id));
+  }, [participants, tenantUsers]);
+
+  const filteredParticipantOptions = useMemo(() => {
+    const query = participantQuery.trim().toLowerCase();
+    if (!query) {
+      return [];
+    }
+
+    return participantOptions.filter((member) => {
+      const name = member.name?.toLowerCase() ?? "";
+      const email = member.email?.toLowerCase() ?? "";
+      return name.includes(query) || email.includes(query);
+    });
+  }, [participantOptions, participantQuery]);
 
   if (isLoading) {
     return <div className="text-sm text-slate-600">{t("common.loading")}</div>;
@@ -419,7 +461,11 @@ export default function CaseDetailPage() {
                         hearing_at: event.target.value,
                       }))
                     }
+                    aria-invalid={hearingDateError}
                   />
+                  {hearingDateError && (
+                    <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  )}
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                     value={hearingForm.type}
@@ -491,18 +537,29 @@ export default function CaseDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={() =>
-                      createHearing.mutate({
-                        case_public_id: casePublicId,
-                        hearing_at: hearingForm.hearing_at,
-                        type: hearingForm.type,
-                        agenda: hearingForm.agenda,
-                        location: hearingForm.location,
-                        outcome: hearingForm.outcome,
-                        minutes: hearingForm.minutes,
-                        next_steps: hearingForm.next_steps,
-                      })
-                    }
+                    onClick={() => {
+                      setHearingSubmitted(true);
+                      if (!hearingForm.hearing_at) {
+                        return;
+                      }
+                      createHearing.mutate(
+                        {
+                          case_public_id: casePublicId,
+                          hearing_at: hearingForm.hearing_at,
+                          type: hearingForm.type,
+                          agenda: hearingForm.agenda,
+                          location: hearingForm.location,
+                          outcome: hearingForm.outcome,
+                          minutes: hearingForm.minutes,
+                          next_steps: hearingForm.next_steps,
+                        },
+                        {
+                          onSuccess: () => {
+                            setHearingSubmitted(false);
+                          },
+                        }
+                      );
+                    }}
                     disabled={createHearing.isPending}
                   >
                     {createHearing.isPending
@@ -540,7 +597,11 @@ export default function CaseDetailPage() {
                         entry_at: event.target.value,
                       }))
                     }
+                    aria-invalid={diaryDateError}
                   />
+                  {diaryDateError && (
+                    <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  )}
                   <Input
                     placeholder={t("diary.entry_title")}
                     value={diaryForm.title}
@@ -550,7 +611,11 @@ export default function CaseDetailPage() {
                         title: event.target.value,
                       }))
                     }
+                    aria-invalid={diaryTitleError}
                   />
+                  {diaryTitleError && (
+                    <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  )}
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                     value={diaryForm.hearing_public_id}
@@ -571,7 +636,11 @@ export default function CaseDetailPage() {
                     ))}
                   </select>
                   <textarea
-                    className="h-28 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                    className={`h-28 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 ${
+                      diaryBodyError
+                        ? "border-rose-500"
+                        : "border-slate-200"
+                    }`}
                     placeholder={t("diary.body")}
                     value={diaryForm.body}
                     onChange={(event) =>
@@ -581,19 +650,33 @@ export default function CaseDetailPage() {
                       }))
                     }
                   />
+                  {diaryBodyError && (
+                    <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={() =>
-                      createDiary.mutate({
-                        case_public_id: casePublicId,
-                        entry_at: diaryForm.entry_at,
-                        title: diaryForm.title,
-                        body: diaryForm.body,
-                        hearing_public_id:
-                          diaryForm.hearing_public_id || undefined,
-                      })
-                    }
+                    onClick={() => {
+                      setDiarySubmitted(true);
+                      if (!diaryForm.entry_at || !diaryForm.title.trim() || !diaryForm.body.trim()) {
+                        return;
+                      }
+                      createDiary.mutate(
+                        {
+                          case_public_id: casePublicId,
+                          entry_at: diaryForm.entry_at,
+                          title: diaryForm.title,
+                          body: diaryForm.body,
+                          hearing_public_id:
+                            diaryForm.hearing_public_id || undefined,
+                        },
+                        {
+                          onSuccess: () => {
+                            setDiarySubmitted(false);
+                          },
+                        }
+                      );
+                    }}
                     disabled={createDiary.isPending}
                   >
                     {createDiary.isPending
@@ -676,7 +759,11 @@ export default function CaseDetailPage() {
                         })(),
                       }))
                     }
+                    aria-invalid={documentFileError}
                   />
+                  {documentFileError && (
+                    <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  )}
                   <div className="flex items-center gap-2">
                     <Input
                       value={documentForm.name_base}
@@ -697,19 +784,29 @@ export default function CaseDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={() =>
-                      documentForm.file &&
-                      createDocument.mutate({
-                        case_public_id: casePublicId,
-                        category: documentForm.category,
-                        file: documentForm.file,
-                        original_name: documentForm.extension
-                          ? `${documentForm.name_base || "document"}.${documentForm.extension}`
-                          : documentForm.name_base || undefined,
-                        hearing_public_id:
-                          documentForm.hearing_public_id || undefined,
-                      })
-                    }
+                    onClick={() => {
+                      setDocumentSubmitted(true);
+                      if (!documentForm.file) {
+                        return;
+                      }
+                      createDocument.mutate(
+                        {
+                          case_public_id: casePublicId,
+                          category: documentForm.category,
+                          file: documentForm.file,
+                          original_name: documentForm.extension
+                            ? `${documentForm.name_base || "document"}.${documentForm.extension}`
+                            : documentForm.name_base || undefined,
+                          hearing_public_id:
+                            documentForm.hearing_public_id || undefined,
+                        },
+                        {
+                          onSuccess: () => {
+                            setDocumentSubmitted(false);
+                          },
+                        }
+                      );
+                    }}
                     disabled={createDocument.isPending || !documentForm.file}
                   >
                     {createDocument.isPending
@@ -726,7 +823,7 @@ export default function CaseDetailPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="overview">{t("case.detail.tabs.overview")}</TabsTrigger>
           <TabsTrigger value="hearings">{t("case.detail.tabs.hearings")}</TabsTrigger>
@@ -737,11 +834,10 @@ export default function CaseDetailPage() {
         </TabsList>
 
         <TabsContent value="overview">
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3 mb-2 mt-2">
             <Card>
               <CardHeader>
                 <CardTitle>{t("case.detail.client")}</CardTitle>
-                <CardDescription>{t("cases.sections.client")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-slate-600">
                 {caseDetail.client ? (
@@ -820,7 +916,8 @@ export default function CaseDetailPage() {
             </Card>
           </div>
 
-          <Card>
+            <div className="mb-2">
+                          <Card>
             <CardHeader>
               <CardTitle>{t("case.detail.story")}</CardTitle>
               <CardDescription>{t("cases.sections.story")}</CardDescription>
@@ -833,11 +930,21 @@ export default function CaseDetailPage() {
               )}
             </CardContent>
           </Card>
+            </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>{t("case.detail.recent_diary")}</CardTitle>
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle>{t("case.detail.recent_diary")}</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab("diary")}
+                  >
+                    {t("case.detail.see_all_diary")}
+                  </Button>
+                </div>
                 <CardDescription>{t("dashboard.section.diary_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -868,7 +975,16 @@ export default function CaseDetailPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("case.detail.recent_documents")}</CardTitle>
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle>{t("case.detail.recent_documents")}</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab("documents")}
+                  >
+                    {t("case.detail.see_all_documents")}
+                  </Button>
+                </div>
                 <CardDescription>{t("dashboard.section.documents_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -1101,16 +1217,55 @@ export default function CaseDetailPage() {
             <CardContent className="space-y-4">
               {canManageParticipants && (
                 <div className="grid gap-3 md:grid-cols-[2fr_1fr_auto]">
-                  <Input
-                    placeholder={t("case.detail.participant_id")}
-                    value={participantForm.user_public_id}
-                    onChange={(event) =>
-                      setParticipantForm((prev) => ({
-                        ...prev,
-                        user_public_id: event.target.value,
-                      }))
-                    }
-                  />
+                  <div className="relative">
+                    <Input
+                      placeholder={t("case.detail.participant_id")}
+                      value={participantQuery}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setParticipantQuery(value);
+                        setParticipantForm((prev) => ({
+                          ...prev,
+                          user_public_id: "",
+                        }));
+                      }}
+                      aria-invalid={participantError}
+                    />
+                    {participantError && (
+                      <p className="mt-1 text-xs text-rose-600">
+                        {t("common.required")}
+                      </p>
+                    )}
+                    {filteredParticipantOptions.length > 0 && (
+                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+                        {filteredParticipantOptions.map((member) => (
+                          <button
+                            key={member.public_id}
+                            type="button"
+                            className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-slate-50"
+                            onClick={() => {
+                              setParticipantForm((prev) => ({
+                                ...prev,
+                                user_public_id: member.public_id,
+                              }));
+                              setParticipantQuery(
+                                member.email
+                                  ? `${member.name} (${member.email})`
+                                  : member.name
+                              );
+                            }}
+                          >
+                            <span className="text-slate-900">{member.name}</span>
+                            {member.email && (
+                              <span className="text-xs text-slate-500">
+                                {member.email}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                     value={participantForm.role}
@@ -1129,13 +1284,33 @@ export default function CaseDetailPage() {
                   </select>
                   <Button
                     onClick={() =>
-                      addParticipant.mutate({
-                        casePublicId: casePublicId,
-                        user_public_id: participantForm.user_public_id,
-                        role: participantForm.role,
-                      })
+                      {
+                        setParticipantSubmitted(true);
+                        if (!participantForm.user_public_id) {
+                          return;
+                        }
+                        addParticipant.mutate(
+                          {
+                            casePublicId: casePublicId,
+                            user_public_id: participantForm.user_public_id,
+                            role: participantForm.role,
+                          },
+                          {
+                            onSuccess: () => {
+                              setParticipantForm((prev) => ({
+                                ...prev,
+                                user_public_id: "",
+                              }));
+                              setParticipantQuery("");
+                              setParticipantSubmitted(false);
+                            },
+                          }
+                        );
+                      }
                     }
-                    disabled={addParticipant.isPending}
+                    disabled={
+                      addParticipant.isPending || !participantForm.user_public_id
+                    }
                   >
                     {addParticipant.isPending ? t("common.adding") : t("common.add")}
                   </Button>
@@ -1200,16 +1375,24 @@ export default function CaseDetailPage() {
               {canManageParticipants && (
                 <div className="grid gap-3 rounded-2xl border border-slate-200 p-4">
                   <div className="grid gap-3 md:grid-cols-2">
-                    <Input
-                      placeholder={t("cases.parties.name")}
-                      value={partyForm.name}
-                      onChange={(event) =>
-                        setPartyForm((prev) => ({
-                          ...prev,
-                          name: event.target.value,
-                        }))
-                      }
-                    />
+                    <div className="space-y-1">
+                      <Input
+                        placeholder={t("cases.parties.name")}
+                        value={partyForm.name}
+                        onChange={(event) =>
+                          setPartyForm((prev) => ({
+                            ...prev,
+                            name: event.target.value,
+                          }))
+                        }
+                        aria-invalid={partyNameError}
+                      />
+                      {partyNameError && (
+                        <p className="text-xs text-rose-600">
+                          {t("common.required")}
+                        </p>
+                      )}
+                    </div>
                     <select
                       className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                       value={partyForm.type}
@@ -1313,20 +1496,31 @@ export default function CaseDetailPage() {
                   />
                   <div className="flex items-center gap-2">
                     <Button
-                      onClick={() =>
-                        addParty.mutate({
-                          casePublicId: casePublicId,
-                          name: partyForm.name,
-                          type: partyForm.type,
-                          side: partyForm.side,
-                          role: partyForm.role,
-                          phone: partyForm.phone,
-                          email: partyForm.email,
-                          address: partyForm.address,
-                          identity_number: partyForm.identity_number,
-                          notes: partyForm.notes,
-                        })
-                      }
+                      onClick={() => {
+                        setPartySubmitted(true);
+                        if (!partyForm.name.trim()) {
+                          return;
+                        }
+                        addParty.mutate(
+                          {
+                            casePublicId: casePublicId,
+                            name: partyForm.name,
+                            type: partyForm.type,
+                            side: partyForm.side,
+                            role: partyForm.role,
+                            phone: partyForm.phone,
+                            email: partyForm.email,
+                            address: partyForm.address,
+                            identity_number: partyForm.identity_number,
+                            notes: partyForm.notes,
+                          },
+                          {
+                            onSuccess: () => {
+                              setPartySubmitted(false);
+                            },
+                          }
+                        );
+                      }}
                       disabled={addParty.isPending}
                     >
                       {addParty.isPending

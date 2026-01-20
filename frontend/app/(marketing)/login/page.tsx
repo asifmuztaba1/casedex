@@ -20,6 +20,12 @@ export default function LoginPage() {
   const { t } = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const emailError = submitted && !email.trim();
+  const emailInvalid =
+    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const passwordError = submitted && !password.trim();
 
   return (
     <section className="mx-auto w-full max-w-xl space-y-8">
@@ -40,6 +46,10 @@ export default function LoginPage() {
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
+              setSubmitted(true);
+              if (!email.trim() || !password.trim()) {
+                return;
+              }
               login.mutate(
                 { email, password },
                 {
@@ -59,7 +69,14 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
+                aria-invalid={emailError || emailInvalid}
               />
+              {emailError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
+              {emailInvalid && (
+                <p className="text-xs text-rose-600">{t("common.invalid_email")}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -70,7 +87,16 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                aria-invalid={passwordError}
               />
+              {passwordError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
+            </div>
+            <div className="text-right text-sm text-slate-600">
+              <a className="underline-offset-4 hover:underline" href="/forgot-password">
+                {t("login.forgot_password")}
+              </a>
             </div>
             <div className="flex flex-col gap-3">
               <Button className="w-full" type="submit" disabled={login.isPending}>

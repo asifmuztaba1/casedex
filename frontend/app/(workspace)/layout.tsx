@@ -16,7 +16,7 @@ import { useAuth, useLogout } from "@/features/auth/use-auth";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   BookOpen,
@@ -43,9 +43,11 @@ export default function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   const { data: user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const logout = useLogout();
   const { locale, setLocale, t } = useLocale();
   const { data: notificationsData } = useNotifications();
+  const [mounted, setMounted] = useState(false);
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
     (notification) => notification.status !== "read"
@@ -71,6 +73,10 @@ export default function WorkspaceLayout({
       setLocale(preferred);
     }
   }, [user, locale, setLocale]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -103,35 +109,43 @@ export default function WorkspaceLayout({
           <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3">
               <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden">
+                {mounted ? (
+                  <>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="md:hidden">
+                        <Menu className="h-4 w-4" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <div className="space-y-6">
+                        <div>
+                          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                            {t("nav.workspace")}
+                          </div>
+                          <div className="text-lg font-semibold text-slate-900">
+                            CaseDex
+                          </div>
+                        </div>
+                        <nav className="space-y-1">
+                          {navItems.map((item) => (
+                            <a
+                              key={item.href}
+                              href={item.href}
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                            >
+                              <item.icon className="h-4 w-4 text-slate-400" />
+                              {t(item.labelKey)}
+                            </a>
+                          ))}
+                        </nav>
+                      </div>
+                    </SheetContent>
+                  </>
+                ) : (
+                  <Button variant="outline" size="sm" className="md:hidden" disabled>
                     <Menu className="h-4 w-4" />
                   </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <div className="space-y-6">
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-                        {t("nav.workspace")}
-                      </div>
-                      <div className="text-lg font-semibold text-slate-900">
-                        CaseDex
-                      </div>
-                    </div>
-                    <nav className="space-y-1">
-                      {navItems.map((item) => (
-                        <a
-                          key={item.href}
-                          href={item.href}
-                          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                        >
-                          <item.icon className="h-4 w-4 text-slate-400" />
-                          {t(item.labelKey)}
-                        </a>
-                      ))}
-                    </nav>
-                  </div>
-                </SheetContent>
+                )}
               </Sheet>
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
@@ -150,81 +164,96 @@ export default function WorkspaceLayout({
               <Button size="sm" asChild>
                 <a href="/cases/new">{t("nav.new_case")}</a>
               </Button>
-              <LanguageSwitcher />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="relative"
-                    aria-label="Notifications"
-                  >
-                    <Bell className="h-4 w-4" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-900 px-1 text-[10px] font-semibold text-white">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[320px] p-2">
-                  <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                    {t("nav.notifications")}
-                  </div>
-                  <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1">
-                    {sortedNotifications.length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-sm text-slate-600">
-                        {t("dashboard.empty")}
-                      </div>
-                    ) : (
-                      sortedNotifications.map((notification) => (
-                        <div
-                          key={notification.public_id}
-                          className={`rounded-xl border px-3 py-2 text-sm ${
-                            notification.status === "read"
-                              ? "border-slate-200 bg-white text-slate-700"
-                              : "border-slate-200 bg-slate-100 text-slate-900"
-                          }`}
-                        >
-                          <div className="text-sm font-medium">
-                            {notification.title}
-                          </div>
-                          {notification.body && (
-                            <div className="text-xs text-slate-600">
-                              {notification.body}
-                            </div>
-                          )}
-                          <div className="mt-1 text-[11px] text-slate-500">
-                            {new Date(notification.created_at).toLocaleString()}
-                          </div>
+              {mounted && <LanguageSwitcher />}
+              {mounted ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="relative"
+                      aria-label="Notifications"
+                    >
+                      <Bell className="h-4 w-4" />
+                      {unreadCount > 0 && (
+                        <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-900 px-1 text-[10px] font-semibold text-white">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[320px] p-2">
+                    <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      {t("nav.notifications")}
+                    </div>
+                    <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1">
+                      {sortedNotifications.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-sm text-slate-600">
+                          {t("dashboard.empty")}
                         </div>
-                      ))
+                      ) : (
+                        sortedNotifications.map((notification) => (
+                          <div
+                            key={notification.public_id}
+                            className={`rounded-xl border px-3 py-2 text-sm ${
+                              notification.status === "read"
+                                ? "border-slate-200 bg-white text-slate-700"
+                                : "border-slate-200 bg-slate-100 text-slate-900"
+                            }`}
+                          >
+                            <div className="text-sm font-medium">
+                              {notification.title}
+                            </div>
+                            {notification.body && (
+                              <div className="text-xs text-slate-600">
+                                {notification.body}
+                              </div>
+                            )}
+                            <div className="mt-1 text-[11px] text-slate-500">
+                              {new Date(notification.created_at).toLocaleString()}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="outline" size="sm" aria-label="Notifications" disabled>
+                  <Bell className="h-4 w-4" />
+                </Button>
+              )}
+              {mounted ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <UserCircle className="h-4 w-4" />
+                      {user?.name ?? t("nav.profile")}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <a href="/settings/profile">{t("nav.profile")}</a>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <a href="/settings/team">{t("nav.team")}</a>
+                      </DropdownMenuItem>
                     )}
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <UserCircle className="h-4 w-4" />
-                    {user?.name ?? t("nav.profile")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <a href="/settings/profile">{t("nav.profile")}</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href="/settings/team">{t("nav.team")}</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => logout.mutate()}
-                    className="text-rose-600"
-                  >
-                    {t("nav.sign_out")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem
+                      onClick={() => logout.mutate()}
+                      className="text-rose-600"
+                    >
+                      {t("nav.sign_out")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="outline" size="sm" className="gap-2" disabled>
+                  <UserCircle className="h-4 w-4" />
+                  {t("nav.profile")}
+                </Button>
+              )}
             </div>
           </div>
         </header>

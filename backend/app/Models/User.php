@@ -2,19 +2,25 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domain\Auth\Enums\UserRole;
 use App\Domain\Tenancy\Models\Country;
 use App\Domain\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use App\Mail\VerifyEmailMail;
+use App\Mail\PasswordResetMail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmailContract
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, MustVerifyEmail, Authorizable;
 
     /**
      * The attributes that are mass assignable.
@@ -73,5 +79,32 @@ class User extends Authenticatable
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $url = URL::temporarySignedRoute(
+            'api.v1.auth.verify-email',
+            now()->addMinutes(60),
+            [
+                'id' => $this->id,
+                'hash' => sha1($this->getEmailForVerification()),
+            ]
+        );
+
+        Mail::to($this->email)->queue(new VerifyEmailMail($this, $url));
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
+        $resetUrl = sprintf(
+            '%s/reset-password?token=%s&email=%s',
+            $frontendUrl,
+            urlencode((string) $token),
+            urlencode($this->email)
+        );
+
+        Mail::to($this->email)->queue(new PasswordResetMail($this, $resetUrl));
     }
 }

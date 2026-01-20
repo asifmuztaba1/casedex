@@ -11,6 +11,7 @@ class CountryController extends Controller
     public function index()
     {
         $countries = Country::query()
+            ->whereActive(1)
             ->orderBy('name')
             ->get();
 

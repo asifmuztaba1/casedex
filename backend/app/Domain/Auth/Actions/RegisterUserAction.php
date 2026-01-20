@@ -12,7 +12,7 @@ class RegisterUserAction
      */
     public function handle(array $data): User
     {
-        return User::query()->create([
+        $user = User::query()->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
@@ -20,5 +20,9 @@ class RegisterUserAction
             'locale' => $data['locale'] ?? config('app.locale'),
             'role' => UserRole::Viewer,
         ]);
+
+        $user->sendEmailVerificationNotification();
+
+        return $user;
     }
 }

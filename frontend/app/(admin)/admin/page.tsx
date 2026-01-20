@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCourtStats } from "@/features/admin/courts/use-admin-courts";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
+import { formatCountryLabel } from "@/features/countries/country-label";
 
 export default function AdminDashboardPage() {
   const { t } = useLocale();
@@ -14,8 +15,9 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (!countryId && countries.length > 0) {
+      const activeCountry = countries.find((country) => country.active);
       const bd = countries.find((country) => country.code === "BD");
-      setCountryId(bd?.id ?? countries[0].id);
+      setCountryId(activeCountry?.id ?? bd?.id ?? countries[0].id);
     }
   }, [countries, countryId]);
 
@@ -43,8 +45,8 @@ export default function AdminDashboardPage() {
             onChange={(event) => setCountryId(Number(event.target.value))}
           >
             {countries.map((country) => (
-              <option key={country.id} value={country.id}>
-                {country.name}
+              <option key={country.id} value={country.id} disabled={!country.active}>
+                {formatCountryLabel(country, t)}
               </option>
             ))}
           </select>

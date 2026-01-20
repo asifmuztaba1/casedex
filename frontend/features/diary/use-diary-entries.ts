@@ -61,6 +61,9 @@ export function useCreateDiaryEntry() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.case_public_id, "diary"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.case_public_id],
+      });
       toast({
         title: "Diary entry saved",
         description: "The diary entry was added.",

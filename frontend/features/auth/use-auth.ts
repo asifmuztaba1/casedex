@@ -9,6 +9,11 @@ function getErrorMessage(error: unknown) {
   return "Something went wrong.";
 }
 
+type ApiErrorPayload = {
+  message?: string;
+  errors?: Record<string, string[] | string>;
+};
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "";
 
@@ -61,6 +66,17 @@ type LoginPayload = {
   password: string;
 };
 
+type ForgotPasswordPayload = {
+  email: string;
+};
+
+type ResetPasswordPayload = {
+  email: string;
+  token: string;
+  password: string;
+  password_confirmation: string;
+};
+
 type CreateUserPayload = {
   name: string;
   email: string;
@@ -70,6 +86,15 @@ type CreateUserPayload = {
   locale?: "en" | "bn";
 };
 
+type UpdateUserPayload = {
+  public_id: string;
+  name: string;
+  email: string;
+  role: AuthUser["role"];
+  country_id: number;
+  password?: string;
+  locale?: "en" | "bn";
+};
 type CreateTenantPayload = {
   tenant_name: string;
   country_id: number;
@@ -113,6 +138,35 @@ function getXsrfToken(): string | null {
   return decodeURIComponent(match[1]);
 }
 
+function extractErrorMessage(payload: ApiErrorPayload): string | null {
+  if (payload?.errors) {
+    const firstError = Object.values(payload.errors)[0];
+    if (Array.isArray(firstError)) {
+      return firstError[0] ?? null;
+    }
+    return firstError ?? null;
+  }
+  return payload?.message ?? null;
+}
+
+async function throwForResponse(response: Response): Promise<never> {
+  const text = await response.text();
+  if (!text) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  try {
+    const payload = JSON.parse(text) as ApiErrorPayload;
+    const message = extractErrorMessage(payload);
+    throw new Error(message || `Request failed: ${response.status}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(`Request failed: ${response.status}`);
+  }
+}
+
 async function fetchMe(): Promise<AuthUser | null> {
   const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
     credentials: "include",
@@ -124,7 +178,7 @@ async function fetchMe(): Promise<AuthUser | null> {
   }
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   const payload = (await response.json()) as AuthResponse;
@@ -144,7 +198,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   if (response.status === 204) {
@@ -172,7 +226,7 @@ async function putJson<T>(path: string, body: unknown): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   const text = await response.text();
@@ -245,6 +299,56 @@ export function useRegister() {
   });
 }
 
+export function useForgotPassword() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: ForgotPasswordPayload) => {
+      await ensureCsrfCookie();
+      return postJson<void>("/api/v1/auth/forgot-password", payload);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Email sent",
+        description: "Check your inbox for the reset link.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Request failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
+    },
+  });
+}
+
+export function useResetPassword() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: ResetPasswordPayload) => {
+      await ensureCsrfCookie();
+      return postJson<void>("/api/v1/auth/reset-password", payload);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password updated",
+        description: "You can sign in with the new password.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Reset failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
+    },
+  });
+}
+
 export function useLogout() {
   const client = useQueryClient();
   const { toast } = useToast();
@@ -282,7 +386,7 @@ export function useUsers(enabled: boolean) {
       });
 
       if (!response.ok) {
-        throw new Error(`Request failed: ${response.status}`);
+        await throwForResponse(response);
       }
 
       const payload = (await response.json()) as { data: AuthUser[] };
@@ -312,6 +416,33 @@ export function useCreateUser() {
     onError: (error) => {
       toast({
         title: "User not created",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
+    },
+  });
+}
+
+export function useUpdateUser() {
+  const client = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: UpdateUserPayload) => {
+      await ensureCsrfCookie();
+      return putJson<AuthResponse>(`/api/v1/users/${payload.public_id}`, payload);
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["tenant-users"] });
+      toast({
+        title: "Team member updated",
+        description: "Changes saved successfully.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update failed",
         description: getErrorMessage(error),
         variant: "error",
       });

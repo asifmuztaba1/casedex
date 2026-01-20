@@ -74,6 +74,9 @@ export function useCreateDocument() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.case_public_id, "documents"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.case_public_id],
+      });
       toast({
         title: "Document uploaded",
         description: "The document is now stored in the case.",

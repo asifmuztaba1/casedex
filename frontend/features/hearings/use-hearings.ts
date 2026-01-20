@@ -67,6 +67,9 @@ export function useCreateHearing() {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.case_public_id, "hearings"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cases", payload.case_public_id],
+      });
       toast({
         title: "Hearing saved",
         description: "The hearing was added to the case.",

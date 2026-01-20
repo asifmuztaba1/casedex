@@ -5,13 +5,17 @@ namespace App\Domain\Cases\Actions;
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Cases\Models\CaseParty;
 use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Notifications\Actions\SendCasePartyAddedMailAction;
+use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class AddCasePartyAction
 {
-    public function __construct(private readonly RecordAuditLogAction $auditLog)
-    {
+    public function __construct(
+        private readonly RecordAuditLogAction $auditLog,
+        private readonly SendCasePartyAddedMailAction $sendCasePartyAddedMail
+    ) {
     }
 
     /**
@@ -62,6 +66,8 @@ class AddCasePartyAction
             CaseParty::class,
             (string) $party->id
         );
+
+        $this->sendCasePartyAddedMail->handle($case, $party, $user instanceof User ? $user : null);
 
         return $party;
     }

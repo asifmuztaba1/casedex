@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLocale } from "@/components/locale-provider";
 import type { CourtLookup } from "@/features/courts/use-courts";
+import { useAuth, useUsers } from "@/features/auth/use-auth";
 
 const participantSchema = z.object({
   user_public_id: z.string().min(2),
@@ -52,6 +53,9 @@ export default function NewCasePage() {
   const router = useRouter();
   const createCase = useCreateCase();
   const { t, locale } = useLocale();
+  const { data: user } = useAuth();
+  const { data: usersData } = useUsers(Boolean(user?.tenant_id));
+  const tenantUsers = usersData ?? [];
   const [useExistingClient, setUseExistingClient] = useState(false);
   const [includeFirstHearing, setIncludeFirstHearing] = useState(false);
   const [selectedCourt, setSelectedCourt] = useState<CourtLookup | null>(null);
@@ -138,6 +142,11 @@ export default function NewCasePage() {
     });
 
   const courtValue = watch("court") ?? "";
+  const selectedParticipants = watch("participants") ?? [];
+  const [participantQuery, setParticipantQuery] = useState<Record<string, string>>(
+    {}
+  );
+  const showErrors = formState.submitCount > 0;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -152,6 +161,12 @@ export default function NewCasePage() {
     control,
     name: "parties",
   });
+
+  const clientError = Boolean(formState.errors.client?.name);
+  const titleError = Boolean(formState.errors.title);
+  const courtError = Boolean(formState.errors.court);
+  const storyError = Boolean(formState.errors.story);
+  const petitionError = Boolean(formState.errors.petition_draft);
 
   const onSubmit = (values: CaseFormValues) => {
     const payload: CaseFormValues = {
@@ -231,12 +246,14 @@ export default function NewCasePage() {
                 <Input
                   placeholder={t("cases.client.id")}
                   {...register("client_id")}
+                  aria-invalid={showErrors && clientError}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                   <Input
                     placeholder={t("cases.client.name")}
                     {...register("client.name")}
+                    aria-invalid={showErrors && clientError}
                   />
                   <Input
                     placeholder={t("cases.client.phone")}
@@ -259,6 +276,9 @@ export default function NewCasePage() {
                     {...register("client.notes")}
                   />
                 </div>
+              )}
+              {showErrors && clientError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
               )}
               <div className="grid gap-3 md:grid-cols-2">
                 <select
@@ -295,26 +315,44 @@ export default function NewCasePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
-              <Input placeholder={t("cases.case.title")} {...register("title")} />
-              <CourtSelect
-                value={courtValue}
-                selectedCourt={selectedCourt}
-                onValueChange={(value) => {
-                  setSelectedCourt(null);
-                  setValue("court", value, { shouldValidate: true });
-                  setValue("court_public_id", undefined);
-                }}
-                onSelect={(court) => {
-                  setSelectedCourt(court);
-                  setValue(
-                    "court",
-                    court ? (locale === "bn" ? court.name_bn : court.name) : "",
-                    { shouldValidate: true }
-                  );
-                  setValue("court_public_id", court?.public_id);
-                }}
+              <div className="space-y-1">
+                <Input
+                  placeholder={t("cases.case.title")}
+                  {...register("title")}
+                  aria-invalid={showErrors && titleError}
+                />
+                {showErrors && titleError && (
+                  <p className="text-xs text-rose-600">{t("common.required")}</p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <CourtSelect
+                  value={courtValue}
+                  selectedCourt={selectedCourt}
+                  invalid={showErrors && courtError}
+                  onValueChange={(value) => {
+                    setSelectedCourt(null);
+                    setValue("court", value, { shouldValidate: true });
+                    setValue("court_public_id", undefined);
+                  }}
+                  onSelect={(court) => {
+                    setSelectedCourt(court);
+                    setValue(
+                      "court",
+                      court ? (locale === "bn" ? court.name_bn : court.name) : "",
+                      { shouldValidate: true }
+                    );
+                    setValue("court_public_id", court?.public_id);
+                  }}
+                />
+                {showErrors && courtError && (
+                  <p className="text-xs text-rose-600">{t("common.required")}</p>
+                )}
+              </div>
+              <Input
+                placeholder={t("cases.case.number")}
+                {...register("case_number")}
               />
-              <Input placeholder={t("cases.case.number")} {...register("case_number")} />
             </CardContent>
           </Card>
 
@@ -327,10 +365,17 @@ export default function NewCasePage() {
             </CardHeader>
             <CardContent>
               <textarea
-                className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
+                  showErrors && storyError
+                    ? "border-rose-500 focus-visible:ring-rose-500"
+                    : "border-slate-200 focus-visible:ring-slate-900"
+                }`}
                 placeholder={t("cases.story.placeholder")}
                 {...register("story")}
               />
+              {showErrors && storyError && (
+                <p className="mt-2 text-xs text-rose-600">{t("common.required")}</p>
+              )}
             </CardContent>
           </Card>
 
@@ -343,10 +388,17 @@ export default function NewCasePage() {
             </CardHeader>
             <CardContent>
               <textarea
-                className="h-32 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
+                  showErrors && petitionError
+                    ? "border-rose-500 focus-visible:ring-rose-500"
+                    : "border-slate-200 focus-visible:ring-slate-900"
+                }`}
                 placeholder={t("cases.petition.placeholder")}
                 {...register("petition_draft")}
               />
+              {showErrors && petitionError && (
+                <p className="mt-2 text-xs text-rose-600">{t("common.required")}</p>
+              )}
             </CardContent>
           </Card>
 
@@ -369,10 +421,21 @@ export default function NewCasePage() {
                   className="grid gap-3 rounded-2xl border border-slate-200 p-4"
                 >
                   <div className="grid gap-3 md:grid-cols-2">
-                    <Input
-                      placeholder={t("cases.parties.name")}
-                      {...register(`parties.${index}.name`)}
-                    />
+                    <div className="space-y-1">
+                      <Input
+                        placeholder={t("cases.parties.name")}
+                        {...register(`parties.${index}.name`)}
+                        aria-invalid={
+                          showErrors &&
+                          Boolean(formState.errors.parties?.[index]?.name)
+                        }
+                      />
+                      {showErrors && formState.errors.parties?.[index]?.name && (
+                        <p className="text-xs text-rose-600">
+                          {t("common.required")}
+                        </p>
+                      )}
+                    </div>
                     <select
                       className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                       {...register(`parties.${index}.type`)}
@@ -472,10 +535,88 @@ export default function NewCasePage() {
                   key={field.id}
                   className="grid gap-3 md:grid-cols-[2fr_1fr_auto]"
                 >
-                  <Input
-                    placeholder={t("cases.team.user_public_id")}
+                  <input
+                    type="hidden"
                     {...register(`participants.${index}.user_public_id`)}
                   />
+                  <div className="relative">
+                    <Input
+                      placeholder={t("cases.team.user_public_id")}
+                      value={participantQuery[field.id] ?? ""}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setParticipantQuery((prev) => ({
+                          ...prev,
+                          [field.id]: value,
+                        }));
+                        setValue(`participants.${index}.user_public_id`, "");
+                      }}
+                      aria-invalid={
+                        showErrors &&
+                        Boolean(formState.errors.participants?.[index]?.user_public_id)
+                      }
+                    />
+                    {showErrors &&
+                      formState.errors.participants?.[index]?.user_public_id && (
+                        <p className="mt-1 text-xs text-rose-600">
+                          {t("common.required")}
+                        </p>
+                      )}
+                    {Boolean(participantQuery[field.id]) && (
+                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+                        {tenantUsers
+                          .filter((member) => {
+                            const query =
+                              participantQuery[field.id]?.trim().toLowerCase() ??
+                              "";
+                            if (!query) {
+                              return false;
+                            }
+                            const name = member.name?.toLowerCase() ?? "";
+                            const email = member.email?.toLowerCase() ?? "";
+                            const matches = name.includes(query) || email.includes(query);
+                            const selectedIds = new Set(
+                              selectedParticipants
+                                .map((participant) => participant?.user_public_id)
+                                .filter(Boolean)
+                            );
+                            const currentId =
+                              selectedParticipants[index]?.user_public_id ?? "";
+                            if (member.public_id === currentId) {
+                              return matches;
+                            }
+                            return matches && !selectedIds.has(member.public_id);
+                          })
+                          .map((member) => (
+                            <button
+                              key={member.public_id}
+                              type="button"
+                              className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              onClick={() => {
+                                setValue(
+                                  `participants.${index}.user_public_id`,
+                                  member.public_id,
+                                  { shouldValidate: true }
+                                );
+                                setParticipantQuery((prev) => ({
+                                  ...prev,
+                                  [field.id]: member.email
+                                    ? `${member.name} (${member.email})`
+                                    : member.name,
+                                }));
+                              }}
+                            >
+                              <span className="text-slate-900">{member.name}</span>
+                              {member.email && (
+                                <span className="text-xs text-slate-500">
+                                  {member.email}
+                                </span>
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                    )}
+                  </div>
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                     {...register(`participants.${index}.role`)}

@@ -16,6 +16,12 @@ export default function AdminLoginPage() {
   const { data: user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const emailError = submitted && !email.trim();
+  const emailInvalid =
+    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const passwordError = submitted && !password.trim();
 
   useEffect(() => {
     if (
@@ -43,6 +49,10 @@ export default function AdminLoginPage() {
           className="mt-6 space-y-4"
           onSubmit={(event) => {
             event.preventDefault();
+            setSubmitted(true);
+            if (!email.trim() || !password.trim()) {
+              return;
+            }
             login.mutate(
               { email, password },
               {
@@ -59,14 +69,30 @@ export default function AdminLoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
+            aria-invalid={emailError || emailInvalid}
           />
+          {emailError && (
+            <p className="text-xs text-rose-600">{t("common.required")}</p>
+          )}
+          {emailInvalid && (
+            <p className="text-xs text-rose-600">{t("common.invalid_email")}</p>
+          )}
           <Input
             type="password"
             placeholder={t("login.password")}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
+            aria-invalid={passwordError}
           />
+          {passwordError && (
+            <p className="text-xs text-rose-600">{t("common.required")}</p>
+          )}
+          <div className="text-right text-sm text-slate-600">
+            <a className="underline-offset-4 hover:underline" href="/forgot-password">
+              {t("login.forgot_password")}
+            </a>
+          </div>
           <Button className="w-full" type="submit" disabled={login.isPending}>
             {login.isPending ? t("login.button_pending") : t("admin.login.button")}
           </Button>

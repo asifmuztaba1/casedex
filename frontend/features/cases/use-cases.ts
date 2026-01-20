@@ -111,6 +111,10 @@ type CaseListResponse = {
   data: CaseSummary[];
 };
 
+type CaseDetailResponse = {
+  data: CaseDetail;
+};
+
 export function useCases() {
   return useQuery({
     queryKey: ["cases"],
@@ -121,7 +125,12 @@ export function useCases() {
 export function useCaseDetail(publicId: string) {
   return useQuery({
     queryKey: ["cases", publicId],
-    queryFn: () => apiGet<CaseDetail>(`/api/v1/cases/${publicId}`),
+    queryFn: async () => {
+      const payload = await apiGet<CaseDetailResponse>(
+        `/api/v1/cases/${publicId}`
+      );
+      return payload.data;
+    },
     enabled: Boolean(publicId),
   });
 }
@@ -207,8 +216,9 @@ export function useUpdateCase() {
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateCasePayload) =>
       apiPut<CaseSummary>(`/api/v1/cases/${publicId}`, data),
-    onSuccess: () => {
+    onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({ queryKey: ["cases"] });
+      queryClient.invalidateQueries({ queryKey: ["cases", payload.publicId] });
       toast({
         title: t("cases.toast.updated_title"),
         description: t("cases.toast.updated_body"),

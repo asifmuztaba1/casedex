@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
+import { formatCountryLabel } from "@/features/countries/country-label";
 
 export default function ProfileSettingsPage() {
   const { data: user } = useAuth();
@@ -25,6 +26,13 @@ export default function ProfileSettingsPage() {
   const [email, setEmail] = useState("");
   const [countryId, setCountryId] = useState("");
   const [password, setPassword] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const nameError = submitted && !name.trim();
+  const emailError = submitted && !email.trim();
+  const emailInvalid =
+    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const countryError = submitted && !countryId;
 
   useEffect(() => {
     if (!user) {
@@ -54,6 +62,10 @@ export default function ProfileSettingsPage() {
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
+              setSubmitted(true);
+              if (!name.trim() || !email.trim() || !countryId) {
+                return;
+              }
               updateProfile.mutate({
                 name,
                 email,
@@ -68,27 +80,46 @@ export default function ProfileSettingsPage() {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 required
+                aria-invalid={nameError}
               />
+              {nameError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
               <Input
                 placeholder={t("settings.profile.email")}
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
+                aria-invalid={emailError || emailInvalid}
               />
+              {emailError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
+              {emailInvalid && (
+                <p className="text-xs text-rose-600">{t("common.invalid_email")}</p>
+              )}
               <select
-                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                className={`h-10 rounded-lg border bg-white px-3 text-sm text-slate-900 ${
+                  countryError
+                    ? "border-rose-500 focus-visible:ring-rose-500"
+                    : "border-slate-200"
+                }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
+                aria-invalid={countryError}
               >
                 <option value="">{t("settings.profile.country")}</option>
                 {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
+                  <option key={country.id} value={country.id} disabled={!country.active}>
+                    {formatCountryLabel(country, t)}
                   </option>
                 ))}
               </select>
+              {countryError && (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              )}
               <Input
                 placeholder={t("settings.profile.password")}
                 type="password"

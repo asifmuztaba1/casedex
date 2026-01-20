@@ -3,6 +3,11 @@ import { getStoredLocale } from "@/lib/locale";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "";
 
+type ApiErrorPayload = {
+  message?: string;
+  errors?: Record<string, string[] | string>;
+};
+
 function getXsrfToken(): string | null {
   if (typeof document === "undefined") {
     return null;
@@ -35,6 +40,35 @@ function withXsrf(headers: HeadersInit = {}): HeadersInit {
   };
 }
 
+function extractErrorMessage(payload: ApiErrorPayload): string | null {
+  if (payload?.errors) {
+    const firstError = Object.values(payload.errors)[0];
+    if (Array.isArray(firstError)) {
+      return firstError[0] ?? null;
+    }
+    return firstError ?? null;
+  }
+  return payload?.message ?? null;
+}
+
+async function throwForResponse(response: Response): Promise<never> {
+  const text = await response.text();
+  if (!text) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  try {
+    const payload = JSON.parse(text) as ApiErrorPayload;
+    const message = extractErrorMessage(payload);
+    throw new Error(message || `Request failed: ${response.status}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(`Request failed: ${response.status}`);
+  }
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     credentials: "include",
@@ -46,7 +80,7 @@ export async function apiGet<T>(path: string): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   return response.json() as Promise<T>;
@@ -63,7 +97,7 @@ export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   return response.json() as Promise<T>;
@@ -80,7 +114,7 @@ export async function apiPut<T>(path: string, payload: unknown): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   return response.json() as Promise<T>;
@@ -94,7 +128,7 @@ export async function apiDelete(path: string): Promise<void> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 }
 
@@ -110,7 +144,7 @@ export async function apiPostForm<T>(
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   return response.json() as Promise<T>;
@@ -128,7 +162,7 @@ export async function apiPutForm<T>(
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    await throwForResponse(response);
   }
 
   return response.json() as Promise<T>;

@@ -14,6 +14,7 @@ use App\Domain\Cases\Enums\CaseParticipantRole;
 use App\Domain\Clients\Models\Client;
 use App\Domain\Courts\Models\Court;
 use App\Domain\Hearings\Models\Hearing;
+use App\Domain\Notifications\Actions\SendCasePartyAddedMailAction;
 use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Models\User;
@@ -23,8 +24,10 @@ use Illuminate\Support\Facades\DB;
 
 class CreateCaseAction
 {
-    public function __construct(private readonly RecordAuditLogAction $auditLog)
-    {
+    public function __construct(
+        private readonly RecordAuditLogAction $auditLog,
+        private readonly SendCasePartyAddedMailAction $sendCasePartyAddedMail
+    ) {
     }
 
     /**
@@ -98,7 +101,7 @@ class CreateCaseAction
                     ->first();
 
                 if ($client) {
-                    CaseParty::create([
+                    $clientParty = CaseParty::create([
                         'case_id' => $case->id,
                         'client_id' => $client->id,
                         'type' => $data['client_party_type'] ?? PartyType::Person->value,
@@ -112,12 +115,18 @@ class CreateCaseAction
                         'identity_number' => $client->identity_number,
                         'notes' => $client->notes,
                     ]);
+
+                    $this->sendCasePartyAddedMail->handle(
+                        $case,
+                        $clientParty,
+                        $user instanceof User ? $user : null
+                    );
                 }
             }
 
             $parties = $data['parties'] ?? [];
             foreach ($parties as $party) {
-                CaseParty::create([
+                $newParty = CaseParty::create([
                     'case_id' => $case->id,
                     'type' => $party['type'],
                     'name' => $party['name'],
@@ -130,6 +139,12 @@ class CreateCaseAction
                     'identity_number' => $party['identity_number'] ?? null,
                     'notes' => $party['notes'] ?? null,
                 ]);
+
+                $this->sendCasePartyAddedMail->handle(
+                    $case,
+                    $newParty,
+                    $user instanceof User ? $user : null
+                );
             }
 
             $participants = $data['participants'] ?? [];

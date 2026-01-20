@@ -38,6 +38,7 @@ import {
 } from "@/features/admin/courts/use-admin-courts";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
+import { formatCountryLabel } from "@/features/countries/country-label";
 
 type SimpleForm = {
   name: string;
@@ -52,8 +53,9 @@ export default function AdminCourtsPage() {
 
   useEffect(() => {
     if (!countryId && countries.length > 0) {
+      const activeCountry = countries.find((country) => country.active);
       const bd = countries.find((country) => country.code === "BD");
-      setCountryId(bd?.id ?? countries[0].id);
+      setCountryId(activeCountry?.id ?? bd?.id ?? countries[0].id);
     }
   }, [countries, countryId]);
 
@@ -143,8 +145,8 @@ export default function AdminCourtsPage() {
             onChange={(event) => setCountryId(Number(event.target.value))}
           >
             {countries.map((country) => (
-              <option key={country.id} value={country.id}>
-                {country.name}
+              <option key={country.id} value={country.id} disabled={!country.active}>
+                {formatCountryLabel(country, t)}
               </option>
             ))}
           </select>

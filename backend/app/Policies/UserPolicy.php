@@ -9,11 +9,16 @@ class UserPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->tenant_id !== null;
     }
 
     public function create(User $user): bool
     {
         return $user->role === UserRole::Admin;
+    }
+
+    public function update(User $user, User $target): bool
+    {
+        return $user->role === UserRole::Admin && $user->tenant_id === $target->tenant_id;
     }
 }

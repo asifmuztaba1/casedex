@@ -15,7 +15,10 @@ class CountriesSeeder extends Seeder
         foreach ($countries as $code => $name) {
             Country::updateOrCreate(
                 ['code' => $code],
-                ['name' => $name]
+                [
+                    'name' => $name,
+                    'active' => $code === 'BD',
+                ]
             );
         }
     }
