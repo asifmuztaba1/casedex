@@ -33,6 +33,10 @@ export type AuthUser = {
   name: string;
   email: string;
   tenant_id: number | null;
+  tenant?: {
+    name?: string | null;
+  } | null;
+  tenant_name?: string | null;
   country_id: number | null;
   country?: string | null;
   country_code?: string | null;

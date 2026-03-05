@@ -24,7 +24,7 @@ CaseDex helps users:
 - organize cases
 - track hearings
 - maintain case diaries
-- summarize hearings (AI-assisted, explainable)
+- summarize hearings (editable, user-reviewed)
 - manage legal documents
 - retain institutional memory
 
@@ -143,7 +143,6 @@ Diary
 Documents
 Notifications
 Research
-Ai
 
 Copy code
 
@@ -171,12 +170,12 @@ Business logic MUST live in Actions / Services.
 - Documents
 - Notifications
 - Research notes
-- AI-assisted hearing summaries (editable)
 
 ### Explicitly Out of Scope (MVP)
 - Billing
 - Accounting
 - CRM
+- AI-assisted hearing summaries
 - Outcome prediction
 - Public case search
 
@@ -222,7 +221,6 @@ Business logic MUST live in Actions / Services.
 
 Anything slow MUST be async:
 - OCR
-- AI summaries
 - notifications
 - indexing
 
@@ -233,23 +231,22 @@ Jobs must be:
 
 ---
 
-# 11. AI USAGE RULES (CRITICAL)
+# 11. AUTOMATION USAGE RULES (CRITICAL)
 
-AI may ONLY:
+Automation may ONLY:
 - summarize provided content
 - organize notes
 - assist structure
 
-AI must NEVER:
+Automation must NEVER:
 - give legal advice
 - predict outcomes
 - suggest verdicts
 - override user input
 
-All AI output must:
-- show sources
-- be editable
-- be clearly labeled as “AI-assisted”
+For MVP:
+- AI-assisted features are out of scope
+- all summaries are user-reviewed before save
 
 ---
 
@@ -309,7 +306,7 @@ CI must block merge on failure.
 
 Codex MUST stop and request human input if:
 - branding ambiguity arises
-- AI feature risks legal interpretation
+- feature risks legal interpretation
 - multi-tenant boundary unclear
 - new feature affects legal trust
 
@@ -415,12 +412,12 @@ SEO defaults:
 3) 3 pillars: Case Workspace / Hearings / Diary & Summaries
 4) How it works (3 steps)
 5) Who it’s for (advocates, assistants, students, legal teams)
-6) Trust & safety (tenant isolation, audit logs, sources-first AI)
+6) Trust & safety (tenant isolation, audit logs, signed access)
 7) Final CTA + footer links (Privacy, Terms, Contact)
 
 ## Copy Rules
 - Never claim: legal advice, verdict prediction, judge replacement
-- Always emphasize: structure, memory, explainability, sources, review-before-save
+- Always emphasize: structure, memory, and review-before-save
 
 
 # MVP WORKFLOW (MANDATORY)
@@ -436,4 +433,3 @@ MVP must include:
 - Hearing reminder notifications 1 day before
 - Case participants with roles per case
 - Free plan limit: max 5 cases per tenant; uploads limited to pdf/jpg/png
-

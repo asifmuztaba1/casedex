@@ -70,11 +70,7 @@ export default function NewCasePage() {
           case_number: z.string().optional(),
           story: z.string().min(2),
           petition_draft: z.string().min(2),
-          client_id: z.preprocess(
-            (value) =>
-              value === "" || value === undefined ? undefined : Number(value),
-            z.number().int().optional()
-          ),
+          client_id: z.coerce.number().int().optional(),
           client: z
             .object({
               name: z.string().min(2),
@@ -127,7 +123,8 @@ export default function NewCasePage() {
 
   const { register, handleSubmit, control, formState, setValue, watch } =
     useForm<CaseFormValues>({
-      resolver: zodResolver(caseSchema),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      resolver: zodResolver(caseSchema) as any,
       defaultValues: {
         client_party_role: "petitioner",
         client_party_type: "person",
@@ -246,14 +243,14 @@ export default function NewCasePage() {
                 <Input
                   placeholder={t("cases.client.id")}
                   {...register("client_id")}
-                  aria-invalid={showErrors && clientError}
+                  aria-invalid={!!(showErrors && clientError)}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                   <Input
                     placeholder={t("cases.client.name")}
                     {...register("client.name")}
-                    aria-invalid={showErrors && clientError}
+                    aria-invalid={!!(showErrors && clientError)}
                   />
                   <Input
                     placeholder={t("cases.client.phone")}
@@ -319,7 +316,7 @@ export default function NewCasePage() {
                 <Input
                   placeholder={t("cases.case.title")}
                   {...register("title")}
-                  aria-invalid={showErrors && titleError}
+                  aria-invalid={!!(showErrors && titleError)}
                 />
                 {showErrors && titleError && (
                   <p className="text-xs text-rose-600">{t("common.required")}</p>

@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CountriesSeeder::class);
         $this->call(CourtTypesSeeder::class);
+        $this->call(RolesAndPermissionsSeeder::class);
 
         $countryId = \App\Domain\Tenancy\Models\Country::query()
             ->where('code', 'BD')

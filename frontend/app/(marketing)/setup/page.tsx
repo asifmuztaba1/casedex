@@ -98,7 +98,7 @@ export default function SetupPage() {
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
-                aria-invalid={countryError}
+                aria-invalid={!!(countryError)}
               >
                 <option value="">{t("setup.country_select")}</option>
                 {countries.map((country) => (
@@ -119,7 +119,7 @@ export default function SetupPage() {
                 placeholder={t("setup.firm_placeholder")}
                 value={tenantName}
                 onChange={(event) => setTenantName(event.target.value)}
-                aria-invalid={nameError}
+                aria-invalid={!!(nameError)}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>

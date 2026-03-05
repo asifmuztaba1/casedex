@@ -99,9 +99,6 @@ export default function WorkspaceLayout({
             </a>
           ))}
         </nav>
-        <Card className="mt-auto border-dashed bg-slate-50 p-4 text-xs text-slate-500 shadow-none">
-          {t("nav.offline_hint")}
-        </Card>
       </aside>
 
       <div className="md:pl-[260px]">
@@ -159,7 +156,7 @@ export default function WorkspaceLayout({
             <div className="flex flex-wrap items-center gap-3">
               <Input className="w-[220px]" placeholder={t("nav.search")} />
               <Badge variant="subtle">
-                {t("nav.tenant")}: {user?.tenant?.name}
+                {t("nav.tenant")}: {user?.tenant?.name ?? user?.tenant_name ?? t("nav.tenant")}
               </Badge>
               <Button size="sm" asChild>
                 <a href="/cases/new">{t("nav.new_case")}</a>

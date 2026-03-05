@@ -56,6 +56,48 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(cacheFirst(request));
 });
 
+self.addEventListener("push", (event) => {
+  if (!event.data) {
+    return;
+  }
+
+  let payload = {};
+  try {
+    payload = event.data.json();
+  } catch {
+    payload = { body: event.data.text() };
+  }
+  const title = payload?.title ?? "CaseDex";
+  const body = payload?.body ?? "You have a new notification.";
+  const url = payload?.url ?? "/notifications";
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      data: { url },
+      icon: "/icons/icon-192.svg",
+      badge: "/icons/icon-192.svg",
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification?.data?.url ?? "/notifications";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if ("focus" in client && client.url.includes(self.location.origin)) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return clients.openWindow(url);
+    })
+  );
+});
+
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) {

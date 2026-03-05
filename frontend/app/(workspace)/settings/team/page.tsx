@@ -96,7 +96,7 @@ export default function TeamSettingsPage() {
                 placeholder={t("settings.team.name")}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                aria-invalid={nameError}
+                aria-invalid={!!(nameError)}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -108,7 +108,7 @@ export default function TeamSettingsPage() {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                aria-invalid={emailError || emailInvalid}
+                aria-invalid={!!(emailError || emailInvalid)}
               />
               {emailError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -123,7 +123,7 @@ export default function TeamSettingsPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                aria-invalid={passwordError}
+                aria-invalid={!!(passwordError)}
               />
               {passwordError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -153,7 +153,7 @@ export default function TeamSettingsPage() {
                 }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
-                aria-invalid={countryError}
+                aria-invalid={!!(countryError)}
               >
                 <option value="">{t("settings.team.country")}</option>
                 {countries.map((country) => (

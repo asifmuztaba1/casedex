@@ -80,7 +80,7 @@ export default function ProfileSettingsPage() {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 required
-                aria-invalid={nameError}
+                aria-invalid={!!(nameError)}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -91,7 +91,7 @@ export default function ProfileSettingsPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
-                aria-invalid={emailError || emailInvalid}
+                aria-invalid={!!(emailError || emailInvalid)}
               />
               {emailError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -108,7 +108,7 @@ export default function ProfileSettingsPage() {
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
-                aria-invalid={countryError}
+                aria-invalid={!!(countryError)}
               >
                 <option value="">{t("settings.profile.country")}</option>
                 {countries.map((country) => (

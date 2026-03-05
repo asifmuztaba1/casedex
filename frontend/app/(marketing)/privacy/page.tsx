@@ -1,7 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
-
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -10,11 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useLocale } from "@/components/locale-provider";
-
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Privacy practices for CaseDex.",
-};
 
 export default function PrivacyPage() {
   const { t } = useLocale();

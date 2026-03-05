@@ -3,6 +3,8 @@
 import type { Locale } from "@/lib/locale-constants";
 import { STORAGE_KEY } from "@/lib/locale-constants";
 
+export type { Locale };
+
 export function getStoredLocale(): Locale {
   if (typeof window === "undefined") {
     return "en";

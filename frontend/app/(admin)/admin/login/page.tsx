@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            aria-invalid={emailError || emailInvalid}
+            aria-invalid={!!(emailError || emailInvalid)}
           />
           {emailError && (
             <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
-            aria-invalid={passwordError}
+            aria-invalid={!!(passwordError)}
           />
           {passwordError && (
             <p className="text-xs text-rose-600">{t("common.required")}</p>

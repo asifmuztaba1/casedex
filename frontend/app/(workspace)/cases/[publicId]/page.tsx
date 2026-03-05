@@ -461,7 +461,7 @@ export default function CaseDetailPage() {
                         hearing_at: event.target.value,
                       }))
                     }
-                    aria-invalid={hearingDateError}
+                    aria-invalid={!!(hearingDateError)}
                   />
                   {hearingDateError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -597,7 +597,7 @@ export default function CaseDetailPage() {
                         entry_at: event.target.value,
                       }))
                     }
-                    aria-invalid={diaryDateError}
+                    aria-invalid={!!(diaryDateError)}
                   />
                   {diaryDateError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -611,7 +611,7 @@ export default function CaseDetailPage() {
                         title: event.target.value,
                       }))
                     }
-                    aria-invalid={diaryTitleError}
+                    aria-invalid={!!(diaryTitleError)}
                   />
                   {diaryTitleError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -759,7 +759,7 @@ export default function CaseDetailPage() {
                         })(),
                       }))
                     }
-                    aria-invalid={documentFileError}
+                    aria-invalid={!!(documentFileError)}
                   />
                   {documentFileError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -1104,9 +1104,6 @@ export default function CaseDetailPage() {
                                 <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                                   {t("hearing.generate_note")}
                                 </div>
-                                <Button variant="outline" disabled>
-                                  {t("hearing.generate_summary")}
-                                </Button>
                               </div>
                             </SheetContent>
                           </Sheet>
@@ -1229,7 +1226,7 @@ export default function CaseDetailPage() {
                           user_public_id: "",
                         }));
                       }}
-                      aria-invalid={participantError}
+                      aria-invalid={!!(participantError)}
                     />
                     {participantError && (
                       <p className="mt-1 text-xs text-rose-600">
@@ -1385,7 +1382,7 @@ export default function CaseDetailPage() {
                             name: event.target.value,
                           }))
                         }
-                        aria-invalid={partyNameError}
+                        aria-invalid={!!(partyNameError)}
                       />
                       {partyNameError && (
                         <p className="text-xs text-rose-600">

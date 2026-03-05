@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
-                aria-invalid={emailError || emailInvalid}
+                aria-invalid={!!(emailError || emailInvalid)}
               />
               {emailError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
-                  aria-invalid={passwordError || mismatchError}
+                  aria-invalid={!!(passwordError || mismatchError)}
                 />
                 {passwordError && (
                   <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -130,7 +130,7 @@ export default function ResetPasswordPage() {
                   value={confirm}
                   onChange={(event) => setConfirm(event.target.value)}
                   required
-                  aria-invalid={confirmError || mismatchError}
+                  aria-invalid={!!(confirmError || mismatchError)}
                 />
                 {confirmError && (
                   <p className="text-xs text-rose-600">{t("common.required")}</p>

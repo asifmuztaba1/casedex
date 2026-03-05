@@ -1,16 +1,18 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
+import StatusBadge from "@/components/status-badge";
 import { useLocale } from "@/components/locale-provider";
 import { useHearings } from "@/features/hearings/use-hearings";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -20,91 +22,190 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
+
+const typeOptions = ["all", "mention", "hearing", "trial", "order"] as const;
 
 export default function HearingsPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useHearings();
   const hearings = data?.data ?? [];
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+
+  const filtered = useMemo(() => {
+    return hearings.filter((h) => {
+      const matchesSearch =
+        !search ||
+        (h.case_title ?? "").toLowerCase().includes(search.toLowerCase()) ||
+        (h.agenda ?? "").toLowerCase().includes(search.toLowerCase());
+      const matchesType = typeFilter === "all" || h.type === typeFilter;
+      return matchesSearch && matchesType;
+    });
+  }, [hearings, search, typeFilter]);
+
+  const upcoming = useMemo(
+    () => filtered.filter((h) => h.hearing_at && new Date(h.hearing_at) >= new Date()),
+    [filtered]
+  );
+  const past = useMemo(
+    () => filtered.filter((h) => !h.hearing_at || new Date(h.hearing_at) < new Date()),
+    [filtered]
+  );
+
+  if (isLoading) {
+    return (
+      <section className="space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-          {t("hearings.kicker")}
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          {t("hearings.title")}
-        </h1>
-        <p className="text-sm text-slate-600">
-          {t("hearings.subtitle")}
-        </p>
+      <PageHeader
+        title={t("hearings.title")}
+        description={t("hearings.subtitle")}
+      />
+
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Input
+            className="w-[260px] pl-9"
+            placeholder={t("hearings.search_placeholder") ?? "Search hearings..."}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {typeOptions.map((opt) => (
+              <SelectItem key={opt} value={opt}>
+                {opt === "all" ? t("status.all") : t(`hearing.type.${opt}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("hearings.card_title")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-sm text-slate-600">
-              {t("hearings.loading")}
-            </div>
-          ) : isError ? (
-            <div className="text-sm text-rose-600">
-              {t("hearings.error")}
-            </div>
-          ) : hearings.length === 0 ? (
-            <EmptyState
-              title={t("hearings.empty_title")}
-              description={t("hearings.empty_desc")}
-              action={
-                <Button asChild>
-                  <Link href="/cases">{t("hearings.action")}</Link>
-                </Button>
-              }
-            />
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("table.date")}</TableHead>
-                  <TableHead>{t("table.case")}</TableHead>
-                  <TableHead>{t("table.type")}</TableHead>
-                  <TableHead>{t("hearing.next_steps")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {hearings.map((hearing) => (
-                  <TableRow key={hearing.public_id}>
-                    <TableCell>
-                      {hearing.hearing_at
-                        ? format(new Date(hearing.hearing_at), "PPpp")
-                        : t("common.tbd")}
-                    </TableCell>
-                    <TableCell>
-                      {hearing.case_public_id ? (
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/cases/${hearing.case_public_id}`}>
-                            {hearing.case_title ?? t("common.view_case")}
-                          </Link>
-                        </Button>
-                      ) : (
-                        hearing.case_title ?? t("common.case")
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {hearing.type
-                        ? t(`hearing.type.${hearing.type}`)
-                        : t("hearing.type.hearing")}
-                    </TableCell>
-                    <TableCell>{hearing.next_steps ?? "-"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+      {isError ? (
+        <div className="text-sm text-rose-600">{t("hearings.error")}</div>
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title={t("hearings.empty_title")}
+          description={t("hearings.empty_desc")}
+          action={
+            <Button asChild>
+              <Link href="/cases">{t("hearings.action")}</Link>
+            </Button>
+          }
+        />
+      ) : (
+        <>
+          {upcoming.length > 0 && (
+            <Card>
+              <CardContent className="pt-6">
+                <h2 className="mb-4 text-base font-semibold text-slate-900">
+                  {t("dashboard.section.hearings")}
+                </h2>
+                <HearingTable hearings={upcoming} t={t} />
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+
+          {past.length > 0 && (
+            <Card>
+              <CardContent className="pt-6">
+                <h2 className="mb-4 text-base font-semibold text-slate-500">
+                  {t("hearings.past") ?? "Past hearings"}
+                </h2>
+                <HearingTable hearings={past} t={t} />
+              </CardContent>
+            </Card>
+          )}
+        </>
+      )}
     </section>
+  );
+}
+
+function HearingTable({
+  hearings,
+  t,
+}: {
+  hearings: Array<{
+    public_id: string;
+    case_public_id?: string | null;
+    case_title?: string | null;
+    hearing_at: string | null;
+    type: string | null;
+    agenda: string | null;
+    next_steps: string | null;
+  }>;
+  t: (key: string) => string;
+}) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>{t("table.date")}</TableHead>
+          <TableHead>{t("table.case")}</TableHead>
+          <TableHead>{t("table.type")}</TableHead>
+          <TableHead>{t("hearing.agenda") ?? "Agenda"}</TableHead>
+          <TableHead>{t("hearing.next_steps")}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {hearings.map((hearing) => (
+          <TableRow key={hearing.public_id}>
+            <TableCell className="whitespace-nowrap">
+              {hearing.hearing_at
+                ? format(new Date(hearing.hearing_at), "PP p")
+                : t("common.tbd")}
+            </TableCell>
+            <TableCell>
+              {hearing.case_public_id ? (
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href={`/cases/${hearing.case_public_id}`}>
+                    {hearing.case_title ?? t("common.view_case")}
+                  </Link>
+                </Button>
+              ) : (
+                hearing.case_title ?? "-"
+              )}
+            </TableCell>
+            <TableCell>
+              <StatusBadge
+                status={hearing.type ?? "hearing"}
+                label={t(`hearing.type.${hearing.type ?? "hearing"}`)}
+              />
+            </TableCell>
+            <TableCell className="max-w-[200px] truncate">
+              {hearing.agenda ?? "-"}
+            </TableCell>
+            <TableCell className="max-w-[200px] truncate">
+              {hearing.next_steps ?? "-"}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

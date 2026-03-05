@@ -4,9 +4,13 @@
   --background: #f7f7f8;
   --foreground: #0b0f1a;
   --paper: #ffffff;
-  --muted: #5b6475;
+  --muted: #4c576a;
   --border: #e6e7ea;
   --wash: #f2f3f5;
+  --primary: #10274d;
+  --primary-hover: #17345f;
+  --accent: #2d4b83;
+  --accent-soft: #edf2fb;
 }
 
 @theme inline {
@@ -29,6 +33,6 @@ html:lang(bn) body {
 }
 
 ::selection {
-  background: #111111;
+  background: var(--primary);
   color: #ffffff;
 }

@@ -9,7 +9,7 @@ CaseDex is a legal case workspace SaaS. The **backend is ~90% complete** (all 8+
 ## Current State Summary
 
 ### Backend — DONE
-- All domain modules: Auth, Tenancy, Cases, Hearings, Diary, Documents, Notifications, Research, AI, Clients, Courts
+- All domain modules: Auth, Tenancy, Cases, Hearings, Diary, Documents, Notifications, Research, Clients, Courts
 - 35 migrations, 23 controllers, 50+ form requests, 17 API resources, 12 policies
 - Full CRUD API routes under `/api/v1/`
 - Sanctum auth, tenant middleware, locale middleware
@@ -17,7 +17,7 @@ CaseDex is a legal case workspace SaaS. The **backend is ~90% complete** (all 8+
 ### Backend — TODO
 - Permission/role seeding (Spatie roles & permissions)
 - Comprehensive Pest tests
-- AI summary generation logic (model exists, no service)
+- AI-assisted summaries removed from MVP scope
 - CORS configuration
 - Custom exception handler
 
@@ -161,7 +161,6 @@ CaseDex is a legal case workspace SaaS. The **backend is ~90% complete** (all 8+
 
 ### Phase 11: Backend Gaps
 - `backend/database/seeders/RolesAndPermissionsSeeder.php` — Seed Spatie roles/permissions
-- `backend/app/Domain/Ai/Actions/GenerateHearingSummaryAction.php` — AI summary stub
 - `backend/config/cors.php` — CORS config for frontend origin
 - `backend/app/Exceptions/Handler.php` — Custom API exception responses
 - Update `DatabaseSeeder.php` to call role seeder

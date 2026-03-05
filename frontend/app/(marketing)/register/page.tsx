@@ -93,7 +93,7 @@ export default function RegisterPage() {
                 placeholder={t("register.name")}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                aria-invalid={nameError}
+                aria-invalid={!!(nameError)}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                aria-invalid={emailError || emailInvalid}
+                aria-invalid={!!(!!(emailError || emailInvalid))}
               />
               {emailError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
-                aria-invalid={countryError}
+                aria-invalid={!!(countryError)}
               >
                 <option value="">{t("register.country_select")}</option>
                 {countries.map((country) => (
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                aria-invalid={passwordError || mismatchError}
+                aria-invalid={!!(!!(passwordError || mismatchError))}
               />
               {passwordError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                 type="password"
                 value={confirm}
                 onChange={(event) => setConfirm(event.target.value)}
-                aria-invalid={confirmError || mismatchError}
+                aria-invalid={!!(!!(confirmError || mismatchError))}
               />
               {confirmError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>

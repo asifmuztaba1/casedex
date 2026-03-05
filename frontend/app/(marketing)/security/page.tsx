@@ -1,7 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
-
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -11,11 +9,6 @@ import {
 } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
-
-export const metadata: Metadata = {
-  title: "Security",
-  description: "Security practices for CaseDex.",
-};
 
 export default function SecurityPage() {
   const { t } = useLocale();

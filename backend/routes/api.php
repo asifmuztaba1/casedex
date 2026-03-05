@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AuthPasswordController;
 use App\Http\Controllers\Api\V1\AuthVerificationController;
 use App\Http\Controllers\Api\V1\CountryController;
+use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\TenantController;
@@ -131,6 +132,9 @@ Route::prefix('v1')
         Route::get('/notifications/{publicId}', [NotificationController::class, 'show']);
         Route::put('/notifications/{publicId}', [NotificationController::class, 'update']);
         Route::delete('/notifications/{publicId}', [NotificationController::class, 'destroy']);
+        Route::get('/push-subscriptions', [PushSubscriptionController::class, 'index']);
+        Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store']);
+        Route::delete('/push-subscriptions/{endpointHash}', [PushSubscriptionController::class, 'destroy']);
 
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);

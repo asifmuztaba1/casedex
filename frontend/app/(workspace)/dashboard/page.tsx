@@ -27,19 +27,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronDown, Filter, Search } from "lucide-react";
+import { ChevronDown, Filter, Plus, Search } from "lucide-react";
 import { useCases } from "@/features/cases/use-cases";
 import { useHearings } from "@/features/hearings/use-hearings";
 import { useDiaryEntries } from "@/features/diary/use-diary-entries";
 import { useDocuments } from "@/features/documents/use-documents";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
-import {useAuth, useUsers} from "@/features/auth/use-auth";
+import { useAuth } from "@/features/auth/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
   const { t } = useLocale();
-  const { data: casesData } = useCases();
-  const { data: hearingsData } = useHearings();
+  const { data: user } = useAuth();
+  const { data: casesData, isLoading: casesLoading } = useCases();
+  const { data: hearingsData, isLoading: hearingsLoading } = useHearings();
   const { data: diaryData } = useDiaryEntries();
   const { data: documentsData } = useDocuments();
   const { data: notificationsData } = useNotifications();
@@ -61,8 +63,39 @@ export default function DashboardPage() {
 
   const recentDocuments = useMemo(() => documents.slice(0, 5), [documents]);
 
+  if (casesLoading || hearingsLoading) {
+    return (
+      <section className="space-y-6">
+        <Skeleton className="h-24 w-full" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full" />
+          ))}
+        </div>
+        <Skeleton className="h-64 w-full" />
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">
+            {t("dashboard.welcome")}{user ? `, ${user.name}` : ""}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">{t("dashboard.welcome_desc")}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link href="/cases/new">
+              <Plus className="mr-1.5 h-4 w-4" />
+              {t("dashboard.new_case")}
+            </Link>
+          </Button>
+        </div>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: t("dashboard.metrics.cases"), value: `${cases.length}` },
