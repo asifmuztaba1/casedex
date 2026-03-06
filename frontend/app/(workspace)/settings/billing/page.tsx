@@ -74,7 +74,7 @@ export default function BillingSettingsPage() {
           <CardHeader>
             <CardTitle>Choose your package and add payment details</CardTitle>
             <CardDescription>
-              You can add payment details now. Charges start only after your trial period ends.
+              You can add payment details now. No charge today. After your trial ends in 30 days, you will be charged unless you cancel.
             </CardDescription>
           </CardHeader>
         </Card>

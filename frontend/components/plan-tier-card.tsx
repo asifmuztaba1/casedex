@@ -72,6 +72,11 @@ export default function PlanTierCard({
             </div>
           ))}
         </div>
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-700">
+          <div>30-day trial: no charge today.</div>
+          <div>After your trial ends in 30 days, you will be charged.</div>
+          <div>You can cancel anytime before trial end.</div>
+        </div>
 
         {ctaHref ? (
           <Button asChild className="w-full" variant={featured ? "default" : "outline"}>
