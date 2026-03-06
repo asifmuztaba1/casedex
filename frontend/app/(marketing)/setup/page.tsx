@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,6 +30,21 @@ export default function SetupPage() {
   const nameError = submitted && !tenantName.trim();
   const countryError = submitted && !countryId;
 
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.tenant_id) {
+      router.replace("/settings/billing?onboarding=1");
+    }
+  }, [isLoading, user, router]);
+
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
@@ -38,13 +53,7 @@ export default function SetupPage() {
     );
   }
 
-  if (!user) {
-    router.replace("/login");
-    return null;
-  }
-
-  if (user.tenant_id) {
-    router.replace("/settings/billing?onboarding=1");
+  if (!user || user.tenant_id) {
     return null;
   }
 
