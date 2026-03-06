@@ -19,6 +19,8 @@ import {
   Users,
 } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
+import PlanTierCard from "@/components/plan-tier-card";
+import { PLAN_CATALOG } from "@/features/billing/plan-catalog";
 
 export default function Home() {
   const { t } = useLocale();
@@ -263,6 +265,32 @@ export default function Home() {
               </div>
               <p className="text-sm text-slate-600">{item.description}</p>
             </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
+            Plans
+          </p>
+          <CardTitle className="text-2xl font-semibold">
+            Choose a package based on storage and support
+          </CardTitle>
+          <CardDescription>
+            Unlimited cases and team members are included in every plan. Upgrade by storage and service level.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-6 md:grid-cols-3">
+          {PLAN_CATALOG.map((plan) => (
+            <PlanTierCard
+              key={plan.id}
+              plan={plan}
+              interval="monthly"
+              featured={plan.id === "professional"}
+              ctaLabel="View pricing"
+              ctaHref="/pricing"
+            />
           ))}
         </CardContent>
       </Card>

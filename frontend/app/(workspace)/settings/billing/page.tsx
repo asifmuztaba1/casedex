@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import StorageMeter from "@/components/storage-meter";
+import PlanTierCard from "@/components/plan-tier-card";
 import {
   useBillingPortal,
   useCancelSubscription,
@@ -17,27 +18,7 @@ import {
 } from "@/features/billing/use-billing";
 import type { BillingInterval } from "@/features/billing/types";
 import { useLocale } from "@/components/locale-provider";
-
-const plans = [
-  {
-    id: "starter",
-    name: "Starter",
-    monthlyPrice: "$19",
-    yearlyPrice: "$190",
-  },
-  {
-    id: "professional",
-    name: "Professional",
-    monthlyPrice: "$49",
-    yearlyPrice: "$490",
-  },
-  {
-    id: "chambers",
-    name: "Chambers",
-    monthlyPrice: "$99",
-    yearlyPrice: "$990",
-  },
-] as const;
+import { PLAN_CATALOG, STORAGE_ADDON_FEATURES } from "@/features/billing/plan-catalog";
 
 export default function BillingSettingsPage() {
   const { t } = useLocale();
@@ -142,25 +123,54 @@ export default function BillingSettingsPage() {
           </div>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-3">
-          {plans.map((plan) => (
-            <Card key={plan.id}>
-              <CardHeader>
-                <CardTitle className="text-lg">{plan.name}</CardTitle>
-                <CardDescription>
-                  {interval === "monthly" ? plan.monthlyPrice : plan.yearlyPrice}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  className="w-full"
-                  onClick={() => onSelectPlan(plan.id)}
-                  disabled={checkout.isPending || changePlan.isPending}
-                >
-                  {t("billing.upgrade")}
-                </Button>
-              </CardContent>
-            </Card>
+          {PLAN_CATALOG.map((plan) => (
+            <PlanTierCard
+              key={plan.id}
+              plan={plan}
+              interval={interval}
+              featured={plan.id === "professional"}
+              active={subscription?.plan === plan.id}
+              ctaLabel={subscription?.plan === plan.id ? "Current plan" : t("billing.upgrade")}
+              onCta={() => onSelectPlan(plan.id)}
+              disabled={
+                checkout.isPending ||
+                changePlan.isPending ||
+                subscription?.plan === plan.id
+              }
+            />
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Unlimited storage add-on</CardTitle>
+          <CardDescription>Available on any tier when your team needs unrestricted uploads.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-2">
+            {STORAGE_ADDON_FEATURES.map((feature) => (
+              <div key={feature} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                {feature}
+              </div>
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              const response = await checkout.mutateAsync({
+                plan: "starter",
+                interval,
+                add_unlimited_storage: true,
+              });
+              if (response.checkout_url) {
+                window.location.href = response.checkout_url;
+              }
+            }}
+            disabled={checkout.isPending}
+          >
+            Buy unlimited storage
+          </Button>
         </CardContent>
       </Card>
 

@@ -12,36 +12,14 @@ import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { useAuth } from "@/features/auth/use-auth";
 import { useCheckout } from "@/features/billing/use-billing";
+import { PLAN_CATALOG } from "@/features/billing/plan-catalog";
+import PlanTierCard from "@/components/plan-tier-card";
 
 export default function PricingPageClient() {
   const { t } = useLocale();
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const { data: user } = useAuth();
   const checkout = useCheckout();
-
-  const tiers = [
-    {
-      id: "starter",
-      title: "Starter",
-      monthlyPrice: "$19",
-      yearlyPrice: "$190",
-      description: "1 GB storage · Unlimited cases",
-    },
-    {
-      id: "professional",
-      title: "Professional",
-      monthlyPrice: "$49",
-      yearlyPrice: "$490",
-      description: "5 GB storage · Audit export",
-    },
-    {
-      id: "chambers",
-      title: "Chambers",
-      monthlyPrice: "$99",
-      yearlyPrice: "$990",
-      description: "10 GB storage · Priority support",
-    },
-  ] as const;
 
   return (
     <section className="space-y-12">
@@ -72,38 +50,30 @@ export default function PricingPageClient() {
       </Card>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {tiers.map((tier) => (
-          <Card key={tier.id} className="h-full">
-            <CardHeader className="space-y-3">
-              <CardTitle className="text-base">{tier.title}</CardTitle>
-              <div className="text-2xl font-semibold text-slate-900">
-                {interval === "monthly" ? tier.monthlyPrice : tier.yearlyPrice}
-              </div>
-              <CardDescription>{tier.description}</CardDescription>
-              {user?.tenant_id ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={async () => {
+        {PLAN_CATALOG.map((plan) => (
+          <PlanTierCard
+            key={plan.id}
+            plan={plan}
+            interval={interval}
+            featured={plan.id === "professional"}
+            ctaLabel={user?.tenant_id ? t("billing.upgrade") : t("pricing.cta")}
+            ctaHref={user?.tenant_id ? undefined : "/register"}
+            onCta={
+              user?.tenant_id
+                ? async () => {
                     const response = await checkout.mutateAsync({
-                      plan: tier.id,
+                      plan: plan.id,
                       interval,
                     });
 
                     if (response.checkout_url) {
                       window.location.href = response.checkout_url;
                     }
-                  }}
-                >
-                  {t("billing.upgrade")}
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" asChild>
-                  <a href="/register">{t("pricing.cta")}</a>
-                </Button>
-              )}
-            </CardHeader>
-          </Card>
+                  }
+                : undefined
+            }
+            disabled={checkout.isPending}
+          />
         ))}
       </div>
     </section>
