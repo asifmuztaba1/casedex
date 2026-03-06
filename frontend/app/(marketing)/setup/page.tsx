@@ -79,7 +79,7 @@ export default function SetupPage() {
                 },
                 {
                   onSuccess: () => {
-                    router.push("/dashboard");
+                    router.push("/settings/billing?onboarding=1");
                   },
                 }
               );

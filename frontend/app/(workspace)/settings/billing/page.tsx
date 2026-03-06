@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
+import { useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,7 @@ import { PLAN_CATALOG, STORAGE_ADDON_FEATURES } from "@/features/billing/plan-ca
 
 export default function BillingSettingsPage() {
   const { t } = useLocale();
+  const searchParams = useSearchParams();
   const [interval, setInterval] = useState<BillingInterval>("monthly");
   const { data: subscription } = useSubscription();
   const { data: invoices = [] } = useInvoices();
@@ -41,6 +43,8 @@ export default function BillingSettingsPage() {
     });
   }, [subscription?.trial_ends_at]);
 
+  const fromOnboarding = searchParams.get("onboarding") === "1";
+
   const onSelectPlan = async (plan: "starter" | "professional" | "chambers") => {
     if (!subscription || subscription.status === "expired" || subscription.on_trial) {
       const response = await checkout.mutateAsync({ plan, interval });
@@ -55,6 +59,17 @@ export default function BillingSettingsPage() {
 
   return (
     <section className="space-y-6">
+      {fromOnboarding && (
+        <Card className="border-slate-300 bg-slate-50">
+          <CardHeader>
+            <CardTitle>Choose your package and add payment details</CardTitle>
+            <CardDescription>
+              You can add payment details now. Charges start only after your trial period ends.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>{t("billing.title")}</CardTitle>
