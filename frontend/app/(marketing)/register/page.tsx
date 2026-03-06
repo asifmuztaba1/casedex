@@ -217,9 +217,15 @@ export default function RegisterPage() {
                         </div>
                       </div>
                       <div className="mt-2 text-xs text-slate-600">{item.summary}</div>
-                      <div className="mt-2 flex items-center gap-1 text-xs text-slate-700">
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-700">
                         <Check className="h-3.5 w-3.5" />
                         Unlimited cases and team members
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px]">
+                          {t("billing.audit_export_label")}: {item.auditExport ? t("billing.included") : t("billing.not_included")}
+                        </span>
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px]">
+                          {t("billing.priority_support_label")}: {item.prioritySupport ? t("billing.included") : t("billing.not_included")}
+                        </span>
                       </div>
                     </button>
                   );

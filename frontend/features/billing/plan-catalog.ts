@@ -8,6 +8,10 @@ export type PlanCatalogItem = {
   storage: string;
   summary: string;
   badge?: string;
+  bestFor: string;
+  auditExport: boolean;
+  prioritySupport: boolean;
+  accent: "slate" | "indigo" | "teal";
   features: string[];
 };
 
@@ -19,12 +23,16 @@ export const PLAN_CATALOG: PlanCatalogItem[] = [
     yearlyPrice: "$190",
     storage: "1 GB storage",
     summary: "For solo advocates and early teams",
+    bestFor: "Solo or early-stage teams",
+    auditExport: false,
+    prioritySupport: false,
+    accent: "slate",
     features: [
       "Unlimited cases",
       "Unlimited team members",
       "All file types",
-      "30-day trial included",
-      "Monthly or yearly billing",
+      "Standard support",
+      "Simple setup",
     ],
   },
   {
@@ -35,12 +43,15 @@ export const PLAN_CATALOG: PlanCatalogItem[] = [
     storage: "5 GB storage",
     summary: "For active firms handling larger dockets",
     badge: "Most selected",
+    bestFor: "Growing firms with regular filings",
+    auditExport: true,
+    prioritySupport: false,
+    accent: "indigo",
     features: [
       "Everything in Starter",
       "Audit export",
-      "Higher storage capacity",
-      "Unlimited cases and team members",
-      "Monthly or yearly billing",
+      "Expanded document capacity",
+      "Team-friendly operations",
     ],
   },
   {
@@ -50,12 +61,15 @@ export const PLAN_CATALOG: PlanCatalogItem[] = [
     yearlyPrice: "$990",
     storage: "10 GB storage",
     summary: "For multi-team chambers and legal groups",
+    bestFor: "Multi-team chambers and legal groups",
+    auditExport: true,
+    prioritySupport: true,
+    accent: "teal",
     features: [
       "Everything in Professional",
       "Priority support",
       "Highest included storage",
-      "Unlimited cases and team members",
-      "Monthly or yearly billing",
+      "Top-tier service level",
     ],
   },
 ];
