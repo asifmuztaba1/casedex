@@ -44,7 +44,7 @@ export default function SetupPage() {
   }
 
   if (user.tenant_id) {
-    router.replace("/dashboard");
+    router.replace("/settings/billing?onboarding=1");
     return null;
   }
 
