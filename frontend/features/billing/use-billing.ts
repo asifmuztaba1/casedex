@@ -40,6 +40,7 @@ export function useCheckout() {
       plan: Exclude<PlanTier, "trial">;
       interval: BillingInterval;
       add_unlimited_storage?: boolean;
+      redirect_url?: string;
     }) => {
       const response = await apiPost<ApiResponse<{ checkout_url: string }>>(
         "/api/v1/billing/checkout",

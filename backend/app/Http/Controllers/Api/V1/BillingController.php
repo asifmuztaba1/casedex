@@ -27,13 +27,15 @@ class BillingController extends Controller
             ])],
             'interval' => ['required_without:add_unlimited_storage', Rule::in(['monthly', 'yearly'])],
             'add_unlimited_storage' => ['sometimes', 'boolean'],
+            'redirect_url' => ['sometimes', 'nullable', 'url'],
         ]);
 
         $checkoutUrl = $action->handle(
             $request->user()->tenant,
             $data['plan'] ?? TenantPlan::Starter->value,
             $data['interval'] ?? 'monthly',
-            (bool) ($data['add_unlimited_storage'] ?? false)
+            (bool) ($data['add_unlimited_storage'] ?? false),
+            $data['redirect_url'] ?? null
         );
 
         return response()->json([

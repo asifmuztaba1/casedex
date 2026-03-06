@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,17 +15,26 @@ import { useAuth, useCreateTenant } from "@/features/auth/use-auth";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
+import { useCheckout } from "@/features/billing/use-billing";
+import type { BillingInterval } from "@/features/billing/types";
+import type { PlanId } from "@/features/billing/plan-catalog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function SetupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: user, isLoading } = useAuth();
   const createTenant = useCreateTenant();
+  const checkout = useCheckout();
   const { t, locale } = useLocale();
+  const { toast } = useToast();
   const { data: countriesData } = useCountries();
   const countries = useMemo(() => countriesData?.data ?? [], [countriesData]);
   const [tenantName, setTenantName] = useState("");
   const [countryId, setCountryId] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const selectedPlan = (searchParams.get("plan") as PlanId) || "professional";
+  const selectedInterval = (searchParams.get("interval") as BillingInterval) || "monthly";
 
   const nameError = submitted && !tenantName.trim();
   const countryError = submitted && !countryId;
@@ -91,7 +100,27 @@ export default function SetupPage() {
                   locale,
                 },
                 {
-                  onSuccess: () => {
+                  onSuccess: async () => {
+                    try {
+                      const redirectUrl = `${window.location.origin}/dashboard?billing=success`;
+                      const response = await checkout.mutateAsync({
+                        plan: selectedPlan,
+                        interval: selectedInterval,
+                        redirect_url: redirectUrl,
+                      });
+
+                      if (response.checkout_url) {
+                        window.location.href = response.checkout_url;
+                        return;
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Checkout could not start",
+                        description: error instanceof Error ? error.message : "Please select package from billing page.",
+                        variant: "error",
+                      });
+                    }
+
                     router.push("/settings/billing?onboarding=1");
                   },
                 }
@@ -138,9 +167,9 @@ export default function SetupPage() {
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
               )}
             </div>
-            <Button type="submit" disabled={createTenant.isPending}>
-              {createTenant.isPending
-                ? t("setup.button_pending")
+            <Button type="submit" disabled={createTenant.isPending || checkout.isPending}>
+              {createTenant.isPending || checkout.isPending
+                ? "Preparing checkout..."
                 : t("setup.button")}
             </Button>
             {createTenant.isError && (

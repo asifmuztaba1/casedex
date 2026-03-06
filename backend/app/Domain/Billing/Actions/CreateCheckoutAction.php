@@ -16,7 +16,8 @@ class CreateCheckoutAction
         Tenant $tenant,
         string $plan,
         string $interval,
-        bool $addUnlimitedStorage = false
+        bool $addUnlimitedStorage = false,
+        ?string $redirectUrl = null
     ): string {
         if ($addUnlimitedStorage) {
             $variant = (string) config('billing.addons.unlimited_storage_variant', '');
@@ -24,7 +25,12 @@ class CreateCheckoutAction
                 abort(422, __('messages.billing_variant_missing'));
             }
 
-            return $tenant->checkout($variant)->url();
+            $checkout = $tenant->checkout($variant);
+            if ($redirectUrl !== null) {
+                $checkout->redirectTo($redirectUrl);
+            }
+
+            return $checkout->url();
         }
 
         $targetPlan = TenantPlan::from($plan);
@@ -38,6 +44,11 @@ class CreateCheckoutAction
             abort(422, __('messages.billing_variant_missing'));
         }
 
-        return $tenant->subscribe($variant)->url();
+        $checkout = $tenant->subscribe($variant);
+        if ($redirectUrl !== null) {
+            $checkout->redirectTo($redirectUrl);
+        }
+
+        return $checkout->url();
     }
 }

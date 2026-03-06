@@ -2,6 +2,8 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,9 +38,13 @@ import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
 import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DashboardPage() {
   const { t } = useLocale();
+  const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: user } = useAuth();
   const { data: casesData, isLoading: casesLoading } = useCases();
   const { data: hearingsData, isLoading: hearingsLoading } = useHearings();
@@ -62,6 +68,20 @@ export default function DashboardPage() {
   ]);
 
   const recentDocuments = useMemo(() => documents.slice(0, 5), [documents]);
+
+  useEffect(() => {
+    if (searchParams.get("billing") !== "success") {
+      return;
+    }
+
+    toast({
+      title: "Subscription active",
+      description: "Payment completed successfully. Your workspace is now active.",
+      variant: "success",
+    });
+
+    router.replace("/dashboard");
+  }, [router, searchParams, toast]);
 
   if (casesLoading || hearingsLoading) {
     return (

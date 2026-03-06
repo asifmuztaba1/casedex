@@ -15,6 +15,8 @@ import { useRegister } from "@/features/auth/use-auth";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
+import type { BillingInterval } from "@/features/billing/types";
+import type { PlanId } from "@/features/billing/plan-catalog";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -27,6 +29,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [countryId, setCountryId] = useState("");
+  const [plan, setPlan] = useState<PlanId>("professional");
+  const [interval, setInterval] = useState<BillingInterval>("monthly");
   const [submitted, setSubmitted] = useState(false);
 
   const nameError = submitted && !name.trim();
@@ -79,7 +83,7 @@ export default function RegisterPage() {
                 },
                 {
                   onSuccess: () => {
-                    router.push("/setup");
+                    router.push(`/setup?plan=${plan}&interval=${interval}`);
                   },
                 }
               );
@@ -142,6 +146,43 @@ export default function RegisterPage() {
               {countryError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
               )}
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Package
+              </label>
+              <select
+                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                value={plan}
+                onChange={(event) => setPlan(event.target.value as PlanId)}
+              >
+                <option value="starter">Starter</option>
+                <option value="professional">Professional</option>
+                <option value="chambers">Chambers</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Billing cycle
+              </label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={interval === "monthly" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setInterval("monthly")}
+                >
+                  Monthly
+                </Button>
+                <Button
+                  type="button"
+                  variant={interval === "yearly" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setInterval("yearly")}
+                >
+                  Yearly
+                </Button>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
