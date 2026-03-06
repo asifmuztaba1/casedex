@@ -63,6 +63,8 @@ import {
   useCaseDocuments,
   useCreateDocument,
 } from "@/features/documents/use-documents";
+import { usePlanLimits } from "@/features/billing/use-billing";
+import StorageMeter from "@/components/storage-meter";
 import { useLocale } from "@/components/locale-provider";
 import type { CourtLookup } from "@/features/courts/use-courts";
 
@@ -107,6 +109,7 @@ export default function CaseDetailPage() {
   const { data: hearingsData } = useCaseHearings(casePublicId);
   const { data: diaryData } = useCaseDiaryEntries(casePublicId);
   const { data: documentsData } = useCaseDocuments(casePublicId);
+  const { data: planLimits } = usePlanLimits();
   const { data: participantsData } = useCaseParticipants(casePublicId);
   const { data: partiesData } = useCaseParties(casePublicId);
 
@@ -704,6 +707,13 @@ export default function CaseDetailPage() {
                     {t("document.allowed_types")}
                   </p>
                 </div>
+                {planLimits && (
+                  <StorageMeter
+                    usedBytes={planLimits.storage_used_bytes}
+                    limitBytes={planLimits.storage_limit_bytes}
+                    hasUnlimitedStorage={planLimits.has_unlimited_storage}
+                  />
+                )}
                 <div className="space-y-3">
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
@@ -742,7 +752,6 @@ export default function CaseDetailPage() {
                   </select>
                   <Input
                     type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(event) =>
                       setDocumentForm((prev) => ({
                         ...prev,
@@ -1164,6 +1173,14 @@ export default function CaseDetailPage() {
               <CardDescription>{t("dashboard.section.documents_desc")}</CardDescription>
             </CardHeader>
             <CardContent>
+              {planLimits && (
+                <StorageMeter
+                  usedBytes={planLimits.storage_used_bytes}
+                  limitBytes={planLimits.storage_limit_bytes}
+                  hasUnlimitedStorage={planLimits.has_unlimited_storage}
+                  className="mb-4"
+                />
+              )}
               {documents.length === 0 ? (
                 <EmptyState
                   title={t("case.detail.documents_empty_title")}

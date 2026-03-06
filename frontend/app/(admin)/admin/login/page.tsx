@@ -6,12 +6,14 @@ import { useLogin, useAuth } from "@/features/auth/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLocale } from "@/components/locale-provider";
+import { useToast } from "@/components/ui/use-toast";
 
 const PLATFORM_ROLES = ["platform_admin", "platform_editor"] as const;
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const { t } = useLocale();
+  const { toast } = useToast();
   const login = useLogin();
   const { data: user } = useAuth();
   const [email, setEmail] = useState("");
@@ -56,8 +58,22 @@ export default function AdminLoginPage() {
             login.mutate(
               { email, password },
               {
-                onSuccess: () => {
-                  router.replace("/admin");
+                onSuccess: (response) => {
+                  const role = response.data.role;
+                  if (
+                    PLATFORM_ROLES.includes(
+                      role as (typeof PLATFORM_ROLES)[number]
+                    )
+                  ) {
+                    router.replace("/admin");
+                    return;
+                  }
+
+                  toast({
+                    title: t("admin.login.access_denied_title"),
+                    description: t("admin.login.access_denied_desc"),
+                    variant: "error",
+                  });
                 },
               }
             );

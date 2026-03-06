@@ -4,6 +4,8 @@ namespace App\Domain\Tenancy\Enums;
 
 enum TenantPlan: string
 {
-    case Free = 'free';
-    case Premium = 'premium';
+    case Trial = 'trial';
+    case Starter = 'starter';
+    case Professional = 'professional';
+    case Chambers = 'chambers';
 }

@@ -15,8 +15,6 @@ use App\Domain\Clients\Models\Client;
 use App\Domain\Courts\Models\Court;
 use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Notifications\Actions\SendCasePartyAddedMailAction;
-use App\Domain\Tenancy\Enums\TenantPlan;
-use App\Domain\Tenancy\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -35,19 +33,6 @@ class CreateCaseAction
      */
     public function handle(array $data, ?Authenticatable $user): CaseFile
     {
-        $tenantId = TenantContext::id();
-        $tenant = Tenant::query()->findOrFail($tenantId);
-
-        if ($tenant->plan === TenantPlan::Free) {
-            $caseCount = CaseFile::query()
-                ->where('tenant_id', $tenantId)
-                ->count();
-
-            if ($caseCount >= 5) {
-                abort(403, __('messages.free_plan_case_limit'));
-            }
-        }
-
         return DB::transaction(function () use ($data, $user): CaseFile {
             $clientId = $data['client_id'] ?? null;
 

@@ -13,13 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth, useLogout } from "@/features/auth/use-auth";
+import { useSubscription } from "@/features/billing/use-billing";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   BookOpen,
+  CreditCard,
   Calendar,
   FileText,
   LayoutDashboard,
@@ -35,6 +38,7 @@ const navItems = [
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
+  { href: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
 ];
 
 export default function WorkspaceLayout({
@@ -45,7 +49,9 @@ export default function WorkspaceLayout({
   const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
   const logout = useLogout();
+  const { data: subscription } = useSubscription();
   const { locale, setLocale, t } = useLocale();
+  const pathname = usePathname();
   const { data: notificationsData } = useNotifications();
   const [mounted, setMounted] = useState(false);
   const notifications = notificationsData?.data ?? [];
@@ -77,6 +83,10 @@ export default function WorkspaceLayout({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const showSubscriptionWall =
+    subscription?.status === "expired" &&
+    pathname !== "/settings/billing";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -156,8 +166,13 @@ export default function WorkspaceLayout({
             <div className="flex flex-wrap items-center gap-3">
               <Input className="w-[220px]" placeholder={t("nav.search")} />
               <Badge variant="subtle">
-                {t("nav.tenant")}: {user?.tenant?.name ?? user?.tenant_name ?? t("nav.tenant")}
+                {t("nav.tenant")}: {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>
+              {subscription?.on_trial && subscription?.trial_ends_at && (
+                <Badge variant="outline">
+                  {t("billing.trial_ends")}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
+                </Badge>
+              )}
               <Button size="sm" asChild>
                 <a href="/cases/new">{t("nav.new_case")}</a>
               </Button>
@@ -258,6 +273,7 @@ export default function WorkspaceLayout({
           <AuthGuard>{children}</AuthGuard>
         </main>
       </div>
+      {showSubscriptionWall && <SubscriptionWall />}
     </div>
   );
 }
@@ -265,3 +281,6 @@ const LanguageSwitcher = dynamic(
   () => import("@/components/language-switcher"),
   { ssr: false }
 );
+const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"), {
+  ssr: false,
+});

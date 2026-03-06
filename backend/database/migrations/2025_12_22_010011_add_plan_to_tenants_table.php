@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::table('tenants', function (Blueprint $table): void {
             $table->enum('plan', array_column(TenantPlan::cases(), 'value'))
-                ->default(TenantPlan::Free->value)
+                ->default(TenantPlan::Trial->value)
                 ->after('name');
         });
     }

@@ -237,6 +237,18 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-lg">{t("billing.title")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-slate-600">
+            <p>{t("billing.subtitle")}</p>
+            <Button asChild className="mt-3 md-block">
+              <Link href="/settings/billing">{t("nav.billing")}</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
     </section>

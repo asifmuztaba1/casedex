@@ -35,6 +35,19 @@ export type AuthUser = {
   tenant_id: number | null;
   tenant?: {
     name?: string | null;
+    plan?: "trial" | "starter" | "professional" | "chambers" | null;
+    subscription_status?: string | null;
+    on_trial?: boolean;
+    trial_ends_at?: string | null;
+    on_grace_period?: boolean;
+    plan_limits?: {
+      storage_limit_bytes?: number | null;
+      storage_used_bytes?: number;
+      storage_remaining_bytes?: number | null;
+      has_unlimited_storage?: boolean;
+      has_audit_export?: boolean;
+      has_priority_support?: boolean;
+    } | null;
   } | null;
   tenant_name?: string | null;
   country_id: number | null;
@@ -258,7 +271,8 @@ export function useLogin() {
       await ensureCsrfCookie();
       return postJson<AuthResponse>("/api/v1/auth/login", payload);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      client.setQueryData(["auth-me"], response.data);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
         title: "Signed in",
@@ -363,6 +377,7 @@ export function useLogout() {
       return postJson<void>("/api/v1/auth/logout", {});
     },
     onSuccess: () => {
+      client.setQueryData(["auth-me"], null);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
         title: "Signed out",

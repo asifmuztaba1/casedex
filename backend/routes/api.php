@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\DiaryEntryController;
 use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\HearingController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\ResearchNoteController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AuthPasswordController;
@@ -73,6 +74,19 @@ Route::prefix('v1')
 
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'tenant'])
+    ->group(function (): void {
+        Route::post('/billing/checkout', [BillingController::class, 'checkout']);
+        Route::post('/billing/portal', [BillingController::class, 'portal']);
+        Route::get('/billing/subscription', [BillingController::class, 'subscription']);
+        Route::post('/billing/change-plan', [BillingController::class, 'changePlan']);
+        Route::post('/billing/cancel', [BillingController::class, 'cancel']);
+        Route::post('/billing/resume', [BillingController::class, 'resume']);
+        Route::get('/billing/invoices', [BillingController::class, 'invoices']);
+        Route::get('/billing/plan-limits', [BillingController::class, 'planLimits']);
+    });
+
+Route::prefix('v1')
+    ->middleware(['auth:sanctum', 'tenant', 'subscription.active'])
     ->group(function (): void {
         Route::get('/courts', [CourtLookupController::class, 'index']);
         Route::get('/cases', [CaseController::class, 'index']);

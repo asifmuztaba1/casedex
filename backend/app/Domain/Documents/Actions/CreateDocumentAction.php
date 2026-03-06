@@ -3,9 +3,11 @@
 namespace App\Domain\Documents\Actions;
 
 use App\Domain\Auth\Actions\RecordAuditLogAction;
+use App\Domain\Billing\Services\PlanFeatureService;
 use App\Domain\Cases\Models\CaseFile;
 use App\Domain\Documents\Models\Document;
 use App\Domain\Hearings\Models\Hearing;
+use App\Domain\Tenancy\Models\Tenant;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +15,10 @@ use Illuminate\Support\Str;
 
 class CreateDocumentAction
 {
-    public function __construct(private readonly RecordAuditLogAction $auditLog)
+    public function __construct(
+        private readonly RecordAuditLogAction $auditLog,
+        private readonly PlanFeatureService $planFeatureService
+    )
     {
     }
 
@@ -30,6 +35,16 @@ class CreateDocumentAction
         $case = CaseFile::query()
             ->where('public_id', $casePublicId)
             ->firstOrFail();
+
+        $tenant = Tenant::query()->find($case->tenant_id);
+        if ($tenant === null) {
+            abort(422, __('messages.tenant_context_missing'));
+        }
+
+        $fileSize = (int) ($file->getSize() ?? 0);
+        if (! $this->planFeatureService->canUploadFile($tenant, $fileSize)) {
+            abort(422, __('messages.storage_limit_reached'));
+        }
 
         $hearingId = null;
 

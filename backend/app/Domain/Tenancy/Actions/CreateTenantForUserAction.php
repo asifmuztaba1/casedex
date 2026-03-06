@@ -19,9 +19,14 @@ class CreateTenantForUserAction
         return DB::transaction(function () use ($user, $tenantName, $countryId, $locale): User {
             $tenant = Tenant::query()->create([
                 'name' => $tenantName,
-                'plan' => TenantPlan::Free,
+                'plan' => TenantPlan::Trial,
+                'trial_ends_at' => now()->addDays((int) config('billing.trial_days', 30)),
                 'country_id' => $countryId,
                 'locale' => $locale ?? $user->locale ?? config('app.locale'),
+            ]);
+
+            $tenant->createAsCustomer([
+                'trial_ends_at' => $tenant->trial_ends_at,
             ]);
 
             $user->tenant_id = $tenant->id;

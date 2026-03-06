@@ -3,6 +3,9 @@
 namespace App\Domain\Tenancy\Models;
 
 use Database\Factories\TenantFactory;
+use LemonSqueezy\Laravel\Billable;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,23 +14,45 @@ use App\Domain\Tenancy\Enums\TenantPlan;
 
 class Tenant extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+    use Billable;
 
     protected $fillable = [
         'name',
         'public_id',
         'plan',
+        'trial_ends_at',
         'country_id',
         'locale',
     ];
 
     protected $casts = [
         'plan' => TenantPlan::class,
+        'trial_ends_at' => 'datetime',
     ];
 
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function lemonSqueezyEmail(): ?string
+    {
+        return $this->users()
+            ->orderByRaw("role = 'admin' desc")
+            ->orderBy('id')
+            ->value('email');
+    }
+
+    public function lemonSqueezyCountry(): ?string
+    {
+        return $this->country?->code;
     }
 
     protected static function booted(): void

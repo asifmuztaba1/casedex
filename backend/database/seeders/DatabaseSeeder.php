@@ -36,20 +36,26 @@ class DatabaseSeeder extends Seeder
             ->where('code', 'BD')
             ->value('id');
 
-        User::query()->firstOrCreate(
+        User::query()->updateOrCreate(
             ['email' => 'platform.admin@casedex.app'],
             [
                 'name' => 'CaseDex Platform Admin',
                 'password' => Hash::make('password'),
                 'role' => UserRole::PlatformAdmin,
+                'tenant_id' => null,
                 'country_id' => $countryId,
             ]
         );
 
         $tenant = Tenant::create([
             'name' => 'Demo Law Firm',
-            'plan' => TenantPlan::Free,
+            'plan' => TenantPlan::Trial,
+            'trial_ends_at' => now()->addDays(30),
             'country_id' => $countryId,
+        ]);
+
+        $tenant->createAsCustomer([
+            'trial_ends_at' => $tenant->trial_ends_at,
         ]);
 
         TenantContext::set($tenant->id);

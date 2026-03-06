@@ -22,7 +22,8 @@ class TenantFactory extends Factory
         return [
             'name' => fake()->company(),
             'public_id' => (string) Str::ulid(),
-            'plan' => TenantPlan::Free,
+            'plan' => TenantPlan::Trial,
+            'trial_ends_at' => now()->addDays(30),
             'country_id' => null,
         ];
     }

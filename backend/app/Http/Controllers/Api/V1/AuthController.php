@@ -24,7 +24,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user()?->loadMissing(['tenant', 'tenant.country', 'country']);
+        $user = $request->user()?->loadMissing(['tenant', 'tenant.country', 'tenant.subscriptions', 'tenant.customer', 'country']);
 
         $auditLog->handle('auth.login', $user, User::class, $user?->public_id);
 
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()?->loadMissing(['tenant', 'tenant.country', 'country']);
+        $user = $request->user()?->loadMissing(['tenant', 'tenant.country', 'tenant.subscriptions', 'tenant.customer', 'country']);
 
         return new UserResource($user);
     }
@@ -47,7 +47,7 @@ class AuthController extends Controller
 
         $auditLog->handle('auth.register', $user, User::class, $user?->public_id);
 
-        $user->loadMissing(['tenant', 'tenant.country', 'country']);
+        $user->loadMissing(['tenant', 'tenant.country', 'tenant.subscriptions', 'tenant.customer', 'country']);
 
         return new UserResource($user);
     }

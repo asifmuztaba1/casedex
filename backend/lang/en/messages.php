@@ -14,4 +14,10 @@ return [
     'client_party_mismatch' => 'Client party must match the case client.',
     'invalid_download_signature' => 'Invalid or expired download link.',
     'auth_forbidden' => 'You are not authorized to perform this action.',
+    'subscription_required' => 'Your trial has ended. Subscribe to continue.',
+    'storage_limit_reached' => 'Storage limit reached for your current plan.',
+    'billing_variant_missing' => 'Billing variant is not configured.',
+    'billing_invalid_plan' => 'Selected billing plan is not valid.',
+    'billing_subscription_missing' => 'No active subscription found for this tenant.',
+    'billing_customer_missing' => 'Billing customer profile has not been created yet.',
 ];

@@ -5,6 +5,11 @@ namespace App\Providers;
 use App\Domain\Cases\Models\CaseFile;
 use App\Domain\Cases\Models\CaseParticipant;
 use App\Domain\Cases\Models\CaseParty;
+use App\Domain\Billing\Listeners\SubscriptionCancelledListener;
+use App\Domain\Billing\Listeners\SubscriptionCreatedListener;
+use App\Domain\Billing\Listeners\SubscriptionExpiredListener;
+use App\Domain\Billing\Listeners\SubscriptionPaymentFailedListener;
+use App\Domain\Billing\Listeners\SubscriptionUpdatedListener;
 use App\Domain\Clients\Models\Client;
 use App\Domain\Courts\Models\Court;
 use App\Domain\Courts\Models\CourtDistrict;
@@ -30,7 +35,13 @@ use App\Policies\ResearchNotePolicy;
 use App\Policies\PushSubscriptionPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use LemonSqueezy\Laravel\Events\SubscriptionCancelled;
+use LemonSqueezy\Laravel\Events\SubscriptionCreated;
+use LemonSqueezy\Laravel\Events\SubscriptionExpired;
+use LemonSqueezy\Laravel\Events\SubscriptionPaymentFailed;
+use LemonSqueezy\Laravel\Events\SubscriptionUpdated;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,5 +73,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(CourtDistrict::class, CourtAdminPolicy::class);
         Gate::policy(CourtType::class, CourtAdminPolicy::class);
         Gate::policy(Court::class, CourtAdminPolicy::class);
+
+        Event::listen(SubscriptionCreated::class, SubscriptionCreatedListener::class);
+        Event::listen(SubscriptionUpdated::class, SubscriptionUpdatedListener::class);
+        Event::listen(SubscriptionCancelled::class, SubscriptionCancelledListener::class);
+        Event::listen(SubscriptionExpired::class, SubscriptionExpiredListener::class);
+        Event::listen(SubscriptionPaymentFailed::class, SubscriptionPaymentFailedListener::class);
     }
 }
