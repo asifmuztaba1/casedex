@@ -21,6 +21,7 @@ class PlanFeatureService
     public function getStorageUsed(Tenant $tenant): int
     {
         return (int) Document::query()
+            ->withoutGlobalScopes()
             ->where('tenant_id', $tenant->id)
             ->sum('size');
     }
