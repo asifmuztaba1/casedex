@@ -16,6 +16,10 @@ return new class extends Migration
             });
         }
 
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE tenants MODIFY plan ENUM('free','premium','trial','starter','professional','chambers') NOT NULL DEFAULT 'trial'");
+        }
+
         DB::table('tenants')
             ->where('plan', 'free')
             ->update(['plan' => TenantPlan::Trial->value]);
