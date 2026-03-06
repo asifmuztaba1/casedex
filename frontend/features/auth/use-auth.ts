@@ -36,6 +36,7 @@ export type AuthUser = {
   tenant?: {
     name?: string | null;
     plan?: "trial" | "starter" | "professional" | "chambers" | null;
+    has_active_subscription?: boolean;
     subscription_status?: string | null;
     on_trial?: boolean;
     trial_ends_at?: string | null;

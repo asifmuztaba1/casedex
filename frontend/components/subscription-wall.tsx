@@ -4,19 +4,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCheckout } from "@/features/billing/use-billing";
 import { useLocale } from "@/components/locale-provider";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function SubscriptionWall() {
   const checkout = useCheckout();
   const { t } = useLocale();
+  const { toast } = useToast();
 
   const onSubscribe = async (plan: "starter" | "professional" | "chambers") => {
-    const response = await checkout.mutateAsync({
-      plan,
-      interval: "monthly",
-    });
+    try {
+      const response = await checkout.mutateAsync({
+        plan,
+        interval: "monthly",
+      });
 
-    if (response.checkout_url) {
-      window.location.href = response.checkout_url;
+      if (response.checkout_url) {
+        window.location.href = response.checkout_url;
+      }
+    } catch (error) {
+      toast({
+        title: "Checkout failed",
+        description: error instanceof Error ? error.message : "Unable to start checkout.",
+        variant: "error",
+      });
     }
   };
 

@@ -53,7 +53,18 @@ export default function LoginPage() {
               login.mutate(
                 { email, password },
                 {
-                  onSuccess: () => {
+                  onSuccess: (response) => {
+                    const loggedInUser = response.data;
+                    if (!loggedInUser.tenant_id) {
+                      router.push("/setup");
+                      return;
+                    }
+
+                    if (loggedInUser.tenant?.has_active_subscription === false) {
+                      router.push("/settings/billing?onboarding=1");
+                      return;
+                    }
+
                     router.push("/dashboard");
                   },
                 }

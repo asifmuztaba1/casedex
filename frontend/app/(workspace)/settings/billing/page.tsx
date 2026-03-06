@@ -20,6 +20,7 @@ import {
 import type { BillingInterval } from "@/features/billing/types";
 import { useLocale } from "@/components/locale-provider";
 import { PLAN_CATALOG, STORAGE_ADDON_FEATURES } from "@/features/billing/plan-catalog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function BillingSettingsPage() {
   const { t } = useLocale();
@@ -32,6 +33,7 @@ export default function BillingSettingsPage() {
   const cancel = useCancelSubscription();
   const resume = useResumeSubscription();
   const portal = useBillingPortal();
+  const { toast } = useToast();
 
   const trialText = useMemo(() => {
     if (!subscription?.trial_ends_at) {
@@ -46,15 +48,23 @@ export default function BillingSettingsPage() {
   const fromOnboarding = searchParams.get("onboarding") === "1";
 
   const onSelectPlan = async (plan: "starter" | "professional" | "chambers") => {
-    if (!subscription || subscription.status === "expired" || subscription.on_trial) {
-      const response = await checkout.mutateAsync({ plan, interval });
-      if (response.checkout_url) {
-        window.location.href = response.checkout_url;
+    try {
+      if (!subscription || subscription.status === "expired" || subscription.on_trial) {
+        const response = await checkout.mutateAsync({ plan, interval });
+        if (response.checkout_url) {
+          window.location.href = response.checkout_url;
+        }
+        return;
       }
-      return;
-    }
 
-    await changePlan.mutateAsync({ plan, interval });
+      await changePlan.mutateAsync({ plan, interval });
+    } catch (error) {
+      toast({
+        title: "Billing update failed",
+        description: error instanceof Error ? error.message : "Unable to update billing.",
+        variant: "error",
+      });
+    }
   };
 
   return (
@@ -92,9 +102,17 @@ export default function BillingSettingsPage() {
             <Button
               variant="outline"
               onClick={async () => {
-                const response = await portal.mutateAsync();
-                if (response.portal_url) {
-                  window.location.href = response.portal_url;
+                try {
+                  const response = await portal.mutateAsync();
+                  if (response.portal_url) {
+                    window.location.href = response.portal_url;
+                  }
+                } catch (error) {
+                  toast({
+                    title: "Portal unavailable",
+                    description: error instanceof Error ? error.message : "Unable to open billing portal.",
+                    variant: "error",
+                  });
                 }
               }}
             >
@@ -173,13 +191,21 @@ export default function BillingSettingsPage() {
           <Button
             variant="outline"
             onClick={async () => {
-              const response = await checkout.mutateAsync({
-                plan: "starter",
-                interval,
-                add_unlimited_storage: true,
-              });
-              if (response.checkout_url) {
-                window.location.href = response.checkout_url;
+              try {
+                const response = await checkout.mutateAsync({
+                  plan: "starter",
+                  interval,
+                  add_unlimited_storage: true,
+                });
+                if (response.checkout_url) {
+                  window.location.href = response.checkout_url;
+                }
+              } catch (error) {
+                toast({
+                  title: "Checkout failed",
+                  description: error instanceof Error ? error.message : "Unable to start checkout.",
+                  variant: "error",
+                });
               }
             }}
             disabled={checkout.isPending}

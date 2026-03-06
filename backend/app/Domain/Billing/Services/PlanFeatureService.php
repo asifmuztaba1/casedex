@@ -91,11 +91,7 @@ class PlanFeatureService
 
     public function hasAccess(Tenant $tenant): bool
     {
-        if ($this->hasActiveSubscription($tenant)) {
-            return true;
-        }
-
-        return ! $this->isTrialExpired($tenant);
+        return $this->hasActiveSubscription($tenant);
     }
 
     public function resolvePlanFromVariant(string $variantId): TenantPlan

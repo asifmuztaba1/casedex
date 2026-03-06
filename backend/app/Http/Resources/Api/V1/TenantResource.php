@@ -20,6 +20,7 @@ class TenantResource extends JsonResource
             'public_id' => $this->public_id,
             'name' => $this->name,
             'plan' => $this->plan?->value,
+            'has_active_subscription' => $planFeatures->hasActiveSubscription($this->resource),
             'subscription_status' => $subscription?->status ?? ($planFeatures->isTrialExpired($this->resource) ? 'expired' : 'on_trial'),
             'on_trial' => ! $planFeatures->isTrialExpired($this->resource) && ! $planFeatures->hasActiveSubscription($this->resource),
             'trial_ends_at' => $this->trial_ends_at,

@@ -14,12 +14,14 @@ import { useAuth } from "@/features/auth/use-auth";
 import { useCheckout } from "@/features/billing/use-billing";
 import { PLAN_CATALOG } from "@/features/billing/plan-catalog";
 import PlanTierCard from "@/components/plan-tier-card";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PricingPageClient() {
   const { t } = useLocale();
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const { data: user } = useAuth();
   const checkout = useCheckout();
+  const { toast } = useToast();
 
   return (
     <section className="space-y-12">
@@ -61,13 +63,21 @@ export default function PricingPageClient() {
             onCta={
               user?.tenant_id
                 ? async () => {
-                    const response = await checkout.mutateAsync({
-                      plan: plan.id,
-                      interval,
-                    });
+                    try {
+                      const response = await checkout.mutateAsync({
+                        plan: plan.id,
+                        interval,
+                      });
 
-                    if (response.checkout_url) {
-                      window.location.href = response.checkout_url;
+                      if (response.checkout_url) {
+                        window.location.href = response.checkout_url;
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Checkout failed",
+                        description: error instanceof Error ? error.message : "Unable to start checkout.",
+                        variant: "error",
+                      });
                     }
                   }
                 : undefined

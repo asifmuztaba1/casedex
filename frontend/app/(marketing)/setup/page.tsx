@@ -41,7 +41,11 @@ export default function SetupPage() {
     }
 
     if (user.tenant_id) {
-      router.replace("/settings/billing?onboarding=1");
+      if (user.tenant?.has_active_subscription === false) {
+        router.replace("/settings/billing?onboarding=1");
+      } else {
+        router.replace("/dashboard");
+      }
     }
   }, [isLoading, user, router]);
 

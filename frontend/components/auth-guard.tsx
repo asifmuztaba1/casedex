@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/use-auth";
 
 export default function AuthGuard({
@@ -10,6 +10,7 @@ export default function AuthGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: user, isLoading } = useAuth();
 
   useEffect(() => {
@@ -19,8 +20,18 @@ export default function AuthGuard({
     }
     if (!isLoading && user && !user.tenant_id) {
       router.replace("/setup");
+      return;
     }
-  }, [isLoading, user, router]);
+
+    if (
+      !isLoading &&
+      user?.tenant_id &&
+      user?.tenant?.has_active_subscription === false &&
+      pathname !== "/settings/billing"
+    ) {
+      router.replace("/settings/billing?onboarding=1");
+    }
+  }, [isLoading, user, pathname, router]);
 
   if (isLoading) {
     return (
@@ -31,6 +42,14 @@ export default function AuthGuard({
   }
 
   if (!user || !user.tenant_id) {
+    return null;
+  }
+
+  if (
+    user?.tenant_id &&
+    user?.tenant?.has_active_subscription === false &&
+    pathname !== "/settings/billing"
+  ) {
     return null;
   }
 
