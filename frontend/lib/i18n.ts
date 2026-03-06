@@ -167,7 +167,19 @@ const en: Dictionary = {
   "billing.no_invoices": "No invoices yet.",
   "billing.wall_title": "Your trial has ended",
   "billing.wall_desc": "Subscribe to continue using your case workspace.",
+  "billing.current_plan_badge": "Current",
+  "billing.trial_notice_line1": "30-day trial: no charge today.",
+  "billing.trial_notice_line2": "After your trial ends in 30 days, you will be charged.",
+  "billing.trial_notice_line3": "You can cancel anytime before trial end.",
+  "billing.onboarding_title": "Choose your package and add payment details",
+  "billing.onboarding_desc":
+    "You can add payment details now. No charge today. After your trial ends in 30 days, you will be charged unless you cancel.",
+  "billing.addon_title": "Unlimited storage add-on",
+  "billing.addon_desc":
+    "Available on any tier when your team needs unrestricted uploads.",
+  "billing.addon_buy": "Buy unlimited storage",
   "cases.new_case": "New case",
+  "register.subscription_package": "Subscription package",
   "security.badge": "Security",
   "security.title": "Security and compliance",
   "security.subtitle":
@@ -924,7 +936,21 @@ const bn: Dictionary = {
   "billing.no_invoices": "এখনও কোনো ইনভয়েস নেই।",
   "billing.wall_title": "আপনার ট্রায়াল শেষ হয়েছে",
   "billing.wall_desc": "চালিয়ে যেতে সাবস্ক্রাইব করুন।",
+  "billing.current_plan_badge": "বর্তমান",
+  "billing.trial_notice_line1": "৩০ দিনের ট্রায়াল: আজ কোনো চার্জ হবে না।",
+  "billing.trial_notice_line2":
+    "৩০ দিন পর ট্রায়াল শেষ হলে আপনার কাছ থেকে চার্জ কাটা হবে।",
+  "billing.trial_notice_line3":
+    "ট্রায়াল শেষ হওয়ার আগে যেকোনো সময় সাবস্ক্রিপশন বাতিল করতে পারবেন।",
+  "billing.onboarding_title": "আপনার প্যাকেজ নির্বাচন করুন এবং পেমেন্ট তথ্য দিন",
+  "billing.onboarding_desc":
+    "এখনই পেমেন্ট তথ্য দিতে পারেন। আজ কোনো চার্জ হবে না। ৩০ দিনের ট্রায়াল শেষ হলে, বাতিল না করলে চার্জ কাটা হবে।",
+  "billing.addon_title": "আনলিমিটেড স্টোরেজ অ্যাড-অন",
+  "billing.addon_desc":
+    "যে কোনো প্ল্যানে নেওয়া যায়, যখন আপনার টিমের সীমাহীন আপলোড দরকার।",
+  "billing.addon_buy": "আনলিমিটেড স্টোরেজ কিনুন",
   "cases.new_case": "নতুন কেস",
+  "register.subscription_package": "সাবস্ক্রিপশন প্যাকেজ",
   "security.badge": "নিরাপত্তা",
   "security.title": "নিরাপত্তা এবং সম্মতি",
   "security.subtitle": "CaseDex টেন্যান্ট আইসোলেশন, অডিট লগ, এবং সংবেদনশীল আইনি তথ্য সুরক্ষিত রাখতে স্বাক্ষরিত ডাউনলোড ব্যবহার করে।",

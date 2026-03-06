@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { BillingInterval } from "@/features/billing/types";
 import type { PlanCatalogItem } from "@/features/billing/plan-catalog";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale-provider";
 
 type PlanTierCardProps = {
   plan: PlanCatalogItem;
@@ -31,6 +32,7 @@ export default function PlanTierCard({
   disabled = false,
   className,
 }: PlanTierCardProps) {
+  const { t } = useLocale();
   const price = interval === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
 
   return (
@@ -46,7 +48,7 @@ export default function PlanTierCard({
         <div className="absolute right-4 top-4">
           <Badge variant="subtle" className="gap-1">
             <Sparkles className="h-3 w-3" />
-            {active ? "Current" : plan.badge ?? "Recommended"}
+            {active ? t("billing.current_plan_badge") : plan.badge ?? "Recommended"}
           </Badge>
         </div>
       )}
@@ -73,9 +75,9 @@ export default function PlanTierCard({
           ))}
         </div>
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-700">
-          <div>30-day trial: no charge today.</div>
-          <div>After your trial ends in 30 days, you will be charged.</div>
-          <div>You can cancel anytime before trial end.</div>
+          <div>{t("billing.trial_notice_line1")}</div>
+          <div>{t("billing.trial_notice_line2")}</div>
+          <div>{t("billing.trial_notice_line3")}</div>
         </div>
 
         {ctaHref ? (

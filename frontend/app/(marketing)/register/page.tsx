@@ -161,7 +161,7 @@ export default function RegisterPage() {
             <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Subscription package
+                  {t("register.subscription_package")}
                 </label>
                 <div className="flex gap-2">
                   <Button
@@ -226,9 +226,9 @@ export default function RegisterPage() {
                 })}
               </div>
               <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-xs text-slate-700">
-                <div>30-day trial: no charge today.</div>
-                <div>After your trial ends in 30 days, you will be charged.</div>
-                <div>You can cancel anytime before trial end.</div>
+                <div>{t("billing.trial_notice_line1")}</div>
+                <div>{t("billing.trial_notice_line2")}</div>
+                <div>{t("billing.trial_notice_line3")}</div>
               </div>
             </div>
             <div className="space-y-2">

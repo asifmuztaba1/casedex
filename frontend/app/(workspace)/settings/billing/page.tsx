@@ -72,9 +72,9 @@ export default function BillingSettingsPage() {
       {fromOnboarding && (
         <Card className="border-slate-300 bg-slate-50">
           <CardHeader>
-            <CardTitle>Choose your package and add payment details</CardTitle>
+            <CardTitle>{t("billing.onboarding_title")}</CardTitle>
             <CardDescription>
-              You can add payment details now. No charge today. After your trial ends in 30 days, you will be charged unless you cancel.
+              {t("billing.onboarding_desc")}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -177,8 +177,8 @@ export default function BillingSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Unlimited storage add-on</CardTitle>
-          <CardDescription>Available on any tier when your team needs unrestricted uploads.</CardDescription>
+          <CardTitle>{t("billing.addon_title")}</CardTitle>
+          <CardDescription>{t("billing.addon_desc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-2">
@@ -210,7 +210,7 @@ export default function BillingSettingsPage() {
             }}
             disabled={checkout.isPending}
           >
-            Buy unlimited storage
+            {t("billing.addon_buy")}
           </Button>
         </CardContent>
       </Card>
