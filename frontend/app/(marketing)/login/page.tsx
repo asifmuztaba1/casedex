@@ -13,11 +13,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/features/auth/use-auth";
 import { useLocale } from "@/components/locale-provider";
+import { useToast } from "@/components/ui/use-toast";
+
+const DEMO_ACCOUNTS = [
+  { label: "Tenant Admin", email: "admin@demo.casedex.app", password: "password" },
+  { label: "Tenant Lawyer", email: "lawyer@demo.casedex.app", password: "password" },
+  { label: "Tenant Assistant", email: "assistant@demo.casedex.app", password: "password" },
+  { label: "Platform Admin", email: "platform.admin@casedex.app", password: "password" },
+] as const;
 
 export default function LoginPage() {
   const router = useRouter();
   const login = useLogin();
   const { t } = useLocale();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -26,6 +35,55 @@ export default function LoginPage() {
   const emailInvalid =
     submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordError = submitted && !password.trim();
+
+  const handleLoginSuccess = (loggedInUser: {
+    tenant_id: number | null;
+    role?: string;
+    tenant?: { has_workspace_access?: boolean; has_active_subscription?: boolean } | null;
+  }) => {
+    if (loggedInUser.role === "platform_admin" || loggedInUser.role === "platform_editor") {
+      router.push("/admin");
+      return;
+    }
+
+    if (!loggedInUser.tenant_id) {
+      router.push("/onboarding");
+      return;
+    }
+
+    const hasWorkspaceAccess =
+      loggedInUser.tenant?.has_workspace_access ??
+      loggedInUser.tenant?.has_active_subscription ??
+      false;
+
+    if (!hasWorkspaceAccess) {
+      router.push("/settings/billing?onboarding=1");
+      return;
+    }
+
+    router.push("/dashboard");
+  };
+
+  const loginWithDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
+    setEmail(demo.email);
+    setPassword(demo.password);
+    setSubmitted(false);
+    login.mutate(
+      { email: demo.email, password: demo.password },
+      {
+        onSuccess: (response) => {
+          handleLoginSuccess(response.data);
+        },
+        onError: () => {
+          toast({
+            title: "Demo login failed",
+            description: "Seed demo accounts and try again.",
+            variant: "error",
+          });
+        },
+      }
+    );
+  };
 
   return (
     <section className="mx-auto w-full max-w-xl space-y-8">
@@ -54,18 +112,7 @@ export default function LoginPage() {
                 { email, password },
                 {
                   onSuccess: (response) => {
-                    const loggedInUser = response.data;
-                    if (!loggedInUser.tenant_id) {
-                      router.push("/setup");
-                      return;
-                    }
-
-                    if (loggedInUser.tenant?.has_active_subscription === false) {
-                      router.push("/settings/billing?onboarding=1");
-                      return;
-                    }
-
-                    router.push("/dashboard");
+                    handleLoginSuccess(response.data);
                   },
                 }
               );
@@ -125,6 +172,44 @@ export default function LoginPage() {
               </div>
             )}
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-slate-900">Demo accounts</CardTitle>
+          <CardDescription>Use these accounts to explore the product quickly.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {DEMO_ACCOUNTS.map((demo) => (
+            <div key={demo.email} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="text-sm font-medium text-slate-900">{demo.label}</div>
+              <div className="mt-1 text-xs text-slate-600">Email: {demo.email}</div>
+              <div className="text-xs text-slate-600">Password: {demo.password}</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEmail(demo.email);
+                    setPassword(demo.password);
+                    setSubmitted(false);
+                  }}
+                >
+                  Use
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => loginWithDemo(demo)}
+                  disabled={login.isPending}
+                >
+                  Login as {demo.label}
+                </Button>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </section>

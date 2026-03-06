@@ -18,7 +18,7 @@ class HearingReminderMail extends Mailable
     public function build(): self
     {
         return $this->subject('Hearing reminder')
-            ->text('emails.hearing-reminder')
+            ->view('emails.hearing-reminder')
             ->with([
                 'notification' => $this->notification,
             ]);

@@ -12,6 +12,10 @@ class CreateTenantForUserAction
 {
     public function handle(User $user, string $tenantName, int $countryId, ?string $locale = null): User
     {
+        if (in_array($user->role?->value, UserRole::platformRoles(), true)) {
+            abort(403, __('messages.platform_user_cannot_create_tenant'));
+        }
+
         if ($user->tenant_id !== null) {
             abort(409, __('messages.user_already_has_tenant'));
         }

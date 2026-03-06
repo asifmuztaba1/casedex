@@ -16,6 +16,7 @@ class UserResource extends JsonResource
             'public_id' => $this->public_id,
             'name' => $this->name,
             'email' => $this->email,
+            'email_verified_at' => $this->email_verified_at,
             'tenant_id' => $this->tenant_id,
             'tenant' => new TenantResource($this->whenLoaded('tenant')),
             'country_id' => $this->country_id,

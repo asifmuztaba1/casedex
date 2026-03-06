@@ -4,6 +4,7 @@ return [
     'tenant_context_missing' => 'Tenant context missing.',
     'invalid_credentials' => 'Invalid credentials.',
     'user_already_has_tenant' => 'User already belongs to a tenant.',
+    'platform_user_cannot_create_tenant' => 'Platform admin accounts cannot create tenant workspaces.',
     'case_not_found_public_id' => 'Case not found for the provided public_id.',
     'hearing_not_found_public_id' => 'Hearing not found for the provided public_id.',
     'user_not_found_public_id' => 'User not found for the provided public_id.',
@@ -20,4 +21,9 @@ return [
     'billing_invalid_plan' => 'Selected billing plan is not valid.',
     'billing_subscription_missing' => 'No active subscription found for this tenant.',
     'billing_customer_missing' => 'Billing customer profile has not been created yet.',
+    'manual_payment_country_restricted' => 'Manual bKash/Rocket payment is available for Bangladesh tenants only.',
+    'manual_payment_pending_exists' => 'A pending manual payment request already exists.',
+    'manual_payment_amount_mismatch' => 'Submitted amount does not match the selected plan price.',
+    'manual_payment_not_found' => 'Manual payment request not found.',
+    'manual_payment_not_pending' => 'Only pending manual payment requests can be reviewed.',
 ];

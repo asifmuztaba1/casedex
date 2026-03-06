@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/features/auth/use-auth";
 
 export default function AuthGuard({
@@ -11,7 +11,12 @@ export default function AuthGuard({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: user, isLoading } = useAuth();
+  const hasWorkspaceAccess =
+    user?.tenant?.has_workspace_access ?? user?.tenant?.has_active_subscription ?? false;
+  const isBillingSuccessReturn =
+    pathname === "/dashboard" && searchParams.get("billing") === "success";
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -19,19 +24,20 @@ export default function AuthGuard({
       return;
     }
     if (!isLoading && user && !user.tenant_id) {
-      router.replace("/setup");
+      router.replace("/subscribe");
       return;
     }
 
     if (
       !isLoading &&
       user?.tenant_id &&
-      user?.tenant?.has_active_subscription === false &&
-      pathname !== "/settings/billing"
+      hasWorkspaceAccess === false &&
+      pathname !== "/settings/billing" &&
+      !isBillingSuccessReturn
     ) {
       router.replace("/settings/billing?onboarding=1");
     }
-  }, [isLoading, user, pathname, router]);
+  }, [hasWorkspaceAccess, isBillingSuccessReturn, isLoading, user, pathname, router]);
 
   if (isLoading) {
     return (
@@ -47,8 +53,9 @@ export default function AuthGuard({
 
   if (
     user?.tenant_id &&
-    user?.tenant?.has_active_subscription === false &&
-    pathname !== "/settings/billing"
+    hasWorkspaceAccess === false &&
+    pathname !== "/settings/billing" &&
+    !isBillingSuccessReturn
   ) {
     return null;
   }

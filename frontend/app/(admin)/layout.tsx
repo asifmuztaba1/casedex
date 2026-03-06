@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 const adminNav = [
   { href: "/admin", key: "admin.nav.dashboard" },
   { href: "/admin/courts", key: "admin.nav.courts" },
+  { href: "/admin/manual-payments", key: "admin.nav.manual_payments" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

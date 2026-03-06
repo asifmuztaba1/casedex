@@ -10,6 +10,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('hearings:send-reminders')->dailyAt('08:00');
+        $schedule->command('ai:grant-monthly-credits')->dailyAt('00:15');
     }
 
     protected function commands(): void

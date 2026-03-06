@@ -10,6 +10,7 @@ use App\Domain\Billing\Listeners\SubscriptionCreatedListener;
 use App\Domain\Billing\Listeners\SubscriptionExpiredListener;
 use App\Domain\Billing\Listeners\SubscriptionPaymentFailedListener;
 use App\Domain\Billing\Listeners\SubscriptionUpdatedListener;
+use App\Domain\Ai\Listeners\LemonOrderCreatedListener;
 use App\Domain\Clients\Models\Client;
 use App\Domain\Courts\Models\Court;
 use App\Domain\Courts\Models\CourtDistrict;
@@ -40,6 +41,7 @@ use Illuminate\Support\ServiceProvider;
 use LemonSqueezy\Laravel\Events\SubscriptionCancelled;
 use LemonSqueezy\Laravel\Events\SubscriptionCreated;
 use LemonSqueezy\Laravel\Events\SubscriptionExpired;
+use LemonSqueezy\Laravel\Events\OrderCreated;
 use LemonSqueezy\Laravel\Events\SubscriptionPaymentFailed;
 use LemonSqueezy\Laravel\Events\SubscriptionUpdated;
 
@@ -79,5 +81,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(SubscriptionCancelled::class, SubscriptionCancelledListener::class);
         Event::listen(SubscriptionExpired::class, SubscriptionExpiredListener::class);
         Event::listen(SubscriptionPaymentFailed::class, SubscriptionPaymentFailedListener::class);
+        Event::listen(OrderCreated::class, LemonOrderCreatedListener::class);
     }
 }

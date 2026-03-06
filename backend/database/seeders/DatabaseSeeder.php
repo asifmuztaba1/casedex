@@ -7,12 +7,15 @@ use App\Domain\Cases\Enums\CaseParticipantRole;
 use App\Domain\Cases\Enums\CaseStatus;
 use App\Domain\Cases\Models\CaseFile;
 use App\Domain\Cases\Models\CaseParticipant;
+use App\Domain\Ai\Models\AiCreditPack;
 use App\Domain\Clients\Models\Client;
 use App\Domain\Documents\Enums\DocumentCategory;
 use App\Domain\Documents\Models\Document;
 use App\Domain\Hearings\Enums\HearingType;
 use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Diary\Models\DiaryEntry;
+use App\Domain\Billing\Enums\ManualPaymentChannel;
+use App\Domain\Billing\Models\ManualPaymentMethod;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
@@ -46,6 +49,43 @@ class DatabaseSeeder extends Seeder
                 'country_id' => $countryId,
             ]
         );
+
+        ManualPaymentMethod::query()->updateOrCreate(
+            ['channel' => ManualPaymentChannel::Bkash, 'receiver_number' => '01700000000'],
+            [
+                'account_name' => 'CaseDex Billing',
+                'instructions_en' => 'Send exact amount to this bKash number and submit transaction ID with screenshot.',
+                'instructions_bn' => 'এই bKash নম্বরে সঠিক টাকা পাঠান, তারপর ট্রান্স্যাকশন আইডি ও স্ক্রিনশট সাবমিট করুন।',
+                'active' => true,
+                'sort_order' => 1,
+            ]
+        );
+
+        ManualPaymentMethod::query()->updateOrCreate(
+            ['channel' => ManualPaymentChannel::Rocket, 'receiver_number' => '01800000000'],
+            [
+                'account_name' => 'CaseDex Billing',
+                'instructions_en' => 'Send exact amount to this Rocket number and submit transaction ID with screenshot.',
+                'instructions_bn' => 'এই Rocket নম্বরে সঠিক টাকা পাঠান, তারপর ট্রান্স্যাকশন আইডি ও স্ক্রিনশট সাবমিট করুন।',
+                'active' => true,
+                'sort_order' => 2,
+            ]
+        );
+
+        foreach (config('billing.ai.packs', []) as $code => $packConfig) {
+            AiCreditPack::query()->updateOrCreate(
+                ['code' => (string) $code],
+                [
+                    'name' => (string) ($packConfig['name'] ?? ucfirst((string) $code).' AI Pack'),
+                    'credits' => (int) ($packConfig['credits'] ?? 0),
+                    'price_usd_cents' => (int) ($packConfig['price_usd_cents'] ?? 0),
+                    'price_bdt' => (float) ($packConfig['price_bdt'] ?? 0),
+                    'lemon_variant_id' => $packConfig['lemon_variant_id'] ?? null,
+                    'active' => true,
+                    'sort_order' => (int) ($packConfig['sort_order'] ?? 0),
+                ]
+            );
+        }
 
         $tenant = Tenant::create([
             'name' => 'Demo Law Firm',

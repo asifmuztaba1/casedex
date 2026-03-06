@@ -84,7 +84,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function sendEmailVerificationNotification(): void
     {
         $url = URL::temporarySignedRoute(
-            'api.v1.auth.verify-email',
+            'auth.verify-email',
             now()->addMinutes(60),
             [
                 'id' => $this->id,

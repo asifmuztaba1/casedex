@@ -129,3 +129,206 @@ This section records the follow-up debugging and behavior fixes after initial im
 - Set `LEMON_SQUEEZY_SIGNING_SECRET`.
 - Ensure Lemon webhook points to active backend: `/lemon-squeezy/webhook`.
 - Re-test register -> setup -> billing selection -> checkout (test mode).
+
+## Session Addendum (2026-03-06 Late Updates)
+
+### A) Onboarding Flow Updated (Setup Removed From Main Path)
+- Decision: `/setup` should not be part of registration onboarding anymore.
+- Implemented flow:
+  - Register page now collects user + country + plan + interval.
+  - After submit, frontend creates user, creates minimal tenant silently, creates Lemon checkout, then redirects directly to payment.
+  - No second country selection and no extra package re-selection step.
+- Routing changes:
+  - No-tenant redirects now use `/subscribe` (auto checkout bootstrap), not `/setup`.
+  - `/setup` remains available as fallback page but is no longer primary onboarding.
+
+### B) Post-Payment Redirect Loop Fix
+- Issue: user returned to `/dashboard?billing=success` but got forced to `/settings/billing?onboarding=1`.
+- Root cause: subscription status can lag briefly while webhook sync completes.
+- Fixes:
+  - `AuthGuard` now allows the dashboard success return path temporarily.
+  - Dashboard performs short sync polling (`auth-me` + subscription refetch) before deciding final access.
+
+### C) Webhook 404 Root Cause and Infrastructure Fix
+- Observed in ngrok: repeated `POST /lemon-squeezy/webhook -> 404`.
+- Root cause: nginx on `localhost:8080` forwarded `/` to Next.js, so webhook route never reached Laravel.
+- Fix applied:
+  - Added exact nginx route:
+    - `location = /lemon-squeezy/webhook { proxy_pass http://backend:8000/lemon-squeezy/webhook; }`
+  - Reloaded nginx container.
+- Verification:
+  - Requests to `/lemon-squeezy/webhook` now reach Laravel (no longer frontend 404).
+
+### D) Webhook Security/Config Notes
+- `LEMON_SQUEEZY_SIGNING_SECRET` must be set and match Lemon dashboard webhook signing secret.
+- If signature header is missing/invalid, Laravel webhook middleware rejects request.
+- Current access gating depends on actual subscription rows created by successful webhook processing.
+
+### E) Why Dashboard Can Still Be Blocked
+- Access check is strict:
+  - `has_active_subscription` is derived from `tenant->subscribed()`.
+  - Middleware `EnsureActiveSubscription` blocks workspace APIs when false.
+- If webhook did not write a subscription record for that tenant, user remains blocked and routed to billing.
+
+### F) Local Webhook Testing Runbook (Docker + ngrok)
+1. Run app stack and ngrok to `localhost:8080`.
+2. In Lemon dashboard, set webhook URL to:
+   - `https://<ngrok-domain>/lemon-squeezy/webhook`
+3. Ensure backend env has:
+   - `LEMON_SQUEEZY_API_KEY`
+   - `LEMON_SQUEEZY_STORE`
+   - `LEMON_SQUEEZY_SIGNING_SECRET`
+   - all CaseDex variant IDs
+4. Restart backend and clear config cache:
+   - `docker restart compose-backend-1`
+   - `docker exec compose-backend-1 php artisan optimize:clear`
+5. Resend webhook (or complete test checkout again).
+6. Validate outcome:
+   - `lemon_squeezy_subscriptions` has new row
+   - `/api/v1/auth/me` returns `tenant.has_active_subscription = true`
+
+### G) Current Known Gaps (Non-blocking to this doc update)
+- Frontend typecheck still reports pre-existing `Badge` variant type mismatches in workspace files unrelated to webhook flow.
+- `/setup` page exists as legacy fallback and can be removed later once fully unused.
+
+## Session Addendum (2026-03-06 Manual MFS Billing)
+
+### H) Manual MFS Billing Implemented (bKash/Rocket + Admin Approval)
+
+#### Backend data model
+- Added `manual_payment_methods` table (platform-managed receiver numbers/instructions).
+- Added `manual_payment_requests` table with statuses:
+  - `pending`, `approved`, `rejected`, `expired`.
+- Added unique transaction enforcement:
+  - `manual_payment_requests.transaction_id` unique.
+- Enforced one active pending request per tenant at action layer:
+  - rejects submit when tenant already has non-expired pending request.
+
+#### Backend access control integration
+- Kept middleware `subscription.active` unchanged.
+- Updated decision logic in `PlanFeatureService::hasAccess()` to allow access when:
+  - Lemon subscription is active, or
+  - latest manual request is `pending` and `temporary_access_expires_at` is in future, or
+  - latest manual request is `approved` and within approved window.
+- Added auto-expiry transition:
+  - pending request auto-transitions to `expired` when 24h window is past.
+  - emits audit log + notifications on expiry.
+
+#### Backend tenant APIs
+Implemented under `auth:sanctum + tenant`:
+- `GET /api/v1/billing/manual-methods`
+  - Bangladesh-only availability via country code gate (`BD` from config).
+- `POST /api/v1/billing/manual-request`
+  - validates: plan/interval/amount/sender/transaction_id/sent_at/screenshot.
+  - enforces exact configured amount.
+- `GET /api/v1/billing/manual-request/status`
+  - returns latest request state.
+
+#### Backend admin APIs
+Implemented under `auth:sanctum + platform`:
+- `GET /api/v1/admin/manual-payments`
+  - filters: status/date/tenant.
+- `POST /api/v1/admin/manual-payments/{id}/approve`
+- `POST /api/v1/admin/manual-payments/{id}/reject`
+- `GET /api/v1/admin/manual-payments/{id}/screenshot`
+- `GET/POST/PUT/DELETE /api/v1/admin/manual-payment-methods`
+  - admin-editable receiver numbers/instructions.
+
+#### Subscription payload extension
+Added to billing/tenant responses:
+- `billing_source` (`lemon` | `manual_mfs` | `none`)
+- `manual_status`
+- `temporary_access_expires_at`
+- `has_workspace_access` (derived access state for frontend gating)
+
+#### Notifications + audit
+- Audit actions recorded for:
+  - submit / approve / reject / expire
+- In-app + email-channel notification records created for state changes.
+
+### I) Frontend implementation
+
+#### Billing UX for Bangladesh users
+- Billing settings page now shows both options when eligible:
+  - Lemon checkout
+  - Manual bKash/Rocket submission
+- Added manual section with:
+  - receiver methods/instructions (EN/BN)
+  - plan/interval exact amount view
+  - sender number, transaction ID, sent time, screenshot upload
+  - current request status + temporary-access countdown
+
+#### Admin UX
+- Added platform admin page:
+  - `/admin/manual-payments`
+- Supports:
+  - review + approve/reject manual requests
+  - screenshot preview/open
+  - receiver method management (create/enable-disable/delete)
+- Added admin navigation link for manual payments.
+
+#### Types/hooks
+- Extended billing types for manual state and method catalog.
+- Added tenant hooks:
+  - `useManualMethods`, `useManualRequestStatus`, `useSubmitManualRequest`
+- Added admin hooks for list/review/method CRUD.
+
+### J) Registration flow refinement
+- Register page now supports Bangladesh method choice:
+  - `Card checkout` (Lemon)
+  - `bKash / Rocket` (manual)
+- For manual selection:
+  - register + tenant creation complete,
+  - then redirect to billing onboarding with selected plan/interval for proof submission.
+
+### K) Verification run results
+- Migrations: **passed** on active docker stack.
+  - `2026_03_06_170000_create_manual_payment_methods_table`
+  - `2026_03_06_170100_create_manual_payment_requests_table`
+- Frontend build (`pnpm build` in docker): **passed**.
+- Backend route registration for manual endpoints: **confirmed**.
+- Backend full test suite in current environment: **blocked by pre-existing test DB/migration setup mismatch**.
+  - Default container env points DB to MySQL database name while PHPUnit forces SQLite.
+  - Existing migration `ALTER TABLE ... MODIFY ... ENUM` is not SQLite-compatible.
+  - This failure is infrastructure/migration compatibility debt not introduced by manual MFS code.
+
+## Session Addendum (2026-03-06 Email Templates + Delivery Wiring)
+
+### L) Unified Email Template Design
+- Introduced a shared branded HTML email layout:
+  - `backend/resources/views/emails/layouts/base.blade.php`
+- Updated all existing mail views to use the shared visual shell while keeping distinct content per notification type:
+  - Verify email
+  - Password reset
+  - Password changed
+  - Team member invite
+  - Hearing reminder
+  - Case party added
+
+### M) Mailable Rendering Upgrade
+- Switched existing mailables from text-only rendering to HTML views:
+  - `VerifyEmailMail`, `PasswordResetMail`, `PasswordChangedMail`, `TeamMemberInviteMail`, `HearingReminderMail`, `CasePartyAddedMail`.
+
+### N) Email Delivery Started For Notification Channel
+- Added new mailable:
+  - `backend/app/Mail/CaseNotificationMail.php`
+- Added new view:
+  - `backend/resources/views/emails/case-notification.blade.php`
+- Updated `DispatchCaseNotificationJob`:
+  - if `channel = email`, send email to notification user
+  - then mark notification sent
+  - if email target missing, mark failed and log warning
+
+### O) Billing Notification Delivery Wiring
+- Billing manual/failed payment code paths were creating `CaseNotification` rows but not dispatching email jobs.
+- Added `DispatchCaseNotificationJob::dispatch(...)` after notification creation in:
+  - manual submit action
+  - manual approve action
+  - manual reject action
+  - manual pending-expired handler
+  - subscription payment failed listener
+
+### P) Verification
+- PHP syntax checks passed for updated backend files.
+- Backend test suite passed in Docker with MySQL env override:
+  - `14 passed`.

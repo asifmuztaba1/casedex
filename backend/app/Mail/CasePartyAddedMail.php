@@ -23,7 +23,7 @@ class CasePartyAddedMail extends Mailable
     public function build(): self
     {
         return $this->subject('You have been added to a case')
-            ->text('emails.case-party-added')
+            ->view('emails.case-party-added')
             ->with([
                 'case' => $this->case,
                 'party' => $this->party,

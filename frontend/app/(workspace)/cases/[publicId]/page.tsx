@@ -67,6 +67,14 @@ import { usePlanLimits } from "@/features/billing/use-billing";
 import StorageMeter from "@/components/storage-meter";
 import { useLocale } from "@/components/locale-provider";
 import type { CourtLookup } from "@/features/courts/use-courts";
+import {
+  useAiDiarySummary,
+  useAiDocumentQa,
+  useAiHearingSummary,
+  useAiRequestStatus,
+  useAiResearchSummary,
+} from "@/features/ai/use-ai";
+import { useToast } from "@/components/ui/use-toast";
 
 // Make option arrays literal so we can derive union types from them.
 const statusOptions = ["open", "active", "closed", "archived"] as const;
@@ -127,6 +135,11 @@ export default function CaseDetailPage() {
   const removeParticipant = useRemoveCaseParticipant();
   const addParty = useAddCaseParty();
   const removeParty = useRemoveCaseParty();
+  const aiHearingSummary = useAiHearingSummary();
+  const aiDiarySummary = useAiDiarySummary();
+  const aiResearchSummary = useAiResearchSummary();
+  const aiDocumentQa = useAiDocumentQa();
+  const { toast } = useToast();
 
   const recentDiaryEntries = caseDetail?.recent_diary_entries ?? [];
   const recentDocuments = caseDetail?.recent_documents ?? [];
@@ -172,6 +185,9 @@ export default function CaseDetailPage() {
   const [participantQuery, setParticipantQuery] = useState("");
   const [participantSubmitted, setParticipantSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [activeAiRequestId, setActiveAiRequestId] = useState<string | null>(null);
+  const [documentQaQuestion, setDocumentQaQuestion] = useState("");
+  const [documentQaResult, setDocumentQaResult] = useState<string | null>(null);
 
   const [partyForm, setPartyForm] = useState<{
     name: string;
@@ -195,6 +211,7 @@ export default function CaseDetailPage() {
     notes: "",
   });
   const [partySubmitted, setPartySubmitted] = useState(false);
+  const activeAiRequest = useAiRequestStatus(activeAiRequestId);
 
   const [editForm, setEditForm] = useState({
     title: caseDetail?.title ?? "",
@@ -223,6 +240,55 @@ export default function CaseDetailPage() {
     });
     setSelectedCourt(null);
   }, [caseDetail]);
+
+  useEffect(() => {
+    if (!activeAiRequest.data) {
+      return;
+    }
+
+    if (activeAiRequest.data.status === "completed" && activeAiRequest.data.result_text) {
+      if (activeAiRequest.data.feature === "document_qa") {
+        setDocumentQaResult(activeAiRequest.data.result_text);
+      } else if (activeAiRequest.data.feature === "hearing_summary") {
+        setHearingForm((prev) => ({
+          ...prev,
+          minutes: activeAiRequest.data?.result_text ?? prev.minutes,
+        }));
+      } else if (activeAiRequest.data.feature === "diary_summary") {
+        setDiaryForm((prev) => ({
+          ...prev,
+          body: activeAiRequest.data?.result_text ?? prev.body,
+        }));
+      } else if (activeAiRequest.data.feature === "research_summary") {
+        setEditForm((prev) => ({
+          ...prev,
+          petition_draft: activeAiRequest.data?.result_text ?? prev.petition_draft,
+        }));
+      }
+
+      setActiveAiRequestId(null);
+      return;
+    }
+
+    if (activeAiRequest.data.status === "blocked_insufficient_credits") {
+      toast({
+        title: "AI credits required",
+        description: "Your tenant has no AI credits left. Top up in Billing.",
+        variant: "error",
+      });
+      setActiveAiRequestId(null);
+      return;
+    }
+
+    if (activeAiRequest.data.status === "failed") {
+      toast({
+        title: "AI request failed",
+        description: activeAiRequest.data.error_message ?? "Unable to process AI request.",
+        variant: "error",
+      });
+      setActiveAiRequestId(null);
+    }
+  }, [activeAiRequest.data, toast]);
 
   const canManageParticipants = useMemo(() => {
     if (!user || !caseDetail) {
@@ -415,6 +481,28 @@ export default function CaseDetailPage() {
                     }
                     placeholder={t("cases.petition.placeholder")}
                   />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const response = await aiResearchSummary.mutateAsync({
+                          content: editForm.petition_draft,
+                        });
+                        setActiveAiRequestId(response.public_id);
+                      } catch (error) {
+                        toast({
+                          title: "AI request failed",
+                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          variant: "error",
+                        });
+                      }
+                    }}
+                    disabled={aiResearchSummary.isPending || !editForm.petition_draft.trim()}
+                  >
+                    {aiResearchSummary.isPending ? "Queuing..." : "AI summarize petition (5 credits)"}
+                  </Button>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -495,6 +583,28 @@ export default function CaseDetailPage() {
                       }))
                     }
                   />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const response = await aiHearingSummary.mutateAsync({
+                          content: `Agenda: ${hearingForm.agenda}\nOutcome: ${hearingForm.outcome}\nMinutes: ${hearingForm.minutes}\nNext steps: ${hearingForm.next_steps}`,
+                        });
+                        setActiveAiRequestId(response.public_id);
+                      } catch (error) {
+                        toast({
+                          title: "AI request failed",
+                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          variant: "error",
+                        });
+                      }
+                    }}
+                    disabled={aiHearingSummary.isPending || !hearingForm.agenda}
+                  >
+                    {aiHearingSummary.isPending ? "Queuing..." : "AI summarize hearing (4 credits)"}
+                  </Button>
                   <Input
                     placeholder={t("case.detail.location_placeholder")}
                     value={hearingForm.location}
@@ -653,6 +763,28 @@ export default function CaseDetailPage() {
                       }))
                     }
                   />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const response = await aiDiarySummary.mutateAsync({
+                          content: diaryForm.body,
+                        });
+                        setActiveAiRequestId(response.public_id);
+                      } catch (error) {
+                        toast({
+                          title: "AI request failed",
+                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          variant: "error",
+                        });
+                      }
+                    }}
+                    disabled={aiDiarySummary.isPending || !diaryForm.body.trim()}
+                  >
+                    {aiDiarySummary.isPending ? "Queuing..." : "AI rewrite diary (3 credits)"}
+                  </Button>
                   {diaryBodyError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
                   )}
@@ -1181,6 +1313,43 @@ export default function CaseDetailPage() {
                   className="mb-4"
                 />
               )}
+              <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                <div className="text-sm font-semibold text-slate-900">Document Q&A (2 credits)</div>
+                <Input
+                  value={documentQaQuestion}
+                  onChange={(event) => setDocumentQaQuestion(event.target.value)}
+                  placeholder="Ask a question about uploaded case documents"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      const context = documents.map((doc) => `${doc.original_name} (${doc.category ?? "other"})`).join("\n");
+                      const response = await aiDocumentQa.mutateAsync({
+                        question: documentQaQuestion,
+                        context,
+                      });
+                      setActiveAiRequestId(response.public_id);
+                    } catch (error) {
+                      toast({
+                        title: "AI request failed",
+                        description: error instanceof Error ? error.message : "Unable to start document Q&A.",
+                        variant: "error",
+                      });
+                    }
+                  }}
+                  disabled={aiDocumentQa.isPending || !documentQaQuestion.trim()}
+                >
+                  {aiDocumentQa.isPending ? "Queuing..." : "Ask AI"}
+                </Button>
+                {documentQaResult && (
+                  <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
+                    {documentQaResult}
+                  </div>
+                )}
+              </div>
               {documents.length === 0 ? (
                 <EmptyState
                   title={t("case.detail.documents_empty_title")}

@@ -25,7 +25,7 @@ class AuthVerificationController extends Controller
 
         $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
-        return redirect()->away($frontendUrl.'/login?verified=1');
+        return redirect()->away($frontendUrl.'/onboarding/account?verified=1');
     }
 
     public function resend(Request $request)

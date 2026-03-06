@@ -40,4 +40,64 @@ return [
     'addons' => [
         'unlimited_storage_variant' => env('LEMON_SQUEEZY_UNLIMITED_STORAGE_VARIANT'),
     ],
+
+    'manual_mfs' => [
+        'enabled_country_codes' => ['BD'],
+        'currency' => env('BILLING_MANUAL_CURRENCY', 'BDT'),
+        'temporary_access_hours' => (int) env('BILLING_MANUAL_TEMPORARY_ACCESS_HOURS', 24),
+        'prices' => [
+            TenantPlan::Starter->value => [
+                'monthly' => (float) env('BILLING_MANUAL_STARTER_MONTHLY', 1900),
+                'yearly' => (float) env('BILLING_MANUAL_STARTER_YEARLY', 19000),
+            ],
+            TenantPlan::Professional->value => [
+                'monthly' => (float) env('BILLING_MANUAL_PROFESSIONAL_MONTHLY', 4900),
+                'yearly' => (float) env('BILLING_MANUAL_PROFESSIONAL_YEARLY', 49000),
+            ],
+            TenantPlan::Chambers->value => [
+                'monthly' => (float) env('BILLING_MANUAL_CHAMBERS_MONTHLY', 9900),
+                'yearly' => (float) env('BILLING_MANUAL_CHAMBERS_YEARLY', 99000),
+            ],
+        ],
+    ],
+
+    'ai' => [
+        'monthly_free_credits' => (int) env('AI_MONTHLY_FREE_CREDITS', 100),
+        'feature_costs' => [
+            'hearing_summary' => (int) env('AI_COST_HEARING_SUMMARY', 4),
+            'diary_summary' => (int) env('AI_COST_DIARY_SUMMARY', 3),
+            'research_summary' => (int) env('AI_COST_RESEARCH_SUMMARY', 5),
+            'document_qa' => (int) env('AI_COST_DOCUMENT_QA', 2),
+        ],
+        'packs' => [
+            'small' => [
+                'name' => env('AI_PACK_SMALL_NAME', 'Small AI Pack'),
+                'credits' => (int) env('AI_PACK_SMALL_CREDITS', 100),
+                'price_usd_cents' => (int) env('AI_PACK_SMALL_PRICE_USD_CENTS', 900),
+                'price_bdt' => (float) env('AI_PACK_SMALL_PRICE_BDT', 999),
+                'lemon_variant_id' => env('LEMON_SQUEEZY_AI_PACK_SMALL_VARIANT'),
+                'sort_order' => 10,
+            ],
+            'medium' => [
+                'name' => env('AI_PACK_MEDIUM_NAME', 'Medium AI Pack'),
+                'credits' => (int) env('AI_PACK_MEDIUM_CREDITS', 300),
+                'price_usd_cents' => (int) env('AI_PACK_MEDIUM_PRICE_USD_CENTS', 2400),
+                'price_bdt' => (float) env('AI_PACK_MEDIUM_PRICE_BDT', 2799),
+                'lemon_variant_id' => env('LEMON_SQUEEZY_AI_PACK_MEDIUM_VARIANT'),
+                'sort_order' => 20,
+            ],
+            'large' => [
+                'name' => env('AI_PACK_LARGE_NAME', 'Large AI Pack'),
+                'credits' => (int) env('AI_PACK_LARGE_CREDITS', 800),
+                'price_usd_cents' => (int) env('AI_PACK_LARGE_PRICE_USD_CENTS', 5600),
+                'price_bdt' => (float) env('AI_PACK_LARGE_PRICE_BDT', 6499),
+                'lemon_variant_id' => env('LEMON_SQUEEZY_AI_PACK_LARGE_VARIANT'),
+                'sort_order' => 30,
+            ],
+        ],
+        'default_alert_thresholds' => [
+            (int) env('AI_ALERT_THRESHOLD_LOW', 50),
+            (int) env('AI_ALERT_THRESHOLD_CRITICAL', 15),
+        ],
+    ],
 ];

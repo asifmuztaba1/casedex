@@ -4,6 +4,7 @@ return [
     'tenant_context_missing' => 'টেন্যান্ট প্রসঙ্গ অনুপস্থিত।',
     'invalid_credentials' => 'ভুল ইমেইল বা পাসওয়ার্ড।',
     'user_already_has_tenant' => 'ব্যবহারকারী ইতিমধ্যে একটি টেন্যান্টের সাথে যুক্ত।',
+    'platform_user_cannot_create_tenant' => 'প্ল্যাটফর্ম অ্যাডমিন অ্যাকাউন্ট দিয়ে টেন্যান্ট ওয়ার্কস্পেস তৈরি করা যাবে না।',
     'case_not_found_public_id' => 'প্রদত্ত public_id এর জন্য কেস পাওয়া যায়নি।',
     'hearing_not_found_public_id' => 'প্রদত্ত public_id এর জন্য শুনানি পাওয়া যায়নি।',
     'user_not_found_public_id' => 'প্রদত্ত public_id এর জন্য ব্যবহারকারী পাওয়া যায়নি।',
@@ -20,4 +21,9 @@ return [
     'billing_invalid_plan' => 'নির্বাচিত বিলিং প্ল্যানটি বৈধ নয়।',
     'billing_subscription_missing' => 'এই টেন্যান্টের জন্য কোনো সক্রিয় সাবস্ক্রিপশন পাওয়া যায়নি।',
     'billing_customer_missing' => 'বিলিং কাস্টমার প্রোফাইল এখনও তৈরি হয়নি।',
+    'manual_payment_country_restricted' => 'ম্যানুয়াল বিকাশ/রকেট পেমেন্ট শুধুমাত্র বাংলাদেশি টেন্যান্টদের জন্য উপলব্ধ।',
+    'manual_payment_pending_exists' => 'ইতিমধ্যে একটি পেন্ডিং ম্যানুয়াল পেমেন্ট অনুরোধ রয়েছে।',
+    'manual_payment_amount_mismatch' => 'জমা দেওয়া পরিমাণ নির্বাচিত প্ল্যানের মূল্যের সাথে মেলেনি।',
+    'manual_payment_not_found' => 'ম্যানুয়াল পেমেন্ট অনুরোধ পাওয়া যায়নি।',
+    'manual_payment_not_pending' => 'শুধুমাত্র পেন্ডিং ম্যানুয়াল পেমেন্ট অনুরোধ পর্যালোচনা করা যাবে।',
 ];

@@ -9,6 +9,9 @@ import { useLocale } from "@/components/locale-provider";
 import { useToast } from "@/components/ui/use-toast";
 
 const PLATFORM_ROLES = ["platform_admin", "platform_editor"] as const;
+const ADMIN_DEMO_ACCOUNTS = [
+  { label: "Platform Admin", email: "platform.admin@casedex.app", password: "password" },
+] as const;
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -24,6 +27,31 @@ export default function AdminLoginPage() {
   const emailInvalid =
     submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordError = submitted && !password.trim();
+
+  const loginAsDemo = (demo: (typeof ADMIN_DEMO_ACCOUNTS)[number]) => {
+    setEmail(demo.email);
+    setPassword(demo.password);
+    setSubmitted(false);
+
+    login.mutate(
+      { email: demo.email, password: demo.password },
+      {
+        onSuccess: (response) => {
+          const role = response.data.role;
+          if (PLATFORM_ROLES.includes(role as (typeof PLATFORM_ROLES)[number])) {
+            router.replace("/admin");
+            return;
+          }
+
+          toast({
+            title: t("admin.login.access_denied_title"),
+            description: t("admin.login.access_denied_desc"),
+            variant: "error",
+          });
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     if (
@@ -113,6 +141,38 @@ export default function AdminLoginPage() {
             {login.isPending ? t("login.button_pending") : t("admin.login.button")}
           </Button>
         </form>
+
+        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="text-sm font-semibold text-slate-900">Demo platform account</div>
+          {ADMIN_DEMO_ACCOUNTS.map((demo) => (
+            <div key={demo.email} className="mt-2">
+              <div className="text-xs text-slate-600">Email: {demo.email}</div>
+              <div className="text-xs text-slate-600">Password: {demo.password}</div>
+              <div className="mt-2 flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEmail(demo.email);
+                    setPassword(demo.password);
+                    setSubmitted(false);
+                  }}
+                >
+                  Use
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => loginAsDemo(demo)}
+                  disabled={login.isPending}
+                >
+                  Login now
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

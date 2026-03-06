@@ -23,7 +23,11 @@ class NotificationController extends Controller
 
         $perPage = (int) ($request->input('per_page', 25));
 
-        $notifications = $action->handle($perPage, $request->input('cursor'));
+        $notifications = $action->handle(
+            $perPage,
+            $request->input('cursor'),
+            (int) $request->user()->id
+        );
 
         return NotificationResource::collection($notifications);
     }

@@ -20,7 +20,7 @@ class VerifyEmailMail extends Mailable
     public function build(): self
     {
         return $this->subject('Verify your CaseDex™ email')
-            ->text('emails.verify-email')
+            ->view('emails.verify-email')
             ->with([
                 'user' => $this->user,
                 'verificationUrl' => $this->verificationUrl,

@@ -20,7 +20,7 @@ class PasswordResetMail extends Mailable
     public function build(): self
     {
         return $this->subject('Reset your CaseDex™ password')
-            ->text('emails.password-reset')
+            ->view('emails.password-reset')
             ->with([
                 'user' => $this->user,
                 'resetUrl' => $this->resetUrl,

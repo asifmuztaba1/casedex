@@ -21,7 +21,7 @@ class TeamMemberInviteMail extends Mailable
     public function build(): self
     {
         return $this->subject('You have been added to a CaseDex™ workspace')
-            ->text('emails.team-member-invite')
+            ->view('emails.team-member-invite')
             ->with([
                 'user' => $this->user,
                 'temporaryPassword' => $this->temporaryPassword,

@@ -21,7 +21,7 @@ class PasswordChangedMail extends Mailable
     public function build(): self
     {
         return $this->subject('Your CaseDex™ password was updated')
-            ->text('emails.password-changed')
+            ->view('emails.password-changed')
             ->with([
                 'user' => $this->user,
                 'ipAddress' => $this->ipAddress,

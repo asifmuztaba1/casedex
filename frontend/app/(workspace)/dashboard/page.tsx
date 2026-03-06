@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
+import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,13 +40,16 @@ import { useLocale } from "@/components/locale-provider";
 import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { useSubscription } from "@/features/billing/use-billing";
 
 export default function DashboardPage() {
   const { t } = useLocale();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: user } = useAuth();
+  const { refetch: refetchSubscription } = useSubscription();
   const { data: casesData, isLoading: casesLoading } = useCases();
   const { data: hearingsData, isLoading: hearingsLoading } = useHearings();
   const { data: diaryData } = useDiaryEntries();
@@ -73,15 +77,58 @@ export default function DashboardPage() {
     if (searchParams.get("billing") !== "success") {
       return;
     }
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 10;
 
-    toast({
-      title: "Subscription active",
-      description: "Payment completed successfully. Your workspace is now active.",
-      variant: "success",
-    });
+    const checkAndSync = async () => {
+      attempts += 1;
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["auth-me"] }),
+        refetchSubscription(),
+      ]);
 
-    router.replace("/dashboard");
-  }, [router, searchParams, toast]);
+      if (cancelled) {
+        return;
+      }
+
+      const refreshedUser = queryClient.getQueryData<{
+        tenant?: { has_active_subscription?: boolean; has_workspace_access?: boolean } | null;
+      }>(["auth-me"]);
+      const hasAccess =
+        (refreshedUser?.tenant?.has_workspace_access ??
+          refreshedUser?.tenant?.has_active_subscription ??
+          false) === true;
+
+      if (hasAccess) {
+        toast({
+          title: "Subscription active",
+          description: "Payment completed successfully. Your workspace is now active.",
+          variant: "success",
+        });
+        router.replace("/dashboard");
+        return;
+      }
+
+      if (attempts >= maxAttempts) {
+        toast({
+          title: "Payment processing",
+          description: "Your payment was received. Subscription sync is still pending.",
+          variant: "error",
+        });
+        router.replace("/settings/billing?onboarding=1");
+        return;
+      }
+
+      setTimeout(checkAndSync, 2000);
+    };
+
+    void checkAndSync();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [queryClient, refetchSubscription, router, searchParams, toast]);
 
   if (casesLoading || hearingsLoading) {
     return (

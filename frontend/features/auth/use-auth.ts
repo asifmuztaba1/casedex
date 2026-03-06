@@ -32,11 +32,16 @@ export type AuthUser = {
   public_id: string;
   name: string;
   email: string;
+  email_verified_at?: string | null;
   tenant_id: number | null;
   tenant?: {
     name?: string | null;
     plan?: "trial" | "starter" | "professional" | "chambers" | null;
     has_active_subscription?: boolean;
+    has_workspace_access?: boolean;
+    billing_source?: "lemon" | "manual_mfs" | "none";
+    manual_status?: "pending" | "approved" | "rejected" | "expired" | null;
+    temporary_access_expires_at?: string | null;
     subscription_status?: string | null;
     on_trial?: boolean;
     trial_ends_at?: string | null;
@@ -117,6 +122,7 @@ type CreateTenantPayload = {
   tenant_name: string;
   country_id: number;
   locale?: "en" | "bn";
+  skipToast?: boolean;
 };
 
 type UpdateProfilePayload = {
@@ -318,6 +324,31 @@ export function useRegister() {
   });
 }
 
+export function useResendVerificationEmail() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async () => {
+      await ensureCsrfCookie();
+      return postJson<void>("/api/v1/auth/email/verification-notification", {});
+    },
+    onSuccess: () => {
+      toast({
+        title: "Verification sent",
+        description: "Check your inbox for the verification link.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Request failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
+    },
+  });
+}
+
 export function useForgotPassword() {
   const { toast } = useToast();
 
@@ -477,22 +508,27 @@ export function useCreateTenant() {
   return useMutation({
     mutationFn: async (payload: CreateTenantPayload) => {
       await ensureCsrfCookie();
-      return postJson<AuthResponse>("/api/v1/tenants", payload);
+      const { skipToast, ...requestPayload } = payload;
+      return postJson<AuthResponse>("/api/v1/tenants", requestPayload);
     },
-    onSuccess: () => {
+    onSuccess: (_response, variables) => {
       client.invalidateQueries({ queryKey: ["auth-me"] });
-      toast({
-        title: "Firm created",
-        description: "Your firm workspace is ready.",
-        variant: "success",
-      });
+      if (!variables.skipToast) {
+        toast({
+          title: "Firm created",
+          description: "Your firm workspace is ready.",
+          variant: "success",
+        });
+      }
     },
-    onError: (error) => {
-      toast({
-        title: "Firm not created",
-        description: getErrorMessage(error),
-        variant: "error",
-      });
+    onError: (error, variables) => {
+      if (!variables.skipToast) {
+        toast({
+          title: "Firm not created",
+          description: getErrorMessage(error),
+          variant: "error",
+        });
+      }
     },
   });
 }

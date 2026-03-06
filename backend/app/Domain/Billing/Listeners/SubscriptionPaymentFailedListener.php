@@ -5,6 +5,7 @@ namespace App\Domain\Billing\Listeners;
 use App\Domain\Auth\Enums\UserRole;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Tenancy\Models\Tenant;
+use App\Jobs\DispatchCaseNotificationJob;
 use LemonSqueezy\Laravel\Events\SubscriptionPaymentFailed;
 
 class SubscriptionPaymentFailedListener
@@ -20,7 +21,7 @@ class SubscriptionPaymentFailedListener
             ->get(['id']);
 
         foreach ($admins as $admin) {
-            CaseNotification::query()->create([
+            $notification = CaseNotification::query()->create([
                 'tenant_id' => $event->billable->id,
                 'case_id' => null,
                 'user_id' => $admin->id,
@@ -32,6 +33,8 @@ class SubscriptionPaymentFailedListener
                 'status' => 'pending',
                 'scheduled_for' => now(),
             ]);
+
+            DispatchCaseNotificationJob::dispatch($event->billable->id, $notification->id);
         }
     }
 }

@@ -4,7 +4,6 @@ use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
@@ -18,7 +17,7 @@ it('blocks tenant routes when trial expired and no subscription', function (): v
         'tenant_id' => $tenant->id,
     ]);
 
-    Sanctum::actingAs($user);
+    $this->actingAs($user);
 
     $response = $this->getJson('/api/v1/cases');
 
@@ -47,7 +46,7 @@ it('allows tenant routes when subscription is active', function (): void {
         'tenant_id' => $tenant->id,
     ]);
 
-    Sanctum::actingAs($user);
+    $this->actingAs($user);
 
     $response = $this->getJson('/api/v1/cases');
 
@@ -64,7 +63,7 @@ it('allows billing routes even when trial expired', function (): void {
         'tenant_id' => $tenant->id,
     ]);
 
-    Sanctum::actingAs($user);
+    $this->actingAs($user);
 
     $response = $this->getJson('/api/v1/billing/subscription');
 

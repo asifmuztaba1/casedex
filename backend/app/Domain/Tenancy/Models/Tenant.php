@@ -2,6 +2,8 @@
 
 namespace App\Domain\Tenancy\Models;
 
+use App\Domain\Ai\Models\AiCreditWallet;
+use App\Domain\Billing\Models\ManualPaymentRequest;
 use Database\Factories\TenantFactory;
 use LemonSqueezy\Laravel\Billable;
 use App\Models\User;
@@ -40,6 +42,16 @@ class Tenant extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function manualPaymentRequests(): HasMany
+    {
+        return $this->hasMany(ManualPaymentRequest::class);
+    }
+
+    public function aiCreditWallet()
+    {
+        return $this->hasOne(AiCreditWallet::class);
     }
 
     public function lemonSqueezyEmail(): ?string

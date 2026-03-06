@@ -169,7 +169,7 @@ export default function WorkspaceLayout({
                 {t("nav.tenant")}: {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>
               {subscription?.on_trial && subscription?.trial_ends_at && (
-                <Badge variant="outline">
+                <Badge>
                   {t("billing.trial_ends")}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
                 </Badge>
               )}
