@@ -59,7 +59,11 @@ export default function PricingPageClient() {
             interval={interval}
             featured={plan.id === "professional"}
             ctaLabel={user?.tenant_id ? t("billing.upgrade") : t("pricing.cta")}
-            ctaHref={user?.tenant_id ? undefined : "/register"}
+            ctaHref={
+              user?.tenant_id
+                ? undefined
+                : `/register?plan=${plan.id}&interval=${interval}`
+            }
             onCta={
               user?.tenant_id
                 ? async () => {

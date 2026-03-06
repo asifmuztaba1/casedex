@@ -288,8 +288,8 @@ export default function Home() {
               plan={plan}
               interval="monthly"
               featured={plan.id === "professional"}
-              ctaLabel="View pricing"
-              ctaHref="/pricing"
+              ctaLabel="Start with this plan"
+              ctaHref={`/register?plan=${plan.id}&interval=monthly`}
             />
           ))}
         </CardContent>

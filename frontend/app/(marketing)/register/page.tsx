@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,10 +16,13 @@ import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
 import type { BillingInterval } from "@/features/billing/types";
-import type { PlanId } from "@/features/billing/plan-catalog";
+import { PLAN_CATALOG, type PlanId } from "@/features/billing/plan-catalog";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const registerUser = useRegister();
   const { t, locale } = useLocale();
   const { data: countriesData } = useCountries();
@@ -29,8 +32,16 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [countryId, setCountryId] = useState("");
-  const [plan, setPlan] = useState<PlanId>("professional");
-  const [interval, setInterval] = useState<BillingInterval>("monthly");
+  const initialPlan = (searchParams.get("plan") as PlanId) || "professional";
+  const initialInterval = (searchParams.get("interval") as BillingInterval) || "monthly";
+  const [plan, setPlan] = useState<PlanId>(
+    PLAN_CATALOG.some((item) => item.id === initialPlan)
+      ? initialPlan
+      : "professional"
+  );
+  const [interval, setInterval] = useState<BillingInterval>(
+    initialInterval === "yearly" ? "yearly" : "monthly"
+  );
   const [submitted, setSubmitted] = useState(false);
 
   const nameError = submitted && !name.trim();
@@ -147,41 +158,72 @@ export default function RegisterPage() {
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Package
-              </label>
-              <select
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
-                value={plan}
-                onChange={(event) => setPlan(event.target.value as PlanId)}
-              >
-                <option value="starter">Starter</option>
-                <option value="professional">Professional</option>
-                <option value="chambers">Chambers</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Billing cycle
-              </label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={interval === "monthly" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setInterval("monthly")}
-                >
-                  Monthly
-                </Button>
-                <Button
-                  type="button"
-                  variant={interval === "yearly" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setInterval("yearly")}
-                >
-                  Yearly
-                </Button>
+            <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Subscription package
+                </label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={interval === "monthly" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setInterval("monthly")}
+                  >
+                    Monthly
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={interval === "yearly" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setInterval("yearly")}
+                  >
+                    Yearly
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-3">
+                {PLAN_CATALOG.map((item) => {
+                  const isSelected = plan === item.id;
+                  const amount =
+                    interval === "monthly" ? item.monthlyPrice : item.yearlyPrice;
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setPlan(item.id)}
+                      className={cn(
+                        "w-full rounded-xl border bg-white p-4 text-left transition",
+                        isSelected
+                          ? "border-slate-900 ring-1 ring-slate-900"
+                          : "border-slate-200 hover:border-slate-300"
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">
+                            {item.name}
+                          </div>
+                          <div className="text-xs text-slate-600">{item.storage}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-base font-semibold text-slate-900">
+                            {amount}
+                          </div>
+                          <div className="text-[11px] uppercase tracking-wide text-slate-500">
+                            {interval}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-slate-600">{item.summary}</div>
+                      <div className="mt-2 flex items-center gap-1 text-xs text-slate-700">
+                        <Check className="h-3.5 w-3.5" />
+                        Unlimited cases and team members
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
             <div className="space-y-2">
