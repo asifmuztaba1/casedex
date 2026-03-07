@@ -6,6 +6,7 @@ import type {
   AiWalletSummary,
   BillingInterval,
   BillingInvoice,
+  ManualSubscriptionChangeRequest,
   ManualMethodsResponse,
   ManualPaymentRequest,
   PlanLimits,
@@ -311,6 +312,44 @@ export function useStoreAiAlertRule() {
     }) => apiPost("/api/v1/billing/ai-alert-rules", payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["billing", "ai-credits"] });
+    },
+  });
+}
+
+export function useManualSubscriptionChangeStatus() {
+  return useQuery({
+    queryKey: ["billing", "manual-subscription-change-status"],
+    queryFn: async () => {
+      const response = await apiGet<ApiResponse<ManualSubscriptionChangeRequest | null>>(
+        "/api/v1/billing/manual-subscription-change/status"
+      );
+      return response.data;
+    },
+  });
+}
+
+export function useSubmitManualSubscriptionChange() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: {
+      type: "cancel" | "plan_change";
+      requested_plan?: "starter" | "professional" | "chambers";
+      requested_interval?: BillingInterval;
+      effective_at: string;
+    }) => {
+      const response = await apiPost<ApiResponse<ManualSubscriptionChangeRequest>>(
+        "/api/v1/billing/manual-subscription-change",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["billing", "manual-subscription-change-status"] }),
+        queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] }),
+        queryClient.invalidateQueries({ queryKey: ["auth-me"] }),
+      ]);
     },
   });
 }

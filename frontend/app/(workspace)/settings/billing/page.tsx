@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,8 @@ import {
   useInvoices,
   useManualMethods,
   useManualRequestStatus,
+  useManualSubscriptionChangeStatus,
+  useSubmitManualSubscriptionChange,
   useResumeSubscription,
   useSubmitManualRequest,
   useSubscription,
@@ -38,6 +41,19 @@ import { useLocale } from "@/components/locale-provider";
 import { PLAN_CATALOG, STORAGE_ADDON_FEATURES, type PlanId } from "@/features/billing/plan-catalog";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import {
+  BadgeCheck,
+  Banknote,
+  Brain,
+  CalendarClock,
+  CreditCard,
+  FileClock,
+  History,
+  Package,
+  ShieldCheck,
+  Smartphone,
+  Wallet,
+} from "lucide-react";
 
 export default function BillingSettingsPage() {
   const { t, locale } = useLocale();
@@ -56,10 +72,13 @@ export default function BillingSettingsPage() {
   const [paymentChoiceOpen, setPaymentChoiceOpen] = useState(false);
   const [pendingPlanChoice, setPendingPlanChoice] = useState<PlanId | null>(null);
   const manualSectionRef = useRef<HTMLDivElement | null>(null);
+  const aiManualSectionRef = useRef<HTMLDivElement | null>(null);
+  const [sectionTab, setSectionTab] = useState<"plans" | "manual" | "ai" | "invoices">("plans");
   const { data: subscription } = useSubscription();
   const { data: invoices = [] } = useInvoices();
   const { data: manualMethods } = useManualMethods();
   const { data: manualRequestStatus } = useManualRequestStatus();
+  const { data: manualChangeStatus } = useManualSubscriptionChangeStatus();
   const { data: aiCredits } = useAiCredits();
   const { data: aiLedger = [] } = useAiLedger();
   const { data: aiMfsStatus } = useAiMfsRequestStatus();
@@ -71,12 +90,17 @@ export default function BillingSettingsPage() {
   const resume = useResumeSubscription();
   const portal = useBillingPortal();
   const submitManualRequest = useSubmitManualRequest();
+  const submitManualSubscriptionChange = useSubmitManualSubscriptionChange();
   const { toast } = useToast();
   const [selectedAiPackId, setSelectedAiPackId] = useState<string>("");
   const [aiSenderNumber, setAiSenderNumber] = useState("");
   const [aiTransactionId, setAiTransactionId] = useState("");
   const [aiSentAt, setAiSentAt] = useState("");
   const [aiScreenshot, setAiScreenshot] = useState<File | null>(null);
+  const [manualLifecycleType, setManualLifecycleType] = useState<"cancel" | "plan_change">("cancel");
+  const [manualLifecyclePlan, setManualLifecyclePlan] = useState<PlanId>("starter");
+  const [manualLifecycleInterval, setManualLifecycleInterval] = useState<BillingInterval>("monthly");
+  const [manualLifecycleEffectiveAt, setManualLifecycleEffectiveAt] = useState("");
 
   const trialText = useMemo(() => {
     if (!subscription?.trial_ends_at) {
@@ -101,6 +125,7 @@ export default function BillingSettingsPage() {
   const fromOnboarding = searchParams.get("onboarding") === "1";
   const preferManual = searchParams.get("source") === "manual";
   const manualEnabled = Boolean(manualMethods?.enabled);
+  const manualCanSubmitNow = manualMethods?.can_submit_now ?? true;
   const expectedAmount = manualMethods?.prices?.[manualPlan]?.[interval] ?? null;
   const selectedManualMethod = useMemo(
     () => manualMethods?.methods?.find((method) => method.public_id === selectedManualMethodPublicId) ?? null,
@@ -129,6 +154,12 @@ export default function BillingSettingsPage() {
       setSelectedAiPackId(aiCredits.pack_catalog[0].public_id);
     }
   }, [aiCredits?.pack_catalog, selectedAiPackId]);
+
+  useEffect(() => {
+    if (!manualEnabled && sectionTab === "manual") {
+      setSectionTab("plans");
+    }
+  }, [manualEnabled, sectionTab]);
 
   const startCardCheckout = async (plan: PlanId) => {
     try {
@@ -183,6 +214,15 @@ export default function BillingSettingsPage() {
   };
 
   const onSubmitManual = async () => {
+      if (!manualCanSubmitNow) {
+        toast({
+          title: "Payment not needed yet",
+          description: "You can submit MFS payment after your 30-day trial ends.",
+          variant: "error",
+        });
+        return;
+      }
+
       if (!selectedManualMethod || !expectedAmount || !senderNumber || !transactionId || !sentAt || !screenshot) {
         toast({
           title: "Manual payment details required",
@@ -284,17 +324,50 @@ export default function BillingSettingsPage() {
     }
   };
 
+  const onSubmitManualLifecycle = async () => {
+    if (!manualLifecycleEffectiveAt) {
+      toast({
+        title: "Effective date required",
+        description: "Choose when the change should take effect.",
+        variant: "error",
+      });
+      return;
+    }
+
+    try {
+      await submitManualSubscriptionChange.mutateAsync({
+        type: manualLifecycleType,
+        requested_plan: manualLifecycleType === "plan_change" ? manualLifecyclePlan : undefined,
+        requested_interval: manualLifecycleType === "plan_change" ? manualLifecycleInterval : undefined,
+        effective_at: new Date(manualLifecycleEffectiveAt).toISOString(),
+      });
+
+      toast({
+        title: "Request submitted",
+        description: "Platform admin will review your manual subscription change request.",
+      });
+    } catch (error) {
+      toast({
+        title: "Request failed",
+        description: error instanceof Error ? error.message : "Unable to submit request.",
+        variant: "error",
+      });
+    }
+  };
+
   const selectedAiPack = useMemo(
     () => aiCredits?.pack_catalog?.find((pack) => pack.public_id === selectedAiPackId) ?? null,
     [aiCredits?.pack_catalog, selectedAiPackId]
   );
+  const isLemonBilling = subscription?.billing_source === "lemon";
+  const canManageLemonSubscription = isLemonBilling && Boolean(subscription?.status && subscription.status !== "expired");
 
   return (
     <section className="space-y-6">
       {fromOnboarding && (
         <Card className="border-slate-300 bg-slate-50">
           <CardHeader>
-            <CardTitle>{t("billing.onboarding_title")}</CardTitle>
+            <CardTitle className="flex items-center gap-2"><BadgeCheck className="h-5 w-5 text-emerald-700" />{t("billing.onboarding_title")}</CardTitle>
             <CardDescription>
               {t("billing.onboarding_desc")}
             </CardDescription>
@@ -309,7 +382,7 @@ export default function BillingSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("billing.title")}</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5 text-slate-700" />{t("billing.title")}</CardTitle>
           <CardDescription>{t("billing.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -319,7 +392,7 @@ export default function BillingSettingsPage() {
             {subscription?.billing_source === "manual_mfs" && (
               <Badge>Manual MFS</Badge>
             )}
-            {trialText && <span className="text-xs text-slate-500">{t("billing.trial_ends")}: {trialText}</span>}
+            {trialText && <span className="inline-flex items-center gap-1 text-xs text-slate-500"><CalendarClock className="h-3.5 w-3.5" />{t("billing.trial_ends")}: {trialText}</span>}
           </div>
           {subscription?.plan_limits && (
             <StorageMeter
@@ -345,75 +418,195 @@ export default function BillingSettingsPage() {
                   });
                 }
               }}
+              disabled={portal.isPending || !isLemonBilling}
             >
               {t("billing.manage_portal")}
             </Button>
             <Button
               variant="outline"
               onClick={() => cancel.mutate()}
-              disabled={cancel.isPending}
+              disabled={cancel.isPending || !canManageLemonSubscription}
             >
               {t("billing.cancel")}
             </Button>
-            <Button onClick={() => resume.mutate()} disabled={resume.isPending}>
+            <Button onClick={() => resume.mutate()} disabled={resume.isPending || !isLemonBilling}>
               {t("billing.resume")}
             </Button>
+            {manualEnabled && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSectionTab("manual");
+                  manualSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+              >
+                Manage MFS subscription
+              </Button>
+            )}
           </div>
+          {!isLemonBilling && (
+            <p className="text-xs text-slate-500">
+              Subscription management actions are available for Lemon-managed subscriptions.
+            </p>
+          )}
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("billing.change_plan")}</CardTitle>
-          <CardDescription>{t("billing.choose_plan")}</CardDescription>
-          <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              size="sm"
-              variant={interval === "monthly" ? "default" : "outline"}
-              onClick={() => setInterval("monthly")}
-            >
-              Monthly
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={interval === "yearly" ? "default" : "outline"}
-              onClick={() => setInterval("yearly")}
-            >
-              Yearly
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          {PLAN_CATALOG.map((plan) => (
-            <PlanTierCard
-              key={plan.id}
-              plan={plan}
-              interval={interval}
-              featured={plan.id === "professional"}
-              active={subscription?.plan === plan.id}
-              ctaLabel={subscription?.plan === plan.id ? "Current plan" : t("billing.upgrade")}
-              onCta={() => onSelectPlan(plan.id)}
-              disabled={
-                checkout.isPending ||
-                changePlan.isPending ||
-                subscription?.plan === plan.id
-              }
-            />
-          ))}
-        </CardContent>
-      </Card>
+      <Tabs value={sectionTab} onValueChange={(value) => setSectionTab(value as "plans" | "manual" | "ai" | "invoices")}>
+        <TabsList className="h-auto flex w-full flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-2">
+          <TabsTrigger value="plans">Plans</TabsTrigger>
+          {manualEnabled && <TabsTrigger value="manual">Manual Payment</TabsTrigger>}
+          <TabsTrigger value="ai">AI Credits</TabsTrigger>
+          <TabsTrigger value="invoices">Invoices</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {manualEnabled && (
+      {sectionTab === "plans" && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-slate-700" />{t("billing.change_plan")}</CardTitle>
+              <CardDescription>{t("billing.choose_plan")}</CardDescription>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={interval === "monthly" ? "default" : "outline"}
+                  onClick={() => setInterval("monthly")}
+                >
+                  Monthly
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={interval === "yearly" ? "default" : "outline"}
+                  onClick={() => setInterval("yearly")}
+                >
+                  Yearly
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-3">
+              {PLAN_CATALOG.map((plan) => (
+                <PlanTierCard
+                  key={plan.id}
+                  plan={plan}
+                  interval={interval}
+                  featured={plan.id === "professional"}
+                  active={subscription?.plan === plan.id}
+                  ctaLabel={subscription?.plan === plan.id ? "Current plan" : t("billing.upgrade")}
+                  onCta={() => onSelectPlan(plan.id)}
+                  disabled={
+                    checkout.isPending ||
+                    changePlan.isPending ||
+                    subscription?.plan === plan.id
+                  }
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-slate-700" />{t("billing.addon_title")}</CardTitle>
+              <CardDescription>{t("billing.addon_desc")}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                {STORAGE_ADDON_FEATURES.map((feature) => (
+                  <div key={feature} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                    {feature}
+                  </div>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const response = await checkout.mutateAsync({
+                      plan: "starter",
+                      interval,
+                      add_unlimited_storage: true,
+                    });
+                    if (response.checkout_url) {
+                      window.location.href = response.checkout_url;
+                    }
+                  } catch (error) {
+                    toast({
+                      title: "Checkout failed",
+                      description: error instanceof Error ? error.message : "Unable to start checkout.",
+                      variant: "error",
+                    });
+                  }
+                }}
+                disabled={checkout.isPending}
+              >
+                {t("billing.addon_buy")}
+              </Button>
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {manualEnabled && sectionTab === "manual" && (
         <Card ref={manualSectionRef}>
           <CardHeader>
-            <CardTitle>Manual bKash/Rocket payment (Bangladesh)</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-teal-700" />Manual bKash/Rocket payment (Bangladesh)</CardTitle>
             <CardDescription>
               Step 1: Select one payment option. Step 2: Send exact amount. Step 3: Submit transaction details and screenshot.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            {subscription?.billing_source === "manual_mfs" && (
+              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+                <div className="text-sm font-semibold text-slate-900">Manual subscription change request</div>
+                <p className="text-xs text-slate-600">
+                  Request cancel or plan change. Platform admin approves and applies on the effective date.
+                </p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <select
+                    value={manualLifecycleType}
+                    onChange={(event) => setManualLifecycleType(event.target.value as "cancel" | "plan_change")}
+                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  >
+                    <option value="cancel">Cancel subscription</option>
+                    <option value="plan_change">Change plan</option>
+                  </select>
+                  <Input type="datetime-local" value={manualLifecycleEffectiveAt} onChange={(event) => setManualLifecycleEffectiveAt(event.target.value)} />
+                  {manualLifecycleType === "plan_change" && (
+                    <>
+                      <select
+                        value={manualLifecyclePlan}
+                        onChange={(event) => setManualLifecyclePlan(event.target.value as PlanId)}
+                        className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      >
+                        {PLAN_CATALOG.map((plan) => (
+                          <option key={plan.id} value={plan.id}>{plan.name}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={manualLifecycleInterval}
+                        onChange={(event) => setManualLifecycleInterval(event.target.value as BillingInterval)}
+                        className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      >
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                      </select>
+                    </>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button onClick={onSubmitManualLifecycle} disabled={submitManualSubscriptionChange.isPending}>
+                    {submitManualSubscriptionChange.isPending ? "Submitting..." : "Submit lifecycle request"}
+                  </Button>
+                  {manualChangeStatus && <Badge>Status: {manualChangeStatus.status}</Badge>}
+                </div>
+                {manualChangeStatus?.rejection_reason && (
+                  <p className="text-xs text-rose-700">Reason: {manualChangeStatus.rejection_reason}</p>
+                )}
+              </div>
+            )}
+
             <div className="grid gap-4 md:grid-cols-2">
               {manualMethods?.methods?.map((method) => (
                 <button
@@ -428,7 +621,10 @@ export default function BillingSettingsPage() {
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-semibold">{method.channel.toUpperCase()}</div>
+                    <div className="flex items-center gap-2 text-sm font-semibold">
+                      <Banknote className="h-4 w-4" />
+                      {method.channel.toUpperCase()}
+                    </div>
                     <span className={cn(
                       "rounded-full border px-3 py-1 text-xs",
                       selectedManualMethodPublicId === method.public_id
@@ -513,8 +709,14 @@ export default function BillingSettingsPage() {
               <div>{t("billing.trial_notice_line3")}</div>
             </div>
 
+            {!manualCanSubmitNow && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                Trial is active. Submit MFS payment after trial end{manualMethods?.trial_ends_at ? ` (${new Date(manualMethods.trial_ends_at).toLocaleDateString()})` : ""}.
+              </div>
+            )}
+
             <div className="flex flex-wrap items-center gap-2">
-              <Button onClick={onSubmitManual} disabled={submitManualRequest.isPending || !expectedAmount || !selectedManualMethod}>
+              <Button onClick={onSubmitManual} disabled={submitManualRequest.isPending || !expectedAmount || !selectedManualMethod || !manualCanSubmitNow}>
                 {submitManualRequest.isPending ? "Submitting..." : "Submit manual payment"}
               </Button>
               {manualRequestStatus && (
@@ -592,49 +794,10 @@ export default function BillingSettingsPage() {
         </DialogContent>
       </Dialog>
 
+      {sectionTab === "ai" && (
       <Card>
         <CardHeader>
-          <CardTitle>{t("billing.addon_title")}</CardTitle>
-          <CardDescription>{t("billing.addon_desc")}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2">
-            {STORAGE_ADDON_FEATURES.map((feature) => (
-              <div key={feature} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                {feature}
-              </div>
-            ))}
-          </div>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                const response = await checkout.mutateAsync({
-                  plan: "starter",
-                  interval,
-                  add_unlimited_storage: true,
-                });
-                if (response.checkout_url) {
-                  window.location.href = response.checkout_url;
-                }
-              } catch (error) {
-                toast({
-                  title: "Checkout failed",
-                  description: error instanceof Error ? error.message : "Unable to start checkout.",
-                  variant: "error",
-                });
-              }
-            }}
-            disabled={checkout.isPending}
-          >
-            {t("billing.addon_buy")}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>AI Credits</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-slate-700" />AI Credits</CardTitle>
           <CardDescription>Monthly free credits + paid top-ups for AI actions.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -688,17 +851,19 @@ export default function BillingSettingsPage() {
 
           <div className="flex flex-wrap gap-2">
             <Button onClick={startAiCheckout} disabled={!selectedAiPack || aiCheckout.isPending}>
+              <CreditCard className="mr-2 h-4 w-4" />
               {aiCheckout.isPending ? "Starting checkout..." : "Buy with Lemon"}
             </Button>
             {manualEnabled && (
-              <Button variant="outline" onClick={() => manualSectionRef.current?.scrollIntoView({ behavior: "smooth" })}>
-                Use bKash/Rocket for subscription
+              <Button variant="outline" onClick={() => aiManualSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                <Smartphone className="mr-2 h-4 w-4" />
+                Use bKash/Rocket for AI top-up
               </Button>
             )}
           </div>
 
           {manualEnabled && selectedAiPack && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+            <div ref={aiManualSectionRef} className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
               <div className="text-sm font-semibold text-slate-900">Bangladesh manual top-up for AI credits</div>
               <div className="text-xs text-slate-600">
                 Selected pack: {selectedAiPack.name} ({selectedAiPack.credits} credits), amount: {selectedAiPack.price_bdt} BDT.
@@ -711,6 +876,7 @@ export default function BillingSettingsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Button onClick={onSubmitAiManual} disabled={submitAiMfsRequest.isPending}>
+                  <FileClock className="mr-2 h-4 w-4" />
                   {submitAiMfsRequest.isPending ? "Submitting..." : "Submit AI manual payment"}
                 </Button>
                 {aiMfsStatus && <Badge>Status: {aiMfsStatus.status}</Badge>}
@@ -719,7 +885,7 @@ export default function BillingSettingsPage() {
           )}
 
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <div className="text-sm font-semibold text-slate-900">Recent AI credit events</div>
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><History className="h-4 w-4 text-slate-500" />Recent AI credit events</div>
             <div className="mt-2 space-y-2">
               {aiLedger.slice(0, 5).map((event) => (
                 <div key={event.public_id} className="flex items-center justify-between rounded-lg border border-slate-200 p-2 text-xs">
@@ -738,10 +904,12 @@ export default function BillingSettingsPage() {
           </div>
         </CardContent>
       </Card>
+      )}
 
+      {sectionTab === "invoices" && (
       <Card>
         <CardHeader>
-          <CardTitle>{t("billing.invoices")}</CardTitle>
+          <CardTitle className="flex items-center gap-2"><FileClock className="h-5 w-5 text-slate-700" />{t("billing.invoices")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -768,6 +936,7 @@ export default function BillingSettingsPage() {
           </div>
         </CardContent>
       </Card>
+      )}
     </section>
   );
 }

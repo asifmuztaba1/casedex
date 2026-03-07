@@ -24,6 +24,7 @@ return [
     'manual_payment_country_restricted' => 'Manual bKash/Rocket payment is available for Bangladesh tenants only.',
     'manual_payment_pending_exists' => 'A pending manual payment request already exists.',
     'manual_payment_amount_mismatch' => 'Submitted amount does not match the selected plan price.',
+    'manual_payment_trial_not_ended' => 'Manual MFS payment can be submitted after your trial ends.',
     'manual_payment_not_found' => 'Manual payment request not found.',
     'manual_payment_not_pending' => 'Only pending manual payment requests can be reviewed.',
 ];

@@ -9,9 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useAdminManualMethods,
   useAdminManualPayments,
+  useAdminManualSubscriptionChanges,
+  useApproveManualSubscriptionChange,
   useApproveManualPayment,
   useCreateManualMethod,
   useDeleteManualMethod,
+  useRejectManualSubscriptionChange,
   useRejectManualPayment,
   useUpdateManualMethod,
 } from "@/features/admin/billing/use-admin-manual-payments";
@@ -33,12 +36,15 @@ export default function AdminManualPaymentsPage() {
   });
 
   const { data: payments = [] } = useAdminManualPayments({ status, tenant: tenant || undefined });
+  const { data: lifecycleRequests = [] } = useAdminManualSubscriptionChanges({ status: "", tenant: tenant || undefined });
   const { data: methods = [] } = useAdminManualMethods();
   const approve = useApproveManualPayment();
   const reject = useRejectManualPayment();
   const createMethod = useCreateManualMethod();
   const updateMethod = useUpdateManualMethod();
   const deleteMethod = useDeleteManualMethod();
+  const approveLifecycle = useApproveManualSubscriptionChange();
+  const rejectLifecycle = useRejectManualSubscriptionChange();
 
   const sortedPayments = useMemo(
     () => [...payments].sort((a, b) => (a.created_at && b.created_at ? Date.parse(b.created_at) - Date.parse(a.created_at) : 0)),
@@ -165,6 +171,60 @@ export default function AdminManualPaymentsPage() {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Manual subscription lifecycle</CardTitle>
+          <CardDescription>Approve/reject MFS cancel or plan-change requests with effective date.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {lifecycleRequests.length === 0 && (
+            <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-500">No lifecycle requests found.</div>
+          )}
+          {lifecycleRequests.map((item) => (
+            <div key={item.public_id} className="rounded-xl border border-slate-200 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm font-semibold text-slate-900">{item.tenant_name ?? "Tenant"}</div>
+                  <div className="text-xs text-slate-600">Requested by: {item.requested_by_name ?? "-"}</div>
+                  <div className="text-xs text-slate-600">Type: {item.type}</div>
+                  <div className="text-xs text-slate-600">Current: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
+                  {item.type === "plan_change" && (
+                    <div className="text-xs text-slate-600">Requested: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
+                  )}
+                  <div className="text-xs text-slate-600">Effective at: {new Date(item.effective_at).toLocaleString()}</div>
+                  {item.applied_at && (
+                    <div className="text-xs text-emerald-700">Applied at: {new Date(item.applied_at).toLocaleString()}</div>
+                  )}
+                  {item.rejection_reason && (
+                    <div className="text-xs text-rose-700">Reason: {item.rejection_reason}</div>
+                  )}
+                </div>
+                <Badge>{item.status}</Badge>
+              </div>
+              {item.status === "pending" && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => approveLifecycle.mutate({ publicId: item.public_id })}
+                    disabled={approveLifecycle.isPending}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => rejectLifecycle.mutate({ publicId: item.public_id })}
+                    disabled={rejectLifecycle.isPending}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
         </CardContent>
       </Card>
 

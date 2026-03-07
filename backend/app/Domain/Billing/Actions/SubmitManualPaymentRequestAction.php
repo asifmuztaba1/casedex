@@ -34,6 +34,10 @@ class SubmitManualPaymentRequestAction
             abort(422, __('messages.manual_payment_country_restricted'));
         }
 
+        if (! $this->planFeatureService->canSubmitManualSubscriptionPayment($tenant)) {
+            abort(422, __('messages.manual_payment_trial_not_ended'));
+        }
+
         $pending = ManualPaymentRequest::query()
             ->where('tenant_id', $tenant->id)
             ->where('status', ManualPaymentRequestStatus::Pending->value)

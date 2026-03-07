@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { ManualPaymentMethod, ManualPaymentRequest } from "@/features/billing/types";
+import type { ManualPaymentMethod, ManualPaymentRequest, ManualSubscriptionChangeRequest } from "@/features/billing/types";
 
 type ApiResponse<T> = { data: T };
 
@@ -132,6 +132,60 @@ export function useDeleteManualMethod() {
     mutationFn: (publicId: string) => apiDelete(`/api/v1/admin/manual-payment-methods/${publicId}`),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "manual-payment-methods"] });
+    },
+  });
+}
+
+export function useAdminManualSubscriptionChanges(filters?: {
+  status?: "pending" | "approved" | "rejected" | "applied" | "";
+  tenant?: string;
+}) {
+  const params = new URLSearchParams();
+  if (filters?.status) params.set("status", filters.status);
+  if (filters?.tenant) params.set("tenant", filters.tenant);
+  const query = params.toString();
+
+  return useQuery({
+    queryKey: ["admin", "manual-subscription-changes", filters],
+    queryFn: async () => {
+      const response = await apiGet<ApiResponse<ManualSubscriptionChangeRequest[]>>(
+        `/api/v1/admin/manual-subscription-changes${query ? `?${query}` : ""}`
+      );
+      return response.data;
+    },
+  });
+}
+
+export function useApproveManualSubscriptionChange() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: { publicId: string; effective_at?: string }) => {
+      const response = await apiPost<ApiResponse<ManualSubscriptionChangeRequest>>(
+        `/api/v1/admin/manual-subscription-changes/${payload.publicId}/approve`,
+        { effective_at: payload.effective_at ?? null }
+      );
+      return response.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin", "manual-subscription-changes"] });
+    },
+  });
+}
+
+export function useRejectManualSubscriptionChange() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: { publicId: string; reason?: string }) => {
+      const response = await apiPost<ApiResponse<ManualSubscriptionChangeRequest>>(
+        `/api/v1/admin/manual-subscription-changes/${payload.publicId}/reject`,
+        { reason: payload.reason ?? null }
+      );
+      return response.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin", "manual-subscription-changes"] });
     },
   });
 }

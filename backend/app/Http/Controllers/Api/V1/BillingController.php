@@ -195,6 +195,8 @@ class BillingController extends Controller
                     ],
                 ],
                 'temporary_access_hours' => (int) config('billing.manual_mfs.temporary_access_hours', 24),
+                'can_submit_now' => $tenant !== null && $planFeatureService->canSubmitManualSubscriptionPayment($tenant),
+                'trial_ends_at' => $tenant?->trial_ends_at,
             ],
         ]);
     }

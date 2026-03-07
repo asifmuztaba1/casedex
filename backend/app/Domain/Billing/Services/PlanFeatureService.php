@@ -277,9 +277,19 @@ class PlanFeatureService
 
     public function hasAccess(Tenant $tenant): bool
     {
-        return $this->hasActiveSubscription($tenant)
+        return ! $this->isTrialExpired($tenant)
+            || $this->hasActiveSubscription($tenant)
             || $this->hasManualPendingAccess($tenant)
             || $this->hasManualApprovedAccess($tenant);
+    }
+
+    public function canSubmitManualSubscriptionPayment(Tenant $tenant): bool
+    {
+        if ($this->hasPaidSubscription($tenant)) {
+            return true;
+        }
+
+        return $this->isTrialExpired($tenant);
     }
 
     public function resolvePlanFromVariant(string $variantId): TenantPlan

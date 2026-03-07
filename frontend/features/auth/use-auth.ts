@@ -306,7 +306,8 @@ export function useRegister() {
       await ensureCsrfCookie();
       return postJson<AuthResponse>("/api/v1/auth/register", payload);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      client.setQueryData(["auth-me"], response.data);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
         title: "Account created",

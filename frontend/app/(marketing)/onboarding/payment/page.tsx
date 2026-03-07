@@ -15,7 +15,7 @@ import { PLAN_CATALOG, type PlanId } from "@/features/billing/plan-catalog";
 import type { BillingInterval } from "@/features/billing/types";
 import { useCheckout, useManualMethods, useSubmitManualRequest } from "@/features/billing/use-billing";
 import { cn } from "@/lib/utils";
-import { CreditCard, Smartphone } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarClock, CreditCard, ShieldCheck, Smartphone } from "lucide-react";
 
 function isValidPlan(value: string | null): value is PlanId {
   if (value === null) {
@@ -193,9 +193,14 @@ export default function OnboardingPaymentPage() {
       });
 
       if (source === "manual_mfs") {
-        setAllowTenantDuringManual(true);
+        clearOnboardingDraft(user.email);
         await queryClient.invalidateQueries({ queryKey: ["auth-me"] });
-        setManualDialogOpen(true);
+        toast({
+          title: "Trial started",
+          description: "No payment is taken now. You can submit MFS payment when the trial ends.",
+          variant: "success",
+        });
+        router.push("/dashboard?trial=started");
         return;
       }
 
@@ -234,7 +239,7 @@ export default function OnboardingPaymentPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-xl">Payment path</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-xl"><ShieldCheck className="h-5 w-5 text-slate-700" />Payment path</CardTitle>
             <CardDescription>
               Trial starts now. Charge starts only after 30 days.
             </CardDescription>
@@ -278,6 +283,7 @@ export default function OnboardingPaymentPage() {
             <div className="flex flex-wrap gap-3">
               <Button type="button" variant="outline" onClick={() => router.push("/onboarding/plan")}>Back to package</Button>
               <Button type="button" onClick={startCheckout} disabled={createTenant.isPending || checkout.isPending || submitManualRequest.isPending || (isBangladesh && !paymentSource)}>
+                <ArrowRight className="mr-2 h-4 w-4" />
                 {createTenant.isPending || checkout.isPending ? "Please wait..." : "Continue"}
               </Button>
             </div>
@@ -286,7 +292,7 @@ export default function OnboardingPaymentPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Order summary</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-lg"><BadgeCheck className="h-4 w-4 text-slate-700" />Order summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -300,7 +306,8 @@ export default function OnboardingPaymentPage() {
               <div className="text-slate-600">{price}</div>
             </div>
             <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-blue-900">
-              30-day trial: no charge today. You can cancel before trial ends.
+              <div className="mb-1 inline-flex items-center gap-1 font-semibold"><CalendarClock className="h-3.5 w-3.5" />30-day trial</div>
+              No charge today. You can cancel before trial ends.
             </div>
           </CardContent>
         </Card>

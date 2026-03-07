@@ -3,6 +3,8 @@ export type PlanTier = "trial" | "starter" | "professional" | "chambers";
 export type BillingInterval = "monthly" | "yearly";
 export type BillingSource = "lemon" | "manual_mfs" | "none";
 export type ManualPaymentStatus = "pending" | "approved" | "rejected" | "expired";
+export type ManualSubscriptionChangeType = "cancel" | "plan_change";
+export type ManualSubscriptionChangeStatus = "pending" | "approved" | "rejected" | "applied";
 
 export type SubscriptionStatus =
   | "active"
@@ -70,6 +72,8 @@ export type ManualMethodsResponse = {
   methods: ManualPaymentMethod[];
   prices: Record<Exclude<PlanTier, "trial">, Record<BillingInterval, number | null>>;
   temporary_access_hours: number;
+  can_submit_now?: boolean;
+  trial_ends_at?: string | null;
 };
 
 export type ManualPaymentRequest = {
@@ -163,4 +167,26 @@ export type AiManualPaymentRequest = {
     name: string;
     credits: number;
   } | null;
+};
+
+export type ManualSubscriptionChangeRequest = {
+  public_id: string;
+  tenant_public_id?: string | null;
+  tenant_name?: string | null;
+  requested_by_public_id?: string | null;
+  requested_by_name?: string | null;
+  type: ManualSubscriptionChangeType;
+  current_plan: PlanTier | null;
+  current_interval: BillingInterval | null;
+  requested_plan: Exclude<PlanTier, "trial"> | null;
+  requested_interval: BillingInterval | null;
+  effective_at: string;
+  status: ManualSubscriptionChangeStatus;
+  reviewed_by_public_id?: string | null;
+  reviewed_by_name?: string | null;
+  reviewed_at: string | null;
+  applied_at: string | null;
+  rejection_reason: string | null;
+  created_at: string;
+  updated_at: string;
 };

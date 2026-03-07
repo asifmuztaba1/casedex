@@ -22,8 +22,10 @@ use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\ManualSubscriptionChangeController;
 use App\Http\Controllers\Api\V1\TenantController;
 use App\Http\Controllers\Api\V1\Admin\CourtController as AdminCourtController;
+use App\Http\Controllers\Api\V1\Admin\ManualSubscriptionChangeController as AdminManualSubscriptionChangeController;
 use App\Http\Controllers\Api\V1\Admin\CourtDistrictController as AdminCourtDistrictController;
 use App\Http\Controllers\Api\V1\Admin\CourtDivisionController as AdminCourtDivisionController;
 use App\Http\Controllers\Api\V1\Admin\CourtStatsController as AdminCourtStatsController;
@@ -90,6 +92,9 @@ Route::prefix('v1')
         Route::post('/admin/manual-payment-methods', [AdminManualPaymentMethodController::class, 'store']);
         Route::put('/admin/manual-payment-methods/{publicId}', [AdminManualPaymentMethodController::class, 'update']);
         Route::delete('/admin/manual-payment-methods/{publicId}', [AdminManualPaymentMethodController::class, 'destroy']);
+        Route::get('/admin/manual-subscription-changes', [AdminManualSubscriptionChangeController::class, 'index']);
+        Route::post('/admin/manual-subscription-changes/{publicId}/approve', [AdminManualSubscriptionChangeController::class, 'approve']);
+        Route::post('/admin/manual-subscription-changes/{publicId}/reject', [AdminManualSubscriptionChangeController::class, 'reject']);
     });
 
 Route::prefix('v1')
@@ -106,6 +111,8 @@ Route::prefix('v1')
         Route::get('/billing/manual-methods', [BillingController::class, 'manualMethods']);
         Route::post('/billing/manual-request', [BillingController::class, 'submitManualRequest']);
         Route::get('/billing/manual-request/status', [BillingController::class, 'manualRequestStatus']);
+        Route::post('/billing/manual-subscription-change', [ManualSubscriptionChangeController::class, 'store']);
+        Route::get('/billing/manual-subscription-change/status', [ManualSubscriptionChangeController::class, 'status']);
         Route::get('/billing/ai-credits', [BillingController::class, 'aiCredits']);
         Route::get('/billing/ai-ledger', [BillingController::class, 'aiLedger']);
         Route::post('/billing/ai-credit-checkout', [BillingController::class, 'aiCreditCheckout']);

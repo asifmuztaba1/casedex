@@ -10,6 +10,7 @@ import { loadOnboardingDraft, saveOnboardingDraft } from "@/features/auth/onboar
 import { PLAN_CATALOG, type PlanId } from "@/features/billing/plan-catalog";
 import type { BillingInterval } from "@/features/billing/types";
 import { cn } from "@/lib/utils";
+import { ArrowRight, BriefcaseBusiness, CalendarClock, Gem, Scale, ShieldCheck } from "lucide-react";
 
 function isValidPlan(value: string | null): value is PlanId {
   if (value === null) {
@@ -97,7 +98,7 @@ export default function OnboardingPlanPage() {
     >
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Plans built for legal teams</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-xl"><BriefcaseBusiness className="h-5 w-5 text-slate-700" />Plans built for legal teams</CardTitle>
           <CardDescription>
             Every package includes unlimited cases and team members. Differences are storage and service level.
           </CardDescription>
@@ -112,6 +113,7 @@ export default function OnboardingPlanPage() {
             {PLAN_CATALOG.map((item) => {
               const price = interval === "monthly" ? item.monthlyPrice : item.yearlyPrice;
               const selected = plan === item.id;
+              const Icon = item.id === "starter" ? Scale : item.id === "professional" ? ShieldCheck : Gem;
 
               return (
                 <button
@@ -125,7 +127,7 @@ export default function OnboardingPlanPage() {
                       : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-slate-300"
                   )}
                 >
-                  <div className="text-lg font-semibold">{item.name}</div>
+                  <div className="flex items-center gap-2 text-lg font-semibold"><Icon className="h-4 w-4" />{item.name}</div>
                   <div className={cn("mt-1 text-sm", selected ? "text-slate-200" : "text-slate-600")}>{item.summary}</div>
                   <div className={cn("mt-3 text-sm", selected ? "text-slate-300" : "text-slate-500")}>{item.storage}</div>
                   <div className="mt-3 text-3xl font-semibold leading-none">{price}</div>
@@ -135,7 +137,7 @@ export default function OnboardingPlanPage() {
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <div className="font-semibold">30-day trial</div>
+            <div className="flex items-center gap-2 font-semibold"><CalendarClock className="h-4 w-4 text-slate-600" />30-day trial</div>
             <div className="mt-1">No charge today. Billing starts only after trial ends. Cancel any time before trial end.</div>
           </div>
 
@@ -152,6 +154,7 @@ export default function OnboardingPlanPage() {
                 router.push(`/onboarding/payment?${query.toString()}`);
               }}
             >
+              <ArrowRight className="mr-2 h-4 w-4" />
               Continue to payment
             </Button>
           </div>
