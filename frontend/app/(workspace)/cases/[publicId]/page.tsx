@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
+import AiIcon from "@/components/ai-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -501,7 +502,10 @@ export default function CaseDetailPage() {
                     }}
                     disabled={aiResearchSummary.isPending || !editForm.petition_draft.trim()}
                   >
-                    {aiResearchSummary.isPending ? "Queuing..." : "AI summarize petition (5 credits)"}
+                    <span className="inline-flex items-center gap-2">
+                      <AiIcon />
+                      {aiResearchSummary.isPending ? "Queuing..." : "AI summarize petition (5 credits)"}
+                    </span>
                   </Button>
                 </div>
                 <div className="flex items-center gap-2">
@@ -603,7 +607,10 @@ export default function CaseDetailPage() {
                     }}
                     disabled={aiHearingSummary.isPending || !hearingForm.agenda}
                   >
-                    {aiHearingSummary.isPending ? "Queuing..." : "AI summarize hearing (4 credits)"}
+                    <span className="inline-flex items-center gap-2">
+                      <AiIcon />
+                      {aiHearingSummary.isPending ? "Queuing..." : "AI summarize hearing (4 credits)"}
+                    </span>
                   </Button>
                   <Input
                     placeholder={t("case.detail.location_placeholder")}
@@ -783,7 +790,10 @@ export default function CaseDetailPage() {
                     }}
                     disabled={aiDiarySummary.isPending || !diaryForm.body.trim()}
                   >
-                    {aiDiarySummary.isPending ? "Queuing..." : "AI rewrite diary (3 credits)"}
+                    <span className="inline-flex items-center gap-2">
+                      <AiIcon />
+                      {aiDiarySummary.isPending ? "Queuing..." : "AI rewrite diary (3 credits)"}
+                    </span>
                   </Button>
                   {diaryBodyError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -1342,7 +1352,10 @@ export default function CaseDetailPage() {
                   }}
                   disabled={aiDocumentQa.isPending || !documentQaQuestion.trim()}
                 >
-                  {aiDocumentQa.isPending ? "Queuing..." : "Ask AI"}
+                  <span className="inline-flex items-center gap-2">
+                    <AiIcon />
+                    {aiDocumentQa.isPending ? "Queuing..." : "Ask AI"}
+                  </span>
                 </Button>
                 {documentQaResult && (
                   <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">

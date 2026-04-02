@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useSearchParams } from "next/navigation";
+import AiIcon from "@/components/ai-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -852,12 +853,18 @@ export default function BillingSettingsPage() {
           <div className="flex flex-wrap gap-2">
             <Button onClick={startAiCheckout} disabled={!selectedAiPack || aiCheckout.isPending}>
               <CreditCard className="mr-2 h-4 w-4" />
-              {aiCheckout.isPending ? "Starting checkout..." : "Buy with Lemon"}
+              <span className="inline-flex items-center gap-2">
+                <AiIcon />
+                {aiCheckout.isPending ? "Starting checkout..." : "Buy with Lemon"}
+              </span>
             </Button>
             {manualEnabled && (
               <Button variant="outline" onClick={() => aiManualSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>
                 <Smartphone className="mr-2 h-4 w-4" />
-                Use bKash/Rocket for AI top-up
+                <span className="inline-flex items-center gap-2">
+                  <AiIcon />
+                  Use bKash/Rocket for AI top-up
+                </span>
               </Button>
             )}
           </div>
@@ -877,7 +884,10 @@ export default function BillingSettingsPage() {
               <div className="flex items-center gap-2">
                 <Button onClick={onSubmitAiManual} disabled={submitAiMfsRequest.isPending}>
                   <FileClock className="mr-2 h-4 w-4" />
-                  {submitAiMfsRequest.isPending ? "Submitting..." : "Submit AI manual payment"}
+                  <span className="inline-flex items-center gap-2">
+                    <AiIcon />
+                    {submitAiMfsRequest.isPending ? "Submitting..." : "Submit AI manual payment"}
+                  </span>
                 </Button>
                 {aiMfsStatus && <Badge>Status: {aiMfsStatus.status}</Badge>}
               </div>

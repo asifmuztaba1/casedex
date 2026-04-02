@@ -166,16 +166,13 @@ export default function WorkspaceLayout({
             <div className="flex flex-wrap items-center gap-3">
               <Input className="w-[220px]" placeholder={t("nav.search")} />
               <Badge variant="subtle">
-                {t("nav.tenant")}: {user?.tenant?.name ?? user?.tenant_name ?? "-"}
+                {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>
               {subscription?.on_trial && subscription?.trial_ends_at && (
                 <Badge>
                   {t("billing.trial_ends")}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
                 </Badge>
               )}
-              <Button size="sm" asChild>
-                <a href="/cases/new">{t("nav.new_case")}</a>
-              </Button>
               {mounted && <LanguageSwitcher />}
               {mounted ? (
                 <DropdownMenu>
