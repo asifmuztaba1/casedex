@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ "$SUPERVISOR_PHP_USER" != "root" ] && [ "$SUPERVISOR_PHP_USER" != "sail" ]; then
     echo "You should set SUPERVISOR_PHP_USER to either 'sail' or 'root'."
     exit 1
@@ -14,6 +16,18 @@ if [ ! -d /.composer ]; then
 fi
 
 chmod -R ugo+rw /.composer
+
+cd /var/www/html
+
+if [ -f composer.json ] && [ ! -f vendor/autoload.php ]; then
+    echo "Installing PHP dependencies with Composer..."
+
+    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
+        COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist
+    else
+        gosu $WWWUSER env COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist
+    fi
+fi
 
 if [ $# -gt 0 ]; then
     if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
