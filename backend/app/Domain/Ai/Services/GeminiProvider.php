@@ -10,11 +10,13 @@ class GeminiProvider implements AiProviderInterface
     public function complete(array $messages, array $options = []): array
     {
         $baseUrl = rtrim((string) config('services.ai.gemini_base_url', ''), '/');
-        $apiKey = (string) config('services.ai.api_key', '');
+        $apiKey = (string) config('services.ai.gemini_api_key', '');
         $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-2.0-flash'));
 
         if ($baseUrl === '' || $apiKey === '') {
-            throw new \RuntimeException('Gemini provider is not configured.');
+            throw new \RuntimeException(
+                'Gemini provider is not configured. Set AI_GEMINI_API_KEY, GEMINI_API_KEY, GOOGLE_API_KEY, or AI_API_KEY.'
+            );
         }
 
         $systemText = $this->extractMessageByRole($messages, 'system');

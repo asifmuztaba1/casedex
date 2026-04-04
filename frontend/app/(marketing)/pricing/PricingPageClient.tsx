@@ -11,17 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { useAuth } from "@/features/auth/use-auth";
-import { useCheckout } from "@/features/billing/use-billing";
 import { PLAN_CATALOG } from "@/features/billing/plan-catalog";
 import PlanTierCard from "@/components/plan-tier-card";
-import { useToast } from "@/components/ui/use-toast";
+import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
 
 export default function PricingPageClient() {
   const { t } = useLocale();
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const { data: user } = useAuth();
-  const checkout = useCheckout();
-  const { toast } = useToast();
 
   return (
     <section className="space-y-12">
@@ -58,35 +55,18 @@ export default function PricingPageClient() {
             plan={plan}
             interval={interval}
             featured={plan.id === "professional"}
-            ctaLabel={user?.tenant_id ? t("billing.upgrade") : t("pricing.cta")}
+            ctaLabel={
+              user?.tenant_id
+                ? (isManualMfsOnlyLaunch() ? "Open billing details" : t("billing.upgrade"))
+                : t("pricing.cta")
+            }
             ctaHref={
               user?.tenant_id
-                ? undefined
+                ? (isManualMfsOnlyLaunch()
+                    ? `/settings/billing?source=manual&plan=${plan.id}&interval=${interval}`
+                    : `/settings/billing?plan=${plan.id}&interval=${interval}`)
                 : `/register?plan=${plan.id}&interval=${interval}`
             }
-            onCta={
-              user?.tenant_id
-                ? async () => {
-                    try {
-                      const response = await checkout.mutateAsync({
-                        plan: plan.id,
-                        interval,
-                      });
-
-                      if (response.checkout_url) {
-                        window.location.href = response.checkout_url;
-                      }
-                    } catch (error) {
-                      toast({
-                        title: "Checkout failed",
-                        description: error instanceof Error ? error.message : "Unable to start checkout.",
-                        variant: "error",
-                      });
-                    }
-                  }
-                : undefined
-            }
-            disabled={checkout.isPending}
           />
         ))}
       </div>

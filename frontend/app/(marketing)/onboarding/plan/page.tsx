@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import OnboardingShell from "@/components/onboarding-shell";
-import { useAuth } from "@/features/auth/use-auth";
+import { type AuthUser, useAuth } from "@/features/auth/use-auth";
 import { loadOnboardingDraft, saveOnboardingDraft } from "@/features/auth/onboarding-draft";
 import { PLAN_CATALOG, type PlanId } from "@/features/billing/plan-catalog";
 import type { BillingInterval } from "@/features/billing/types";
@@ -24,9 +24,6 @@ export default function OnboardingPlanPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: user, isLoading } = useAuth();
-  const [plan, setPlan] = useState<PlanId | null>(null);
-  const [interval, setInterval] = useState<BillingInterval>("monthly");
-  const [isBootstrapped, setIsBootstrapped] = useState(false);
 
   useEffect(() => {
     if (isLoading) {
@@ -48,39 +45,7 @@ export default function OnboardingPlanPage() {
       router.replace("/onboarding/account");
       return;
     }
-
-    if (!isBootstrapped) {
-      const draft = loadOnboardingDraft(user.email);
-      const planFromQuery = searchParams.get("plan");
-      const intervalFromQuery = searchParams.get("interval");
-
-      if (isValidPlan(planFromQuery)) {
-        setPlan(planFromQuery);
-      } else if (draft.plan) {
-        setPlan(draft.plan);
-      }
-
-      if (intervalFromQuery === "yearly" || draft.interval === "yearly") {
-        setInterval("yearly");
-      }
-
-      setIsBootstrapped(true);
-    }
-  }, [isBootstrapped, isLoading, router, searchParams, user]);
-
-  useEffect(() => {
-    if (!user || !isBootstrapped) {
-      return;
-    }
-
-    saveOnboardingDraft(user.email, {
-      ...loadOnboardingDraft(user.email),
-      plan: plan ?? undefined,
-      interval,
-    });
-  }, [interval, isBootstrapped, plan, user]);
-
-  const selectedPlan = useMemo(() => PLAN_CATALOG.find((item) => item.id === plan) ?? null, [plan]);
+  }, [isLoading, router, user]);
 
   if (isLoading || !user) {
     return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading...</div>;
@@ -89,6 +54,31 @@ export default function OnboardingPlanPage() {
   if (user.tenant_id) {
     return null;
   }
+
+  return <OnboardingPlanContent key={`${user.email}:${searchParams.toString()}`} user={user} queryString={searchParams.toString()} />;
+}
+
+function OnboardingPlanContent({ user, queryString }: { user: AuthUser; queryString: string }) {
+  const router = useRouter();
+  const search = useMemo(() => new URLSearchParams(queryString), [queryString]);
+  const draft = useMemo(() => loadOnboardingDraft(user.email), [user.email]);
+  const [plan, setPlan] = useState<PlanId | null>(() => {
+    const planFromQuery = search.get("plan");
+    return isValidPlan(planFromQuery) ? planFromQuery : draft.plan ?? null;
+  });
+  const [interval, setInterval] = useState<BillingInterval>(() => (
+    search.get("interval") === "yearly" || draft.interval === "yearly" ? "yearly" : "monthly"
+  ));
+
+  useEffect(() => {
+    saveOnboardingDraft(user.email, {
+      ...loadOnboardingDraft(user.email),
+      plan: plan ?? undefined,
+      interval,
+    });
+  }, [interval, plan, user.email]);
+
+  const selectedPlan = useMemo(() => PLAN_CATALOG.find((item) => item.id === plan) ?? null, [plan]);
 
   return (
     <OnboardingShell

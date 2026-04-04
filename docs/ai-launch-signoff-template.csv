@@ -1,0 +1,13 @@
+environment,account_used,provider,scenario_name,pass_fail,evidence_link,defect_id,notes
+local_docker,admin@demo.casedex.app,REPLACE_ME,Hearing summary happy path,PENDING,,,
+local_docker,admin@demo.casedex.app,REPLACE_ME,Diary rewrite happy path,PENDING,,,
+local_docker,admin@demo.casedex.app,REPLACE_ME,Research summary happy path,PENDING,,,
+local_docker,admin@demo.casedex.app,REPLACE_ME,Document Q&A happy path,PENDING,,,
+local_docker,admin@demo.casedex.app,REPLACE_ME,Insufficient-credit block,PENDING,,,
+local_docker,admin@demo.casedex.app,REPLACE_ME,Provider failure refund,PENDING,,,
+beta_or_staging,admin@demo.casedex.app,REPLACE_ME,English hearing summary,PENDING,,,
+beta_or_staging,admin@demo.casedex.app,REPLACE_ME,Bangla hearing summary,PENDING,,,
+beta_or_staging,admin@demo.casedex.app,REPLACE_ME,Document Q&A from uploaded document,PENDING,,,
+beta_or_staging,admin@demo.casedex.app,REPLACE_ME,AI manual payment submit,PENDING,,,
+beta_or_staging,platform.admin@casedex.app,REPLACE_ME,AI manual payment approve,PENDING,,,
+beta_or_staging,platform.admin@casedex.app,REPLACE_ME,AI manual payment reject,PENDING,,,

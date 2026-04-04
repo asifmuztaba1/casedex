@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,12 +19,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  type AuthUser,
   useAuth,
   useCreateUser,
   useUpdateUser,
   useUsers,
 } from "@/features/auth/use-auth";
-import { useCountries } from "@/features/countries/use-countries";
+import { type CountryOption, useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
 
@@ -36,31 +37,9 @@ export default function TeamSettingsPage() {
   const { data: users, isLoading } = useUsers(Boolean(isAdmin));
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
-  const { t, locale } = useLocale();
   const { data: countriesData } = useCountries();
   const countries = useMemo(() => countriesData?.data ?? [], [countriesData]);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<(typeof roleOptions)[number]>("lawyer");
-  const [countryId, setCountryId] = useState("");
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-
-  const nameError = submitted && !name.trim();
-  const emailError = submitted && !email.trim();
-  const emailInvalid =
-    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const countryError = submitted && !countryId;
-  const passwordRequired = !editingUserId;
-  const passwordError = submitted && passwordRequired && !password.trim();
-
-  useEffect(() => {
-    if (user?.country_id && !countryId) {
-      setCountryId(String(user.country_id));
-    }
-  }, [countryId, user]);
+  const { t } = useLocale();
 
   if (!isAdmin) {
     return (
@@ -74,6 +53,66 @@ export default function TeamSettingsPage() {
       </Card>
     );
   }
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <TeamSettingsContent
+      key={user.public_id}
+      user={user}
+      users={users}
+      isLoading={isLoading}
+      createUser={createUser}
+      updateUser={updateUser}
+      countries={countries}
+    />
+  );
+}
+
+function TeamSettingsContent({
+  user,
+  users,
+  isLoading,
+  createUser,
+  updateUser,
+  countries,
+}: {
+  user: AuthUser;
+  users: ReturnType<typeof useUsers>["data"];
+  isLoading: boolean;
+  createUser: ReturnType<typeof useCreateUser>;
+  updateUser: ReturnType<typeof useUpdateUser>;
+  countries: CountryOption[];
+}) {
+  const { t, locale } = useLocale();
+  const defaultCountryId = user.country_id ? String(user.country_id) : "";
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<(typeof roleOptions)[number]>("lawyer");
+  const [countryId, setCountryId] = useState(defaultCountryId);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const nameError = submitted && !name.trim();
+  const emailError = submitted && !email.trim();
+  const emailInvalid =
+    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const countryError = submitted && !countryId;
+  const passwordRequired = !editingUserId;
+  const passwordError = submitted && passwordRequired && !password.trim();
+
+  const resetForm = () => {
+    setEditingUserId(null);
+    setName("");
+    setEmail("");
+    setPassword("");
+    setRole("lawyer");
+    setCountryId(defaultCountryId);
+    setSubmitted(false);
+  };
 
   return (
     <section className="space-y-6">
@@ -96,7 +135,7 @@ export default function TeamSettingsPage() {
                 placeholder={t("settings.team.name")}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                aria-invalid={!!(nameError)}
+                aria-invalid={!!nameError}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -123,7 +162,7 @@ export default function TeamSettingsPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                aria-invalid={!!(passwordError)}
+                aria-invalid={!!passwordError}
               />
               {passwordError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -153,7 +192,7 @@ export default function TeamSettingsPage() {
                 }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
-                aria-invalid={!!(countryError)}
+                aria-invalid={!!countryError}
               >
                 <option value="">{t("settings.team.country")}</option>
                 {countries.map((country) => (
@@ -189,15 +228,7 @@ export default function TeamSettingsPage() {
                       locale,
                     },
                     {
-                      onSuccess: () => {
-                        setEditingUserId(null);
-                        setName("");
-                        setEmail("");
-                        setPassword("");
-                        setRole("lawyer");
-                        setCountryId("");
-                        setSubmitted(false);
-                      },
+                      onSuccess: resetForm,
                     }
                   );
                   return;
@@ -213,14 +244,7 @@ export default function TeamSettingsPage() {
                     locale,
                   },
                   {
-                    onSuccess: () => {
-                      setName("");
-                      setEmail("");
-                      setPassword("");
-                      setRole("lawyer");
-                      setCountryId("");
-                      setSubmitted(false);
-                    },
+                    onSuccess: resetForm,
                   }
                 );
               }}
@@ -237,15 +261,7 @@ export default function TeamSettingsPage() {
             {editingUserId && (
               <Button
                 variant="outline"
-                onClick={() => {
-                  setEditingUserId(null);
-                  setName("");
-                  setEmail("");
-                  setPassword("");
-                  setRole("lawyer");
-                  setCountryId("");
-                  setSubmitted(false);
-                }}
+                onClick={resetForm}
               >
                 {t("common.cancel")}
               </Button>
@@ -301,7 +317,8 @@ export default function TeamSettingsPage() {
                           setEmail(member.email ?? "");
                           setPassword("");
                           setRole(member.role as (typeof roleOptions)[number]);
-                          setCountryId(member.country_id ? String(member.country_id) : "");
+                          setCountryId(member.country_id ? String(member.country_id) : defaultCountryId);
+                          setSubmitted(false);
                         }}
                       >
                         {t("common.edit")}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Tenancy\Actions\CreateTenantForUserAction;
+use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreTenantRequest;
@@ -24,6 +25,7 @@ class TenantController extends Controller
             $user,
             $payload['tenant_name'],
             (int) $payload['country_id'],
+            TenantPlan::from((string) $payload['plan']),
             $payload['locale'] ?? null
         );
 

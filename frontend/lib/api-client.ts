@@ -86,6 +86,23 @@ export async function apiGet<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+export async function apiGetBlob(path: string): Promise<Response> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    credentials: "include",
+    headers: {
+      Accept: "text/csv, application/json",
+      "Accept-Language": getStoredLocale(),
+      "X-Locale": getStoredLocale(),
+    },
+  });
+
+  if (!response.ok) {
+    await throwForResponse(response);
+  }
+
+  return response;
+}
+
 export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",

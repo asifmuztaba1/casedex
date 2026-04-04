@@ -121,6 +121,7 @@ type UpdateUserPayload = {
 type CreateTenantPayload = {
   tenant_name: string;
   country_id: number;
+  plan: "starter" | "professional" | "chambers";
   locale?: "en" | "bn";
   skipToast?: boolean;
 };

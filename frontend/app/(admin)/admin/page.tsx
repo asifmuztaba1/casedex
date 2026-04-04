@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCourtStats } from "@/features/admin/courts/use-admin-courts";
 import { useCountries } from "@/features/countries/use-countries";
@@ -11,17 +11,14 @@ export default function AdminDashboardPage() {
   const { t } = useLocale();
   const { data: countriesData } = useCountries();
   const countries = countriesData?.data ?? [];
+  const defaultCountryId =
+    countries.find((country) => country.active)?.id ??
+    countries.find((country) => country.code === "BD")?.id ??
+    countries[0]?.id;
   const [countryId, setCountryId] = useState<number | undefined>(undefined);
+  const effectiveCountryId = countryId ?? defaultCountryId;
 
-  useEffect(() => {
-    if (!countryId && countries.length > 0) {
-      const activeCountry = countries.find((country) => country.active);
-      const bd = countries.find((country) => country.code === "BD");
-      setCountryId(activeCountry?.id ?? bd?.id ?? countries[0].id);
-    }
-  }, [countries, countryId]);
-
-  const { data: stats } = useCourtStats(countryId);
+  const { data: stats } = useCourtStats(effectiveCountryId);
 
   return (
     <section className="space-y-6">
@@ -41,7 +38,7 @@ export default function AdminDashboardPage() {
           </label>
           <select
             className="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
-            value={countryId ?? ""}
+            value={effectiveCountryId ?? ""}
             onChange={(event) => setCountryId(Number(event.target.value))}
           >
             {countries.map((country) => (

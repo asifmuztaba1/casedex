@@ -1,0 +1,120 @@
+@baseUrl = http://localhost:8080
+@api = {{baseUrl}}/api/v1
+
+### Use /api/sanctum/csrf-cookie first, then paste these values.
+@xsrf = REPLACE_WITH_URL_DECODED_XSRF_TOKEN
+@laravelSession = REPLACE_WITH_LARAVEL_SESSION
+@password = password
+
+### Demo accounts
+@tenantAdminEmail = admin@demo.casedex.app
+@tenantLawyerEmail = lawyer@demo.casedex.app
+@platformAdminEmail = platform.admin@casedex.app
+
+### 0) Get CSRF cookies
+GET {{baseUrl}}/api/sanctum/csrf-cookie
+
+### 1) Login as tenant admin
+POST {{api}}/auth/login
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "email": "{{tenantAdminEmail}}",
+  "password": "{{password}}"
+}
+
+### 2) AI credits summary
+GET {{api}}/billing/ai-credits
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 3) Hearing summary request
+POST {{api}}/ai/hearing-summary
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "idempotency_key": "qa-hearing-1",
+  "content": "Hearing started at 10:00 AM and the court fixed the matter for objection reply."
+}
+
+### 4) Diary rewrite request
+POST {{api}}/ai/diary-summary
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "idempotency_key": "qa-diary-1",
+  "content": "Talked to client, collect affidavit, prepare vakalatnama."
+}
+
+### 5) Research summary request
+POST {{api}}/ai/research-summary
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "idempotency_key": "qa-research-1",
+  "content": "Need summary of maintainability, limitation, and interim relief points."
+}
+
+### 6) Document Q&A request
+POST {{api}}/ai/document-qa
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "idempotency_key": "qa-document-1",
+  "question": "বাংলায় বলুন, পরবর্তী তারিখ কী?",
+  "context": "The order sheet records the next date as 12 May 2026. আদালত ১২ মে ২০২৬ তারিখ ধার্য করেছে।"
+}
+
+### 7) Replace REPLACE_PUBLIC_ID and inspect request status
+GET {{api}}/ai/requests/REPLACE_PUBLIC_ID
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 8) AI manual payment request status
+GET {{api}}/billing/ai-mfs-request/status
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 9) Log in as platform admin for AI payment review
+POST {{api}}/auth/login
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "email": "{{platformAdminEmail}}",
+  "password": "{{password}}"
+}
+
+### 10) List pending AI manual payments
+GET {{api}}/admin/ai-manual-payments?status=pending
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 11) Replace REPLACE_PUBLIC_ID and open screenshot download URL in a browser
+GET {{api}}/admin/ai-manual-payments/REPLACE_PUBLIC_ID/screenshot
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+### 12) Approve a pending AI manual payment
+POST {{api}}/admin/ai-manual-payments/REPLACE_PUBLIC_ID/approve
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{}
+
+### 13) Reject a pending AI manual payment
+POST {{api}}/admin/ai-manual-payments/REPLACE_PUBLIC_ID/reject
+Content-Type: application/json
+X-XSRF-TOKEN: {{xsrf}}
+Cookie: XSRF-TOKEN={{xsrf}}; laravel_session={{laravelSession}}
+
+{
+  "reason": "Screenshot does not match the transaction."
+}

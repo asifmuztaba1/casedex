@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Tabs,
   TabsContent,
@@ -49,24 +49,21 @@ export default function AdminCourtsPage() {
   const { t } = useLocale();
   const { data: countriesData } = useCountries();
   const countries = countriesData?.data ?? [];
+  const defaultCountryId =
+    countries.find((country) => country.active)?.id ??
+    countries.find((country) => country.code === "BD")?.id ??
+    countries[0]?.id;
   const [countryId, setCountryId] = useState<number | undefined>(undefined);
+  const effectiveCountryId = countryId ?? defaultCountryId;
 
-  useEffect(() => {
-    if (!countryId && countries.length > 0) {
-      const activeCountry = countries.find((country) => country.active);
-      const bd = countries.find((country) => country.code === "BD");
-      setCountryId(activeCountry?.id ?? bd?.id ?? countries[0].id);
-    }
-  }, [countries, countryId]);
-
-  const { data: divisions = [] } = useCourtDivisions(countryId);
-  const { data: types = [] } = useCourtTypes(countryId);
+  const { data: divisions = [] } = useCourtDivisions(effectiveCountryId);
+  const { data: types = [] } = useCourtTypes(effectiveCountryId);
 
   const [divisionFilter, setDivisionFilter] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
 
-  const { data: allDistricts = [] } = useCourtDistricts(countryId);
+  const { data: allDistricts = [] } = useCourtDistricts(effectiveCountryId);
   const filteredDistricts = useMemo(() => {
     if (!divisionFilter) {
       return allDistricts;
@@ -77,7 +74,7 @@ export default function AdminCourtsPage() {
   }, [allDistricts, divisionFilter]);
 
   const { data: courts = [] } = useCourts(
-    countryId,
+    effectiveCountryId,
     districtFilter || undefined,
     typeFilter || undefined
   );
@@ -141,7 +138,7 @@ export default function AdminCourtsPage() {
           </label>
           <select
             className="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
-            value={countryId ?? ""}
+            value={effectiveCountryId ?? ""}
             onChange={(event) => setCountryId(Number(event.target.value))}
           >
             {countries.map((country) => (

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -20,6 +20,8 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
@@ -67,6 +69,7 @@ import {
 import { usePlanLimits } from "@/features/billing/use-billing";
 import StorageMeter from "@/components/storage-meter";
 import { useLocale } from "@/components/locale-provider";
+import TemplatePresetPicker from "@/components/template-preset-picker";
 import type { CourtLookup } from "@/features/courts/use-courts";
 import {
   useAiDiarySummary,
@@ -76,6 +79,14 @@ import {
   useAiResearchSummary,
 } from "@/features/ai/use-ai";
 import { useToast } from "@/components/ui/use-toast";
+import { downloadCaseTimelineExport } from "@/features/cases/case-timeline-export";
+import {
+  CASE_STORY_TEMPLATES,
+  DIARY_TEMPLATES,
+  getDocumentNameTemplates,
+  HEARING_AGENDA_TEMPLATES,
+  PETITION_TEMPLATES,
+} from "@/features/templates/legal-templates";
 
 // Make option arrays literal so we can derive union types from them.
 const statusOptions = ["open", "active", "closed", "archived"] as const;
@@ -106,6 +117,15 @@ const partyRoles = [
 type PartyType = (typeof partyTypes)[number];
 type PartySide = (typeof partySides)[number];
 type PartyRole = (typeof partyRoles)[number];
+type EditFormState = {
+  title: string;
+  court: string;
+  court_public_id?: string;
+  case_number: string;
+  status: string;
+  story: string;
+  petition_draft: string;
+};
 
 export default function CaseDetailPage() {
   const params = useParams();
@@ -122,11 +142,20 @@ export default function CaseDetailPage() {
   const { data: participantsData } = useCaseParticipants(casePublicId);
   const { data: partiesData } = useCaseParties(casePublicId);
 
-  const hearings = hearingsData?.data ?? [];
-  const diaryEntries = diaryData?.data ?? [];
-  const documents = documentsData?.data ?? [];
-  const participants = participantsData?.data ?? caseDetail?.participants ?? [];
-  const parties = partiesData?.data ?? caseDetail?.parties ?? [];
+  const hearings = useMemo(() => hearingsData?.data ?? [], [hearingsData?.data]);
+  const diaryEntries = useMemo(() => diaryData?.data ?? [], [diaryData?.data]);
+  const documents = useMemo(
+    () => documentsData?.data ?? [],
+    [documentsData?.data]
+  );
+  const participants = useMemo(
+    () => participantsData?.data ?? caseDetail?.participants ?? [],
+    [participantsData?.data, caseDetail?.participants]
+  );
+  const parties = useMemo(
+    () => partiesData?.data ?? caseDetail?.parties ?? [],
+    [partiesData?.data, caseDetail?.parties]
+  );
 
   const updateCase = useUpdateCase();
   const createHearing = useCreateHearing();
@@ -188,7 +217,6 @@ export default function CaseDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [activeAiRequestId, setActiveAiRequestId] = useState<string | null>(null);
   const [documentQaQuestion, setDocumentQaQuestion] = useState("");
-  const [documentQaResult, setDocumentQaResult] = useState<string | null>(null);
 
   const [partyForm, setPartyForm] = useState<{
     name: string;
@@ -214,7 +242,15 @@ export default function CaseDetailPage() {
   const [partySubmitted, setPartySubmitted] = useState(false);
   const activeAiRequest = useAiRequestStatus(activeAiRequestId);
 
-  const [editForm, setEditForm] = useState({
+  const mergeTemplateText = (current: string | null | undefined, template: string) => {
+    const trimmedCurrent = current?.trim() ?? "";
+    if (!trimmedCurrent) {
+      return template;
+    }
+    return `${trimmedCurrent}\n\n${template}`;
+  };
+
+  const baseEditForm: EditFormState = {
     title: caseDetail?.title ?? "",
     court: caseDetail?.court ?? "",
     court_public_id: caseDetail?.court_public_id ?? undefined,
@@ -222,74 +258,75 @@ export default function CaseDetailPage() {
     status: caseDetail?.status ?? "open",
     story: caseDetail?.story ?? "",
     petition_draft: caseDetail?.petition_draft ?? "",
-  });
+  };
+  const [editFormDraft, setEditFormDraft] = useState<EditFormState | null>(null);
+  const editForm = editFormDraft ?? baseEditForm;
   const [selectedCourt, setSelectedCourt] = useState<CourtLookup | null>(null);
+  const updateEditForm = (updater: (prev: EditFormState) => EditFormState) => {
+    setEditFormDraft((prev) => updater(prev ?? baseEditForm));
+  };
+  const activeAiStatus = activeAiRequest.data?.status ?? null;
+  const activeAiFeature = activeAiRequest.data?.feature ?? null;
+  const activeAiResult = activeAiRequest.data?.result_text ?? null;
+  const activeAiError = activeAiRequest.data?.error_message ?? null;
 
-  useEffect(() => {
-    if (!caseDetail) {
-      return;
+  const renderAiFeedback = ({
+    feature,
+    title,
+    onApply,
+  }: {
+    feature: string;
+    title: string;
+    onApply?: (result: string) => void;
+  }) => {
+    if (activeAiFeature !== feature) {
+      return null;
     }
 
-    setEditForm({
-      title: caseDetail.title ?? "",
-      court: caseDetail.court ?? "",
-      court_public_id: caseDetail.court_public_id ?? undefined,
-      case_number: caseDetail.case_number ?? "",
-      status: caseDetail.status ?? "open",
-      story: caseDetail.story ?? "",
-      petition_draft: caseDetail.petition_draft ?? "",
-    });
-    setSelectedCourt(null);
-  }, [caseDetail]);
-
-  useEffect(() => {
-    if (!activeAiRequest.data) {
-      return;
+    if (activeAiStatus === "completed" && activeAiResult) {
+      return (
+        <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
+          <div className="font-semibold text-slate-900">{title}</div>
+          <div className="mt-2 whitespace-pre-wrap">{activeAiResult}</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {onApply && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  onApply(activeAiResult);
+                  setActiveAiRequestId(null);
+                }}
+              >
+                Apply result
+              </Button>
+            )}
+            <Button type="button" size="sm" variant="outline" onClick={() => setActiveAiRequestId(null)}>
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      );
     }
 
-    if (activeAiRequest.data.status === "completed" && activeAiRequest.data.result_text) {
-      if (activeAiRequest.data.feature === "document_qa") {
-        setDocumentQaResult(activeAiRequest.data.result_text);
-      } else if (activeAiRequest.data.feature === "hearing_summary") {
-        setHearingForm((prev) => ({
-          ...prev,
-          minutes: activeAiRequest.data?.result_text ?? prev.minutes,
-        }));
-      } else if (activeAiRequest.data.feature === "diary_summary") {
-        setDiaryForm((prev) => ({
-          ...prev,
-          body: activeAiRequest.data?.result_text ?? prev.body,
-        }));
-      } else if (activeAiRequest.data.feature === "research_summary") {
-        setEditForm((prev) => ({
-          ...prev,
-          petition_draft: activeAiRequest.data?.result_text ?? prev.petition_draft,
-        }));
-      }
-
-      setActiveAiRequestId(null);
-      return;
+    if (activeAiStatus === "blocked_insufficient_credits") {
+      return (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          AI credits required. Top up in Billing to continue.
+        </div>
+      );
     }
 
-    if (activeAiRequest.data.status === "blocked_insufficient_credits") {
-      toast({
-        title: "AI credits required",
-        description: "Your tenant has no AI credits left. Top up in Billing.",
-        variant: "error",
-      });
-      setActiveAiRequestId(null);
-      return;
+    if (activeAiStatus === "failed") {
+      return (
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+          {activeAiError ?? "Unable to process AI request."}
+        </div>
+      );
     }
 
-    if (activeAiRequest.data.status === "failed") {
-      toast({
-        title: "AI request failed",
-        description: activeAiRequest.data.error_message ?? "Unable to process AI request.",
-        variant: "error",
-      });
-      setActiveAiRequestId(null);
-    }
-  }, [activeAiRequest.data, toast]);
+    return null;
+  };
 
   const canManageParticipants = useMemo(() => {
     if (!user || !caseDetail) {
@@ -317,7 +354,7 @@ export default function CaseDetailPage() {
   const partyNameError = partySubmitted && !partyForm.name.trim();
 
   const { data: usersData } = useUsers(canManageParticipants);
-  const tenantUsers = usersData ?? [];
+  const tenantUsers = useMemo(() => usersData ?? [], [usersData]);
 
   const participantOptions = useMemo(() => {
     const existing = new Set(
@@ -383,6 +420,28 @@ export default function CaseDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              const filename = downloadCaseTimelineExport({
+                locale,
+                t,
+                caseDetail,
+                hearings,
+                diaryEntries,
+                documents,
+                participants,
+                parties,
+              });
+              toast({
+                title: t("case.timeline.export_success_title"),
+                description: `${t("case.timeline.export_success_desc")} ${filename}`,
+                variant: "success",
+              });
+            }}
+          >
+            {t("case.timeline.export")}
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline">{t("case.detail.edit")}</Button>
@@ -390,18 +449,18 @@ export default function CaseDetailPage() {
             <SheetContent className="w-[420px]">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold">
+                  <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.edit_title")}
-                  </h2>
-                  <p className="text-sm text-slate-600">
+                  </SheetTitle>
+                  <SheetDescription className="text-sm text-slate-600">
                     {t("case.detail.edit_desc")}
-                  </p>
+                  </SheetDescription>
                 </div>
                 <div className="space-y-3">
                   <Input
                     value={editForm.title}
                     onChange={(event) =>
-                      setEditForm((prev) => ({
+                      updateEditForm((prev) => ({
                         ...prev,
                         title: event.target.value,
                       }))
@@ -414,7 +473,7 @@ export default function CaseDetailPage() {
                       selectedCourt={selectedCourt}
                       onValueChange={(value) => {
                         setSelectedCourt(null);
-                        setEditForm((prev) => ({
+                        updateEditForm((prev) => ({
                           ...prev,
                           court: value,
                           court_public_id: undefined,
@@ -422,7 +481,7 @@ export default function CaseDetailPage() {
                       }}
                       onSelect={(court) => {
                         setSelectedCourt(court);
-                        setEditForm((prev) => ({
+                        updateEditForm((prev) => ({
                           ...prev,
                           court: court
                             ? locale === "bn"
@@ -436,7 +495,7 @@ export default function CaseDetailPage() {
                     <Input
                       value={editForm.case_number}
                       onChange={(event) =>
-                        setEditForm((prev) => ({
+                        updateEditForm((prev) => ({
                           ...prev,
                           case_number: event.target.value,
                         }))
@@ -448,7 +507,7 @@ export default function CaseDetailPage() {
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                     value={editForm.status}
                     onChange={(event) =>
-                      setEditForm((prev) => ({
+                      updateEditForm((prev) => ({
                         ...prev,
                         status: event.target.value,
                       }))
@@ -460,22 +519,49 @@ export default function CaseDetailPage() {
                       </option>
                     ))}
                   </select>
+                  <TemplatePresetPicker
+                    title={t("templates.story.title")}
+                    description={t("templates.story.desc")}
+                    locale={locale}
+                    templates={CASE_STORY_TEMPLATES}
+                    onSelect={(template) =>
+                      updateEditForm((prev) => ({
+                        ...prev,
+                        story: mergeTemplateText(prev.story, template),
+                      }))
+                    }
+                  />
                   <textarea
                     className="h-28 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
                     value={editForm.story}
                     onChange={(event) =>
-                      setEditForm((prev) => ({
+                      updateEditForm((prev) => ({
                         ...prev,
                         story: event.target.value,
                       }))
                     }
                     placeholder={t("cases.story.placeholder")}
                   />
+                  <TemplatePresetPicker
+                    title={t("templates.petition.title")}
+                    description={t("templates.petition.desc")}
+                    locale={locale}
+                    templates={PETITION_TEMPLATES}
+                    onSelect={(template) =>
+                      updateEditForm((prev) => ({
+                        ...prev,
+                        petition_draft: mergeTemplateText(
+                          prev.petition_draft,
+                          template
+                        ),
+                      }))
+                    }
+                  />
                   <textarea
                     className="h-28 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
                     value={editForm.petition_draft}
                     onChange={(event) =>
-                      setEditForm((prev) => ({
+                      updateEditForm((prev) => ({
                         ...prev,
                         petition_draft: event.target.value,
                       }))
@@ -507,6 +593,15 @@ export default function CaseDetailPage() {
                       {aiResearchSummary.isPending ? "Queuing..." : "AI summarize petition (5 credits)"}
                     </span>
                   </Button>
+                  {renderAiFeedback({
+                    feature: "research_summary",
+                    title: "AI petition summary",
+                    onApply: (result) =>
+                      updateEditForm((prev) => ({
+                        ...prev,
+                        petition_draft: result,
+                      })),
+                  })}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -516,6 +611,11 @@ export default function CaseDetailPage() {
                         data: {
                           ...editForm,
                           court_public_id: editForm.court_public_id ?? undefined,
+                        },
+                      }, {
+                        onSuccess: () => {
+                          setEditFormDraft(null);
+                          setSelectedCourt(null);
                         },
                       })
                     }
@@ -539,12 +639,12 @@ export default function CaseDetailPage() {
             <SheetContent className="w-[420px]">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold">
+                  <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.add_hearing_title")}
-                  </h2>
-                  <p className="text-sm text-slate-600">
+                  </SheetTitle>
+                  <SheetDescription className="text-sm text-slate-600">
                     {t("case.detail.hearing_prompt")}
-                  </p>
+                  </SheetDescription>
                 </div>
                 <div className="space-y-3">
                   <Input
@@ -577,6 +677,18 @@ export default function CaseDetailPage() {
                       </option>
                     ))}
                   </select>
+                  <TemplatePresetPicker
+                    title={t("templates.hearing.title")}
+                    description={t("templates.hearing.desc")}
+                    locale={locale}
+                    templates={HEARING_AGENDA_TEMPLATES}
+                    onSelect={(template) =>
+                      setHearingForm((prev) => ({
+                        ...prev,
+                        agenda: mergeTemplateText(prev.agenda, template),
+                      }))
+                    }
+                  />
                   <Input
                     placeholder={t("hearing.agenda")}
                     value={hearingForm.agenda}
@@ -612,6 +724,15 @@ export default function CaseDetailPage() {
                       {aiHearingSummary.isPending ? "Queuing..." : "AI summarize hearing (4 credits)"}
                     </span>
                   </Button>
+                  {renderAiFeedback({
+                    feature: "hearing_summary",
+                    title: "AI hearing summary",
+                    onApply: (result) =>
+                      setHearingForm((prev) => ({
+                        ...prev,
+                        minutes: result,
+                      })),
+                  })}
                   <Input
                     placeholder={t("case.detail.location_placeholder")}
                     value={hearingForm.location}
@@ -700,12 +821,12 @@ export default function CaseDetailPage() {
             <SheetContent className="w-[420px]">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold">
+                  <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.add_diary_title")}
-                  </h2>
-                  <p className="text-sm text-slate-600">
+                  </SheetTitle>
+                  <SheetDescription className="text-sm text-slate-600">
                     {t("case.detail.diary_prompt")}
-                  </p>
+                  </SheetDescription>
                 </div>
                 <div className="space-y-3">
                   <Input
@@ -736,6 +857,19 @@ export default function CaseDetailPage() {
                   {diaryTitleError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
                   )}
+                  <TemplatePresetPicker
+                    title={t("templates.diary.title")}
+                    description={t("templates.diary.desc")}
+                    locale={locale}
+                    templates={DIARY_TEMPLATES}
+                    onSelect={(template) =>
+                      setDiaryForm((prev) => ({
+                        ...prev,
+                        title: prev.title.trim() ? prev.title : template.title,
+                        body: mergeTemplateText(prev.body, template.body),
+                      }))
+                    }
+                  />
                   <select
                     className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
                     value={diaryForm.hearing_public_id}
@@ -795,6 +929,15 @@ export default function CaseDetailPage() {
                       {aiDiarySummary.isPending ? "Queuing..." : "AI rewrite diary (3 credits)"}
                     </span>
                   </Button>
+                  {renderAiFeedback({
+                    feature: "diary_summary",
+                    title: "AI diary rewrite",
+                    onApply: (result) =>
+                      setDiaryForm((prev) => ({
+                        ...prev,
+                        body: result,
+                      })),
+                  })}
                   {diaryBodyError && (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
                   )}
@@ -842,12 +985,12 @@ export default function CaseDetailPage() {
             <SheetContent className="w-[420px]">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold">
+                  <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.upload_document_title")}
-                  </h2>
-                  <p className="text-sm text-slate-600">
+                  </SheetTitle>
+                  <SheetDescription className="text-sm text-slate-600">
                     {t("document.allowed_types")}
-                  </p>
+                  </SheetDescription>
                 </div>
                 {planLimits && (
                   <StorageMeter
@@ -892,6 +1035,18 @@ export default function CaseDetailPage() {
                       </option>
                     ))}
                   </select>
+                  <TemplatePresetPicker
+                    title={t("templates.document.title")}
+                    description={t("templates.document.desc")}
+                    locale={locale}
+                    templates={getDocumentNameTemplates(documentForm.category)}
+                    onSelect={(template) =>
+                      setDocumentForm((prev) => ({
+                        ...prev,
+                        name_base: template,
+                      }))
+                    }
+                  />
                   <Input
                     type="file"
                     onChange={(event) =>
@@ -1214,17 +1369,17 @@ export default function CaseDetailPage() {
                             <SheetContent className="w-[420px]">
                               <div className="space-y-4">
                                 <div>
-                                  <h2 className="text-lg font-semibold">
+                                  <SheetTitle className="text-lg font-semibold">
                                     {t("hearing.detail_title")}
-                                  </h2>
-                                  <p className="text-sm text-slate-600">
+                                  </SheetTitle>
+                                  <SheetDescription className="text-sm text-slate-600">
                                     {hearing.hearing_at
                                       ? format(
                                           new Date(hearing.hearing_at),
                                           "PPpp"
                                         )
                                       : t("common.tbd")}
-                                  </p>
+                                  </SheetDescription>
                                 </div>
                                 <div className="space-y-2 text-sm text-slate-600">
                                   <div>
@@ -1357,11 +1512,10 @@ export default function CaseDetailPage() {
                     {aiDocumentQa.isPending ? "Queuing..." : "Ask AI"}
                   </span>
                 </Button>
-                {documentQaResult && (
-                  <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
-                    {documentQaResult}
-                  </div>
-                )}
+                {renderAiFeedback({
+                  feature: "document_qa",
+                  title: "AI answer",
+                })}
               </div>
               {documents.length === 0 ? (
                 <EmptyState

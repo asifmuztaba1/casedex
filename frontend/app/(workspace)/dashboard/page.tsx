@@ -42,28 +42,54 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
 
+function formatLocalizedDate(
+  locale: "en" | "bn",
+  date: Date,
+  withTime = false
+) {
+  return new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-US", {
+    dateStyle: "medium",
+    ...(withTime ? { timeStyle: "short" } : {}),
+  }).format(date);
+}
+
 export default function DashboardPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: user } = useAuth();
-  const { refetch: refetchSubscription } = useSubscription();
+  const { data: subscription, refetch: refetchSubscription } = useSubscription();
   const { data: casesData, isLoading: casesLoading } = useCases();
   const { data: hearingsData, isLoading: hearingsLoading } = useHearings();
   const { data: diaryData } = useDiaryEntries();
   const { data: documentsData } = useDocuments();
   const { data: notificationsData } = useNotifications();
 
-  const cases = casesData?.data ?? [];
-  const hearings = hearingsData?.data ?? [];
-  const diaryEntries = diaryData?.data ?? [];
-  const documents = documentsData?.data ?? [];
-  const notifications = notificationsData?.data ?? [];
+  const cases = useMemo(() => casesData?.data ?? [], [casesData?.data]);
+  const hearings = useMemo(() => hearingsData?.data ?? [], [hearingsData?.data]);
+  const diaryEntries = useMemo(() => diaryData?.data ?? [], [diaryData?.data]);
+  const documents = useMemo(() => documentsData?.data ?? [], [documentsData?.data]);
+  const notifications = useMemo(
+    () => notificationsData?.data ?? [],
+    [notificationsData?.data]
+  );
 
   const upcomingHearings = useMemo(
-    () => hearings.filter((hearing) => Boolean(hearing.hearing_at)).slice(0, 5),
+    () =>
+      hearings
+        .filter((hearing) => Boolean(hearing.hearing_at))
+        .sort((left, right) => {
+          const leftValue = left.hearing_at
+            ? new Date(left.hearing_at).getTime()
+            : Number.MAX_SAFE_INTEGER;
+          const rightValue = right.hearing_at
+            ? new Date(right.hearing_at).getTime()
+            : Number.MAX_SAFE_INTEGER;
+          return leftValue - rightValue;
+        })
+        .slice(0, 5),
     [hearings]
   );
 
@@ -72,6 +98,109 @@ export default function DashboardPage() {
   ]);
 
   const recentDocuments = useMemo(() => documents.slice(0, 5), [documents]);
+
+  const deadlineItems = useMemo(() => {
+    const now = new Date();
+    const nowTime = now.getTime();
+    const weekAheadTime = nowTime + 7 * 24 * 60 * 60 * 1000;
+    const items: Array<{
+      id: string;
+      title: string;
+      detail: string;
+      badge: string;
+      href: string;
+      hrefLabel: string;
+    }> = [];
+
+    const resolveBadge = (date: Date, fallback: string) => {
+      const diff = date.getTime() - nowTime;
+      if (diff <= 24 * 60 * 60 * 1000) {
+        return t("dashboard.deadlines.badge.today");
+      }
+      if (diff <= 48 * 60 * 60 * 1000) {
+        return t("dashboard.deadlines.badge.soon");
+      }
+      return fallback;
+    };
+
+    if (subscription?.on_trial && subscription.trial_ends_at) {
+      const trialEndsAt = new Date(subscription.trial_ends_at);
+      const trialEndsTime = trialEndsAt.getTime();
+      if (!Number.isNaN(trialEndsTime) && trialEndsTime <= weekAheadTime) {
+        items.push({
+          id: "trial-access",
+          title: t("dashboard.deadlines.trial_title"),
+          detail: `${t("dashboard.deadlines.trial_desc")} ${formatLocalizedDate(
+            locale,
+            trialEndsAt
+          )}`,
+          badge: resolveBadge(
+            trialEndsAt,
+            t("dashboard.deadlines.badge.billing")
+          ),
+          href: "/settings/billing",
+          hrefLabel: t("nav.billing"),
+        });
+      }
+    }
+
+    if (
+      subscription?.manual_status === "pending" &&
+      subscription.temporary_access_expires_at
+    ) {
+      const reviewEndsAt = new Date(subscription.temporary_access_expires_at);
+      const reviewEndsTime = reviewEndsAt.getTime();
+      if (!Number.isNaN(reviewEndsTime) && reviewEndsTime <= weekAheadTime) {
+        items.push({
+          id: "billing-review",
+          title: t("dashboard.deadlines.review_title"),
+          detail: `${t("dashboard.deadlines.review_desc")} ${formatLocalizedDate(
+            locale,
+            reviewEndsAt,
+            true
+          )}`,
+          badge: resolveBadge(
+            reviewEndsAt,
+            t("dashboard.deadlines.badge.billing")
+          ),
+          href: "/settings/billing",
+          hrefLabel: t("nav.billing"),
+        });
+      }
+    }
+
+    upcomingHearings.forEach((hearing) => {
+      if (!hearing.hearing_at) {
+        return;
+      }
+      const hearingDate = new Date(hearing.hearing_at);
+      const hearingTime = hearingDate.getTime();
+      if (
+        Number.isNaN(hearingTime) ||
+        hearingTime < nowTime ||
+        hearingTime > weekAheadTime
+      ) {
+        return;
+      }
+
+      items.push({
+        id: hearing.public_id,
+        title: hearing.case_title ?? t("dashboard.deadlines.hearing_title"),
+        detail: `${hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")} · ${formatLocalizedDate(
+          locale,
+          hearingDate,
+          true
+        )}`,
+        badge: resolveBadge(hearingDate, t("dashboard.deadlines.badge.week")),
+        href: hearing.case_public_id
+          ? `/cases/${hearing.case_public_id}`
+          : "/hearings",
+        hrefLabel: hearing.case_public_id ? t("common.view_case") : t("nav.hearings"),
+      });
+    });
+
+    return items.slice(0, 4);
+  }, [locale, subscription, t, upcomingHearings]);
 
   useEffect(() => {
     if (searchParams.get("billing") !== "success") {
@@ -244,6 +373,47 @@ export default function DashboardPage() {
         </Card>
 
         <div className="space-y-6 lg:col-span-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("dashboard.deadlines.title")}</CardTitle>
+              <CardDescription>{t("dashboard.deadlines.desc")}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {deadlineItems.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  {t("dashboard.deadlines.empty")}
+                </div>
+              ) : (
+                deadlineItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium text-slate-900">
+                          {item.title}
+                        </div>
+                        <div className="text-xs text-slate-500">{item.detail}</div>
+                      </div>
+                      <Badge variant="subtle" className="shrink-0">
+                        {item.badge}
+                      </Badge>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="mt-2 px-0 text-[var(--accent)] hover:bg-transparent"
+                    >
+                      <Link href={item.href}>{item.hrefLabel}</Link>
+                    </Button>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>{t("dashboard.section.actions")}</CardTitle>

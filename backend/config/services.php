@@ -39,7 +39,13 @@ return [
         'driver' => env('AI_DRIVER', 'openai_compatible'),
         'base_url' => env('AI_BASE_URL', 'https://api.openai.com/v1'),
         'gemini_base_url' => env('AI_GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta'),
-        'api_key' => env('AI_API_KEY'),
+        'api_key' => env('AI_API_KEY')
+            ?: env('AI_OPENAI_API_KEY')
+            ?: env('GROQ_API_KEY'),
+        'gemini_api_key' => env('AI_GEMINI_API_KEY')
+            ?: env('GEMINI_API_KEY')
+            ?: env('GOOGLE_API_KEY')
+            ?: env('AI_API_KEY'),
         'model' => env('AI_MODEL', 'gpt-4.1-mini'),
         'gemini_model' => env('AI_GEMINI_MODEL', 'gemini-2.0-flash'),
     ],

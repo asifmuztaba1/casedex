@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,8 +18,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLocale } from "@/components/locale-provider";
+import TemplatePresetPicker from "@/components/template-preset-picker";
 import type { CourtLookup } from "@/features/courts/use-courts";
 import { useAuth, useUsers } from "@/features/auth/use-auth";
+import {
+  CASE_STORY_TEMPLATES,
+  HEARING_AGENDA_TEMPLATES,
+  PETITION_TEMPLATES,
+} from "@/features/templates/legal-templates";
 
 const participantSchema = z.object({
   user_public_id: z.string().min(2),
@@ -121,7 +127,7 @@ export default function NewCasePage() {
 
   type CaseFormValues = z.infer<typeof caseSchema>;
 
-  const { register, handleSubmit, control, formState, setValue, watch } =
+  const { register, handleSubmit, control, formState, setValue } =
     useForm<CaseFormValues>({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       resolver: zodResolver(caseSchema) as any,
@@ -138,8 +144,12 @@ export default function NewCasePage() {
       },
     });
 
-  const courtValue = watch("court") ?? "";
-  const selectedParticipants = watch("participants") ?? [];
+  const courtValue = useWatch({ control, name: "court" }) ?? "";
+  const storyValue = useWatch({ control, name: "story" }) ?? "";
+  const petitionValue = useWatch({ control, name: "petition_draft" }) ?? "";
+  const firstHearingAgendaValue =
+    useWatch({ control, name: "first_hearing.agenda" }) ?? "";
+  const selectedParticipants = useWatch({ control, name: "participants" }) ?? [];
   const [participantQuery, setParticipantQuery] = useState<Record<string, string>>(
     {}
   );
@@ -164,6 +174,14 @@ export default function NewCasePage() {
   const courtError = Boolean(formState.errors.court);
   const storyError = Boolean(formState.errors.story);
   const petitionError = Boolean(formState.errors.petition_draft);
+
+  const mergeTemplateText = (current: string | undefined, template: string) => {
+    const trimmedCurrent = current?.trim() ?? "";
+    if (!trimmedCurrent) {
+      return template;
+    }
+    return `${trimmedCurrent}\n\n${template}`;
+  };
 
   const onSubmit = (values: CaseFormValues) => {
     const payload: CaseFormValues = {
@@ -360,7 +378,19 @@ export default function NewCasePage() {
                 {t("cases.story.placeholder")}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <TemplatePresetPicker
+                title={t("templates.story.title")}
+                description={t("templates.story.desc")}
+                locale={locale}
+                templates={CASE_STORY_TEMPLATES}
+                onSelect={(template) =>
+                  setValue("story", mergeTemplateText(storyValue, template), {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
               <textarea
                 className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
                   showErrors && storyError
@@ -383,7 +413,23 @@ export default function NewCasePage() {
                 {t("cases.petition.placeholder")}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <TemplatePresetPicker
+                title={t("templates.petition.title")}
+                description={t("templates.petition.desc")}
+                locale={locale}
+                templates={PETITION_TEMPLATES}
+                onSelect={(template) =>
+                  setValue(
+                    "petition_draft",
+                    mergeTemplateText(petitionValue, template),
+                    {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    }
+                  )
+                }
+              />
               <textarea
                 className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
                   showErrors && petitionError
@@ -660,28 +706,46 @@ export default function NewCasePage() {
                 {t("cases.hearing.add")}
               </label>
               {includeFirstHearing && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Input
-                    type="datetime-local"
-                    {...register("first_hearing.hearing_at")}
+                <div className="space-y-4">
+                  <TemplatePresetPicker
+                    title={t("templates.hearing.title")}
+                    description={t("templates.hearing.desc")}
+                    locale={locale}
+                    templates={HEARING_AGENDA_TEMPLATES}
+                    onSelect={(template) =>
+                      setValue(
+                        "first_hearing.agenda",
+                        mergeTemplateText(firstHearingAgendaValue, template),
+                        {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        }
+                      )
+                    }
                   />
-                  <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
-                    {...register("first_hearing.type")}
-                  >
-                    <option value="mention">{t("hearing.type.mention")}</option>
-                    <option value="hearing">{t("hearing.type.hearing")}</option>
-                    <option value="trial">{t("hearing.type.trial")}</option>
-                    <option value="order">{t("hearing.type.order")}</option>
-                  </select>
-                  <Input
-                    placeholder={t("cases.hearing.agenda")}
-                    {...register("first_hearing.agenda")}
-                  />
-                  <Input
-                    placeholder={t("cases.hearing.location")}
-                    {...register("first_hearing.location")}
-                  />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input
+                      type="datetime-local"
+                      {...register("first_hearing.hearing_at")}
+                    />
+                    <select
+                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      {...register("first_hearing.type")}
+                    >
+                      <option value="mention">{t("hearing.type.mention")}</option>
+                      <option value="hearing">{t("hearing.type.hearing")}</option>
+                      <option value="trial">{t("hearing.type.trial")}</option>
+                      <option value="order">{t("hearing.type.order")}</option>
+                    </select>
+                    <Input
+                      placeholder={t("cases.hearing.agenda")}
+                      {...register("first_hearing.agenda")}
+                    />
+                    <Input
+                      placeholder={t("cases.hearing.location")}
+                      {...register("first_hearing.location")}
+                    />
+                  </div>
                 </div>
               )}
             </CardContent>

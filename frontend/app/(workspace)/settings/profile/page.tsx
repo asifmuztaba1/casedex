@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,21 +10,44 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
-import { useCountries } from "@/features/countries/use-countries";
+import { type AuthUser, useAuth, useUpdateProfile } from "@/features/auth/use-auth";
+import { type CountryOption, useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
 
 export default function ProfileSettingsPage() {
   const { data: user } = useAuth();
   const updateProfile = useUpdateProfile();
-  const { t } = useLocale();
   const { data: countriesData } = useCountries();
   const countries = useMemo(() => countriesData?.data ?? [], [countriesData]);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [countryId, setCountryId] = useState("");
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <ProfileSettingsForm
+      key={user.public_id}
+      user={user}
+      countries={countries}
+      updateProfile={updateProfile}
+    />
+  );
+}
+
+function ProfileSettingsForm({
+  user,
+  countries,
+  updateProfile,
+}: {
+  user: AuthUser;
+  countries: CountryOption[];
+  updateProfile: ReturnType<typeof useUpdateProfile>;
+}) {
+  const { t } = useLocale();
+  const [name, setName] = useState(user.name ?? "");
+  const [email, setEmail] = useState(user.email ?? "");
+  const [countryId, setCountryId] = useState(user.country_id ? String(user.country_id) : "");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -33,15 +56,6 @@ export default function ProfileSettingsPage() {
   const emailInvalid =
     submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const countryError = submitted && !countryId;
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    setName(user.name ?? "");
-    setEmail(user.email ?? "");
-    setCountryId(user.country_id ? String(user.country_id) : "");
-  }, [user]);
 
   return (
     <section className="space-y-6">
@@ -80,7 +94,7 @@ export default function ProfileSettingsPage() {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 required
-                aria-invalid={!!(nameError)}
+                aria-invalid={!!nameError}
               />
               {nameError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
@@ -108,7 +122,7 @@ export default function ProfileSettingsPage() {
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
                 required
-                aria-invalid={!!(countryError)}
+                aria-invalid={!!countryError}
               >
                 <option value="">{t("settings.profile.country")}</option>
                 {countries.map((country) => (

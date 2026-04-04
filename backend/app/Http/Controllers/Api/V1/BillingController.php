@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Domain\Ai\Actions\SubmitAiManualPaymentRequestAction;
+use App\Domain\Auth\Actions\ExportAuditLogCsvAction;
+use App\Domain\Auth\Enums\UserRole;
 use App\Domain\Ai\Models\AiAlertRule;
 use App\Domain\Ai\Models\AiCreditLedger;
 use App\Domain\Ai\Models\AiCreditPack;
@@ -33,6 +35,7 @@ use App\Http\Resources\Api\V1\ManualPaymentRequestResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BillingController extends Controller
 {
@@ -158,6 +161,41 @@ class BillingController extends Controller
     {
         return response()->json([
             'data' => $planFeatureService->planLimits($request->user()->tenant),
+        ]);
+    }
+
+    public function auditExport(
+        Request $request,
+        PlanFeatureService $planFeatureService,
+        ExportAuditLogCsvAction $action
+    ): StreamedResponse {
+        $user = $request->user();
+        $tenant = $user->tenant;
+
+        if ($user->role?->value !== UserRole::Admin->value) {
+            abort(403, 'Only workspace admins can export audit history.');
+        }
+
+        if (! $planFeatureService->hasAccess($tenant)) {
+            abort(403, 'Active workspace access is required to export audit history.');
+        }
+
+        if (! $planFeatureService->hasAuditExport($tenant->plan ?? TenantPlan::Trial)) {
+            abort(403, 'Audit export is available on Professional and Chambers plans only.');
+        }
+
+        $validated = $request->validate([
+            'days' => ['nullable', Rule::in(['30', '90', '365', 'all'])],
+            'action' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $days = ($validated['days'] ?? '90') === 'all'
+            ? null
+            : (int) ($validated['days'] ?? 90);
+
+        return $action->handle($tenant, [
+            'days' => $days,
+            'action' => $validated['action'] ?? null,
         ]);
     }
 

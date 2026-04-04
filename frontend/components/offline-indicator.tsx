@@ -1,26 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useLocale } from "@/components/locale-provider";
 
+function subscribe(callback: () => void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
+function getSnapshot() {
+  return navigator.onLine;
+}
+
+function getServerSnapshot() {
+  return true;
+}
+
 export default function OfflineIndicator() {
-  const [online, setOnline] = useState(true);
+  const online = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const { t } = useLocale();
-
-  useEffect(() => {
-    setOnline(navigator.onLine);
-
-    const handleOnline = () => setOnline(true);
-    const handleOffline = () => setOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
 
   if (online) {
     return null;
@@ -32,4 +35,3 @@ export default function OfflineIndicator() {
     </div>
   );
 }
-

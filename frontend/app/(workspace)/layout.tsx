@@ -3,9 +3,13 @@
 import AuthGuard from "@/components/auth-guard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +21,7 @@ import { useSubscription } from "@/features/billing/use-billing";
 import { useNotifications } from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   Bell,
@@ -53,7 +57,7 @@ export default function WorkspaceLayout({
   const { locale, setLocale, t } = useLocale();
   const pathname = usePathname();
   const { data: notificationsData } = useNotifications();
-  const [mounted, setMounted] = useState(false);
+  const mounted = true;
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
     (notification) => notification.status !== "read"
@@ -79,10 +83,6 @@ export default function WorkspaceLayout({
       setLocale(preferred);
     }
   }, [user, locale, setLocale]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const showSubscriptionWall =
     subscription?.status === "expired" &&
@@ -124,6 +124,9 @@ export default function WorkspaceLayout({
                       </Button>
                     </SheetTrigger>
                     <SheetContent>
+                      <SheetTitle className="sr-only">
+                        {t("nav.workspace")}
+                      </SheetTitle>
                       <div className="space-y-6">
                         <div>
                           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">

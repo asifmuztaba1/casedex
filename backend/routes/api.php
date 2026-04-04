@@ -108,6 +108,7 @@ Route::prefix('v1')
         Route::post('/billing/resume', [BillingController::class, 'resume']);
         Route::get('/billing/invoices', [BillingController::class, 'invoices']);
         Route::get('/billing/plan-limits', [BillingController::class, 'planLimits']);
+        Route::get('/billing/audit-export', [BillingController::class, 'auditExport']);
         Route::get('/billing/manual-methods', [BillingController::class, 'manualMethods']);
         Route::post('/billing/manual-request', [BillingController::class, 'submitManualRequest']);
         Route::get('/billing/manual-request/status', [BillingController::class, 'manualRequestStatus']);

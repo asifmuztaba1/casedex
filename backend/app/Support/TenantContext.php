@@ -4,24 +4,27 @@ namespace App\Support;
 
 final class TenantContext
 {
-    private static ?int $tenantId = null;
+    /**
+     * @var array<int, int>
+     */
+    private static array $stack = [];
 
     public static function set(int $tenantId): void
     {
-        self::$tenantId = $tenantId;
+        self::$stack[] = $tenantId;
     }
 
     public static function id(): int
     {
-        if (self::$tenantId === null) {
+        if (self::$stack === []) {
             throw new \RuntimeException('Tenant context is not set.');
         }
 
-        return self::$tenantId;
+        return self::$stack[array_key_last(self::$stack)];
     }
 
     public static function clear(): void
     {
-        self::$tenantId = null;
+        array_pop(self::$stack);
     }
 }
