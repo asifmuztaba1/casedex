@@ -32,6 +32,7 @@ class StoreCasePartyRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:255'],
             'identity_number' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
+            'create_contact' => ['nullable', 'boolean'],
         ];
     }
 }

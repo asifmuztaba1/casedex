@@ -27,10 +27,44 @@ const bengaliSans = Noto_Sans_Bengali({
 });
 
 export const metadata: Metadata = {
-  title: "CaseDex",
+  title: {
+    default: "CaseDex — Every case, every hearing — in one place.",
+    template: "%s | CaseDex",
+  },
   description:
-    "CaseDex is a structured case workspace for legal professionals and law students.",
+    "CaseDex is a structured case workspace for legal professionals and law students. Organize hearings, documents, diary entries, and research in one secure workspace.",
   manifest: "/manifest.json",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://casedex.app"
+  ),
+  openGraph: {
+    type: "website",
+    siteName: "CaseDex",
+    title: "CaseDex — Every case, every hearing — in one place.",
+    description:
+      "A structured case workspace for legal professionals and law students. Track hearings, documents, and diary entries with clarity.",
+    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CaseDex — Every case, every hearing — in one place.",
+    description:
+      "A structured case workspace for legal professionals and law students.",
+    images: ["/og-image.svg"],
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-32.svg", sizes: "32x32", type: "image/svg+xml" },
+      { url: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
+    ],
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.svg",
+        sizes: "180x180",
+        type: "image/svg+xml",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({

@@ -5,6 +5,7 @@ namespace App\Domain\Cases\Actions;
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Cases\Models\CaseParty;
 use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Clients\Models\Client;
 use App\Domain\Notifications\Actions\SendCasePartyAddedMailAction;
 use App\Models\User;
 use App\Support\TenantContext;
@@ -44,9 +45,26 @@ class AddCasePartyAction
             }
         }
 
+        $clientId = $data['client_id'] ?? null;
+
+        if (! $clientId && ! empty($data['create_contact'])) {
+            $contact = Client::create([
+                'tenant_id' => TenantContext::id(),
+                'name' => $data['name'],
+                'phone' => $data['phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'address' => $data['address'] ?? null,
+                'identity_number' => $data['identity_number'] ?? null,
+                'notes' => null,
+                'type' => $data['type'] ?? 'person',
+                'is_client' => false,
+            ]);
+            $clientId = $contact->id;
+        }
+
         $party = CaseParty::create([
             'case_id' => $case->id,
-            'client_id' => $data['client_id'] ?? null,
+            'client_id' => $clientId,
             'type' => $data['type'],
             'name' => $data['name'],
             'side' => $data['side'],

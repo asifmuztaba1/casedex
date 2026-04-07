@@ -148,6 +148,7 @@ Route::prefix('v1')
         Route::put('/cases/{casePublicId}/parties/{partyId}', [CasePartyController::class, 'update']);
         Route::delete('/cases/{casePublicId}/parties/{partyId}', [CasePartyController::class, 'destroy']);
 
+        Route::get('/clients/search', [ClientController::class, 'search']);
         Route::get('/clients', [ClientController::class, 'index']);
         Route::post('/clients', [ClientController::class, 'store']);
         Route::get('/clients/{id}', [ClientController::class, 'show']);

@@ -14,9 +14,11 @@ import {
   ArrowRight,
   CalendarClock,
   FileText,
+  Scale,
   ShieldCheck,
   Sparkles,
   Users,
+  WifiOff,
 } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 import PlanTierCard from "@/components/plan-tier-card";
@@ -294,6 +296,23 @@ export default function Home() {
           ))}
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader className="space-y-3">
+            <Scale className="h-5 w-5 text-slate-500" />
+            <CardTitle className="text-lg">{t("home.bd_courts_title")}</CardTitle>
+            <CardDescription>{t("home.bd_courts_desc")}</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="space-y-3">
+            <WifiOff className="h-5 w-5 text-slate-500" />
+            <CardTitle className="text-lg">{t("home.offline_title")}</CardTitle>
+            <CardDescription>{t("home.offline_desc")}</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader className="space-y-3">

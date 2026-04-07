@@ -1,5 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" fill="none">
-  <rect width="192" height="192" rx="36" fill="#1D4ED8"/>
-  <rect x="24" y="24" width="144" height="144" rx="28" fill="#0F172A"/>
-  <text x="96" y="112" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="56" fill="#F8FAFC" letter-spacing="2">CD</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Rounded square background -->
+  <rect width="192" height="192" rx="40" fill="#1D4ED8"/>
+
+  <!-- Index card with folded corner -->
+  <g transform="translate(42, 30)">
+    <!-- Card body -->
+    <path d="M0 12 C0 5.4 5.4 0 12 0 L76 0 L108 32 L108 120 C108 126.6 102.6 132 96 132 L12 132 C5.4 132 0 126.6 0 120 Z" fill="#FFFFFF" opacity="0.95"/>
+
+    <!-- Folded corner -->
+    <path d="M76 0 L76 20 C76 26.6 81.4 32 88 32 L108 32 Z" fill="#93C5FD"/>
+
+    <!-- Line details -->
+    <rect x="16" y="50" width="52" height="3" rx="1.5" fill="#1D4ED8" opacity="0.25"/>
+    <rect x="16" y="62" width="76" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
+    <rect x="16" y="74" width="64" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
+    <rect x="16" y="86" width="76" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
+    <rect x="16" y="98" width="44" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
+  </g>
 </svg>

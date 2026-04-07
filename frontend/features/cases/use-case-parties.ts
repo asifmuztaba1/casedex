@@ -48,6 +48,8 @@ type AddPartyPayload = {
   side: string;
   role?: string;
   is_client?: boolean;
+  client_id?: number;
+  create_contact?: boolean;
   phone?: string;
   email?: string;
   address?: string;
@@ -67,6 +69,8 @@ export function useAddCaseParty() {
         side: payload.side,
         role: payload.role,
         is_client: payload.is_client,
+        client_id: payload.client_id,
+        create_contact: payload.create_contact,
         phone: payload.phone,
         email: payload.email,
         address: payload.address,

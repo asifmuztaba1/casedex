@@ -67,6 +67,7 @@ import {
   useCreateDocument,
 } from "@/features/documents/use-documents";
 import { usePlanLimits } from "@/features/billing/use-billing";
+import { useSearchContacts } from "@/features/clients/use-clients";
 import StorageMeter from "@/components/storage-meter";
 import { useLocale } from "@/components/locale-provider";
 import TemplatePresetPicker from "@/components/template-preset-picker";
@@ -228,6 +229,8 @@ export default function CaseDetailPage() {
     address: string;
     identity_number: string;
     notes: string;
+    client_id: number | null;
+    create_contact: boolean;
   }>({
     name: "",
     type: "person",
@@ -238,8 +241,13 @@ export default function CaseDetailPage() {
     address: "",
     identity_number: "",
     notes: "",
+    client_id: null,
+    create_contact: false,
   });
   const [partySubmitted, setPartySubmitted] = useState(false);
+  const [partySearchQuery, setPartySearchQuery] = useState("");
+  const [showContactSuggestions, setShowContactSuggestions] = useState(false);
+  const { data: contactSearchResults } = useSearchContacts(partySearchQuery);
   const activeAiRequest = useAiRequestStatus(activeAiRequestId);
 
   const mergeTemplateText = (current: string | null | undefined, template: string) => {
@@ -1725,18 +1733,64 @@ export default function CaseDetailPage() {
               {canManageParticipants && (
                 <div className="grid gap-3 rounded-2xl border border-slate-200 p-4">
                   <div className="grid gap-3 md:grid-cols-2">
-                    <div className="space-y-1">
+                    <div className="relative space-y-1">
                       <Input
                         placeholder={t("cases.parties.name")}
                         value={partyForm.name}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          const val = event.target.value;
                           setPartyForm((prev) => ({
                             ...prev,
-                            name: event.target.value,
-                          }))
-                        }
+                            name: val,
+                            client_id: null,
+                          }));
+                          setPartySearchQuery(val);
+                          setShowContactSuggestions(val.length >= 2);
+                        }}
+                        onFocus={() => {
+                          if (partyForm.name.length >= 2) setShowContactSuggestions(true);
+                        }}
+                        onBlur={() => {
+                          setTimeout(() => setShowContactSuggestions(false), 200);
+                        }}
                         aria-invalid={!!(partyNameError)}
                       />
+                      {partyForm.client_id && (
+                        <p className="text-xs text-emerald-600">
+                          {t("contact.linked") ?? "Linked to existing contact"}
+                        </p>
+                      )}
+                      {showContactSuggestions && (contactSearchResults?.data?.length ?? 0) > 0 && (
+                        <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                          {contactSearchResults!.data.map((c) => (
+                            <button
+                              key={c.id}
+                              type="button"
+                              className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => {
+                                setPartyForm((prev) => ({
+                                  ...prev,
+                                  name: c.name,
+                                  type: c.type as PartyType,
+                                  phone: c.phone ?? "",
+                                  email: c.email ?? "",
+                                  address: c.address ?? "",
+                                  identity_number: c.identity_number ?? "",
+                                  client_id: c.id,
+                                  create_contact: false,
+                                }));
+                                setShowContactSuggestions(false);
+                              }}
+                            >
+                              <span className="font-medium">{c.name}</span>
+                              <span className="text-xs text-slate-400">
+                                {c.case_parties_count} {t("table.cases")?.toLowerCase() ?? "cases"}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                       {partyNameError && (
                         <p className="text-xs text-rose-600">
                           {t("common.required")}
@@ -1844,7 +1898,23 @@ export default function CaseDetailPage() {
                       }))
                     }
                   />
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
+                    {!partyForm.client_id && (
+                      <label className="flex items-center gap-2 text-sm text-slate-600">
+                        <input
+                          type="checkbox"
+                          checked={partyForm.create_contact}
+                          onChange={(e) =>
+                            setPartyForm((prev) => ({
+                              ...prev,
+                              create_contact: e.target.checked,
+                            }))
+                          }
+                          className="rounded border-slate-300"
+                        />
+                        {t("contact.save_as_contact") ?? "Save as known contact"}
+                      </label>
+                    )}
                     <Button
                       onClick={() => {
                         setPartySubmitted(true);
@@ -1863,10 +1933,25 @@ export default function CaseDetailPage() {
                             address: partyForm.address,
                             identity_number: partyForm.identity_number,
                             notes: partyForm.notes,
+                            client_id: partyForm.client_id ?? undefined,
+                            create_contact: partyForm.create_contact || undefined,
                           },
                           {
                             onSuccess: () => {
                               setPartySubmitted(false);
+                              setPartyForm({
+                                name: "",
+                                type: "person",
+                                side: "opponent",
+                                role: "respondent",
+                                phone: "",
+                                email: "",
+                                address: "",
+                                identity_number: "",
+                                notes: "",
+                                client_id: null,
+                                create_contact: false,
+                              });
                             },
                           }
                         );
@@ -1886,65 +1971,89 @@ export default function CaseDetailPage() {
                   description={t("case.detail.parties.empty_desc")}
                 />
               ) : (
-                <Table className="min-w-[720px]">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("table.name")}</TableHead>
-                      <TableHead>{t("table.side")}</TableHead>
-                      <TableHead>{t("table.role")}</TableHead>
-                      <TableHead>{t("table.contact")}</TableHead>
-                      <TableHead>{t("table.actions")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {parties.map((party) => (
-                      <TableRow key={String(party.id)}>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <div className="text-sm font-medium text-slate-900">
-                              {party.name}
-                            </div>
-                            {Boolean(party.is_client) && (
-                              <Badge variant="subtle">
-                                {t("case.detail.parties.client_badge")}
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="capitalize">
-                          {party.side
-                            ? t(`party.side.${party.side}` as string)
-                            : "-"}
-                        </TableCell>
-                        <TableCell className="capitalize">
-                          {party.role
-                            ? t(`party.role.${party.role}` as string)
-                            : "-"}
-                        </TableCell>
-                        <TableCell className="text-sm text-slate-600">
-                          {party.phone ?? party.email ?? "-"}
-                        </TableCell>
-                        <TableCell>
-                          {canManageParticipants && !Boolean(party.is_client) && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                removeParty.mutate({
-                                  casePublicId,
-                                  partyId: Number(party.id),
-                                })
-                              }
-                              disabled={removeParty.isPending}
-                            >
-                              {t("common.remove")}
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="space-y-6">
+                  {(["client", "opponent", "third_party"] as const).map((sideKey) => {
+                    const sideParties = parties.filter((p) => p.side === sideKey);
+                    if (sideParties.length === 0) return null;
+                    return (
+                      <div key={sideKey}>
+                        <h3 className="mb-2 text-sm font-semibold text-slate-700">
+                          {t(`party.group.${sideKey}`) ?? sideKey}
+                        </h3>
+                        <Table className="min-w-[720px]">
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>{t("table.name")}</TableHead>
+                              <TableHead>{t("table.type")}</TableHead>
+                              <TableHead>{t("table.role")}</TableHead>
+                              <TableHead>{t("table.contact")}</TableHead>
+                              <TableHead>{t("table.actions")}</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {sideParties.map((party) => (
+                              <TableRow key={String(party.id)}>
+                                <TableCell>
+                                  <div className="space-y-1">
+                                    <div className="text-sm font-medium text-slate-900">
+                                      {party.name}
+                                    </div>
+                                    {Boolean(party.is_client) && (
+                                      <Badge variant="subtle">
+                                        {t("case.detail.parties.client_badge")}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge>
+                                    {party.type
+                                      ? t(`contact.type.${party.type}`)
+                                      : "-"}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                  {party.role
+                                    ? t(`party.role.${party.role}` as string)
+                                    : "-"}
+                                </TableCell>
+                                <TableCell className="text-sm text-slate-600">
+                                  {party.phone ?? party.email ?? "-"}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    {party.client_id && (
+                                      <Button variant="ghost" size="sm" asChild>
+                                        <Link href={`/contacts/${party.client_id}`}>
+                                          {t("contact.view_history") ?? "History"}
+                                        </Link>
+                                      </Button>
+                                    )}
+                                    {canManageParticipants && !Boolean(party.is_client) && (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          removeParty.mutate({
+                                            casePublicId,
+                                            partyId: Number(party.id),
+                                          })
+                                        }
+                                        disabled={removeParty.isPending}
+                                      >
+                                        {t("common.remove")}
+                                      </Button>
+                                    )}
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </CardContent>
           </Card>

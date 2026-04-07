@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Domain\Clients\Enums\ContactType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreClientRequest extends FormRequest
 {
@@ -23,6 +25,8 @@ class StoreClientRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:255'],
             'identity_number' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
+            'type' => ['nullable', Rule::in(array_column(ContactType::cases(), 'value'))],
+            'is_client' => ['nullable', 'boolean'],
         ];
     }
 }

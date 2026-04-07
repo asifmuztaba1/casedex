@@ -8,6 +8,7 @@ import type { BillingInterval } from "@/features/billing/types";
 import type { PlanCatalogItem } from "@/features/billing/plan-catalog";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale-provider";
+import { useIsBdtPricing } from "@/lib/use-locale-currency";
 
 type PlanTierCardProps = {
   plan: PlanCatalogItem;
@@ -33,7 +34,10 @@ export default function PlanTierCard({
   className,
 }: PlanTierCardProps) {
   const { t } = useLocale();
-  const price = interval === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
+  const isBdt = useIsBdtPricing();
+  const price = isBdt
+    ? (interval === "monthly" ? plan.monthlyPriceBdt : plan.yearlyPriceBdt)
+    : (interval === "monthly" ? plan.monthlyPrice : plan.yearlyPrice);
   const accentStyles = {
     slate: "before:bg-slate-700/80",
     indigo: "before:bg-indigo-700/80",

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#1D4ED8"/>
+
+  <!-- Simplified card with fold -->
+  <g transform="translate(7, 5)">
+    <!-- Card body -->
+    <path d="M0 2 C0 0.9 0.9 0 2 0 L12 0 L18 6 L18 20 C18 21.1 17.1 22 16 22 L2 22 C0.9 22 0 21.1 0 20 Z" fill="#FFFFFF" opacity="0.95"/>
+
+    <!-- Folded corner -->
+    <path d="M12 0 L12 4 C12 5.1 12.9 6 14 6 L18 6 Z" fill="#93C5FD"/>
+
+    <!-- Simplified lines -->
+    <rect x="3" y="9" width="8" height="1.5" rx="0.75" fill="#1D4ED8" opacity="0.3"/>
+    <rect x="3" y="12.5" width="12" height="1.5" rx="0.75" fill="#1D4ED8" opacity="0.2"/>
+    <rect x="3" y="16" width="10" height="1.5" rx="0.75" fill="#1D4ED8" opacity="0.15"/>
+  </g>
+</svg>

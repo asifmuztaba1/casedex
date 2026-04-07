@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Full-bleed background (iOS adds its own rounding) -->
+  <rect width="180" height="180" fill="#1D4ED8"/>
+
+  <!-- Index card with folded corner -->
+  <g transform="translate(40, 28)">
+    <!-- Card body -->
+    <path d="M0 10 C0 4.5 4.5 0 10 0 L70 0 L100 30 L100 114 C100 119.5 95.5 124 90 124 L10 124 C4.5 124 0 119.5 0 114 Z" fill="#FFFFFF" opacity="0.95"/>
+
+    <!-- Folded corner -->
+    <path d="M70 0 L70 18 C70 24.6 75.4 30 82 30 L100 30 Z" fill="#93C5FD"/>
+
+    <!-- Line details -->
+    <rect x="14" y="46" width="48" height="3" rx="1.5" fill="#1D4ED8" opacity="0.25"/>
+    <rect x="14" y="56" width="72" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
+    <rect x="14" y="66" width="60" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
+    <rect x="14" y="76" width="72" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
+    <rect x="14" y="86" width="42" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
+  </g>
+</svg>

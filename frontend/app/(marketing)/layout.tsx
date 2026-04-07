@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
+import CookieConsent from "@/components/cookie-consent";
 import dynamic from "next/dynamic";
 
 export default function MarketingLayout({
@@ -20,19 +21,21 @@ export default function MarketingLayout({
       <div className="relative">
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-6 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold">
-                CD
-              </div>
+            <a href="/" className="flex items-center gap-3">
+              <img
+                src="/icons/icon-192.svg"
+                alt="CaseDex"
+                className="h-9 w-9 rounded-lg"
+              />
               <div>
                 <div className="text-sm font-semibold tracking-wide text-slate-900">
                   {"CaseDex\u2122"}
                 </div>
-                <div className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                  {t("nav.workspace")}
+                <div className="text-[11px] text-slate-500">
+                  {t("meta.tagline")}
                 </div>
               </div>
-            </div>
+            </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
               <a className="hover:text-slate-900" href="/about">
                 {t("nav.about")}
@@ -43,14 +46,8 @@ export default function MarketingLayout({
               <a className="hover:text-slate-900" href="/pricing">
                 {t("nav.pricing")}
               </a>
-              <a className="hover:text-slate-900" href="/security">
-                {t("nav.security")}
-              </a>
-              <a className="hover:text-slate-900" href="/privacy">
-                {t("nav.privacy")}
-              </a>
-              <a className="hover:text-slate-900" href="/terms">
-                {t("nav.terms")}
+              <a className="hover:text-slate-900" href="/contact">
+                {t("nav.contact")}
               </a>
             </nav>
             <div className="flex items-center gap-3">
@@ -76,11 +73,18 @@ export default function MarketingLayout({
           <div className="mx-auto w-full max-w-[1200px] px-6 py-12">
             <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
               <div className="space-y-3">
-                <div className="text-sm font-semibold text-slate-900">
-                  CaseDex
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/icons/icon-192.svg"
+                    alt="CaseDex"
+                    className="h-7 w-7 rounded-md"
+                  />
+                  <div className="text-sm font-semibold text-slate-900">
+                    CaseDex
+                  </div>
                 </div>
                 <p className="text-sm text-slate-600">
-                  {t("footer.subtitle")}
+                  {t("footer.tagline")}
                 </p>
                 <div className="text-xs text-slate-500">
                   {t("footer.note")}
@@ -113,10 +117,19 @@ export default function MarketingLayout({
                 <a className="block hover:text-slate-900" href="/about">
                   {t("nav.about")}
                 </a>
+                <a className="block hover:text-slate-900" href="/contact">
+                  {t("footer.contact")}
+                </a>
               </div>
+            </div>
+            <div className="mt-8 border-t border-slate-200 pt-6">
+              <p className="text-xs leading-relaxed text-slate-400">
+                {t("footer.disclaimer")}
+              </p>
             </div>
           </div>
         </footer>
+        <CookieConsent />
       </div>
     </div>
   );

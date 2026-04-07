@@ -26,6 +26,7 @@ import { usePathname } from "next/navigation";
 import {
   Bell,
   BookOpen,
+  BookUser,
   CreditCard,
   Calendar,
   FileText,
@@ -33,11 +34,14 @@ import {
   Menu,
   Settings,
   UserCircle,
+  Users,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { href: "/cases", labelKey: "nav.cases", icon: BookOpen },
+  { href: "/clients", labelKey: "nav.clients", icon: Users },
+  { href: "/contacts", labelKey: "nav.contacts", icon: BookUser },
   { href: "/hearings", labelKey: "nav.hearings", icon: Calendar },
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },

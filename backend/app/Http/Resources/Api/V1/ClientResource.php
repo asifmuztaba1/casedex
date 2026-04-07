@@ -20,6 +20,10 @@ class ClientResource extends JsonResource
             'address' => $this->address,
             'identity_number' => $this->identity_number,
             'notes' => $this->notes,
+            'type' => $this->type?->value ?? 'person',
+            'is_client' => (bool) ($this->is_client ?? true),
+            'case_parties_count' => $this->whenCounted('caseParties'),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

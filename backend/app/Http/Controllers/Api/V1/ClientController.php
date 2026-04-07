@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Domain\Clients\Actions\CreateClientAction;
 use App\Domain\Clients\Actions\DeleteClientAction;
 use App\Domain\Clients\Actions\FindClientAction;
+use App\Domain\Clients\Actions\FindClientWithCaseHistoryAction;
 use App\Domain\Clients\Actions\ListClientsAction;
 use App\Domain\Clients\Actions\UpdateClientAction;
 use App\Domain\Clients\Models\Client;
@@ -12,7 +13,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\IndexRequest;
 use App\Http\Requests\Api\V1\StoreClientRequest;
 use App\Http\Requests\Api\V1\UpdateClientRequest;
+use App\Http\Resources\Api\V1\ClientDetailResource;
 use App\Http\Resources\Api\V1\ClientResource;
+use App\Support\TenantContext;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -23,7 +26,9 @@ class ClientController extends Controller
 
         $perPage = (int) ($request->input('per_page', 25));
 
-        $clients = $action->handle($perPage, $request->input('cursor'));
+        $filters = $request->only(['search', 'is_client', 'type']);
+
+        $clients = $action->handle($perPage, $request->input('cursor'), $filters);
 
         return ClientResource::collection($clients);
     }
@@ -37,13 +42,13 @@ class ClientController extends Controller
         return new ClientResource($client);
     }
 
-    public function show(int $id, FindClientAction $action)
+    public function show(int $id, FindClientWithCaseHistoryAction $action)
     {
         $client = $action->handle($id);
 
         $this->authorize('view', $client);
 
-        return new ClientResource($client);
+        return new ClientDetailResource($client);
     }
 
     public function update(
@@ -74,5 +79,29 @@ class ClientController extends Controller
         $action->handle($client, $request->user());
 
         return response()->noContent();
+    }
+
+    public function search(Request $request)
+    {
+        $this->authorize('viewAny', Client::class);
+
+        $term = $request->input('q', '');
+
+        if (strlen($term) < 2) {
+            return response()->json(['data' => []]);
+        }
+
+        $contacts = Client::query()
+            ->where('tenant_id', TenantContext::id())
+            ->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('identity_number', 'like', "%{$term}%");
+            })
+            ->withCount('caseParties')
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+
+        return ClientResource::collection($contacts);
     }
 }
