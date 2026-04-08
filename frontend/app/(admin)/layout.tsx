@@ -23,6 +23,7 @@ const adminNav = [
   { href: "/admin/courts", key: "admin.nav.courts" },
   { href: "/admin/manual-payments", key: "admin.nav.manual_payments" },
   { href: "/admin/ai-payments", key: "admin.nav.ai_payments" },
+  { href: "/admin/support", key: "admin.nav.support" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

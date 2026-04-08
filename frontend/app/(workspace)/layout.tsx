@@ -32,6 +32,7 @@ import {
   Calendar,
   FileText,
   LayoutDashboard,
+  LifeBuoy,
   Menu,
   Settings,
   Sparkles,
@@ -48,6 +49,7 @@ const navItems = [
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
   { href: "/ai", labelKey: "nav.ai", icon: Sparkles },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
+  { href: "/support", labelKey: "nav.support", icon: LifeBuoy },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
   { href: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
 ];
