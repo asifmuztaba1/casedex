@@ -77,14 +77,9 @@ check_env() {
         err "backend/.env not found! Copy from infra/.env.production.example and fill in values:\n  cp $APP_DIR/infra/.env.production.example $APP_DIR/backend/.env\n  nano $APP_DIR/backend/.env"
     fi
 
-    # Source env for docker-compose
-    set -a
-    source "$APP_DIR/backend/.env"
-    set +a
-
-    # Ensure required vars
-    [ -z "${APP_KEY:-}" ] && err "APP_KEY is empty. Generate: docker compose -f $COMPOSE_FILE run --rm backend php artisan key:generate --show"
-    [ -z "${DB_PASSWORD:-}" ] && err "DB_PASSWORD is empty!"
+    # Check required vars without sourcing (avoids special char issues)
+    grep -q '^APP_KEY=.\+' "$APP_DIR/backend/.env" || warn "APP_KEY is empty — generate after first build"
+    grep -q '^DB_PASSWORD=.\+' "$APP_DIR/backend/.env" || err "DB_PASSWORD is empty in backend/.env!"
 }
 
 # ─── Build & deploy ──────────────────────────────
