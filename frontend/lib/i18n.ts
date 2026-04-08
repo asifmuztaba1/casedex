@@ -1117,9 +1117,11 @@ const en: Dictionary = {
   "ai.summary.content_ph": "Paste or type the content you want summarized…",
 
   "ai.docqa.context": "Document content",
-  "ai.docqa.context_ph": "Paste the document text here…",
+  "ai.docqa.context_ph": "Paste the document text here or upload a file…",
   "ai.docqa.question": "Your question",
   "ai.docqa.question_ph": "What do you want to know about this document?",
+  "ai.docqa.upload": "Upload file",
+  "ai.docqa.upload_hint": "PDF, DOCX, or TXT",
 };
 
 const bn: Dictionary = {
@@ -2195,9 +2197,11 @@ const bn: Dictionary = {
   "ai.summary.content_ph": "যে বিষয়বস্তুর সারসংক্ষেপ চান তা পেস্ট বা টাইপ করুন…",
 
   "ai.docqa.context": "ডকুমেন্টের বিষয়বস্তু",
-  "ai.docqa.context_ph": "এখানে ডকুমেন্টের টেক্সট পেস্ট করুন…",
+  "ai.docqa.context_ph": "ডকুমেন্টের টেক্সট পেস্ট করুন অথবা ফাইল আপলোড করুন…",
   "ai.docqa.question": "আপনার প্রশ্ন",
   "ai.docqa.question_ph": "এই ডকুমেন্ট সম্পর্কে কী জানতে চান?",
+  "ai.docqa.upload": "ফাইল আপলোড",
+  "ai.docqa.upload_hint": "PDF, DOCX, বা TXT",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,

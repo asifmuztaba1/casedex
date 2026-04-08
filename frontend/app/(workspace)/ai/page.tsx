@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,9 @@ import {
   NotebookPen,
   Search,
   HelpCircle,
+  Upload,
+  Loader2,
+  X,
 } from "lucide-react";
 
 type FeatureKey =
@@ -409,11 +412,66 @@ function SummaryForm({ type }: { type: "hearing" | "diary" | "research" }) {
 
 // ─── Document Q&A ────────────────────────────────────────────
 
+async function extractTextFromFile(file: File): Promise<string> {
+  const ext = file.name.split(".").pop()?.toLowerCase();
+
+  if (ext === "txt" || ext === "md" || ext === "csv") {
+    return file.text();
+  }
+
+  if (ext === "pdf") {
+    const pdfjs = await import("pdfjs-dist");
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
+    const buf = await file.arrayBuffer();
+    const doc = await pdfjs.getDocument({ data: buf }).promise;
+    const pages: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      pages.push(content.items.map((item: { str?: string }) => item.str ?? "").join(" "));
+    }
+    return pages.join("\n\n");
+  }
+
+  if (ext === "docx") {
+    const mammoth = await import("mammoth");
+    const buf = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: buf });
+    return result.value;
+  }
+
+  throw new Error("Unsupported file type");
+}
+
 function DocQaForm() {
   const { t } = useLocale();
   const mutation = useAiDocumentQa();
   const [question, setQuestion] = useState("");
   const [context, setContext] = useState("");
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setExtracting(true);
+    try {
+      const text = await extractTextFromFile(file);
+      setContext(text);
+      setFileName(file.name);
+    } catch {
+      setFileName(null);
+    } finally {
+      setExtracting(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }, []);
+
+  const clearFile = () => {
+    setContext("");
+    setFileName(null);
+  };
 
   return (
     <Card>
@@ -426,7 +484,37 @@ function DocQaForm() {
       <CardContent className="space-y-4">
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t("ai.docqa.context")}</label>
-          <Textarea rows={5} placeholder={t("ai.docqa.context_ph")} value={context} onChange={(e) => setContext(e.target.value)} />
+          <div className="mb-2 flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              disabled={extracting}
+              onClick={() => fileRef.current?.click()}
+            >
+              {extracting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              {t("ai.docqa.upload")}
+            </Button>
+            <span className="text-xs text-[var(--muted-soft)]">{t("ai.docqa.upload_hint")}</span>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.docx,.txt,.md,.csv"
+              className="hidden"
+              onChange={handleFile}
+            />
+          </div>
+          {fileName && (
+            <div className="mb-2 flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--wash)] px-3 py-1.5 text-xs text-[var(--foreground)]">
+              <FileText className="h-3.5 w-3.5 text-cyan-600" />
+              {fileName}
+              <button onClick={clearFile} className="ml-auto text-[var(--muted)] hover:text-[var(--foreground)]">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+          <Textarea rows={5} placeholder={t("ai.docqa.context_ph")} value={context} onChange={(e) => { setContext(e.target.value); if (!e.target.value) setFileName(null); }} />
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t("ai.docqa.question")}</label>
