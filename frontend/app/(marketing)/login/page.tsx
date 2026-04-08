@@ -13,20 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/features/auth/use-auth";
 import { useLocale } from "@/components/locale-provider";
-import { useToast } from "@/components/ui/use-toast";
-
-const DEMO_ACCOUNTS = [
-  { label: "Tenant Admin", email: "admin@demo.casedex.app", password: "password" },
-  { label: "Tenant Lawyer", email: "lawyer@demo.casedex.app", password: "password" },
-  { label: "Tenant Assistant", email: "assistant@demo.casedex.app", password: "password" },
-  { label: "Platform Admin", email: "platform.admin@casedex.app", password: "password" },
-] as const;
 
 export default function LoginPage() {
   const router = useRouter();
   const login = useLogin();
   const { t } = useLocale();
-  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -62,27 +53,6 @@ export default function LoginPage() {
     }
 
     router.push("/dashboard");
-  };
-
-  const loginWithDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
-    setEmail(demo.email);
-    setPassword(demo.password);
-    setSubmitted(false);
-    login.mutate(
-      { email: demo.email, password: demo.password },
-      {
-        onSuccess: (response) => {
-          handleLoginSuccess(response.data);
-        },
-        onError: () => {
-          toast({
-            title: "Demo login failed",
-            description: "Seed demo accounts and try again.",
-            variant: "error",
-          });
-        },
-      }
-    );
   };
 
   return (
@@ -175,43 +145,6 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[var(--foreground)]">Demo accounts</CardTitle>
-          <CardDescription>Use these accounts to explore the product quickly.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {DEMO_ACCOUNTS.map((demo) => (
-            <div key={demo.email} className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-sm font-medium text-[var(--foreground)]">{demo.label}</div>
-              <div className="mt-1 text-xs text-[var(--muted)]">Email: {demo.email}</div>
-              <div className="text-xs text-[var(--muted)]">Password: {demo.password}</div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setEmail(demo.email);
-                    setPassword(demo.password);
-                    setSubmitted(false);
-                  }}
-                >
-                  Use
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => loginWithDemo(demo)}
-                  disabled={login.isPending}
-                >
-                  Login as {demo.label}
-                </Button>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
     </section>
   );
 }
