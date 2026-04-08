@@ -2,10 +2,12 @@
 
 namespace App\Domain\Support\Actions;
 
+use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Support\Enums\TicketStatus;
 use App\Domain\Support\Models\SupportMessage;
 use App\Domain\Support\Models\SupportTicket;
 use App\Models\User;
+use App\Support\TenantContext;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +36,7 @@ class ReplyToTicketAction
 
             if ($isPlatformUser) {
                 $ticket->update(['status' => TicketStatus::AwaitingReply]);
+                $this->notifyTicketOwner($ticket, $user);
             } elseif ($ticket->status === TicketStatus::AwaitingReply) {
                 $ticket->update(['status' => TicketStatus::Open]);
             }
@@ -42,5 +45,34 @@ class ReplyToTicketAction
 
             return $message;
         });
+    }
+
+    private function notifyTicketOwner(SupportTicket $ticket, User $replier): void
+    {
+        $ticketOwner = $ticket->user;
+
+        if (! $ticketOwner || ! $ticketOwner->tenant_id) {
+            return;
+        }
+
+        $previousTenant = TenantContext::id();
+        TenantContext::set($ticketOwner->tenant_id);
+
+        CaseNotification::query()->withoutGlobalScope('tenant')->create([
+            'tenant_id' => $ticketOwner->tenant_id,
+            'user_id' => $ticketOwner->id,
+            'notification_type' => 'support_reply',
+            'channel' => 'in_app',
+            'title' => 'New reply on your support ticket',
+            'body' => "Your ticket \"{$ticket->subject}\" has a new reply.",
+            'status' => 'pending',
+            'scheduled_for' => now(),
+        ]);
+
+        if ($previousTenant) {
+            TenantContext::set($previousTenant);
+        } else {
+            TenantContext::clear();
+        }
     }
 }
