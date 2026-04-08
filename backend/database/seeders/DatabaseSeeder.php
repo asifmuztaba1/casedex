@@ -96,7 +96,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        if (method_exists($tenant, 'createAsCustomer') && ! $tenant->lmsqueezyId()) {
+        if (method_exists($tenant, 'createAsCustomer') && ! $tenant->lemonSqueezyId()) {
             $tenant->createAsCustomer([
                 'trial_ends_at' => $tenant->trial_ends_at,
             ]);
