@@ -6,7 +6,7 @@ set -euo pipefail
 # Run on your Hetzner VPS after initial setup
 # ──────────────────────────────────────────────────
 
-REPO_URL="git@github.com:asifmuztaba1/casedex.git"
+REPO_URL="https://github.com/asifmuztaba1/casedex.git"
 APP_DIR="/opt/casedex"
 COMPOSE_FILE="infra/compose/docker-compose.production.yml"
 
