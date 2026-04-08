@@ -32,7 +32,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(CountriesSeeder::class);
-        $this->call(CourtTypesSeeder::class);
         $this->call(BangladeshCourtSeeder::class);
         $this->call(RolesAndPermissionsSeeder::class);
 
@@ -81,7 +80,7 @@ class DatabaseSeeder extends Seeder
                     'credits' => (int) ($packConfig['credits'] ?? 0),
                     'price_usd_cents' => (int) ($packConfig['price_usd_cents'] ?? 0),
                     'price_bdt' => (float) ($packConfig['price_bdt'] ?? 0),
-                    'lemon_variant_id' => $packConfig['lemon_variant_id'] ?? null,
+                    'lemon_variant_id' => !empty($packConfig['lemon_variant_id']) ? $packConfig['lemon_variant_id'] : null,
                     'active' => true,
                     'sort_order' => (int) ($packConfig['sort_order'] ?? 0),
                 ]
