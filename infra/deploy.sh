@@ -9,6 +9,7 @@ set -euo pipefail
 REPO_URL="https://github.com/asifmuztaba1/casedex.git"
 APP_DIR="/opt/casedex"
 COMPOSE_FILE="infra/compose/docker-compose.production.yml"
+DC="docker compose -f $COMPOSE_FILE --env-file backend/.env"
 
 # Colors
 RED='\033[0;31m'
@@ -92,35 +93,35 @@ deploy() {
     check_env
 
     log "Building containers..."
-    docker compose -f "$COMPOSE_FILE" build
+    $DC build
 
     log "Starting database & redis first..."
-    docker compose -f "$COMPOSE_FILE" up -d mysql redis
+    $DC up -d mysql redis
     sleep 10
 
     log "Running migrations..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan migrate --force
+    $DC run --rm backend php artisan migrate --force
 
     log "Caching config & routes..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan config:cache
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan route:cache
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan view:cache
+    $DC run --rm backend php artisan config:cache
+    $DC run --rm backend php artisan route:cache
+    $DC run --rm backend php artisan view:cache
 
     log "Starting all services..."
-    docker compose -f "$COMPOSE_FILE" up -d
+    $DC up -d
 
     log "Restarting Horizon..."
-    docker compose -f "$COMPOSE_FILE" exec backend php artisan horizon:terminate 2>/dev/null || true
+    $DC exec backend php artisan horizon:terminate 2>/dev/null || true
 
     log "Deployment complete!"
-    docker compose -f "$COMPOSE_FILE" ps
+    $DC ps
 }
 
 # ─── Seed courts (first deploy only) ─────────────
 seed() {
     cd "$APP_DIR"
     log "Seeding database..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan db:seed --force
+    $DC run --rm backend php artisan db:seed --force
 }
 
 # ─── Quick redeploy (pull + rebuild + restart) ───
@@ -132,19 +133,19 @@ redeploy() {
     check_env
 
     log "Rebuilding..."
-    docker compose -f "$COMPOSE_FILE" build
+    $DC build
 
     log "Running migrations..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan migrate --force
+    $DC run --rm backend php artisan migrate --force
 
     log "Caching..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan config:cache
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan route:cache
-    docker compose -f "$COMPOSE_FILE" run --rm backend php artisan view:cache
+    $DC run --rm backend php artisan config:cache
+    $DC run --rm backend php artisan route:cache
+    $DC run --rm backend php artisan view:cache
 
     log "Restarting services..."
-    docker compose -f "$COMPOSE_FILE" up -d
-    docker compose -f "$COMPOSE_FILE" exec backend php artisan horizon:terminate 2>/dev/null || true
+    $DC up -d
+    $DC exec backend php artisan horizon:terminate 2>/dev/null || true
 
     log "Redeploy complete!"
 }
@@ -152,7 +153,7 @@ redeploy() {
 # ─── View logs ────────────────────────────────────
 logs() {
     cd "$APP_DIR"
-    docker compose -f "$COMPOSE_FILE" logs -f "${1:-}"
+    $DC logs -f "${1:-}"
 }
 
 # ─── Backup database ─────────────────────────────
@@ -162,14 +163,14 @@ backup() {
     local file="/opt/backups/casedex_${timestamp}.sql.gz"
     mkdir -p /opt/backups
     log "Backing up database to $file..."
-    docker compose -f "$COMPOSE_FILE" exec mysql mysqldump -u root -p"${DB_ROOT_PASSWORD}" casedex | gzip > "$file"
+    $DC exec mysql mysqldump -u root -p"${DB_ROOT_PASSWORD}" casedex | gzip > "$file"
     log "Backup saved: $file ($(du -h "$file" | cut -f1))"
 }
 
 # ─── Status ───────────────────────────────────────
 status() {
     cd "$APP_DIR"
-    docker compose -f "$COMPOSE_FILE" ps
+    $DC ps
     echo ""
     log "Disk usage:"
     df -h / | tail -1
