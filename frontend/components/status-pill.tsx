@@ -4,7 +4,7 @@ type StatusPillProps = {
 
 export default function StatusPill({ label }: StatusPillProps) {
   return (
-    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+    <span className="rounded-full bg-[var(--wash)] px-3 py-1 text-xs font-medium text-[var(--muted)]">
       {label}
     </span>
   );

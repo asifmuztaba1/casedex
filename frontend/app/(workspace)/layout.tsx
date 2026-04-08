@@ -23,6 +23,7 @@ import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/theme-toggle";
 import {
   Bell,
   BookOpen,
@@ -33,6 +34,7 @@ import {
   LayoutDashboard,
   Menu,
   Settings,
+  Sparkles,
   UserCircle,
   Users,
 } from "lucide-react";
@@ -44,6 +46,7 @@ const navItems = [
   { href: "/contacts", labelKey: "nav.contacts", icon: BookUser },
   { href: "/hearings", labelKey: "nav.hearings", icon: Calendar },
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
+  { href: "/ai", labelKey: "nav.ai", icon: Sparkles },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
   { href: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
@@ -93,22 +96,22 @@ export default function WorkspaceLayout({
     pathname !== "/settings/billing";
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col border-r border-slate-200 bg-white px-5 py-6 md:flex">
+    <div className="min-h-screen bg-[var(--background)]">
+      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex">
         <div className="space-y-2">
-          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("nav.workspace")}
           </div>
-          <div className="text-lg font-semibold text-slate-900">CaseDex</div>
+          <div className="text-lg font-semibold text-[var(--foreground)]">CaseDex</div>
         </div>
         <nav className="mt-8 space-y-1">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--paper-hover)]"
             >
-              <item.icon className="h-4 w-4 text-slate-400" />
+              <item.icon className="h-4 w-4 text-[var(--muted-soft)]" />
               {t(item.labelKey)}
             </a>
           ))}
@@ -116,7 +119,7 @@ export default function WorkspaceLayout({
       </aside>
 
       <div className="md:pl-[260px]">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3">
               <Sheet>
@@ -133,10 +136,10 @@ export default function WorkspaceLayout({
                       </SheetTitle>
                       <div className="space-y-6">
                         <div>
-                          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
                             {t("nav.workspace")}
                           </div>
-                          <div className="text-lg font-semibold text-slate-900">
+                          <div className="text-lg font-semibold text-[var(--foreground)]">
                             CaseDex
                           </div>
                         </div>
@@ -145,9 +148,9 @@ export default function WorkspaceLayout({
                             <a
                               key={item.href}
                               href={item.href}
-                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--paper-hover)]"
                             >
-                              <item.icon className="h-4 w-4 text-slate-400" />
+                              <item.icon className="h-4 w-4 text-[var(--muted-soft)]" />
                               {t(item.labelKey)}
                             </a>
                           ))}
@@ -162,10 +165,10 @@ export default function WorkspaceLayout({
                 )}
               </Sheet>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
                   {t("nav.workspace")}
                 </div>
-                <div className="text-sm font-medium text-slate-900">
+                <div className="text-sm font-medium text-[var(--foreground)]">
                   {t("nav.workspace_overview")}
                 </div>
               </div>
@@ -180,6 +183,7 @@ export default function WorkspaceLayout({
                   {t("billing.trial_ends")}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
                 </Badge>
               )}
+              <ThemeToggle />
               {mounted && <LanguageSwitcher />}
               {mounted ? (
                 <DropdownMenu>
@@ -192,19 +196,19 @@ export default function WorkspaceLayout({
                     >
                       <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
-                        <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-900 px-1 text-[10px] font-semibold text-white">
+                        <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--foreground)] px-1 text-[10px] font-semibold text-[var(--paper)]">
                           {unreadCount}
                         </span>
                       )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[320px] p-2">
-                    <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted-soft)]">
                       {t("nav.notifications")}
                     </div>
                     <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1">
                       {sortedNotifications.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-sm text-slate-600">
+                        <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--wash)] px-3 py-4 text-sm text-[var(--muted)]">
                           {t("dashboard.empty")}
                         </div>
                       ) : (
@@ -213,19 +217,19 @@ export default function WorkspaceLayout({
                             key={notification.public_id}
                             className={`rounded-xl border px-3 py-2 text-sm ${
                               notification.status === "read"
-                                ? "border-slate-200 bg-white text-slate-700"
-                                : "border-slate-200 bg-slate-100 text-slate-900"
+                                ? "border-[var(--border)] bg-[var(--paper)] text-[var(--muted)]"
+                                : "border-[var(--border)] bg-[var(--wash)] text-[var(--foreground)]"
                             }`}
                           >
                             <div className="text-sm font-medium">
                               {notification.title}
                             </div>
                             {notification.body && (
-                              <div className="text-xs text-slate-600">
+                              <div className="text-xs text-[var(--muted)]">
                                 {notification.body}
                               </div>
                             )}
-                            <div className="mt-1 text-[11px] text-slate-500">
+                            <div className="mt-1 text-[11px] text-[var(--muted-soft)]">
                               {new Date(notification.created_at).toLocaleString()}
                             </div>
                           </div>

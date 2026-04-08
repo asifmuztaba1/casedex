@@ -23,7 +23,7 @@ export default function AboutPageClient() {
           </CardTitle>
           <CardDescription>{t("about.subtitle")}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-slate-600 md:grid-cols-2">
+        <CardContent className="grid gap-4 text-sm text-[var(--muted)] md:grid-cols-2">
           <div>{t("about.body1")}</div>
           <div>{t("about.body2")}</div>
         </CardContent>

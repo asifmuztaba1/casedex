@@ -40,7 +40,7 @@ export default function ResetPasswordPage() {
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">
             {t("reset.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
         </CardHeader>
         <CardContent>
           {missingToken ? (
-            <div className="space-y-4 text-sm text-slate-600">
+            <div className="space-y-4 text-sm text-[var(--muted)]">
               <p>{t("reset.missing_token")}</p>
               <a className="underline-offset-4 hover:underline" href="/forgot-password">
                 {t("reset.request_again")}
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
               }}
             >
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                   {t("reset.email")}
                 </label>
                 <Input
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
               )}
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                   {t("reset.password")}
                 </label>
                 <Input
@@ -121,7 +121,7 @@ export default function ResetPasswordPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                   {t("reset.password_confirm")}
                 </label>
                 <Input
@@ -146,7 +146,7 @@ export default function ResetPasswordPage() {
                   ? t("reset.button_pending")
                   : t("reset.button")}
               </Button>
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-[var(--muted)]">
                 <a className="underline-offset-4 hover:underline" href="/login">
                   {t("reset.back_to_login")}
                 </a>

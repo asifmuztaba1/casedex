@@ -30,14 +30,14 @@ export default function TemplatePresetPicker<T>({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-slate-200 bg-slate-50/80 p-4",
+        "rounded-2xl border border-[var(--border)] bg-[var(--wash)]/80 p-4",
         className
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <div className="text-sm font-semibold text-slate-900">{title}</div>
-          <p className="text-xs text-slate-600">{description}</p>
+          <div className="text-sm font-semibold text-[var(--foreground)]">{title}</div>
+          <p className="text-xs text-[var(--muted)]">{description}</p>
         </div>
         <Badge variant="subtle">
           {locale === "bn" ? "টেমপ্লেট" : "Templates"}
@@ -50,7 +50,7 @@ export default function TemplatePresetPicker<T>({
             type="button"
             variant="outline"
             size="sm"
-            className="bg-white"
+            className="bg-[var(--paper)]"
             onClick={() => onSelect(template.payload[locale])}
           >
             {template.label[locale]}

@@ -68,6 +68,11 @@ return [
             'diary_summary' => (int) env('AI_COST_DIARY_SUMMARY', 3),
             'research_summary' => (int) env('AI_COST_RESEARCH_SUMMARY', 5),
             'document_qa' => (int) env('AI_COST_DOCUMENT_QA', 2),
+            'petition_draft' => (int) env('AI_COST_PETITION_DRAFT', 8),
+            'legal_section_lookup' => (int) env('AI_COST_LEGAL_SECTION_LOOKUP', 3),
+            'case_law_suggestion' => (int) env('AI_COST_CASE_LAW_SUGGESTION', 5),
+            'next_steps' => (int) env('AI_COST_NEXT_STEPS', 4),
+            'client_communication' => (int) env('AI_COST_CLIENT_COMMUNICATION', 3),
         ],
         'packs' => [
             'small' => [

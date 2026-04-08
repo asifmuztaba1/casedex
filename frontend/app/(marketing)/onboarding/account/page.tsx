@@ -48,7 +48,7 @@ export default function OnboardingAccountPage() {
   }, [isLoading, router, searchParams, toast, user]);
 
   if (isLoading || !user) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
   }
 
   if (user.tenant_id) {
@@ -69,9 +69,9 @@ export default function OnboardingAccountPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wider text-slate-500">Email</p>
-            <p className="mt-1 text-base font-medium text-slate-900">{user.email}</p>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4">
+            <p className="text-xs uppercase tracking-wider text-[var(--muted-soft)]">Email</p>
+            <p className="mt-1 text-base font-medium text-[var(--foreground)]">{user.email}</p>
           </div>
 
           {user.email_verified_at ? (

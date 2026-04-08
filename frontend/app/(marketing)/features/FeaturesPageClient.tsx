@@ -54,7 +54,7 @@ export default function FeaturesPageClient() {
         {featureBlocks.map((feature) => (
           <Card key={feature.titleKey} className="h-full">
             <CardHeader className="space-y-3">
-              <feature.icon className="h-5 w-5 text-slate-500" />
+              <feature.icon className="h-5 w-5 text-[var(--muted-soft)]" />
               <CardTitle className="text-base">
                 {t(feature.titleKey)}
               </CardTitle>

@@ -24,11 +24,11 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pr-10 text-slate-900 shadow-sm transition-all",
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 pr-10 text-[var(--foreground)] shadow-sm transition-all",
   {
     variants: {
       variant: {
-        default: "bg-white text-slate-900",
+        default: "bg-[var(--paper)] text-[var(--foreground)]",
         success: "border-emerald-500/30 bg-emerald-500/80 text-white",
         error: "border-rose-500/30 bg-rose-500/80 text-white",
       },
@@ -61,7 +61,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 items-center justify-center rounded-lg border border-slate-200 bg-white/90 px-3 text-xs font-medium text-slate-900 transition hover:bg-white",
+      "inline-flex h-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--paper)]/90 px-3 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--paper)]",
       className
     )}
     {...props}

@@ -35,6 +35,12 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'driver' => env('WHATSAPP_DRIVER', 'null'),
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+    ],
+
     'ai' => [
         'driver' => env('AI_DRIVER', 'openai_compatible'),
         'base_url' => env('AI_BASE_URL', 'https://api.openai.com/v1'),

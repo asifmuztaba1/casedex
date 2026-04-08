@@ -293,8 +293,8 @@ export default function CaseDetailPage() {
 
     if (activeAiStatus === "completed" && activeAiResult) {
       return (
-        <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
-          <div className="font-semibold text-slate-900">{title}</div>
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--paper)] p-3 text-sm text-[var(--muted)]">
+          <div className="font-semibold text-[var(--foreground)]">{title}</div>
           <div className="mt-2 whitespace-pre-wrap">{activeAiResult}</div>
           <div className="mt-3 flex flex-wrap gap-2">
             {onApply && (
@@ -388,7 +388,7 @@ export default function CaseDetailPage() {
   }, [participantOptions, participantQuery]);
 
   if (isLoading) {
-    return <div className="text-sm text-slate-600">{t("common.loading")}</div>;
+    return <div className="text-sm text-[var(--muted)]">{t("common.loading")}</div>;
   }
 
   if (isError || !caseDetail) {
@@ -410,15 +410,15 @@ export default function CaseDetailPage() {
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("case.detail.workspace")}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {caseTitle}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--muted)]">
             <span>{courtLabel}</span>
-            <span className="text-slate-400">•</span>
+            <span className="text-[var(--muted-soft)]">•</span>
             <span>{caseNumberLabel}</span>
             <Badge variant="subtle" className="capitalize">
               {caseDetail.status
@@ -460,7 +460,7 @@ export default function CaseDetailPage() {
                   <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.edit_title")}
                   </SheetTitle>
-                  <SheetDescription className="text-sm text-slate-600">
+                  <SheetDescription className="text-sm text-[var(--muted)]">
                     {t("case.detail.edit_desc")}
                   </SheetDescription>
                 </div>
@@ -512,7 +512,7 @@ export default function CaseDetailPage() {
                     />
                   </div>
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={editForm.status}
                     onChange={(event) =>
                       updateEditForm((prev) => ({
@@ -540,7 +540,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <textarea
-                    className="h-28 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                    className="h-28 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)]"
                     value={editForm.story}
                     onChange={(event) =>
                       updateEditForm((prev) => ({
@@ -566,7 +566,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <textarea
-                    className="h-28 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                    className="h-28 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)]"
                     value={editForm.petition_draft}
                     onChange={(event) =>
                       updateEditForm((prev) => ({
@@ -650,7 +650,7 @@ export default function CaseDetailPage() {
                   <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.add_hearing_title")}
                   </SheetTitle>
-                  <SheetDescription className="text-sm text-slate-600">
+                  <SheetDescription className="text-sm text-[var(--muted)]">
                     {t("case.detail.hearing_prompt")}
                   </SheetDescription>
                 </div>
@@ -670,7 +670,7 @@ export default function CaseDetailPage() {
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
                   )}
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={hearingForm.type}
                     onChange={(event) =>
                       setHearingForm((prev) => ({
@@ -762,7 +762,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <textarea
-                    className="h-24 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                    className="h-24 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)]"
                     placeholder={t("hearing.minutes")}
                     value={hearingForm.minutes}
                     onChange={(event) =>
@@ -773,7 +773,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <textarea
-                    className="h-24 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                    className="h-24 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)]"
                     placeholder={t("hearing.next_steps")}
                     value={hearingForm.next_steps}
                     onChange={(event) =>
@@ -832,7 +832,7 @@ export default function CaseDetailPage() {
                   <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.add_diary_title")}
                   </SheetTitle>
-                  <SheetDescription className="text-sm text-slate-600">
+                  <SheetDescription className="text-sm text-[var(--muted)]">
                     {t("case.detail.diary_prompt")}
                   </SheetDescription>
                 </div>
@@ -879,7 +879,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={diaryForm.hearing_public_id}
                     onChange={(event) =>
                       setDiaryForm((prev) => ({
@@ -898,10 +898,10 @@ export default function CaseDetailPage() {
                     ))}
                   </select>
                   <textarea
-                    className={`h-28 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 ${
+                    className={`h-28 w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)] ${
                       diaryBodyError
                         ? "border-rose-500"
-                        : "border-slate-200"
+                        : "border-[var(--border)]"
                     }`}
                     placeholder={t("diary.body")}
                     value={diaryForm.body}
@@ -996,7 +996,7 @@ export default function CaseDetailPage() {
                   <SheetTitle className="text-lg font-semibold">
                     {t("case.detail.upload_document_title")}
                   </SheetTitle>
-                  <SheetDescription className="text-sm text-slate-600">
+                  <SheetDescription className="text-sm text-[var(--muted)]">
                     {t("document.allowed_types")}
                   </SheetDescription>
                 </div>
@@ -1009,7 +1009,7 @@ export default function CaseDetailPage() {
                 )}
                 <div className="space-y-3">
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={documentForm.category}
                     onChange={(event) =>
                       setDocumentForm((prev) => ({
@@ -1025,7 +1025,7 @@ export default function CaseDetailPage() {
                     ))}
                   </select>
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={documentForm.hearing_public_id}
                     onChange={(event) =>
                       setDocumentForm((prev) => ({
@@ -1090,7 +1090,7 @@ export default function CaseDetailPage() {
                       placeholder={t("document.name_placeholder")}
                     />
                     {documentForm.extension ? (
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                      <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]">
                         .{documentForm.extension}
                       </div>
                     ) : null}
@@ -1153,10 +1153,10 @@ export default function CaseDetailPage() {
               <CardHeader>
                 <CardTitle>{t("case.detail.client")}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-slate-600">
+              <CardContent className="space-y-2 text-sm text-[var(--muted)]">
                 {caseDetail.client ? (
                   <>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--foreground)]">
                       {caseDetail.client.name}
                     </div>
                     <div>
@@ -1173,7 +1173,7 @@ export default function CaseDetailPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-[var(--muted)]">
                     {t("case.detail.no_client")}
                   </div>
                 )}
@@ -1185,10 +1185,10 @@ export default function CaseDetailPage() {
                 <CardTitle>{t("case.detail.next_hearing")}</CardTitle>
                 <CardDescription>{t("dashboard.section.hearings_desc")}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-slate-600">
+              <CardContent className="space-y-2 text-sm text-[var(--muted)]">
                 {nextHearing ? (
                   <>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--foreground)]">
                       {nextHearing.hearing_at
                         ? format(new Date(nextHearing.hearing_at), "PPpp")
                         : t("common.tbd")}
@@ -1213,8 +1213,8 @@ export default function CaseDetailPage() {
               </CardHeader>
               <CardContent>
                 {caseDetail.petition_draft ? (
-                  <details className="text-sm text-slate-600">
-                    <summary className="cursor-pointer text-sm font-medium text-slate-900">
+                  <details className="text-sm text-[var(--muted)]">
+                    <summary className="cursor-pointer text-sm font-medium text-[var(--foreground)]">
                       {t("case.detail.preview_draft")}
                     </summary>
                     <p className="mt-2 whitespace-pre-wrap">
@@ -1222,7 +1222,7 @@ export default function CaseDetailPage() {
                     </p>
                   </details>
                 ) : (
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-[var(--muted)]">
                     {t("case.detail.petition_empty")}
                   </div>
                 )}
@@ -1236,7 +1236,7 @@ export default function CaseDetailPage() {
               <CardTitle>{t("case.detail.story")}</CardTitle>
               <CardDescription>{t("cases.sections.story")}</CardDescription>
             </CardHeader>
-            <CardContent className="text-sm text-slate-600">
+            <CardContent className="text-sm text-[var(--muted)]">
               {caseDetail.story ? (
                 <p className="whitespace-pre-wrap">{caseDetail.story}</p>
               ) : (
@@ -1270,15 +1270,15 @@ export default function CaseDetailPage() {
                 ) : (
                   recentDiaryEntries.map((entry) => (
                     <div key={entry.public_id} className="space-y-1">
-                      <div className="text-sm font-medium text-slate-900">
+                      <div className="text-sm font-medium text-[var(--foreground)]">
                         {entry.title ?? "Diary entry"}
                       </div>
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-[var(--muted-soft)]">
                         {entry.entry_at
                           ? format(new Date(entry.entry_at), "PP")
                           : ""}
                       </div>
-                      <div className="text-sm text-slate-600">
+                      <div className="text-sm text-[var(--muted)]">
                         {entry.body ?? ""}
                       </div>
                     </div>
@@ -1310,10 +1310,10 @@ export default function CaseDetailPage() {
                 ) : (
                   recentDocuments.map((doc) => (
                     <div key={doc.public_id} className="space-y-1">
-                      <div className="text-sm font-medium text-slate-900">
+                      <div className="text-sm font-medium text-[var(--foreground)]">
                         {doc.original_name}
                       </div>
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-[var(--muted-soft)]">
                         {doc.category
                           ? t(`document.category.${doc.category}`)
                           : t("document.category.other")}
@@ -1380,7 +1380,7 @@ export default function CaseDetailPage() {
                                   <SheetTitle className="text-lg font-semibold">
                                     {t("hearing.detail_title")}
                                   </SheetTitle>
-                                  <SheetDescription className="text-sm text-slate-600">
+                                  <SheetDescription className="text-sm text-[var(--muted)]">
                                     {hearing.hearing_at
                                       ? format(
                                           new Date(hearing.hearing_at),
@@ -1389,33 +1389,33 @@ export default function CaseDetailPage() {
                                       : t("common.tbd")}
                                   </SheetDescription>
                                 </div>
-                                <div className="space-y-2 text-sm text-slate-600">
+                                <div className="space-y-2 text-sm text-[var(--muted)]">
                                   <div>
-                                    <span className="font-medium text-slate-900">
+                                    <span className="font-medium text-[var(--foreground)]">
                                       {t("hearing.agenda")}:
                                     </span>{" "}
                                     {hearing.agenda ?? "-"}
                                   </div>
                                   <div>
-                                    <span className="font-medium text-slate-900">
+                                    <span className="font-medium text-[var(--foreground)]">
                                       {t("hearing.outcome")}:
                                     </span>{" "}
                                     {hearing.outcome ?? "-"}
                                   </div>
                                   <div>
-                                    <span className="font-medium text-slate-900">
+                                    <span className="font-medium text-[var(--foreground)]">
                                       {t("hearing.minutes")}:
                                     </span>{" "}
                                     {hearing.minutes ?? "-"}
                                   </div>
                                   <div>
-                                    <span className="font-medium text-slate-900">
+                                    <span className="font-medium text-[var(--foreground)]">
                                       {t("hearing.next_steps")}:
                                     </span>{" "}
                                     {hearing.next_steps ?? "-"}
                                   </div>
                                 </div>
-                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-xs text-[var(--muted)]">
                                   {t("hearing.generate_note")}
                                 </div>
                               </div>
@@ -1486,8 +1486,8 @@ export default function CaseDetailPage() {
                   className="mb-4"
                 />
               )}
-              <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
-                <div className="text-sm font-semibold text-slate-900">Document Q&A (2 credits)</div>
+              <div className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-3">
+                <div className="text-sm font-semibold text-[var(--foreground)]">Document Q&A (2 credits)</div>
                 <Input
                   value={documentQaQuestion}
                   onChange={(event) => setDocumentQaQuestion(event.target.value)}
@@ -1595,12 +1595,12 @@ export default function CaseDetailPage() {
                       </p>
                     )}
                     {filteredParticipantOptions.length > 0 && (
-                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-sm">
                         {filteredParticipantOptions.map((member) => (
                           <button
                             key={member.public_id}
                             type="button"
-                            className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-slate-50"
+                            className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
                             onClick={() => {
                               setParticipantForm((prev) => ({
                                 ...prev,
@@ -1613,9 +1613,9 @@ export default function CaseDetailPage() {
                               );
                             }}
                           >
-                            <span className="text-slate-900">{member.name}</span>
+                            <span className="text-[var(--foreground)]">{member.name}</span>
                             {member.email && (
-                              <span className="text-xs text-slate-500">
+                              <span className="text-xs text-[var(--muted-soft)]">
                                 {member.email}
                               </span>
                             )}
@@ -1625,7 +1625,7 @@ export default function CaseDetailPage() {
                     )}
                   </div>
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     value={participantForm.role}
                     onChange={(event) =>
                       setParticipantForm((prev) => ({
@@ -1731,7 +1731,7 @@ export default function CaseDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {canManageParticipants && (
-                <div className="grid gap-3 rounded-2xl border border-slate-200 p-4">
+                <div className="grid gap-3 rounded-2xl border border-[var(--border)] p-4">
                   <div className="grid gap-3 md:grid-cols-2">
                     <div className="relative space-y-1">
                       <Input
@@ -1761,12 +1761,12 @@ export default function CaseDetailPage() {
                         </p>
                       )}
                       {showContactSuggestions && (contactSearchResults?.data?.length ?? 0) > 0 && (
-                        <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                        <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-lg">
                           {contactSearchResults!.data.map((c) => (
                             <button
                               key={c.id}
                               type="button"
-                              className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
                               onMouseDown={(e) => e.preventDefault()}
                               onClick={() => {
                                 setPartyForm((prev) => ({
@@ -1784,7 +1784,7 @@ export default function CaseDetailPage() {
                               }}
                             >
                               <span className="font-medium">{c.name}</span>
-                              <span className="text-xs text-slate-400">
+                              <span className="text-xs text-[var(--muted-soft)]">
                                 {c.case_parties_count} {t("table.cases")?.toLowerCase() ?? "cases"}
                               </span>
                             </button>
@@ -1798,7 +1798,7 @@ export default function CaseDetailPage() {
                       )}
                     </div>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                       value={partyForm.type}
                       onChange={(event) =>
                         setPartyForm((prev) => ({
@@ -1814,7 +1814,7 @@ export default function CaseDetailPage() {
                       ))}
                     </select>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                       value={partyForm.side}
                       onChange={(event) =>
                         setPartyForm((prev) => ({
@@ -1830,7 +1830,7 @@ export default function CaseDetailPage() {
                       ))}
                     </select>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                       value={partyForm.role}
                       onChange={(event) =>
                         setPartyForm((prev) => ({
@@ -1900,7 +1900,7 @@ export default function CaseDetailPage() {
                   />
                   <div className="flex items-center gap-3">
                     {!partyForm.client_id && (
-                      <label className="flex items-center gap-2 text-sm text-slate-600">
+                      <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                         <input
                           type="checkbox"
                           checked={partyForm.create_contact}
@@ -1910,7 +1910,7 @@ export default function CaseDetailPage() {
                               create_contact: e.target.checked,
                             }))
                           }
-                          className="rounded border-slate-300"
+                          className="rounded border-[var(--border)]"
                         />
                         {t("contact.save_as_contact") ?? "Save as known contact"}
                       </label>
@@ -1977,7 +1977,7 @@ export default function CaseDetailPage() {
                     if (sideParties.length === 0) return null;
                     return (
                       <div key={sideKey}>
-                        <h3 className="mb-2 text-sm font-semibold text-slate-700">
+                        <h3 className="mb-2 text-sm font-semibold text-[var(--muted)]">
                           {t(`party.group.${sideKey}`) ?? sideKey}
                         </h3>
                         <Table className="min-w-[720px]">
@@ -1995,7 +1995,7 @@ export default function CaseDetailPage() {
                               <TableRow key={String(party.id)}>
                                 <TableCell>
                                   <div className="space-y-1">
-                                    <div className="text-sm font-medium text-slate-900">
+                                    <div className="text-sm font-medium text-[var(--foreground)]">
                                       {party.name}
                                     </div>
                                     {Boolean(party.is_client) && (
@@ -2017,7 +2017,7 @@ export default function CaseDetailPage() {
                                     ? t(`party.role.${party.role}` as string)
                                     : "-"}
                                 </TableCell>
-                                <TableCell className="text-sm text-slate-600">
+                                <TableCell className="text-sm text-[var(--muted)]">
                                   {party.phone ?? party.email ?? "-"}
                                 </TableCell>
                                 <TableCell>
@@ -2060,7 +2060,7 @@ export default function CaseDetailPage() {
         </TabsContent>
       </Tabs>
 
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-[var(--muted-soft)]">
         <Link href="/cases">{t("case.detail.return_cases")}</Link>
       </div>
     </section>

@@ -68,7 +68,7 @@ export default function ClientsPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-[260px] pl-9"
             placeholder={t("clients.search_placeholder") ?? "Search clients..."}

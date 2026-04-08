@@ -57,7 +57,7 @@ export default function DiaryPage() {
       />
 
       <div className="relative w-fit">
-        <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
         <Input
           className="w-[260px] pl-9"
           placeholder={t("diary.search_placeholder") ?? "Search diary entries..."}
@@ -109,10 +109,10 @@ export default function DiaryPage() {
                         entry.case_title ?? "-"
                       )}
                     </TableCell>
-                    <TableCell className="font-medium text-slate-900">
+                    <TableCell className="font-medium text-[var(--foreground)]">
                       {entry.title ?? t("common.entry")}
                     </TableCell>
-                    <TableCell className="max-w-[300px] truncate text-slate-500">
+                    <TableCell className="max-w-[300px] truncate text-[var(--muted-soft)]">
                       {entry.body ? entry.body.slice(0, 120) : "-"}
                     </TableCell>
                   </TableRow>

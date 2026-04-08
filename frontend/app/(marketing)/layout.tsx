@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 import CookieConsent from "@/components/cookie-consent";
+import ThemeToggle from "@/components/theme-toggle";
 import dynamic from "next/dynamic";
 
 export default function MarketingLayout({
@@ -16,10 +17,10 @@ export default function MarketingLayout({
   const { t } = useLocale();
 
   return (
-    <div className="relative min-h-screen bg-white text-slate-900">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:64px_64px]" />
+    <div className="relative min-h-screen bg-[var(--paper)] text-[var(--foreground)]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:64px_64px] opacity-40" />
       <div className="relative">
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-6 py-4">
             <a href="/" className="flex items-center gap-3">
               <img
@@ -28,30 +29,31 @@ export default function MarketingLayout({
                 className="h-9 w-9 rounded-lg"
               />
               <div>
-                <div className="text-sm font-semibold tracking-wide text-slate-900">
+                <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
                   {"CaseDex\u2122"}
                 </div>
-                <div className="text-[11px] text-slate-500">
+                <div className="text-[11px] text-[var(--muted-soft)]">
                   {t("meta.tagline")}
                 </div>
               </div>
             </a>
-            <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
-              <a className="hover:text-slate-900" href="/about">
+            <nav className="hidden items-center gap-6 text-sm text-[var(--muted)] md:flex">
+              <a className="hover:text-[var(--foreground)]" href="/about">
                 {t("nav.about")}
               </a>
-              <a className="hover:text-slate-900" href="/features">
+              <a className="hover:text-[var(--foreground)]" href="/features">
                 {t("nav.features")}
               </a>
-              <a className="hover:text-slate-900" href="/pricing">
+              <a className="hover:text-[var(--foreground)]" href="/pricing">
                 {t("nav.pricing")}
               </a>
-              <a className="hover:text-slate-900" href="/contact">
+              <a className="hover:text-[var(--foreground)]" href="/contact">
                 {t("nav.contact")}
               </a>
             </nav>
             <div className="flex items-center gap-3">
               <Badge variant="subtle">{t("nav.pwa")}</Badge>
+              <ThemeToggle />
               <LanguageSwitcher />
               <Button variant="outline" size="sm" asChild>
                 <a href="/login">{t("nav.login")}</a>
@@ -69,7 +71,7 @@ export default function MarketingLayout({
         <main className="mx-auto w-full max-w-[1200px] px-6 py-14">
           {children}
         </main>
-        <footer className="border-t border-slate-200 bg-white/95">
+        <footer className="border-t border-[var(--border)] bg-[var(--paper)]/95">
           <div className="mx-auto w-full max-w-[1200px] px-6 py-12">
             <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
               <div className="space-y-3">
@@ -79,51 +81,51 @@ export default function MarketingLayout({
                     alt="CaseDex"
                     className="h-7 w-7 rounded-md"
                   />
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-[var(--foreground)]">
                     CaseDex
                   </div>
                 </div>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[var(--muted)]">
                   {t("footer.tagline")}
                 </p>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-[var(--muted-soft)]">
                   {t("footer.note")}
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-slate-600">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="space-y-2 text-sm text-[var(--muted)]">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                   {t("footer.product")}
                 </div>
-                <a className="block hover:text-slate-900" href="/features">
+                <a className="block hover:text-[var(--foreground)]" href="/features">
                   {t("nav.features")}
                 </a>
-                <a className="block hover:text-slate-900" href="/security">
+                <a className="block hover:text-[var(--foreground)]" href="/security">
                   {t("nav.security")}
                 </a>
-                <a className="block hover:text-slate-900" href="/pricing">
+                <a className="block hover:text-[var(--foreground)]" href="/pricing">
                   {t("nav.pricing")}
                 </a>
               </div>
-              <div className="space-y-2 text-sm text-slate-600">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="space-y-2 text-sm text-[var(--muted)]">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                   {t("footer.company")}
                 </div>
-                <a className="block hover:text-slate-900" href="/privacy">
+                <a className="block hover:text-[var(--foreground)]" href="/privacy">
                   {t("nav.privacy")}
                 </a>
-                <a className="block hover:text-slate-900" href="/terms">
+                <a className="block hover:text-[var(--foreground)]" href="/terms">
                   {t("nav.terms")}
                 </a>
-                <a className="block hover:text-slate-900" href="/about">
+                <a className="block hover:text-[var(--foreground)]" href="/about">
                   {t("nav.about")}
                 </a>
-                <a className="block hover:text-slate-900" href="/contact">
+                <a className="block hover:text-[var(--foreground)]" href="/contact">
                   {t("footer.contact")}
                 </a>
               </div>
             </div>
-            <div className="mt-8 border-t border-slate-200 pt-6">
-              <p className="text-xs leading-relaxed text-slate-400">
+            <div className="mt-8 border-t border-[var(--border)] pt-6">
+              <p className="text-xs leading-relaxed text-[var(--muted-soft)]">
                 {t("footer.disclaimer")}
               </p>
             </div>

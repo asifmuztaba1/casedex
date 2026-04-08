@@ -39,7 +39,7 @@ export default function PlanTierCard({
     ? (interval === "monthly" ? plan.monthlyPriceBdt : plan.yearlyPriceBdt)
     : (interval === "monthly" ? plan.monthlyPrice : plan.yearlyPrice);
   const accentStyles = {
-    slate: "before:bg-slate-700/80",
+    slate: "before:bg-[var(--muted)]/80",
     indigo: "before:bg-indigo-700/80",
     teal: "before:bg-teal-700/80",
   } as const;
@@ -47,10 +47,10 @@ export default function PlanTierCard({
   return (
     <Card
       className={cn(
-        "relative h-full overflow-hidden border-slate-200 before:absolute before:inset-x-0 before:top-0 before:h-1",
+        "relative h-full overflow-hidden border-[var(--border)] before:absolute before:inset-x-0 before:top-0 before:h-1",
         accentStyles[plan.accent],
-        featured && "border-slate-900 shadow-md",
-        active && "ring-1 ring-slate-900",
+        featured && "border-[var(--foreground)] shadow-md",
+        active && "ring-1 ring-[var(--foreground)]",
         className
       )}
     >
@@ -63,49 +63,49 @@ export default function PlanTierCard({
         </div>
       )}
       <CardHeader className="space-y-3 pb-4">
-        <CardTitle className="text-xl text-slate-900">{plan.name}</CardTitle>
+        <CardTitle className="text-xl text-[var(--foreground)]">{plan.name}</CardTitle>
         <div className="flex items-end gap-2">
-          <div className="text-3xl font-semibold text-slate-900">{price}</div>
-          <div className="pb-1 text-xs uppercase tracking-wide text-slate-500">
+          <div className="text-3xl font-semibold text-[var(--foreground)]">{price}</div>
+          <div className="pb-1 text-xs uppercase tracking-wide text-[var(--muted-soft)]">
             {interval}
           </div>
         </div>
         <CardDescription>{plan.summary}</CardDescription>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm font-medium text-[var(--muted)]">
           {plan.storage}
         </div>
-        <div className="text-xs font-medium text-slate-500">
+        <div className="text-xs font-medium text-[var(--muted-soft)]">
           {t("billing.best_for")}: {plan.bestFor}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-xl border border-slate-200 bg-white px-3 py-3">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3 py-3">
+          <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
             {t("billing.feature_snapshot")}
           </div>
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">{t("billing.storage")}</span>
-              <span className="font-medium text-slate-900">{plan.storage}</span>
+              <span className="text-[var(--muted)]">{t("billing.storage")}</span>
+              <span className="font-medium text-[var(--foreground)]">{plan.storage}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">{t("billing.audit_export_label")}</span>
-              <span className="inline-flex items-center gap-1 font-medium text-slate-900">
+              <span className="text-[var(--muted)]">{t("billing.audit_export_label")}</span>
+              <span className="inline-flex items-center gap-1 font-medium text-[var(--foreground)]">
                 {plan.auditExport ? (
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
                 ) : (
-                  <X className="h-3.5 w-3.5 text-slate-400" />
+                  <X className="h-3.5 w-3.5 text-[var(--muted-soft)]" />
                 )}
                 {plan.auditExport ? t("billing.included") : t("billing.not_included")}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">{t("billing.priority_support_label")}</span>
-              <span className="inline-flex items-center gap-1 font-medium text-slate-900">
+              <span className="text-[var(--muted)]">{t("billing.priority_support_label")}</span>
+              <span className="inline-flex items-center gap-1 font-medium text-[var(--foreground)]">
                 {plan.prioritySupport ? (
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
                 ) : (
-                  <X className="h-3.5 w-3.5 text-slate-400" />
+                  <X className="h-3.5 w-3.5 text-[var(--muted-soft)]" />
                 )}
                 {plan.prioritySupport ? t("billing.included") : t("billing.not_included")}
               </span>
@@ -114,13 +114,13 @@ export default function PlanTierCard({
         </div>
         <div className="space-y-2">
           {plan.features.map((feature) => (
-            <div key={feature} className="flex items-start gap-2 text-sm text-slate-700">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-slate-900" />
+            <div key={feature} className="flex items-start gap-2 text-sm text-[var(--muted)]">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--foreground)]" />
               <span>{feature}</span>
             </div>
           ))}
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-700">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-3 text-xs text-[var(--muted)]">
           <div>{t("billing.trial_notice_line1")}</div>
           <div>{t("billing.trial_notice_line2")}</div>
           <div>{t("billing.trial_notice_line3")}</div>

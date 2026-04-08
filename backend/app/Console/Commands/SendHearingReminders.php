@@ -7,6 +7,7 @@ use App\Domain\Cases\Models\CaseParticipant;
 use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Jobs\SendHearingReminderJob;
+use App\Jobs\SendWhatsAppNotificationJob;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Console\Command;
@@ -81,6 +82,33 @@ class SendHearingReminders extends Command
                             $hearing->tenant_id,
                             $notification->id
                         );
+                    }
+
+                    if ($participant->user->whatsapp_opted_in && $participant->user->whatsapp_phone) {
+                        $waNotification = CaseNotification::query()
+                            ->firstOrCreate(
+                                [
+                                    'tenant_id' => $hearing->tenant_id,
+                                    'case_id' => $hearing->case_id,
+                                    'user_id' => $participant->user_id,
+                                    'hearing_id' => $hearing->id,
+                                    'notification_type' => 'hearing_reminder',
+                                    'channel' => 'whatsapp',
+                                    'scheduled_for' => $tomorrowStart,
+                                ],
+                                [
+                                    'title' => 'Hearing reminder',
+                                    'body' => 'Reminder: hearing scheduled for tomorrow.',
+                                    'status' => 'pending',
+                                ]
+                            );
+
+                        if ($waNotification->wasRecentlyCreated) {
+                            SendWhatsAppNotificationJob::dispatch(
+                                $hearing->tenant_id,
+                                $waNotification->id
+                            );
+                        }
                     }
                 }
 

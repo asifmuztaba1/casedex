@@ -79,11 +79,11 @@ export default function OnboardingPaymentPage() {
   const selectedPlan = useMemo(() => PLAN_CATALOG.find((item) => item.id === plan) ?? null, [plan]);
 
   if (isLoading || !user) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
   }
 
   if (user.tenant_id) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Redirecting...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Redirecting...</div>;
   }
 
   if (!selectedPlan) {
@@ -95,7 +95,7 @@ export default function OnboardingPaymentPage() {
       >
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-slate-700">No package selected yet.</div>
+            <div className="text-sm text-[var(--muted)]">No package selected yet.</div>
             <Button className="mt-4" type="button" onClick={() => router.replace("/onboarding/plan")}>
               Go to package selection
             </Button>
@@ -155,7 +155,7 @@ export default function OnboardingPaymentPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl"><ShieldCheck className="h-5 w-5 text-slate-700" />Trial confirmation</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-xl"><ShieldCheck className="h-5 w-5 text-[var(--muted)]" />Trial confirmation</CardTitle>
             <CardDescription>
               Your selected package will stay visible in Billing while the 30-day trial is active.
             </CardDescription>
@@ -168,7 +168,7 @@ export default function OnboardingPaymentPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 text-sm text-[var(--muted)]">
               No payment procedure is needed during onboarding. This step only confirms the package and starts the trial.
             </div>
 
@@ -184,18 +184,18 @@ export default function OnboardingPaymentPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg"><BadgeCheck className="h-4 w-4 text-slate-700" />Order summary</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-lg"><BadgeCheck className="h-4 w-4 text-[var(--muted)]" />Order summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Package</div>
-              <div className="mt-1 text-base font-semibold text-slate-900">{selectedPlan.name}</div>
-              <div className="text-slate-600">{selectedPlan.storage}</div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Package</div>
+              <div className="mt-1 text-base font-semibold text-[var(--foreground)]">{selectedPlan.name}</div>
+              <div className="text-[var(--muted)]">{selectedPlan.storage}</div>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Cycle</div>
-              <div className="mt-1 text-base font-semibold text-slate-900">{interval === "monthly" ? "Monthly" : "Yearly"}</div>
-              <div className="text-slate-600">{price}</div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Cycle</div>
+              <div className="mt-1 text-base font-semibold text-[var(--foreground)]">{interval === "monthly" ? "Monthly" : "Yearly"}</div>
+              <div className="text-[var(--muted)]">{price}</div>
             </div>
             <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-blue-900">
               <div className="mb-1 inline-flex items-center gap-1 font-semibold"><CalendarClock className="h-3.5 w-3.5" />30-day trial</div>

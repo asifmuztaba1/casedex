@@ -25,7 +25,7 @@ export default function ContactCaseHistory({
 
   if (caseHistory.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-[var(--muted-soft)]">
         {t("contact.no_cases") ?? "No case history"}
       </p>
     );

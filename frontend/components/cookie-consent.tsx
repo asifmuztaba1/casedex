@@ -23,9 +23,9 @@ export default function CookieConsent() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 py-3">
-        <p className="text-xs text-slate-600">{t("cookie.message")}</p>
+        <p className="text-xs text-[var(--muted)]">{t("cookie.message")}</p>
         <Button size="sm" variant="outline" onClick={accept}>
           {t("cookie.accept")}
         </Button>

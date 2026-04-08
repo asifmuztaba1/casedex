@@ -63,16 +63,16 @@ export default function AdminLoginPage() {
   }, [user, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--wash)] px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("admin.login.kicker")}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {t("admin.login.title")}
           </h1>
-          <p className="text-sm text-slate-600">{t("admin.login.subtitle")}</p>
+          <p className="text-sm text-[var(--muted)]">{t("admin.login.subtitle")}</p>
         </div>
 
         <form
@@ -132,7 +132,7 @@ export default function AdminLoginPage() {
           {passwordError && (
             <p className="text-xs text-rose-600">{t("common.required")}</p>
           )}
-          <div className="text-right text-sm text-slate-600">
+          <div className="text-right text-sm text-[var(--muted)]">
             <a className="underline-offset-4 hover:underline" href="/forgot-password">
               {t("login.forgot_password")}
             </a>
@@ -142,12 +142,12 @@ export default function AdminLoginPage() {
           </Button>
         </form>
 
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <div className="text-sm font-semibold text-slate-900">Demo platform account</div>
+        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4">
+          <div className="text-sm font-semibold text-[var(--foreground)]">Demo platform account</div>
           {ADMIN_DEMO_ACCOUNTS.map((demo) => (
             <div key={demo.email} className="mt-2">
-              <div className="text-xs text-slate-600">Email: {demo.email}</div>
-              <div className="text-xs text-slate-600">Password: {demo.password}</div>
+              <div className="text-xs text-[var(--muted)]">Email: {demo.email}</div>
+              <div className="text-xs text-[var(--muted)]">Password: {demo.password}</div>
               <div className="mt-2 flex gap-2">
                 <Button
                   type="button"

@@ -27,6 +27,13 @@ class ProfileController extends Controller
             }
         }
 
+        if (array_key_exists('whatsapp_phone', $data)) {
+            $user->whatsapp_phone = $data['whatsapp_phone'];
+        }
+        if (array_key_exists('whatsapp_opted_in', $data)) {
+            $user->whatsapp_opted_in = $data['whatsapp_opted_in'];
+        }
+
         if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);
             $passwordUpdated = true;

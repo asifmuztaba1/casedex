@@ -30,12 +30,17 @@ use App\Http\Controllers\Api\V1\Admin\CourtDistrictController as AdminCourtDistr
 use App\Http\Controllers\Api\V1\Admin\CourtDivisionController as AdminCourtDivisionController;
 use App\Http\Controllers\Api\V1\Admin\CourtStatsController as AdminCourtStatsController;
 use App\Http\Controllers\Api\V1\Admin\CourtTypeController as AdminCourtTypeController;
+use App\Http\Controllers\Api\V1\Admin\PlatformAnalyticsController as AdminPlatformAnalyticsController;
+use App\Http\Controllers\Api\V1\Admin\TenantController as AdminTenantController;
+use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/countries', [CountryController::class, 'index']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
-    Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/login', [AuthController::class, 'login'])
+        ->middleware('throttle:auth');
+    Route::post('/auth/register', [AuthController::class, 'register'])
+        ->middleware('throttle:auth');
     Route::post('/auth/forgot-password', [AuthPasswordController::class, 'sendResetLink'])
         ->middleware('throttle:6,1');
     Route::post('/auth/reset-password', [AuthPasswordController::class, 'reset'])
@@ -54,8 +59,13 @@ Route::prefix('v1')->group(function (): void {
 });
 
 Route::prefix('v1')
-    ->middleware(['auth:sanctum', 'platform'])
+    ->middleware(['auth:sanctum', 'platform', 'throttle:api'])
     ->group(function (): void {
+        Route::get('/admin/analytics', [AdminPlatformAnalyticsController::class, 'index']);
+        Route::get('/admin/tenants', [AdminTenantController::class, 'index']);
+        Route::get('/admin/users', [AdminUserController::class, 'index']);
+        Route::patch('/admin/users/{publicId}/role', [AdminUserController::class, 'updateRole']);
+
         Route::get('/admin/court-stats', [AdminCourtStatsController::class, 'index']);
         Route::get('/admin/court-divisions', [AdminCourtDivisionController::class, 'index']);
         Route::post('/admin/court-divisions', [AdminCourtDivisionController::class, 'store']);
@@ -98,7 +108,7 @@ Route::prefix('v1')
     });
 
 Route::prefix('v1')
-    ->middleware(['auth:sanctum', 'tenant'])
+    ->middleware(['auth:sanctum', 'tenant', 'throttle:api'])
     ->group(function (): void {
         Route::post('/billing/checkout', [BillingController::class, 'checkout']);
         Route::post('/billing/portal', [BillingController::class, 'portal']);
@@ -125,7 +135,7 @@ Route::prefix('v1')
     });
 
 Route::prefix('v1')
-    ->middleware(['auth:sanctum', 'tenant', 'subscription.active'])
+    ->middleware(['auth:sanctum', 'tenant', 'subscription.active', 'throttle:api'])
     ->group(function (): void {
         Route::get('/courts', [CourtLookupController::class, 'index']);
         Route::get('/cases', [CaseController::class, 'index']);
@@ -198,5 +208,10 @@ Route::prefix('v1')
         Route::post('/ai/diary-summary', [AiController::class, 'diarySummary']);
         Route::post('/ai/research-summary', [AiController::class, 'researchSummary']);
         Route::post('/ai/document-qa', [AiController::class, 'documentQa']);
+        Route::post('/ai/petition-draft', [AiController::class, 'petitionDraft']);
+        Route::post('/ai/legal-sections', [AiController::class, 'legalSectionLookup']);
+        Route::post('/ai/case-law', [AiController::class, 'caseLawSuggestion']);
+        Route::post('/ai/next-steps', [AiController::class, 'nextSteps']);
+        Route::post('/ai/client-communication', [AiController::class, 'clientCommunication']);
         Route::get('/ai/requests/{publicId}', [AiController::class, 'show']);
     });

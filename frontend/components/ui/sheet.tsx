@@ -30,7 +30,7 @@ const SheetContent = React.forwardRef<
     <SheetPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed right-0 top-0 z-50 h-full w-[260px] border-l border-slate-200 bg-white p-6 shadow-sm",
+        "fixed right-0 top-0 z-50 h-full w-[260px] border-l border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm",
         className
       )}
       {...props}
@@ -69,7 +69,7 @@ function SheetTitle({
 }: React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>) {
   return (
     <SheetPrimitive.Title
-      className={cn("text-lg font-semibold leading-none tracking-tight text-slate-900", className)}
+      className={cn("text-lg font-semibold leading-none tracking-tight text-[var(--foreground)]", className)}
       {...props}
     />
   );
@@ -81,7 +81,7 @@ function SheetDescription({
 }: React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>) {
   return (
     <SheetPrimitive.Description
-      className={cn("text-sm text-slate-500", className)}
+      className={cn("text-sm text-[var(--muted-soft)]", className)}
       {...props}
     />
   );

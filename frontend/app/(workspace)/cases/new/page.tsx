@@ -208,13 +208,13 @@ export default function NewCasePage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+        <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
           {t("nav.new_case")}
         </p>
-        <h1 className="text-2xl font-semibold text-slate-900">
+        <h1 className="text-2xl font-semibold text-[var(--foreground)]">
           {t("cases.new.title")}
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-[var(--muted)]">
           {t("cases.new.subtitle")}
         </p>
       </div>
@@ -225,7 +225,7 @@ export default function NewCasePage() {
             <CardTitle className="text-base">{t("cases.sections.title")}</CardTitle>
             <CardDescription>{t("cases.sections.desc")}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-slate-600">
+          <CardContent className="space-y-2 text-sm text-[var(--muted)]">
             <div>1. {t("cases.sections.client")}</div>
             <div>2. {t("cases.sections.basics")}</div>
             <div>3. {t("cases.sections.story")}</div>
@@ -246,7 +246,7 @@ export default function NewCasePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                 <input
                   type="checkbox"
                   checked={useExistingClient}
@@ -297,14 +297,14 @@ export default function NewCasePage() {
               )}
               <div className="grid gap-3 md:grid-cols-2">
                 <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                   {...register("client_party_type")}
                 >
                   <option value="person">{t("party.type.person")}</option>
                   <option value="organization">{t("party.type.organization")}</option>
                 </select>
                 <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                   {...register("client_party_role")}
                 >
                   <option value="petitioner">{t("party.role.petitioner")}</option>
@@ -392,10 +392,10 @@ export default function NewCasePage() {
                 }
               />
               <textarea
-                className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
+                className={`h-32 w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 ${
                   showErrors && storyError
                     ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-slate-200 focus-visible:ring-slate-900"
+                    : "border-[var(--border)] focus-visible:ring-[var(--foreground)]"
                 }`}
                 placeholder={t("cases.story.placeholder")}
                 {...register("story")}
@@ -431,10 +431,10 @@ export default function NewCasePage() {
                 }
               />
               <textarea
-                className={`h-32 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 ${
+                className={`h-32 w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 ${
                   showErrors && petitionError
                     ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-slate-200 focus-visible:ring-slate-900"
+                    : "border-[var(--border)] focus-visible:ring-[var(--foreground)]"
                 }`}
                 placeholder={t("cases.petition.placeholder")}
                 {...register("petition_draft")}
@@ -454,14 +454,14 @@ export default function NewCasePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {partyFields.length === 0 && (
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[var(--muted)]">
                   {t("cases.parties.empty")}
                 </p>
               )}
               {partyFields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="grid gap-3 rounded-2xl border border-slate-200 p-4"
+                  className="grid gap-3 rounded-2xl border border-[var(--border)] p-4"
                 >
                   <div className="grid gap-3 md:grid-cols-2">
                     <div className="space-y-1">
@@ -480,14 +480,14 @@ export default function NewCasePage() {
                       )}
                     </div>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                       {...register(`parties.${index}.type`)}
                     >
                       <option value="person">{t("party.type.person")}</option>
                       <option value="organization">{t("party.type.organization")}</option>
                     </select>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                       {...register(`parties.${index}.side`)}
                     >
                       <option value="opponent">{t("party.side.opponent")}</option>
@@ -495,7 +495,7 @@ export default function NewCasePage() {
                       <option value="client">{t("party.side.client")}</option>
                     </select>
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                       {...register(`parties.${index}.role`)}
                     >
                       <option value="petitioner">{t("party.role.petitioner")}</option>
@@ -606,7 +606,7 @@ export default function NewCasePage() {
                         </p>
                       )}
                     {Boolean(participantQuery[field.id]) && (
-                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-sm">
                         {tenantUsers
                           .filter((member) => {
                             const query =
@@ -634,7 +634,7 @@ export default function NewCasePage() {
                             <button
                               key={member.public_id}
                               type="button"
-                              className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
                               onClick={() => {
                                 setValue(
                                   `participants.${index}.user_public_id`,
@@ -649,9 +649,9 @@ export default function NewCasePage() {
                                 }));
                               }}
                             >
-                              <span className="text-slate-900">{member.name}</span>
+                              <span className="text-[var(--foreground)]">{member.name}</span>
                               {member.email && (
-                                <span className="text-xs text-slate-500">
+                                <span className="text-xs text-[var(--muted-soft)]">
                                   {member.email}
                                 </span>
                               )}
@@ -661,7 +661,7 @@ export default function NewCasePage() {
                     )}
                   </div>
                   <select
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                     {...register(`participants.${index}.role`)}
                   >
                     <option value="lead_lawyer">{t("roles.lead_lawyer")}</option>
@@ -697,7 +697,7 @@ export default function NewCasePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                 <input
                   type="checkbox"
                   checked={includeFirstHearing}
@@ -729,7 +729,7 @@ export default function NewCasePage() {
                       {...register("first_hearing.hearing_at")}
                     />
                     <select
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
                       {...register("first_hearing.type")}
                     >
                       <option value="mention">{t("hearing.type.mention")}</option>

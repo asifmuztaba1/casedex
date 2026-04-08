@@ -124,20 +124,20 @@ export default function AdminCourtsPage() {
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("admin.courts.kicker")}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {t("admin.courts.title")}
           </h1>
-          <p className="text-sm text-slate-600">{t("admin.courts.subtitle")}</p>
+          <p className="text-sm text-[var(--muted)]">{t("admin.courts.subtitle")}</p>
         </div>
         <div className="min-w-[220px]">
-          <label className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <label className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("admin.country")}
           </label>
           <select
-            className="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+            className="mt-2 h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
             value={effectiveCountryId ?? ""}
             onChange={(event) => setCountryId(Number(event.target.value))}
           >
@@ -271,7 +271,7 @@ export default function AdminCourtsPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-3 md:grid-cols-3">
                 <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={districtForm.division_public_id}
                   onChange={(event) =>
                     setDistrictForm((prev) => ({
@@ -341,10 +341,10 @@ export default function AdminCourtsPage() {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
                 <span>{t("admin.courts.filter.division")}</span>
                 <select
-                  className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-9 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={divisionFilter}
                   onChange={(event) => setDivisionFilter(event.target.value)}
                 >
@@ -518,7 +518,7 @@ export default function AdminCourtsPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-3 md:grid-cols-2">
                 <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={courtForm.district_public_id}
                   onChange={(event) =>
                     setCourtForm((prev) => ({
@@ -535,7 +535,7 @@ export default function AdminCourtsPage() {
                   ))}
                 </select>
                 <select
-                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={courtForm.court_type_public_id}
                   onChange={(event) =>
                     setCourtForm((prev) => ({
@@ -568,7 +568,7 @@ export default function AdminCourtsPage() {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <select
-                  className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-9 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={courtForm.is_active ? "1" : "0"}
                   onChange={(event) =>
                     setCourtForm((prev) => ({
@@ -634,10 +634,10 @@ export default function AdminCourtsPage() {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
                 <span>{t("admin.courts.filter.district")}</span>
                 <select
-                  className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-9 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={districtFilter}
                   onChange={(event) => setDistrictFilter(event.target.value)}
                 >
@@ -650,7 +650,7 @@ export default function AdminCourtsPage() {
                 </select>
                 <span>{t("admin.courts.filter.type")}</span>
                 <select
-                  className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                  className="h-9 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                   value={typeFilter}
                   onChange={(event) => setTypeFilter(event.target.value)}
                 >

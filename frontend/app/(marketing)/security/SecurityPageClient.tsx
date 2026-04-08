@@ -64,7 +64,7 @@ export default function SecurityPageClient() {
         ].map((item) => (
           <Card key={item.titleKey} className="h-full">
             <CardHeader className="space-y-3">
-              <ShieldCheck className="h-4 w-4 text-slate-500" />
+              <ShieldCheck className="h-4 w-4 text-[var(--muted-soft)]" />
               <CardTitle className="text-base">{t(item.titleKey)}</CardTitle>
               <CardDescription>{t(item.descriptionKey)}</CardDescription>
             </CardHeader>

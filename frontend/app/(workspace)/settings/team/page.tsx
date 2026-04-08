@@ -118,7 +118,7 @@ function TeamSettingsContent({
     <section className="space-y-6">
       <Card>
         <CardHeader className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("settings.team.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -170,7 +170,7 @@ function TeamSettingsContent({
             </div>
             <div>
               <select
-                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                 value={role}
                 onChange={(event) =>
                   setRole(event.target.value as typeof role)
@@ -185,10 +185,10 @@ function TeamSettingsContent({
             </div>
             <div className="space-y-1">
               <select
-                className={`h-10 rounded-lg border bg-white px-3 text-sm text-slate-900 ${
+                className={`h-10 rounded-lg border bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] ${
                   countryError
                     ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-slate-200"
+                    : "border-[var(--border)]"
                 }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
@@ -284,7 +284,7 @@ function TeamSettingsContent({
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-[var(--muted)]">
               {t("settings.team.loading")}
             </div>
           ) : users && users.length > 0 ? (
@@ -329,7 +329,7 @@ function TeamSettingsContent({
               </TableBody>
             </Table>
           ) : (
-            <div className="text-sm text-slate-600">{t("settings.team.empty")}</div>
+            <div className="text-sm text-[var(--muted)]">{t("settings.team.empty")}</div>
           )}
         </CardContent>
       </Card>

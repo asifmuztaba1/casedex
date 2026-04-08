@@ -58,13 +58,13 @@ export default function CasesPage() {
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("cases.list.kicker")}
           </p>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {t("cases.list.title")}
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[var(--muted)]">
             {t("cases.list.subtitle")}
           </p>
         </div>
@@ -81,11 +81,11 @@ export default function CasesPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("cases.list.search")}
               </label>
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
                 <Input
                   placeholder={t("cases.list.search_placeholder")}
                   value={search}
@@ -95,7 +95,7 @@ export default function CasesPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("cases.list.court")}
               </label>
               <Input
@@ -105,7 +105,7 @@ export default function CasesPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("cases.list.status")}
               </label>
               <DropdownMenu>
@@ -142,7 +142,7 @@ export default function CasesPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {isLoading ? (
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-[var(--muted)]">
                 {t("cases.list.loading")}
               </div>
             ) : isError ? (
@@ -162,17 +162,17 @@ export default function CasesPage() {
             ) : (
               <div className="grid gap-4">
                 {filteredCases.map((caseItem) => (
-                  <Card key={caseItem.public_id} className="border-slate-200">
+                  <Card key={caseItem.public_id} className="border-[var(--border)]">
                     <CardContent className="flex flex-wrap items-center justify-between gap-4 p-4">
                       <div className="space-y-1">
-                        <div className="text-sm font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-[var(--foreground)]">
                           {caseItem.title}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-[var(--muted-soft)]">
                           {caseItem.case_number ?? t("cases.list.case_number_pending")} -{" "}
                           {caseItem.court ?? t("cases.list.court_pending")}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-[var(--muted-soft)]">
                           {t("cases.list.client_label")}:{" "}
                           {caseItem.client?.name ?? t("cases.list.client_empty")}
                         </div>

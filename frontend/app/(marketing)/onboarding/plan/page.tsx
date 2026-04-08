@@ -48,7 +48,7 @@ export default function OnboardingPlanPage() {
   }, [isLoading, router, user]);
 
   if (isLoading || !user) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
   }
 
   if (user.tenant_id) {
@@ -88,13 +88,13 @@ function OnboardingPlanContent({ user, queryString }: { user: AuthUser; queryStr
     >
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl"><BriefcaseBusiness className="h-5 w-5 text-slate-700" />Plans built for legal teams</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-xl"><BriefcaseBusiness className="h-5 w-5 text-[var(--muted)]" />Plans built for legal teams</CardTitle>
           <CardDescription>
             Every package includes unlimited cases and team members. Differences are storage and service level.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+          <div className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--paper)] p-1">
             <Button type="button" size="sm" variant={interval === "monthly" ? "default" : "ghost"} onClick={() => setInterval("monthly")}>Monthly</Button>
             <Button type="button" size="sm" variant={interval === "yearly" ? "default" : "ghost"} onClick={() => setInterval("yearly")}>Yearly</Button>
           </div>
@@ -113,21 +113,21 @@ function OnboardingPlanContent({ user, queryString }: { user: AuthUser; queryStr
                   className={cn(
                     "relative overflow-hidden rounded-2xl border p-5 text-left transition-all",
                     selected
-                      ? "border-slate-900 bg-slate-900 text-white shadow-lg"
-                      : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-slate-300"
+                      ? "border-[var(--foreground)] bg-[var(--foreground)] text-white shadow-lg"
+                      : "border-[var(--border)] bg-[var(--paper)] hover:-translate-y-0.5 hover:border-[var(--border)]"
                   )}
                 >
                   <div className="flex items-center gap-2 text-lg font-semibold"><Icon className="h-4 w-4" />{item.name}</div>
-                  <div className={cn("mt-1 text-sm", selected ? "text-slate-200" : "text-slate-600")}>{item.summary}</div>
-                  <div className={cn("mt-3 text-sm", selected ? "text-slate-300" : "text-slate-500")}>{item.storage}</div>
+                  <div className={cn("mt-1 text-sm", selected ? "text-slate-200" : "text-[var(--muted)]")}>{item.summary}</div>
+                  <div className={cn("mt-3 text-sm", selected ? "text-slate-300" : "text-[var(--muted-soft)]")}>{item.storage}</div>
                   <div className="mt-3 text-3xl font-semibold leading-none">{price}</div>
                 </button>
               );
             })}
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <div className="flex items-center gap-2 font-semibold"><CalendarClock className="h-4 w-4 text-slate-600" />30-day trial</div>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 text-sm text-[var(--muted)]">
+            <div className="flex items-center gap-2 font-semibold"><CalendarClock className="h-4 w-4 text-[var(--muted)]" />30-day trial</div>
             <div className="mt-1">No charge today. Billing starts only after trial ends. Cancel any time before trial end.</div>
           </div>
 

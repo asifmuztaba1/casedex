@@ -275,12 +275,12 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {t("dashboard.welcome")}{user ? `, ${user.name}` : ""}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">{t("dashboard.welcome_desc")}</p>
+          <p className="mt-1 text-sm text-[var(--muted-soft)]">{t("dashboard.welcome_desc")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild>
@@ -307,7 +307,7 @@ export default function DashboardPage() {
         ].map((metric) => (
           <Card key={metric.label}>
             <CardHeader className="space-y-1">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+              <p className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">
                 {metric.label}
               </p>
               <CardTitle className="text-3xl font-semibold">
@@ -380,21 +380,21 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {deadlineItems.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--wash)] px-4 py-3 text-sm text-[var(--muted)]">
                   {t("dashboard.deadlines.empty")}
                 </div>
               ) : (
                 deadlineItems.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--wash)] px-4 py-3"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1">
-                        <div className="text-sm font-medium text-slate-900">
+                        <div className="text-sm font-medium text-[var(--foreground)]">
                           {item.title}
                         </div>
-                        <div className="text-xs text-slate-500">{item.detail}</div>
+                        <div className="text-xs text-[var(--muted-soft)]">{item.detail}</div>
                       </div>
                       <Badge variant="subtle" className="shrink-0">
                         {item.badge}
@@ -430,7 +430,7 @@ export default function DashboardPage() {
               ).map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700"
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]"
                 >
                   {item.label}
                 </div>
@@ -445,16 +445,16 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {recentDiaryEntries.length === 0 ? (
-                <div className="text-sm text-slate-600">
+                <div className="text-sm text-[var(--muted)]">
                   {t("dashboard.diary_empty")}
                 </div>
               ) : (
                 recentDiaryEntries.map((entry) => (
                   <div key={entry.public_id} className="space-y-1">
-                    <div className="text-sm font-medium text-slate-900">
+                    <div className="text-sm font-medium text-[var(--foreground)]">
                       {entry.title ?? t("case.detail.tabs.diary")}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-[var(--muted-soft)]">
                       {entry.entry_at
                         ? format(new Date(entry.entry_at), "PP")
                         : ""}
@@ -478,7 +478,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
                 <Input
                   className="w-[220px] pl-9"
                   placeholder={t("dashboard.search_documents")}

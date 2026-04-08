@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
-import { useAuth } from "@/features/auth/use-auth";
+import { Input } from "@/components/ui/input";
+import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
 import {
   useDeletePushSubscription,
   usePushSubscriptions,
@@ -62,6 +63,13 @@ export default function SettingsPage() {
   const subscriptions = subscriptionsData?.data ?? [];
   const hasPushEnabled = subscriptions.length > 0;
   const isBusy = saveSubscription.isPending || deleteSubscription.isPending;
+
+  const updateProfile = useUpdateProfile();
+  const [waPhone, setWaPhone] = useState(user?.whatsapp_phone ?? "");
+  const [waPhoneError, setWaPhoneError] = useState("");
+  const waPhoneRef = useRef<HTMLInputElement>(null);
+  const waOptedIn = user?.whatsapp_opted_in ?? false;
+  const waIsBusy = updateProfile.isPending;
 
   const activeEndpointHash = useMemo(() => {
     if (!subscriptions.length) {
@@ -238,14 +246,14 @@ export default function SettingsPage() {
     <section className="space-y-8">
       <Card>
         <CardHeader className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("settings.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
             {t("settings.title")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-slate-600">
+        <CardContent className="text-sm text-[var(--muted)]">
           {t("settings.description")}
         </CardContent>
       </Card>
@@ -255,7 +263,7 @@ export default function SettingsPage() {
           <CardHeader className="space-y-2">
             <CardTitle className="text-lg">{t("settings.profile_card")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-600">
+          <CardContent className="space-y-3 text-sm text-[var(--muted)]">
               <p>{t("settings.profile_card_desc")}</p>
             <Button asChild className="mt-3 md-block">
               <Link href="/settings/profile">{t("settings.profile_card_action")}</Link>
@@ -267,7 +275,7 @@ export default function SettingsPage() {
             <CardHeader className="space-y-2">
               <CardTitle className="text-lg">{t("settings.team_card")}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-slate-600">
+            <CardContent className="space-y-3 text-sm text-[var(--muted)]">
                 <p>{t("settings.team_card_desc")}</p>
               <Button asChild className="mt-3 md-block">
                 <Link href="/settings/team">{t("settings.team_card_action")}</Link>
@@ -281,18 +289,18 @@ export default function SettingsPage() {
             <CardHeader className="space-y-2">
               <CardTitle className="text-lg">{t("settings.audit.title")}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-slate-600">
+            <CardContent className="space-y-3 text-sm text-[var(--muted)]">
               {hasAuditExport ? (
                 <>
                   <p>{t("settings.audit.desc")}</p>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                       {t("settings.audit.range_label")}
                     </label>
                     <select
                       value={auditRange}
                       onChange={(event) => setAuditRange(event.target.value as "30" | "90" | "365" | "all")}
-                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
                       <option value="30">{t("settings.audit.range_30")}</option>
                       <option value="90">{t("settings.audit.range_90")}</option>
@@ -300,7 +308,7 @@ export default function SettingsPage() {
                       <option value="all">{t("settings.audit.range_all")}</option>
                     </select>
                   </div>
-                  <p className="text-xs text-slate-500">{t("settings.audit.includes")}</p>
+                  <p className="text-xs text-[var(--muted-soft)]">{t("settings.audit.includes")}</p>
                   <Button onClick={handleAuditExport} disabled={isExportingAudit}>
                     {isExportingAudit ? t("settings.audit.export_pending") : t("settings.audit.export")}
                   </Button>
@@ -321,9 +329,9 @@ export default function SettingsPage() {
           <CardHeader className="space-y-2">
             <CardTitle className="text-lg">{t("settings.push.title")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-600">
+          <CardContent className="space-y-3 text-sm text-[var(--muted)]">
             <p>{t("settings.push.desc")}</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--muted-soft)]">
               {hasPushEnabled
                 ? t("settings.push.status_enabled")
                 : t("settings.push.status_disabled")}
@@ -342,9 +350,107 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="space-y-2">
+            <CardTitle className="text-lg">{t("settings.whatsapp.title")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-[var(--muted)]">
+            <p>{t("settings.whatsapp.desc")}</p>
+            <div className="space-y-2">
+              <Input
+                ref={waPhoneRef}
+                type="tel"
+                placeholder={t("settings.whatsapp.phone_placeholder")}
+                value={waPhone}
+                onChange={(e) => {
+                  setWaPhone(e.target.value);
+                  setWaPhoneError("");
+                }}
+                aria-invalid={!!waPhoneError}
+              />
+              {waPhoneError && (
+                <p className="text-xs text-[var(--error)]">{waPhoneError}</p>
+              )}
+            </div>
+            <p className="text-xs text-[var(--muted-soft)]">
+              {waOptedIn
+                ? t("settings.whatsapp.status_enabled")
+                : t("settings.whatsapp.status_disabled")}
+            </p>
+            <Button
+              onClick={() => {
+                if (!waOptedIn) {
+                  const phone = waPhone.trim();
+                  if (!/^\+880[0-9]{10}$/.test(phone)) {
+                    setWaPhoneError(t("settings.whatsapp.phone_error"));
+                    waPhoneRef.current?.focus();
+                    return;
+                  }
+                  updateProfile.mutate(
+                    {
+                      name: user?.name ?? "",
+                      email: user?.email ?? "",
+                      country_id: user?.country_id ?? 1,
+                      whatsapp_phone: phone,
+                      whatsapp_opted_in: true,
+                    },
+                    {
+                      onSuccess: () => {
+                        toast({
+                          title: t("settings.whatsapp.enabled_title"),
+                          description: t("settings.whatsapp.enabled_desc"),
+                          variant: "success",
+                        });
+                      },
+                      onError: () => {
+                        toast({
+                          title: t("settings.whatsapp.failed_title"),
+                          description: t("settings.whatsapp.failed_desc"),
+                          variant: "error",
+                        });
+                      },
+                    }
+                  );
+                } else {
+                  updateProfile.mutate(
+                    {
+                      name: user?.name ?? "",
+                      email: user?.email ?? "",
+                      country_id: user?.country_id ?? 1,
+                      whatsapp_opted_in: false,
+                    },
+                    {
+                      onSuccess: () => {
+                        toast({
+                          title: t("settings.whatsapp.disabled_title"),
+                          description: t("settings.whatsapp.disabled_desc"),
+                          variant: "success",
+                        });
+                      },
+                      onError: () => {
+                        toast({
+                          title: t("settings.whatsapp.failed_title"),
+                          description: t("settings.whatsapp.failed_desc"),
+                          variant: "error",
+                        });
+                      },
+                    }
+                  );
+                }
+              }}
+              disabled={waIsBusy}
+              variant={waOptedIn ? "outline" : "default"}
+            >
+              {waOptedIn
+                ? t("settings.whatsapp.disable")
+                : t("settings.whatsapp.enable")}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="space-y-2">
             <CardTitle className="text-lg">{t("billing.title")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-600">
+          <CardContent className="space-y-3 text-sm text-[var(--muted)]">
             <p>{t("billing.subtitle")}</p>
             <Button asChild className="mt-3 md-block">
               <Link href="/settings/billing">{t("nav.billing")}</Link>

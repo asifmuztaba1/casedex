@@ -61,7 +61,7 @@ function ProfileSettingsForm({
     <section className="space-y-6">
       <Card>
         <CardHeader className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("settings.profile.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -114,10 +114,10 @@ function ProfileSettingsForm({
                 <p className="text-xs text-rose-600">{t("common.invalid_email")}</p>
               )}
               <select
-                className={`h-10 rounded-lg border bg-white px-3 text-sm text-slate-900 ${
+                className={`h-10 rounded-lg border bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] ${
                   countryError
                     ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-slate-200"
+                    : "border-[var(--border)]"
                 }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}

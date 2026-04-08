@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">
             {t("forgot.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
             }}
           >
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("forgot.email")}
               </label>
               <Input
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                 ? t("forgot.button_pending")
                 : t("forgot.button")}
             </Button>
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-[var(--muted)]">
               <a className="underline-offset-4 hover:underline" href="/login">
                 {t("forgot.back_to_login")}
               </a>

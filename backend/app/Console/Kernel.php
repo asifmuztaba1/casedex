@@ -13,6 +13,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('billing:send-trial-ending-reminders')->dailyAt('09:00');
         $schedule->command('ai:grant-monthly-credits')->dailyAt('00:15');
         $schedule->command('billing:apply-manual-subscription-changes')->everyFifteenMinutes();
+
+        $schedule->command('backup:clean')->daily()->at('01:00');
+        $schedule->command('backup:run --only-db')->daily()->at('01:30');
     }
 
     protected function commands(): void

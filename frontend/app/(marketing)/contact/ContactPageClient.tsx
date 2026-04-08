@@ -55,7 +55,7 @@ export default function ContactPageClient() {
           return (
             <Card key={item.titleKey} className="h-full">
               <CardHeader className="space-y-3">
-                <Icon className="h-4 w-4 text-slate-500" />
+                <Icon className="h-4 w-4 text-[var(--muted-soft)]" />
                 <CardTitle className="text-base">
                   {t(item.titleKey)}
                 </CardTitle>

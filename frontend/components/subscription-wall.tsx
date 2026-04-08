@@ -17,13 +17,13 @@ export default function SubscriptionWall() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 p-6 backdrop-blur-sm">
-      <Card className="w-full max-w-2xl border-slate-200">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[var(--overlay)] p-6 backdrop-blur-sm">
+      <Card className="w-full max-w-2xl border-[var(--border)]">
         <CardHeader>
           <CardTitle className="text-2xl">{t("billing.wall_title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[var(--muted)]">
             {isManualMfsOnlyLaunch()
               ? "This beta activates subscriptions through a guided bKash / Rocket review flow."
               : t("billing.wall_desc")}

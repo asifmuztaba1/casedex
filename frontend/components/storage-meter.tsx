@@ -34,8 +34,8 @@ export default function StorageMeter({
     return (
       <div className={cn("space-y-2", className)}>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-600">Storage</span>
-          <span className="font-medium text-slate-900">Unlimited</span>
+          <span className="text-[var(--muted)]">Storage</span>
+          <span className="font-medium text-[var(--foreground)]">Unlimited</span>
         </div>
         <div className="h-2 rounded-full bg-emerald-100" />
       </div>
@@ -54,15 +54,15 @@ export default function StorageMeter({
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-slate-600">Storage</span>
-        <span className="font-medium text-slate-900">
+        <span className="text-[var(--muted)]">Storage</span>
+        <span className="font-medium text-[var(--foreground)]">
           {formatBytes(usedBytes)} / {formatBytes(limitBytes)}
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+      <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
         <div className={cn("h-full transition-all", tone)} style={{ width: `${percentage}%` }} />
       </div>
-      <div className="text-xs text-slate-500">{percentage}% used</div>
+      <div className="text-xs text-[var(--muted-soft)]">{percentage}% used</div>
     </div>
   );
 }

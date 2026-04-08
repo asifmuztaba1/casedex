@@ -3,7 +3,7 @@ import { apiGet, apiPost } from "@/lib/api-client";
 
 type ApiResponse<T> = { data: T };
 
-type AiRequest = {
+export type AiRequest = {
   public_id: string;
   feature: string;
   status: "queued" | "running" | "completed" | "failed" | "blocked_insufficient_credits";
@@ -18,58 +18,62 @@ function randomIdempotencyKey() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-
   return `ai-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-export function useAiHearingSummary() {
-  return useMutation({
-    mutationFn: async (payload: { content: string; idempotency_key?: string }) => {
-      const response = await apiPost<ApiResponse<AiRequest>>("/api/v1/ai/hearing-summary", {
-        content: payload.content,
-        idempotency_key: payload.idempotency_key ?? randomIdempotencyKey(),
-      });
-      return response.data;
-    },
-  });
+function aiMutation<P extends Record<string, unknown>>(endpoint: string) {
+  return () =>
+    useMutation({
+      mutationFn: async (payload: P & { idempotency_key?: string }) => {
+        const response = await apiPost<ApiResponse<AiRequest>>(endpoint, {
+          ...payload,
+          idempotency_key: payload.idempotency_key ?? randomIdempotencyKey(),
+        });
+        return response.data;
+      },
+    });
 }
 
-export function useAiDiarySummary() {
-  return useMutation({
-    mutationFn: async (payload: { content: string; idempotency_key?: string }) => {
-      const response = await apiPost<ApiResponse<AiRequest>>("/api/v1/ai/diary-summary", {
-        content: payload.content,
-        idempotency_key: payload.idempotency_key ?? randomIdempotencyKey(),
-      });
-      return response.data;
-    },
-  });
-}
+export const useAiHearingSummary = aiMutation<{ content: string }>("/api/v1/ai/hearing-summary");
+export const useAiDiarySummary = aiMutation<{ content: string }>("/api/v1/ai/diary-summary");
+export const useAiResearchSummary = aiMutation<{ content: string }>("/api/v1/ai/research-summary");
+export const useAiDocumentQa = aiMutation<{ question: string; context: string }>("/api/v1/ai/document-qa");
 
-export function useAiResearchSummary() {
-  return useMutation({
-    mutationFn: async (payload: { content: string; idempotency_key?: string }) => {
-      const response = await apiPost<ApiResponse<AiRequest>>("/api/v1/ai/research-summary", {
-        content: payload.content,
-        idempotency_key: payload.idempotency_key ?? randomIdempotencyKey(),
-      });
-      return response.data;
-    },
-  });
-}
+export const useAiPetitionDraft = aiMutation<{
+  case_type: string;
+  court_name: string;
+  facts: string;
+  relief_sought?: string;
+  sections?: string;
+  client_name?: string;
+  opponent_name?: string;
+  language?: string;
+}>("/api/v1/ai/petition-draft");
 
-export function useAiDocumentQa() {
-  return useMutation({
-    mutationFn: async (payload: { question: string; context: string; idempotency_key?: string }) => {
-      const response = await apiPost<ApiResponse<AiRequest>>("/api/v1/ai/document-qa", {
-        question: payload.question,
-        context: payload.context,
-        idempotency_key: payload.idempotency_key ?? randomIdempotencyKey(),
-      });
-      return response.data;
-    },
-  });
-}
+export const useAiLegalSections = aiMutation<{
+  content: string;
+  language?: string;
+}>("/api/v1/ai/legal-sections");
+
+export const useAiCaseLaw = aiMutation<{
+  content: string;
+  language?: string;
+}>("/api/v1/ai/case-law");
+
+export const useAiNextSteps = aiMutation<{
+  case_title?: string;
+  case_status?: string;
+  content: string;
+  language?: string;
+}>("/api/v1/ai/next-steps");
+
+export const useAiClientComms = aiMutation<{
+  case_title?: string;
+  content: string;
+  client_name?: string;
+  tone?: string;
+  language?: string;
+}>("/api/v1/ai/client-communication");
 
 export function useAiRequestStatus(publicId: string | null) {
   return useQuery({

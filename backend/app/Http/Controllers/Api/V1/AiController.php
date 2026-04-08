@@ -33,6 +33,38 @@ class AiController extends Controller
         return $this->enqueue($request, $action, AiFeature::DocumentQa, ['question', 'context']);
     }
 
+    public function petitionDraft(StoreAiRequest $request, EnqueueAiRequestAction $action): JsonResponse
+    {
+        return $this->enqueue($request, $action, AiFeature::PetitionDraft, [
+            'case_type', 'court_name', 'facts', 'relief_sought', 'sections',
+            'client_name', 'opponent_name', 'language',
+        ]);
+    }
+
+    public function legalSectionLookup(StoreAiRequest $request, EnqueueAiRequestAction $action): JsonResponse
+    {
+        return $this->enqueue($request, $action, AiFeature::LegalSectionLookup, ['content', 'language']);
+    }
+
+    public function caseLawSuggestion(StoreAiRequest $request, EnqueueAiRequestAction $action): JsonResponse
+    {
+        return $this->enqueue($request, $action, AiFeature::CaseLawSuggestion, ['content', 'language']);
+    }
+
+    public function nextSteps(StoreAiRequest $request, EnqueueAiRequestAction $action): JsonResponse
+    {
+        return $this->enqueue($request, $action, AiFeature::NextSteps, [
+            'case_title', 'case_status', 'content', 'language',
+        ]);
+    }
+
+    public function clientCommunication(StoreAiRequest $request, EnqueueAiRequestAction $action): JsonResponse
+    {
+        return $this->enqueue($request, $action, AiFeature::ClientCommunication, [
+            'case_title', 'content', 'client_name', 'tone', 'language',
+        ]);
+    }
+
     public function show(Request $request, string $publicId): JsonResponse
     {
         $aiRequest = AiRequest::query()->where('public_id', $publicId)->firstOrFail();

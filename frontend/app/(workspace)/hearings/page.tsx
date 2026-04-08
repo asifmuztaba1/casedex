@@ -83,7 +83,7 @@ export default function HearingsPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-[260px] pl-9"
             placeholder={t("hearings.search_placeholder") ?? "Search hearings..."}
@@ -122,7 +122,7 @@ export default function HearingsPage() {
           {upcoming.length > 0 && (
             <Card>
               <CardContent className="pt-6">
-                <h2 className="mb-4 text-base font-semibold text-slate-900">
+                <h2 className="mb-4 text-base font-semibold text-[var(--foreground)]">
                   {t("dashboard.section.hearings")}
                 </h2>
                 <HearingTable hearings={upcoming} t={t} />
@@ -133,7 +133,7 @@ export default function HearingsPage() {
           {past.length > 0 && (
             <Card>
               <CardContent className="pt-6">
-                <h2 className="mb-4 text-base font-semibold text-slate-500">
+                <h2 className="mb-4 text-base font-semibold text-[var(--muted-soft)]">
                   {t("hearings.past") ?? "Past hearings"}
                 </h2>
                 <HearingTable hearings={past} t={t} />

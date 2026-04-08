@@ -18,8 +18,11 @@ import dynamic from "next/dynamic";
 
 const adminNav = [
   { href: "/admin", key: "admin.nav.dashboard" },
+  { href: "/admin/tenants", key: "admin.nav.tenants" },
+  { href: "/admin/users", key: "admin.nav.users" },
   { href: "/admin/courts", key: "admin.nav.courts" },
   { href: "/admin/manual-payments", key: "admin.nav.manual_payments" },
+  { href: "/admin/ai-payments", key: "admin.nav.ai_payments" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -34,11 +37,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminGuard>
-      <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="min-h-screen bg-[var(--wash)] text-[var(--foreground)]">
         <div className="mx-auto flex min-h-screen w-full max-w-[1400px]">
-          <aside className="hidden w-[260px] flex-col border-r border-slate-200 bg-white px-6 py-6 lg:flex">
+          <aside className="hidden w-[260px] flex-col border-r border-[var(--border)] bg-[var(--paper)] px-6 py-6 lg:flex">
             <div className="flex items-center gap-2 text-lg font-semibold">
-              <ShieldCheck className="h-5 w-5 text-slate-700" />
+              <ShieldCheck className="h-5 w-5 text-[var(--muted)]" />
               <span>{t("admin.title")}</span>
             </div>
             <div className="mt-6 space-y-1 text-sm">
@@ -46,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  className="block rounded-lg px-3 py-2 text-[var(--muted)] hover:bg-[var(--paper-hover)] hover:text-[var(--foreground)]"
                 >
                   {t(item.key)}
                 </Link>
@@ -55,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="mt-auto pt-6">
               <Link
                 href="/dashboard"
-                className="text-xs text-slate-500 hover:text-slate-700"
+                className="text-xs text-[var(--muted-soft)] hover:text-[var(--muted)]"
               >
                 {t("admin.nav.workspace")}
               </Link>
@@ -63,10 +66,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </aside>
 
           <div className="flex flex-1 flex-col">
-            <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-6">
+            <header className="flex h-14 items-center justify-between border-b border-[var(--border)] bg-[var(--paper)] px-6">
               <div className="flex items-center gap-3">
                 <Badge variant="subtle">{t("admin.badge")}</Badge>
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-[var(--muted)]">
                   {t("admin.subtitle")}
                 </span>
               </div>

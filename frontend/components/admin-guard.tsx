@@ -33,7 +33,7 @@ export default function AdminGuard({
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">
         {t("admin.loading")}
       </div>
     );

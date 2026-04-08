@@ -387,7 +387,7 @@ export default function BillingSettingsPage() {
   return (
     <section className="space-y-6">
       {fromOnboarding && (
-        <Card className="border-slate-300 bg-slate-50">
+        <Card className="border-[var(--border)] bg-[var(--wash)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><BadgeCheck className="h-5 w-5 text-emerald-700" />{t("billing.onboarding_title")}</CardTitle>
             <CardDescription>
@@ -404,7 +404,7 @@ export default function BillingSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5 text-slate-700" />{t("billing.title")}</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5 text-[var(--muted)]" />{t("billing.title")}</CardTitle>
           <CardDescription>
             {manualOnlyLaunch
               ? "This private beta uses a guided bKash / Rocket flow for subscriptions and AI top-ups."
@@ -418,20 +418,20 @@ export default function BillingSettingsPage() {
             {subscription?.billing_source === "manual_mfs" && (
               <Badge>bKash / Rocket</Badge>
             )}
-            {trialText && <span className="inline-flex items-center gap-1 text-xs text-slate-500"><CalendarClock className="h-3.5 w-3.5" />{t("billing.trial_ends")}: {trialText}</span>}
+            {trialText && <span className="inline-flex items-center gap-1 text-xs text-[var(--muted-soft)]"><CalendarClock className="h-3.5 w-3.5" />{t("billing.trial_ends")}: {trialText}</span>}
           </div>
           <div className="grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Current plan</div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">{subscription?.plan ?? "trial"}</div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Current plan</div>
+              <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{subscription?.plan ?? "trial"}</div>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Billing route</div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">{billingRouteLabel}</div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Billing route</div>
+              <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{billingRouteLabel}</div>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Next step</div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">{nextStepLabel}</div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Next step</div>
+              <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{nextStepLabel}</div>
             </div>
           </div>
           {subscription?.plan_limits && (
@@ -486,11 +486,11 @@ export default function BillingSettingsPage() {
             )}
           </div>
           {manualOnlyLaunch ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--muted-soft)]">
               Subscription updates and AI top-ups are handled through the bKash / Rocket flow below during this beta.
             </p>
           ) : !isLemonBilling ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--muted-soft)]">
               Subscription management actions are available for Lemon-managed subscriptions.
             </p>
           ) : null}
@@ -498,7 +498,7 @@ export default function BillingSettingsPage() {
       </Card>
 
       <Tabs value={activeSectionTab} onValueChange={(value) => setSectionTab(value as "plans" | "manual" | "ai" | "invoices")}>
-        <TabsList className="h-auto flex w-full flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-2">
+        <TabsList className="h-auto flex w-full flex-wrap gap-2 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-2">
           <TabsTrigger value="plans">Plans</TabsTrigger>
           {manualEnabled && <TabsTrigger value="manual">Payment Details</TabsTrigger>}
           <TabsTrigger value="ai">AI Credits</TabsTrigger>
@@ -510,7 +510,7 @@ export default function BillingSettingsPage() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-slate-700" />{t("billing.change_plan")}</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-[var(--muted)]" />{t("billing.change_plan")}</CardTitle>
               <CardDescription>
                 {manualOnlyLaunch
                   ? "Choose the plan you want to activate with bKash / Rocket billing."
@@ -565,13 +565,13 @@ export default function BillingSettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-slate-700" />{t("billing.addon_title")}</CardTitle>
+              <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-[var(--muted)]" />{t("billing.addon_title")}</CardTitle>
               <CardDescription>{t("billing.addon_desc")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-2">
                 {STORAGE_ADDON_FEATURES.map((feature) => (
-                  <div key={feature} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <div key={feature} className="rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]">
                     {feature}
                   </div>
                 ))}
@@ -622,16 +622,16 @@ export default function BillingSettingsPage() {
           <CardContent className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <div className="space-y-5">
               {subscription?.billing_source === "manual_mfs" && (
-                <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-                  <div className="text-sm font-semibold text-slate-900">Subscription update request</div>
-                  <p className="text-xs text-slate-600">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 space-y-3">
+                  <div className="text-sm font-semibold text-[var(--foreground)]">Subscription update request</div>
+                  <p className="text-xs text-[var(--muted)]">
                     Schedule a cancellation or plan change. The selected update is applied after review on the date you choose.
                   </p>
                   <div className="grid gap-3 md:grid-cols-2">
                     <select
                       value={manualLifecycleType}
                       onChange={(event) => setManualLifecycleType(event.target.value as "cancel" | "plan_change")}
-                      className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
                       <option value="cancel">Cancel subscription</option>
                       <option value="plan_change">Change plan</option>
@@ -642,7 +642,7 @@ export default function BillingSettingsPage() {
                         <select
                           value={manualLifecyclePlan}
                           onChange={(event) => setManualLifecyclePlan(event.target.value as PlanId)}
-                          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                          className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                         >
                           {PLAN_CATALOG.map((plan) => (
                             <option key={plan.id} value={plan.id}>{plan.name}</option>
@@ -651,7 +651,7 @@ export default function BillingSettingsPage() {
                         <select
                           value={manualLifecycleInterval}
                           onChange={(event) => setManualLifecycleInterval(event.target.value as BillingInterval)}
-                          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                          className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                         >
                           <option value="monthly">Monthly</option>
                           <option value="yearly">Yearly</option>
@@ -671,7 +671,7 @@ export default function BillingSettingsPage() {
                 </div>
               )}
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-4">
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="subtle">1. Choose a channel</Badge>
                   <Badge variant="subtle">2. Send the exact amount</Badge>
@@ -687,7 +687,7 @@ export default function BillingSettingsPage() {
                         "rounded-xl border p-4 text-left transition",
                         activeManualMethodId === method.public_id
                           ? "border-teal-700 bg-teal-700 text-white shadow-lg"
-                          : "border-slate-200 bg-white hover:border-teal-300"
+                          : "border-[var(--border)] bg-[var(--paper)] hover:border-teal-300"
                       )}
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -699,7 +699,7 @@ export default function BillingSettingsPage() {
                           "rounded-full border px-3 py-1 text-xs",
                           activeManualMethodId === method.public_id
                             ? "border-teal-300 bg-teal-800 text-teal-100"
-                            : "border-slate-200 bg-slate-50 text-slate-700"
+                            : "border-[var(--border)] bg-[var(--wash)] text-[var(--muted)]"
                         )}>
                           {method.receiver_number}
                         </span>
@@ -707,14 +707,14 @@ export default function BillingSettingsPage() {
                       {method.account_name && (
                         <div className={cn(
                           "mt-1 text-sm",
-                          activeManualMethodId === method.public_id ? "text-teal-100" : "text-slate-700"
+                          activeManualMethodId === method.public_id ? "text-teal-100" : "text-[var(--muted)]"
                         )}>
                           {method.account_name}
                         </div>
                       )}
                       <p className={cn(
                         "mt-2 text-xs leading-5",
-                        activeManualMethodId === method.public_id ? "text-teal-100" : "text-slate-600"
+                        activeManualMethodId === method.public_id ? "text-teal-100" : "text-[var(--muted)]"
                       )}>
                         {locale === "bn" ? method.instructions_bn || method.instructions_en : method.instructions_en || method.instructions_bn}
                       </p>
@@ -736,12 +736,12 @@ export default function BillingSettingsPage() {
               )}
 
               {manualRequestStatus && (
-                <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="text-sm font-semibold text-slate-900">Latest billing submission</div>
+                    <div className="text-sm font-semibold text-[var(--foreground)]">Latest billing submission</div>
                     <Badge>Status: {manualRequestStatus.status}</Badge>
                   </div>
-                  <div className="mt-3 grid gap-2 text-xs text-slate-700 md:grid-cols-2">
+                  <div className="mt-3 grid gap-2 text-xs text-[var(--muted)] md:grid-cols-2">
                     <div>Plan: {manualRequestStatus.plan} ({manualRequestStatus.interval})</div>
                     <div>Amount: {manualRequestStatus.amount} {manualRequestStatus.currency}</div>
                     <div>Transaction ID: {manualRequestStatus.transaction_id}</div>
@@ -754,27 +754,27 @@ export default function BillingSettingsPage() {
                     )}
                   </div>
                   {temporaryAccessText && manualRequestStatus.status === "pending" && (
-                    <p className="mt-3 text-xs text-slate-500">Temporary access {temporaryAccessText}</p>
+                    <p className="mt-3 text-xs text-[var(--muted-soft)]">Temporary access {temporaryAccessText}</p>
                   )}
                 </div>
               )}
             </div>
 
             <div className="space-y-5">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-4">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 space-y-4">
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">Share billing details</div>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">
+                  <div className="text-sm font-semibold text-[var(--foreground)]">Share billing details</div>
+                  <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
                     We use these details to match your transfer and activate the selected plan for your workspace.
                   </p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Plan</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Plan</label>
                     <select
                       value={manualPlan}
                       onChange={(event) => setManualPlan(event.target.value as PlanId)}
-                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                      className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
                       {PLAN_CATALOG.map((plan) => (
                         <option key={plan.id} value={plan.id}>{plan.name}</option>
@@ -782,26 +782,26 @@ export default function BillingSettingsPage() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Exact amount</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Exact amount</label>
                     <Input
                       value={expectedAmount ? `${expectedAmount} ${manualMethods?.currency ?? "BDT"}` : "Not configured"}
                       readOnly
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sender number</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Sender number</label>
                     <Input value={senderNumber} onChange={(event) => setSenderNumber(event.target.value)} placeholder="01XXXXXXXXX" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Transaction ID</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Transaction ID</label>
                     <Input value={transactionId} onChange={(event) => setTransactionId(event.target.value)} placeholder="TXN..." />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sent at</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Sent at</label>
                     <Input type="datetime-local" value={sentAt} onChange={(event) => setSentAt(event.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Screenshot</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Screenshot</label>
                     <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => setScreenshot(event.target.files?.[0] ?? null)} />
                   </div>
                 </div>
@@ -886,7 +886,7 @@ export default function BillingSettingsPage() {
       {activeSectionTab === "ai" && (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-slate-700" />AI Credits</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-[var(--muted)]" />AI Credits</CardTitle>
           <CardDescription>
             {manualOnlyLaunch
               ? "Monthly free credits plus bKash / Rocket top-ups for extra AI usage during beta."
@@ -895,21 +895,21 @@ export default function BillingSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Free</div>
-              <div className="mt-1 text-xl font-semibold text-slate-900">{aiCredits?.free_balance ?? 0}</div>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Free</div>
+              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.free_balance ?? 0}</div>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Paid</div>
-              <div className="mt-1 text-xl font-semibold text-slate-900">{aiCredits?.paid_balance ?? 0}</div>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Paid</div>
+              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.paid_balance ?? 0}</div>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Total</div>
-              <div className="mt-1 text-xl font-semibold text-slate-900">{aiCredits?.total_balance ?? 0}</div>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Total</div>
+              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.total_balance ?? 0}</div>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs uppercase tracking-wide text-slate-500">Next free grant</div>
-              <div className="mt-1 text-sm font-medium text-slate-900">
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Next free grant</div>
+              <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
                 {aiCredits?.next_free_grant_at ? new Date(aiCredits.next_free_grant_at).toLocaleDateString() : "N/A"}
               </div>
             </div>
@@ -924,18 +924,18 @@ export default function BillingSettingsPage() {
                 className={cn(
                   "rounded-xl border p-4 text-left transition",
                   activeAiPackId === pack.public_id
-                    ? "border-slate-900 bg-slate-900 text-white shadow-lg"
-                    : "border-slate-200 bg-white hover:border-slate-300"
+                    ? "border-[var(--foreground)] bg-[var(--foreground)] text-white shadow-lg"
+                    : "border-[var(--border)] bg-[var(--paper)] hover:border-[var(--border)]"
                 )}
               >
                 <div className="text-sm font-semibold">{pack.name}</div>
-                <div className={cn("mt-1 text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-slate-600")}>
+                <div className={cn("mt-1 text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted)]")}>
                   {pack.credits} credits
                 </div>
                 <div className="mt-3 text-lg font-bold">
                   ${(pack.price_usd_cents / 100).toFixed(2)}
                 </div>
-                <div className={cn("text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-slate-500")}>
+                <div className={cn("text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted-soft)]")}>
                   {pack.price_bdt} BDT
                 </div>
               </button>
@@ -970,9 +970,9 @@ export default function BillingSettingsPage() {
           )}
 
           {manualEnabled && selectedAiPack && (
-            <div ref={aiManualSectionRef} className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
-              <div className="text-sm font-semibold text-slate-900">AI credit top-up details</div>
-              <div className="text-xs text-slate-600">
+            <div ref={aiManualSectionRef} className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-3">
+              <div className="text-sm font-semibold text-[var(--foreground)]">AI credit top-up details</div>
+              <div className="text-xs text-[var(--muted)]">
                 Selected pack: {selectedAiPack.name} ({selectedAiPack.credits} credits), amount: {selectedAiPack.price_bdt} BDT.
               </div>
               <div className="grid gap-3 md:grid-cols-2">
@@ -994,14 +994,14 @@ export default function BillingSettingsPage() {
             </div>
           )}
 
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><History className="h-4 w-4 text-slate-500" />Recent AI credit events</div>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]"><History className="h-4 w-4 text-[var(--muted-soft)]" />Recent AI credit events</div>
             <div className="mt-2 space-y-2">
               {aiLedger.slice(0, 5).map((event) => (
-                <div key={event.public_id} className="flex items-center justify-between rounded-lg border border-slate-200 p-2 text-xs">
+                <div key={event.public_id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-2 text-xs">
                   <div>
                     <div className="font-medium">{event.event_type}</div>
-                    <div className="text-slate-500">{event.feature ?? "wallet"}</div>
+                    <div className="text-[var(--muted-soft)]">{event.feature ?? "wallet"}</div>
                   </div>
                   <div className={cn("font-semibold", event.credits_delta < 0 ? "text-rose-600" : "text-emerald-600")}>
                     {event.credits_delta > 0 ? "+" : ""}
@@ -1009,7 +1009,7 @@ export default function BillingSettingsPage() {
                   </div>
                 </div>
               ))}
-              {aiLedger.length === 0 && <div className="text-xs text-slate-500">No AI credit events yet.</div>}
+              {aiLedger.length === 0 && <div className="text-xs text-[var(--muted-soft)]">No AI credit events yet.</div>}
             </div>
           </div>
         </CardContent>
@@ -1019,18 +1019,18 @@ export default function BillingSettingsPage() {
       {activeSectionTab === "invoices" && (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><FileClock className="h-5 w-5 text-slate-700" />{t("billing.invoices")}</CardTitle>
+          <CardTitle className="flex items-center gap-2"><FileClock className="h-5 w-5 text-[var(--muted)]" />{t("billing.invoices")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {invoices.length === 0 ? (
-              <div className="text-sm text-slate-500">{t("billing.no_invoices")}</div>
+              <div className="text-sm text-[var(--muted-soft)]">{t("billing.no_invoices")}</div>
             ) : (
               invoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 text-sm">
+                <div key={invoice.id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3 text-sm">
                   <div>
                     <div className="font-medium">#{invoice.order_number}</div>
-                    <div className="text-xs text-slate-500">{new Date(invoice.ordered_at).toLocaleDateString()}</div>
+                    <div className="text-xs text-[var(--muted-soft)]">{new Date(invoice.ordered_at).toLocaleDateString()}</div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span>{invoice.total / 100} {invoice.currency.toUpperCase()}</span>

@@ -30,7 +30,7 @@ export default function OfflineIndicator() {
   }
 
   return (
-    <div className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
+    <div className="rounded-full bg-[var(--foreground)] px-3 py-1 text-xs font-medium text-white">
       {t("offline.mode")}
     </div>
   );

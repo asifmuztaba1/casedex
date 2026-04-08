@@ -35,9 +35,12 @@ use App\Policies\NotificationPolicy;
 use App\Policies\ResearchNotePolicy;
 use App\Policies\PushSubscriptionPolicy;
 use App\Policies\UserPolicy;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 use LemonSqueezy\Laravel\Events\SubscriptionCancelled;
 use LemonSqueezy\Laravel\Events\SubscriptionCreated;
 use LemonSqueezy\Laravel\Events\SubscriptionExpired;
@@ -60,6 +63,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('auth', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
+        });
+
         Gate::policy(CaseFile::class, CasePolicy::class);
         Gate::policy(CaseParticipant::class, CaseParticipantPolicy::class);
         Gate::policy(CaseParty::class, CasePartyPolicy::class);

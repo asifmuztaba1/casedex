@@ -75,7 +75,7 @@ export default async function RootLayout({
   const initialLocale: Locale = storedLocale === "bn" || storedLocale === "en" ? storedLocale : "en";
 
   return (
-    <html lang={initialLocale}>
+    <html lang={initialLocale} suppressHydrationWarning>
       <body
         className={`${plexSans.variable} ${spectral.variable} ${bengaliSans.variable} antialiased`}
       >

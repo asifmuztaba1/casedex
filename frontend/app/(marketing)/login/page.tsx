@@ -89,7 +89,7 @@ export default function LoginPage() {
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">
             {t("login.kicker")}
           </p>
           <CardTitle className="text-2xl font-semibold">
@@ -119,7 +119,7 @@ export default function LoginPage() {
             }}
           >
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("login.email")}
               </label>
               <Input
@@ -137,7 +137,7 @@ export default function LoginPage() {
               )}
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("login.password")}
               </label>
               <Input
@@ -151,7 +151,7 @@ export default function LoginPage() {
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
               )}
             </div>
-            <div className="text-right text-sm text-slate-600">
+            <div className="text-right text-sm text-[var(--muted)]">
               <a className="underline-offset-4 hover:underline" href="/forgot-password">
                 {t("login.forgot_password")}
               </a>
@@ -177,15 +177,15 @@ export default function LoginPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-slate-900">Demo accounts</CardTitle>
+          <CardTitle className="text-lg font-semibold text-[var(--foreground)]">Demo accounts</CardTitle>
           <CardDescription>Use these accounts to explore the product quickly.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {DEMO_ACCOUNTS.map((demo) => (
-            <div key={demo.email} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-sm font-medium text-slate-900">{demo.label}</div>
-              <div className="mt-1 text-xs text-slate-600">Email: {demo.email}</div>
-              <div className="text-xs text-slate-600">Password: {demo.password}</div>
+            <div key={demo.email} className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
+              <div className="text-sm font-medium text-[var(--foreground)]">{demo.label}</div>
+              <div className="mt-1 text-xs text-[var(--muted)]">Email: {demo.email}</div>
+              <div className="text-xs text-[var(--muted)]">Password: {demo.password}</div>
               <div className="mt-2 flex flex-wrap gap-2">
                 <Button
                   type="button"

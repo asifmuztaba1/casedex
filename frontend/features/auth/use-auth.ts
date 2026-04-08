@@ -69,6 +69,8 @@ export type AuthUser = {
     | "viewer";
   locale?: "en" | "bn";
   tenant_locale?: "en" | "bn" | null;
+  whatsapp_phone?: string | null;
+  whatsapp_opted_in?: boolean;
 };
 
 type AuthResponse = {
@@ -132,6 +134,8 @@ type UpdateProfilePayload = {
   country_id: number;
   password?: string;
   locale?: "en" | "bn";
+  whatsapp_phone?: string | null;
+  whatsapp_opted_in?: boolean;
 };
 
 function resolveSanctumBase(): string {

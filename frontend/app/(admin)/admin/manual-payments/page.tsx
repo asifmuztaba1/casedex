@@ -77,9 +77,9 @@ export default function AdminManualPaymentsPage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{t("admin.title")}</p>
-        <h1 className="text-2xl font-semibold text-slate-900">Manual MFS payments</h1>
-        <p className="text-sm text-slate-600">Review bKash/Rocket requests and maintain receiver numbers.</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">{t("admin.title")}</p>
+        <h1 className="text-2xl font-semibold text-[var(--foreground)]">Manual MFS payments</h1>
+        <p className="text-sm text-[var(--muted)]">Review bKash/Rocket requests and maintain receiver numbers.</p>
       </div>
 
       <Card>
@@ -92,7 +92,7 @@ export default function AdminManualPaymentsPage() {
             <select
               value={status}
               onChange={(event) => setStatus(event.target.value as "" | "pending" | "approved" | "rejected" | "expired")}
-              className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm"
+              className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
             >
               <option value="">All statuses</option>
               <option value="pending">Pending</option>
@@ -105,18 +105,18 @@ export default function AdminManualPaymentsPage() {
 
           <div className="space-y-3">
             {sortedPayments.length === 0 && (
-              <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-500">No manual requests found.</div>
+              <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">No manual requests found.</div>
             )}
             {sortedPayments.map((item) => (
-              <div key={item.public_id} className="rounded-xl border border-slate-200 p-4">
+              <div key={item.public_id} className="rounded-xl border border-[var(--border)] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">{item.tenant_name ?? "Tenant"}</div>
-                    <div className="text-xs text-slate-600">{item.user_name} • {item.plan} • {item.interval}</div>
-                    <div className="text-xs text-slate-600">
+                    <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? "Tenant"}</div>
+                    <div className="text-xs text-[var(--muted)]">{item.user_name} • {item.plan} • {item.interval}</div>
+                    <div className="text-xs text-[var(--muted)]">
                       {item.amount} {item.currency} • TXN: {item.transaction_id}
                     </div>
-                    <div className="text-xs text-slate-600">Sent at: {new Date(item.sent_at).toLocaleString()}</div>
+                    <div className="text-xs text-[var(--muted)]">Sent at: {new Date(item.sent_at).toLocaleString()}</div>
                     {item.temporary_access_expires_at && (
                       <div className="text-xs text-amber-700">Temporary access until: {new Date(item.temporary_access_expires_at).toLocaleString()}</div>
                     )}
@@ -181,20 +181,20 @@ export default function AdminManualPaymentsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {lifecycleRequests.length === 0 && (
-            <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-500">No lifecycle requests found.</div>
+            <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">No lifecycle requests found.</div>
           )}
           {lifecycleRequests.map((item) => (
-            <div key={item.public_id} className="rounded-xl border border-slate-200 p-4">
+            <div key={item.public_id} className="rounded-xl border border-[var(--border)] p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">{item.tenant_name ?? "Tenant"}</div>
-                  <div className="text-xs text-slate-600">Requested by: {item.requested_by_name ?? "-"}</div>
-                  <div className="text-xs text-slate-600">Type: {item.type}</div>
-                  <div className="text-xs text-slate-600">Current: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? "Tenant"}</div>
+                  <div className="text-xs text-[var(--muted)]">Requested by: {item.requested_by_name ?? "-"}</div>
+                  <div className="text-xs text-[var(--muted)]">Type: {item.type}</div>
+                  <div className="text-xs text-[var(--muted)]">Current: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
                   {item.type === "plan_change" && (
-                    <div className="text-xs text-slate-600">Requested: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
+                    <div className="text-xs text-[var(--muted)]">Requested: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
                   )}
-                  <div className="text-xs text-slate-600">Effective at: {new Date(item.effective_at).toLocaleString()}</div>
+                  <div className="text-xs text-[var(--muted)]">Effective at: {new Date(item.effective_at).toLocaleString()}</div>
                   {item.applied_at && (
                     <div className="text-xs text-emerald-700">Applied at: {new Date(item.applied_at).toLocaleString()}</div>
                   )}
@@ -240,7 +240,7 @@ export default function AdminManualPaymentsPage() {
               onChange={(event) =>
                 setNewMethod((prev) => ({ ...prev, channel: event.target.value as "bkash" | "rocket" }))
               }
-              className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm"
+              className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
             >
               <option value="bkash">bKash</option>
               <option value="rocket">Rocket</option>
@@ -281,13 +281,13 @@ export default function AdminManualPaymentsPage() {
 
           <div className="space-y-3">
             {methods.map((method) => (
-              <div key={method.public_id} className="rounded-xl border border-slate-200 p-4">
+              <div key={method.public_id} className="rounded-xl border border-[var(--border)] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--foreground)]">
                       {method.channel.toUpperCase()} • {method.receiver_number}
                     </div>
-                    <div className="text-xs text-slate-600">{method.account_name ?? "-"}</div>
+                    <div className="text-xs text-[var(--muted)]">{method.account_name ?? "-"}</div>
                   </div>
                   <div className="flex gap-2">
                     <Button

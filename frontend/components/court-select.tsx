@@ -127,7 +127,7 @@ export default function CourtSelect({
       </div>
 
       {open && (
-        <Card className="absolute z-20 mt-2 w-full border-slate-200 shadow-sm">
+        <Card className="absolute z-20 mt-2 w-full border-[var(--border)] shadow-sm">
           <CardContent className="space-y-2 p-3">
             <Input
               value={search}
@@ -140,11 +140,11 @@ export default function CourtSelect({
               }}
             />
             {isLoading ? (
-              <div className="py-4 text-sm text-slate-600">
+              <div className="py-4 text-sm text-[var(--muted)]">
                 {t("courts.loading")}
               </div>
             ) : courts.length === 0 ? (
-              <div className="py-4 text-sm text-slate-600">
+              <div className="py-4 text-sm text-[var(--muted)]">
                 {t("courts.no_results")}
               </div>
             ) : (
@@ -167,15 +167,15 @@ export default function CourtSelect({
                       }}
                       className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition ${
                         isSelected
-                          ? "border-slate-900 bg-slate-900 text-white"
-                          : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50"
+                          ? "border-[var(--foreground)] bg-[var(--foreground)] text-white"
+                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--foreground)] hover:bg-[var(--wash)]"
                       }`}
                     >
                       <div className="font-medium">{label}</div>
                       {meta && (
                         <div
                           className={`text-xs ${
-                            isSelected ? "text-slate-100" : "text-slate-500"
+                            isSelected ? "text-white/80" : "text-[var(--muted-soft)]"
                           }`}
                         >
                           {meta}

@@ -75,7 +75,7 @@ export default function ContactsPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-[260px] pl-9"
             placeholder={t("contacts.search_placeholder") ?? "Search contacts..."}
@@ -156,7 +156,7 @@ export default function ContactsPage() {
                           {t("common.yes") ?? "Yes"}
                         </Badge>
                       ) : (
-                        <span className="text-sm text-slate-400">
+                        <span className="text-sm text-[var(--muted-soft)]">
                           {t("common.no") ?? "No"}
                         </span>
                       )}

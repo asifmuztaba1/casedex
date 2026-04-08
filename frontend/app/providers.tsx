@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
 import { useState } from "react";
 import { LocaleProvider } from "@/components/locale-provider";
 import type { Locale } from "@/lib/locale-constants";
@@ -26,9 +27,18 @@ export default function Providers({
   );
 
   return (
-    <QueryClientProvider client={client}>
-      <LocaleProvider initialLocale={initialLocale}>{children}</LocaleProvider>
-    </QueryClientProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      storageKey="casedex-theme"
+    >
+      <QueryClientProvider client={client}>
+        <LocaleProvider initialLocale={initialLocale}>
+          {children}
+        </LocaleProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

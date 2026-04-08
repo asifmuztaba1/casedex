@@ -49,8 +49,8 @@ export default function FileUpload({
         className={cn(
           "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition",
           dragOver
-            ? "border-slate-400 bg-slate-50"
-            : "border-slate-200 bg-white hover:border-slate-300"
+            ? "border-[var(--muted-soft)] bg-[var(--wash)]"
+            : "border-[var(--border)] bg-[var(--paper)] hover:border-[var(--border)]"
         )}
         onDragOver={(e) => {
           e.preventDefault();
@@ -64,9 +64,9 @@ export default function FileUpload({
         }}
         onClick={() => inputRef.current?.click()}
       >
-        <Upload className="mb-2 h-8 w-8 text-slate-400" />
-        <p className="text-sm font-medium text-slate-700">{label}</p>
-        {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+        <Upload className="mb-2 h-8 w-8 text-[var(--muted-soft)]" />
+        <p className="text-sm font-medium text-[var(--muted)]">{label}</p>
+        {hint && <p className="mt-1 text-xs text-[var(--muted-soft)]">{hint}</p>}
         <input
           ref={inputRef}
           type="file"
@@ -82,12 +82,12 @@ export default function FileUpload({
           {selected.map((file, i) => (
             <li
               key={`${file.name}-${i}`}
-              className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm"
             >
-              <span className="flex items-center gap-2 text-slate-700">
-                <FileText className="h-4 w-4 text-slate-400" />
+              <span className="flex items-center gap-2 text-[var(--muted)]">
+                <FileText className="h-4 w-4 text-[var(--muted-soft)]" />
                 {file.name}
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-[var(--muted-soft)]">
                   ({(file.size / 1024).toFixed(0)} KB)
                 </span>
               </span>

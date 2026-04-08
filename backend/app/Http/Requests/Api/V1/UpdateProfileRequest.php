@@ -29,6 +29,8 @@ class UpdateProfileRequest extends FormRequest
             'country_id' => ['required', 'integer', 'exists:countries,id'],
             'password' => ['nullable', Password::min(8)],
             'locale' => ['nullable', 'string', 'in:en,bn'],
+            'whatsapp_phone' => ['nullable', 'string', 'max:20', 'regex:/^\+880[0-9]{10}$/'],
+            'whatsapp_opted_in' => ['nullable', 'boolean'],
         ];
     }
 }

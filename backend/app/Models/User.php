@@ -36,6 +36,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'locale',
         'public_id',
         'role',
+        'whatsapp_phone',
+        'whatsapp_opted_in',
     ];
 
     /**
@@ -59,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'whatsapp_opted_in' => 'boolean',
         ];
     }
 

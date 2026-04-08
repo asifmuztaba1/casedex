@@ -119,16 +119,16 @@ export default function ResearchPage() {
             <Card key={note.public_id}>
               <CardContent className="flex items-start justify-between gap-4 p-6">
                 <div className="min-w-0 flex-1 space-y-1">
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--foreground)]">
                     {note.title}
                   </div>
                   {note.body && (
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-[var(--muted)]">
                       {note.body.slice(0, 300)}
                       {note.body.length > 300 ? "..." : ""}
                     </p>
                   )}
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[var(--muted-soft)]">
                     {format(new Date(note.created_at), "PP")}
                   </p>
                 </div>

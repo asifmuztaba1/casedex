@@ -1,21 +1,57 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #f7f7f8;
   --foreground: #0b0f1a;
   --paper: #ffffff;
+  --paper-hover: #f8fafc;
   --muted: #4c576a;
+  --muted-soft: #64748b;
   --border: #e6e7ea;
   --wash: #f2f3f5;
   --primary: #10274d;
   --primary-hover: #17345f;
   --accent: #2d4b83;
   --accent-soft: #edf2fb;
+  --ring-offset: #ffffff;
+  --skeleton: #e2e8f0;
+  --overlay: rgba(0, 0, 0, 0.5);
+  --success: #059669;
+  --error: #e11d48;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0f1117;
+  --foreground: #e8eaed;
+  --paper: #1a1d27;
+  --paper-hover: #222633;
+  --muted: #8b95a8;
+  --muted-soft: #6b7689;
+  --border: #2a2e3a;
+  --wash: #161821;
+  --primary: #4a7cc9;
+  --primary-hover: #5a8cd6;
+  --accent: #6b9be0;
+  --accent-soft: #1e2a3d;
+  --ring-offset: #0f1117;
+  --skeleton: #2a2e3a;
+  --overlay: rgba(0, 0, 0, 0.7);
+  --success: #34d399;
+  --error: #fb7185;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-hover: var(--paper-hover);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-border: var(--border);
+  --color-wash: var(--wash);
+  --color-skeleton: var(--skeleton);
   --font-sans: var(--font-plex-sans);
   --font-mono: var(--font-spectral);
 }

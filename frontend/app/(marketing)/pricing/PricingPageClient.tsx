@@ -34,7 +34,7 @@ export default function PricingPageClient() {
           </CardTitle>
           <CardDescription>{t("pricing.subtitle")}</CardDescription>
           {isBdt && (
-            <p className="text-xs text-slate-500">{t("pricing.bdt_note")}</p>
+            <p className="text-xs text-[var(--muted-soft)]">{t("pricing.bdt_note")}</p>
           )}
           <div className="flex gap-2 pt-2">
             <Button
@@ -81,16 +81,16 @@ export default function PricingPageClient() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader className="space-y-3">
-            <Smartphone className="h-5 w-5 text-slate-500" />
+            <Smartphone className="h-5 w-5 text-[var(--muted-soft)]" />
             <CardTitle className="text-base">{t("pricing.mfs_title")}</CardTitle>
             <CardDescription>{t("pricing.mfs_desc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="flex h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-[#E2136E]">
+              <div className="flex h-10 items-center rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm font-semibold text-[#E2136E]">
                 bKash
               </div>
-              <div className="flex h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-[#F6921E]">
+              <div className="flex h-10 items-center rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm font-semibold text-[#F6921E]">
                 Nagad
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function PricingPageClient() {
         </Card>
         <Card>
           <CardHeader className="space-y-3">
-            <Scale className="h-5 w-5 text-slate-500" />
+            <Scale className="h-5 w-5 text-[var(--muted-soft)]" />
             <CardTitle className="text-base">{t("pricing.bd_courts")}</CardTitle>
             <CardDescription>{t("pricing.bd_courts_desc")}</CardDescription>
           </CardHeader>

@@ -78,7 +78,7 @@ export default function DocumentsPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-[260px] pl-9"
             placeholder={t("documents.search_placeholder") ?? "Search documents..."}
@@ -132,12 +132,12 @@ export default function DocumentsPage() {
                   <TableRow key={doc.public_id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-slate-400" />
-                        <span className="font-medium text-slate-900">
+                        <FileText className="h-4 w-4 text-[var(--muted-soft)]" />
+                        <span className="font-medium text-[var(--foreground)]">
                           {doc.original_name ?? "Untitled"}
                         </span>
                         {doc.size && (
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-[var(--muted-soft)]">
                             ({(doc.size / 1024).toFixed(0)} KB)
                           </span>
                         )}
@@ -164,7 +164,7 @@ export default function DocumentsPage() {
                         }
                       />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-slate-500">
+                    <TableCell className="whitespace-nowrap text-[var(--muted-soft)]">
                       {doc.created_at
                         ? format(new Date(doc.created_at), "PP")
                         : "-"}

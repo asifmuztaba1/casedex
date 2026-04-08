@@ -46,7 +46,7 @@ export default function RegisterPage() {
     <section className="mx-auto w-full max-w-xl space-y-8">
       <Card>
         <CardHeader className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">{t("register.kicker")}</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">{t("register.kicker")}</p>
           <CardTitle className="text-2xl font-semibold">Create your account</CardTitle>
           <CardDescription>
             Layer 1 of onboarding: create your user account. Next you will verify email, choose package, and choose payment method.
@@ -87,7 +87,7 @@ export default function RegisterPage() {
             }}
           >
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("register.name")}</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("register.name")}</label>
               <Input
                 placeholder={t("register.name")}
                 value={name}
@@ -98,7 +98,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("register.email")}</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("register.email")}</label>
               <Input
                 placeholder="you@firm.com"
                 type="email"
@@ -111,10 +111,10 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("register.country")}</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("register.country")}</label>
               <select
-                className={`h-10 w-full rounded-lg border bg-white px-3 text-sm text-slate-900 ${
-                  countryError ? "border-rose-500 focus-visible:ring-rose-500" : "border-slate-200"
+                className={`h-10 w-full rounded-lg border bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] ${
+                  countryError ? "border-rose-500 focus-visible:ring-rose-500" : "border-[var(--border)]"
                 }`}
                 value={countryId}
                 onChange={(event) => setCountryId(event.target.value)}
@@ -132,7 +132,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("register.password")}</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("register.password")}</label>
               <Input
                 placeholder="********"
                 type="password"
@@ -144,7 +144,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("register.password_confirm")}</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("register.password_confirm")}</label>
               <Input
                 placeholder="********"
                 type="password"

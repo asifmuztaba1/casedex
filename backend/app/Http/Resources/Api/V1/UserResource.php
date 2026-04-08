@@ -25,6 +25,8 @@ class UserResource extends JsonResource
             'role' => $this->role?->value,
             'locale' => $this->locale,
             'tenant_locale' => $this->tenant?->locale,
+            'whatsapp_phone' => $this->whatsapp_phone,
+            'whatsapp_opted_in' => (bool) $this->whatsapp_opted_in,
         ];
     }
 }

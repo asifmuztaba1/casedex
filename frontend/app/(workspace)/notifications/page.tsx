@@ -115,17 +115,17 @@ export default function NotificationsPage() {
                   <TableRow key={note.public_id}>
                     <TableCell>
                       <div className="flex items-start gap-2">
-                        <Bell className="mt-0.5 h-4 w-4 text-slate-400" />
+                        <Bell className="mt-0.5 h-4 w-4 text-[var(--muted-soft)]" />
                         <div className="space-y-0.5">
-                          <div className="font-medium text-slate-900">
+                          <div className="font-medium text-[var(--foreground)]">
                             {note.title}
                           </div>
                           {note.body && (
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-[var(--muted-soft)]">
                               {note.body.slice(0, 80)}
                             </div>
                           )}
-                          <div className="text-xs text-slate-400">
+                          <div className="text-xs text-[var(--muted-soft)]">
                             {note.notification_type ?? "general"}
                           </div>
                         </div>
@@ -145,7 +145,7 @@ export default function NotificationsPage() {
                     <TableCell>
                       <StatusBadge status={note.status} />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-slate-500">
+                    <TableCell className="whitespace-nowrap text-[var(--muted-soft)]">
                       {note.scheduled_for
                         ? format(new Date(note.scheduled_for), "PP")
                         : note.created_at
