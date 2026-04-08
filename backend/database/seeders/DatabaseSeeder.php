@@ -96,12 +96,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // createAsCustomer requires Lemon Squeezy config — skip if not configured
-        if (! empty(config('services.lemon-squeezy.api_key'))) {
-            $tenant->createAsCustomer([
-                'trial_ends_at' => $tenant->trial_ends_at,
-            ]);
-        }
+        $tenant->createAsCustomer([
+            'trial_ends_at' => $tenant->trial_ends_at,
+        ]);
 
         TenantContext::set($tenant->id);
 
