@@ -87,6 +87,11 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // Demo data — only seed in non-production (requires fakerphp/faker)
+        if (app()->environment('production')) {
+            return;
+        }
+
         $tenant = Tenant::create([
             'name' => 'Demo Law Firm',
             'plan' => TenantPlan::Trial,
