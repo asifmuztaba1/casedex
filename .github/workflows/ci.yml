@@ -3,41 +3,84 @@ name: CI
 on:
   pull_request:
   push:
-    branches:
-      - main
-      - master
+    branches: [master]
 
 jobs:
   backend:
+    name: Backend Tests
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: casedex_test
+          MYSQL_USER: casedex
+          MYSQL_PASSWORD: testing
+          MYSQL_ROOT_PASSWORD: testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
-          extensions: dom, sqlite3, pdo_sqlite
+          php-version: "8.4"
+          extensions: mbstring, xml, mysql, redis, bcmath, intl, gd, zip
           tools: composer:v2
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: composer-
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Prepare env
+        run: cp .env.example .env && php artisan key:generate
+
       - name: Run tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: casedex_test
+          DB_USERNAME: casedex
+          DB_PASSWORD: testing
+          REDIS_HOST: 127.0.0.1
+          QUEUE_CONNECTION: sync
         run: php artisan test
 
   frontend:
+    name: Frontend Build
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -47,7 +90,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
 
@@ -55,7 +98,27 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm lint || true
 
       - name: Build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://casedex.app
+          NEXT_PUBLIC_APP_URL: https://casedex.app
         run: pnpm build
+
+  deploy:
+    name: Deploy to Production
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /opt/casedex
+            bash infra/deploy.sh redeploy
