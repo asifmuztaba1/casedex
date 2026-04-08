@@ -21,7 +21,7 @@ class SyncAiCreditPacks extends Command
                     'credits' => (int) ($packConfig['credits'] ?? 0),
                     'price_usd_cents' => (int) ($packConfig['price_usd_cents'] ?? 0),
                     'price_bdt' => (float) ($packConfig['price_bdt'] ?? 0),
-                    'lemon_variant_id' => $packConfig['lemon_variant_id'] ?? null,
+                    'lemon_variant_id' => !empty($packConfig['lemon_variant_id']) ? $packConfig['lemon_variant_id'] : null,
                     'active' => true,
                     'sort_order' => (int) ($packConfig['sort_order'] ?? 0),
                 ]
