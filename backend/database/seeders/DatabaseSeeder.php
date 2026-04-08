@@ -87,47 +87,58 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // Demo data — only seed in non-production (requires fakerphp/faker)
-        if (app()->environment('production')) {
-            return;
+        $tenant = Tenant::query()->updateOrCreate(
+            ['name' => 'Demo Law Firm'],
+            [
+                'plan' => TenantPlan::Trial,
+                'trial_ends_at' => now()->addDays(30),
+                'country_id' => $countryId,
+            ]
+        );
+
+        if (method_exists($tenant, 'createAsCustomer') && ! $tenant->lmsqueezyId()) {
+            $tenant->createAsCustomer([
+                'trial_ends_at' => $tenant->trial_ends_at,
+            ]);
         }
-
-        $tenant = Tenant::create([
-            'name' => 'Demo Law Firm',
-            'plan' => TenantPlan::Trial,
-            'trial_ends_at' => now()->addDays(30),
-            'country_id' => $countryId,
-        ]);
-
-        $tenant->createAsCustomer([
-            'trial_ends_at' => $tenant->trial_ends_at,
-        ]);
 
         TenantContext::set($tenant->id);
 
-        $admin = User::factory()->create([
-            'name' => 'Amina Rahman',
-            'email' => 'admin@demo.casedex.app',
-            'tenant_id' => $tenant->id,
-            'role' => UserRole::Admin,
-            'country_id' => $countryId,
-        ]);
+        $admin = User::query()->updateOrCreate(
+            ['email' => 'admin@demo.casedex.app'],
+            [
+                'name' => 'Amina Rahman',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'tenant_id' => $tenant->id,
+                'role' => UserRole::Admin,
+                'country_id' => $countryId,
+            ]
+        );
 
-        $lawyer = User::factory()->create([
-            'name' => 'Kareem Siddiq',
-            'email' => 'lawyer@demo.casedex.app',
-            'tenant_id' => $tenant->id,
-            'role' => UserRole::Lawyer,
-            'country_id' => $countryId,
-        ]);
+        $lawyer = User::query()->updateOrCreate(
+            ['email' => 'lawyer@demo.casedex.app'],
+            [
+                'name' => 'Kareem Siddiq',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'tenant_id' => $tenant->id,
+                'role' => UserRole::Lawyer,
+                'country_id' => $countryId,
+            ]
+        );
 
-        $assistant = User::factory()->create([
-            'name' => 'Nadia Khan',
-            'email' => 'assistant@demo.casedex.app',
-            'tenant_id' => $tenant->id,
-            'role' => UserRole::Assistant,
-            'country_id' => $countryId,
-        ]);
+        $assistant = User::query()->updateOrCreate(
+            ['email' => 'assistant@demo.casedex.app'],
+            [
+                'name' => 'Nadia Khan',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'tenant_id' => $tenant->id,
+                'role' => UserRole::Assistant,
+                'country_id' => $countryId,
+            ]
+        );
 
         $client = Client::create([
             'name' => 'Rafiq Hasan',
