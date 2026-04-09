@@ -80,10 +80,12 @@ export default async function RootLayout({
       <body
         className={`${plexSans.variable} ${spectral.variable} ${bengaliSans.variable} antialiased`}
       >
-        <Providers initialLocale={initialLocale}>{children}</Providers>
+        <Providers initialLocale={initialLocale}>
+          {children}
+          <InstallPrompt />
+        </Providers>
         <Toaster />
         <ServiceWorkerRegister />
-        <InstallPrompt />
       </body>
     </html>
   );
