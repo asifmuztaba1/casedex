@@ -14,6 +14,7 @@
         "laravel/horizon": "^5.41",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.0",
+        "laravel/telescope": "^5.20",
         "laravel/tinker": "^3.0",
         "lemonsqueezy/laravel": "^1.8.5",
         "resend/resend-laravel": "^1.3",

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Domain\Billing\Models\ManualPaymentRequest;
 use App\Domain\Cases\Models\CaseFile;
+use App\Domain\Support\Models\SupportTicket;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class PlatformAnalyticsController extends Controller
 {
@@ -69,6 +71,24 @@ class PlatformAnalyticsController extends Controller
                 'created_at' => $u->created_at?->toIso8601String(),
             ]);
 
+        $failedJobs = DB::table('failed_jobs')->count();
+        $openTickets = SupportTicket::where('status', 'open')->count();
+
+        $queueStats = [];
+        try {
+            $prefix = config('database.redis.options.prefix', '');
+            $pendingJobs = Redis::connection()->llen($prefix . 'queues:default');
+            $queueStats = [
+                'pending_jobs' => $pendingJobs,
+                'failed_jobs' => $failedJobs,
+            ];
+        } catch (\Throwable) {
+            $queueStats = [
+                'pending_jobs' => null,
+                'failed_jobs' => $failedJobs,
+            ];
+        }
+
         return [
             'total_tenants' => $totalTenants,
             'total_users' => $totalUsers,
@@ -77,6 +97,8 @@ class PlatformAnalyticsController extends Controller
             'on_trial' => $onTrial,
             'trial_expired' => $trialExpired,
             'pending_payments' => $pendingPayments,
+            'open_tickets' => $openTickets,
+            'queue' => $queueStats,
             'recent_tenants' => $recentTenants,
             'recent_users' => $recentUsers,
         ];
