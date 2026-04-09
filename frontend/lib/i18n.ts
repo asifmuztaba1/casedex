@@ -1127,6 +1127,10 @@ const en: Dictionary = {
 
   "common.saving": "Saving...",
 
+  "pwa.install_title": "Install CaseDex",
+  "pwa.install_desc": "Add as a mobile app for quick access from your home screen.",
+  "pwa.install": "Install",
+
   "support.title": "Support",
   "support.desc": "Submit a ticket or check on an existing one.",
   "support.admin_title": "Support Tickets",
@@ -2237,6 +2241,10 @@ const bn: Dictionary = {
   "ai.docqa.upload_hint": "PDF, DOCX, বা TXT",
 
   "common.saving": "সংরক্ষণ হচ্ছে...",
+
+  "pwa.install_title": "CaseDex ইনস্টল করুন",
+  "pwa.install_desc": "মোবাইল অ্যাপ হিসেবে হোম স্ক্রিনে যোগ করুন।",
+  "pwa.install": "ইনস্টল",
 
   "support.title": "সহায়তা",
   "support.desc": "টিকেট জমা দিন অথবা বিদ্যমান টিকেট দেখুন।",
