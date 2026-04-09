@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Settings, ShieldCheck } from "lucide-react";
+import { ExternalLink, Settings, ShieldCheck } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 
@@ -25,6 +25,7 @@ const adminNav = [
   { href: "/admin/ai-payments", key: "admin.nav.ai_payments" },
   { href: "/admin/support", key: "admin.nav.support" },
 ];
+
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: user } = useAuth();
@@ -55,6 +56,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {t(item.key)}
                 </Link>
               ))}
+            </div>
+            <div className="mt-6 border-t border-[var(--border)] pt-4">
+              <div className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-soft)]">
+                {t("admin.nav.tools")}
+              </div>
+              <div className="space-y-1 text-sm">
+                <a
+                  href="/horizon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-[var(--muted)] hover:bg-[var(--paper-hover)] hover:text-[var(--foreground)]"
+                >
+                  {t("admin.nav.horizon")}
+                  <ExternalLink className="h-3 w-3 opacity-40" />
+                </a>
+                {process.env.NEXT_PUBLIC_SENTRY_DSN && (
+                  <a
+                    href="https://sentry.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between rounded-lg px-3 py-2 text-[var(--muted)] hover:bg-[var(--paper-hover)] hover:text-[var(--foreground)]"
+                  >
+                    {t("admin.nav.sentry")}
+                    <ExternalLink className="h-3 w-3 opacity-40" />
+                  </a>
+                )}
+              </div>
             </div>
             <div className="mt-auto pt-6">
               <Link

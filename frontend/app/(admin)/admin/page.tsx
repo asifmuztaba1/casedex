@@ -39,6 +39,12 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard label={t("admin.analytics.open_tickets")} value={data?.open_tickets} loading={isLoading} accent />
+        <StatCard label={t("admin.analytics.pending_jobs")} value={data?.queue?.pending_jobs} loading={isLoading} />
+        <StatCard label={t("admin.analytics.failed_jobs")} value={data?.queue?.failed_jobs} loading={isLoading} accent />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {Object.entries(data?.tenants_by_plan ?? {}).map(([plan, count]) => (
           <Card key={plan}>
             <CardHeader className="pb-2">
