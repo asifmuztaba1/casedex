@@ -10,6 +10,11 @@ export type PlatformAnalytics = {
   on_trial: number;
   trial_expired: number;
   pending_payments: number;
+  open_tickets: number;
+  queue: {
+    pending_jobs: number | null;
+    failed_jobs: number;
+  };
   recent_tenants: {
     public_id: string;
     name: string;
