@@ -12,7 +12,10 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-    if (!consent) setVisible(true);
+    if (!consent) {
+      const id = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
   }, []);
 
   function accept() {
