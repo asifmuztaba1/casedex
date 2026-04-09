@@ -183,8 +183,10 @@ export function useCreateCase() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: (payload: CreateCasePayload) =>
-      apiPost<CaseSummary>("/api/v1/cases", payload),
+    mutationFn: async (payload: CreateCasePayload) => {
+      const res = await apiPost<{ data: CaseSummary }>("/api/v1/cases", payload);
+      return res.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cases"] });
       toast({
