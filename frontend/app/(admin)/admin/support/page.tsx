@@ -139,12 +139,12 @@ function AdminConversation({
                     key={msg.public_id}
                     className={`rounded-xl border p-3 ${
                       isPlatform
-                        ? "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950"
+                        ? "border-blue-300 bg-blue-50 text-blue-900 dark:border-blue-700 dark:bg-blue-950 dark:text-blue-100"
                         : "border-[var(--border)] bg-[var(--wash)]"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-[var(--foreground)]">
+                      <span className={`text-xs font-medium ${isPlatform ? "" : "text-[var(--foreground)]"}`}>
                         {msg.user.name}
                         {isPlatform && (
                           <Badge variant="subtle" className="ml-2 text-[10px]">
@@ -152,11 +152,11 @@ function AdminConversation({
                           </Badge>
                         )}
                       </span>
-                      <span className="text-[11px] text-[var(--muted-soft)]">
+                      <span className={`text-[11px] ${isPlatform ? "opacity-60" : "text-[var(--muted-soft)]"}`}>
                         {format(new Date(msg.created_at), "PPp")}
                       </span>
                     </div>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground)]">
+                    <p className={`mt-1 whitespace-pre-wrap text-sm ${isPlatform ? "" : "text-[var(--foreground)]"}`}>
                       {msg.body}
                     </p>
                     {msg.attachment_name && (
