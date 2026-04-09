@@ -71,6 +71,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {t("admin.nav.horizon")}
                   <ExternalLink className="h-3 w-3 opacity-40" />
                 </a>
+                <a
+                  href="/telescope"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-[var(--muted)] hover:bg-[var(--paper-hover)] hover:text-[var(--foreground)]"
+                >
+                  {t("admin.nav.telescope")}
+                  <ExternalLink className="h-3 w-3 opacity-40" />
+                </a>
                 {process.env.NEXT_PUBLIC_SENTRY_DSN && (
                   <a
                     href="https://sentry.io"
