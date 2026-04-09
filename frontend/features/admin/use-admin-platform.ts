@@ -12,7 +12,7 @@ export type PlatformAnalytics = {
   pending_payments: number;
   open_tickets: number;
   queue: {
-    pending_jobs: number | null;
+    pending_jobs: number;
     failed_jobs: number;
   };
   recent_tenants: {
