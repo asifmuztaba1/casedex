@@ -17,9 +17,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async headers() {
     return [
       {
