@@ -21,12 +21,22 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import { useToast } from "@/components/ui/use-toast";
 
+type MethodEdit = {
+  channel: "bkash" | "rocket";
+  account_name: string;
+  receiver_number: string;
+  instructions_en: string;
+  instructions_bn: string;
+};
+
 export default function AdminManualPaymentsPage() {
   const { t } = useLocale();
   const { toast } = useToast();
   const [status, setStatus] = useState<"" | "pending" | "approved" | "rejected" | "expired">("pending");
   const [tenant, setTenant] = useState("");
   const [rejectReason, setRejectReason] = useState<Record<string, string>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<MethodEdit>({ channel: "bkash", account_name: "", receiver_number: "", instructions_en: "", instructions_bn: "" });
   const [newMethod, setNewMethod] = useState({
     channel: "bkash" as "bkash" | "rocket",
     account_name: "",
@@ -282,37 +292,118 @@ export default function AdminManualPaymentsPage() {
           <div className="space-y-3">
             {methods.map((method) => (
               <div key={method.public_id} className="rounded-xl border border-[var(--border)] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <div className="text-sm font-semibold text-[var(--foreground)]">
-                      {method.channel.toUpperCase()} • {method.receiver_number}
+                {editingId === method.public_id ? (
+                  <div className="space-y-3">
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <select
+                        value={editForm.channel}
+                        onChange={(event) => setEditForm((prev) => ({ ...prev, channel: event.target.value as "bkash" | "rocket" }))}
+                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                      >
+                        <option value="bkash">bKash</option>
+                        <option value="rocket">Rocket</option>
+                      </select>
+                      <Input
+                        placeholder="Receiver number"
+                        value={editForm.receiver_number}
+                        onChange={(event) => setEditForm((prev) => ({ ...prev, receiver_number: event.target.value }))}
+                      />
+                      <Input
+                        placeholder="Account name"
+                        value={editForm.account_name}
+                        onChange={(event) => setEditForm((prev) => ({ ...prev, account_name: event.target.value }))}
+                      />
                     </div>
-                    <div className="text-xs text-[var(--muted)]">{method.account_name ?? "-"}</div>
+                    <Textarea
+                      placeholder="Instructions (EN)"
+                      value={editForm.instructions_en}
+                      onChange={(event) => setEditForm((prev) => ({ ...prev, instructions_en: event.target.value }))}
+                      rows={3}
+                    />
+                    <Textarea
+                      placeholder="Instructions (BN)"
+                      value={editForm.instructions_bn}
+                      onChange={(event) => setEditForm((prev) => ({ ...prev, instructions_bn: event.target.value }))}
+                      rows={3}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          updateMethod.mutate({
+                            public_id: method.public_id,
+                            ...editForm,
+                          }, {
+                            onSuccess: () => setEditingId(null),
+                          });
+                        }}
+                        disabled={updateMethod.isPending || !editForm.receiver_number}
+                      >
+                        Save
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        updateMethod.mutate({
-                          public_id: method.public_id,
-                          active: !method.active,
-                        })
-                      }
-                      disabled={updateMethod.isPending}
-                    >
-                      {method.active ? "Disable" : "Enable"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => deleteMethod.mutate(method.public_id)}
-                      disabled={deleteMethod.isPending}
-                    >
-                      Delete
-                    </Button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold text-[var(--foreground)]">
+                          {method.channel.toUpperCase()} • {method.receiver_number}
+                        </div>
+                        <div className="text-xs text-[var(--muted)]">{method.account_name ?? "-"}</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingId(method.public_id);
+                            setEditForm({
+                              channel: method.channel as "bkash" | "rocket",
+                              account_name: method.account_name ?? "",
+                              receiver_number: method.receiver_number,
+                              instructions_en: method.instructions_en ?? "",
+                              instructions_bn: method.instructions_bn ?? "",
+                            });
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            updateMethod.mutate({
+                              public_id: method.public_id,
+                              active: !method.active,
+                            })
+                          }
+                          disabled={updateMethod.isPending}
+                        >
+                          {method.active ? "Disable" : "Enable"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteMethod.mutate(method.public_id)}
+                          disabled={deleteMethod.isPending}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                    {method.instructions_en && (
+                      <div className="text-xs text-[var(--muted)]">EN: {method.instructions_en}</div>
+                    )}
+                    {method.instructions_bn && (
+                      <div className="text-xs text-[var(--muted)]">BN: {method.instructions_bn}</div>
+                    )}
+                    <Badge variant={method.active ? "default" : "subtle"}>{method.active ? "Active" : "Inactive"}</Badge>
                   </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
