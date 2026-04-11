@@ -49,7 +49,7 @@ const navItems = [
   { href: "/hearings", labelKey: "nav.hearings", icon: Calendar },
   { href: "/calendar", labelKey: "nav.calendar", icon: CalendarDays },
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
-  { href: "/ai", labelKey: "nav.ai", icon: Sparkles },
+  { href: "/ai", labelKey: "nav.ai", icon: Sparkles, ai: true },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
   { href: "/support", labelKey: "nav.support", icon: LifeBuoy },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
@@ -113,10 +113,25 @@ export default function WorkspaceLayout({
             <a
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--paper-hover)]"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-[var(--paper-hover)] ${
+                item.ai
+                  ? "text-violet-600 dark:text-violet-400"
+                  : "text-[var(--muted)]"
+              }`}
             >
-              <item.icon className="h-4 w-4 text-[var(--muted-soft)]" />
+              <item.icon
+                className={`h-4 w-4 ${
+                  item.ai
+                    ? "text-violet-500 dark:text-violet-400"
+                    : "text-[var(--muted-soft)]"
+                }`}
+              />
               {t(item.labelKey)}
+              {item.ai && (
+                <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  AI
+                </span>
+              )}
             </a>
           ))}
         </nav>
@@ -152,10 +167,25 @@ export default function WorkspaceLayout({
                             <a
                               key={item.href}
                               href={item.href}
-                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--paper-hover)]"
+                              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-[var(--paper-hover)] ${
+                                item.ai
+                                  ? "text-violet-600 dark:text-violet-400"
+                                  : "text-[var(--muted)]"
+                              }`}
                             >
-                              <item.icon className="h-4 w-4 text-[var(--muted-soft)]" />
+                              <item.icon
+                                className={`h-4 w-4 ${
+                                  item.ai
+                                    ? "text-violet-500 dark:text-violet-400"
+                                    : "text-[var(--muted-soft)]"
+                                }`}
+                              />
                               {t(item.labelKey)}
+                              {item.ai && (
+                                <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                                  AI
+                                </span>
+                              )}
                             </a>
                           ))}
                         </nav>
