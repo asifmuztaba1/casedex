@@ -34,7 +34,8 @@ export default function ResetPasswordPage() {
     submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordError = submitted && !password.trim();
   const confirmError = submitted && !confirm.trim();
-  const mismatchError = submitted && password && confirm && password !== confirm;
+  const mismatchError = !!(password && confirm && password !== confirm);
+  const passwordTooShort = password.length > 0 && password.length < 8;
 
   return (
     <section className="mx-auto w-full max-w-xl space-y-8">
@@ -66,7 +67,8 @@ export default function ResetPasswordPage() {
                   !email.trim() ||
                   !password.trim() ||
                   !confirm.trim() ||
-                  password !== confirm
+                  password !== confirm ||
+                  password.length < 8
                 ) {
                   return;
                 }
@@ -114,10 +116,14 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
-                  aria-invalid={!!(passwordError || mismatchError)}
+                  aria-invalid={!!(passwordError || mismatchError || passwordTooShort)}
                 />
-                {passwordError && (
+                {passwordError ? (
                   <p className="text-xs text-rose-600">{t("common.required")}</p>
+                ) : passwordTooShort ? (
+                  <p className="text-xs text-rose-600">{t("common.password_too_short")}</p>
+                ) : (
+                  <p className="text-xs text-[var(--muted-soft)]">{t("common.password_hint")}</p>
                 )}
               </div>
               <div className="space-y-2">

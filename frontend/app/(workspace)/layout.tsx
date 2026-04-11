@@ -25,7 +25,7 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import type { NotificationSummary } from "@/features/notifications/use-notifications";
 import ThemeToggle from "@/components/theme-toggle";
@@ -91,6 +91,17 @@ export default function WorkspaceLayout({
   const { data: subscription } = useSubscription();
   const { locale, setLocale, t } = useLocale();
   const pathname = usePathname();
+  const activeHref = useMemo(() => {
+    let best: string | null = null;
+    for (const item of navItems) {
+      if (pathname === item.href || pathname.startsWith(item.href + "/")) {
+        if (!best || item.href.length > best.length) {
+          best = item.href;
+        }
+      }
+    }
+    return best;
+  }, [pathname]);
   const { data: notificationsData } = useNotifications();
   const markRead = useMarkNotificationRead();
   const mounted = true;
@@ -134,31 +145,43 @@ export default function WorkspaceLayout({
           <div className="text-lg font-semibold text-[var(--foreground)]">CaseDex</div>
         </div>
         <nav className="mt-8 space-y-1">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-[var(--paper-hover)] ${
-                item.ai
-                  ? "text-violet-600 dark:text-violet-400"
-                  : "text-[var(--muted)]"
-              }`}
-            >
-              <item.icon
-                className={`h-4 w-4 ${
-                  item.ai
-                    ? "text-violet-500 dark:text-violet-400"
-                    : "text-[var(--muted-soft)]"
+          {navItems.map((item) => {
+            const isActive = item.href === activeHref;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  isActive
+                    ? item.ai
+                      ? "bg-violet-50 font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-300"
+                      : "bg-[var(--wash)] font-semibold text-[var(--foreground)]"
+                    : item.ai
+                      ? "text-violet-600 hover:bg-[var(--paper-hover)] dark:text-violet-400"
+                      : "text-[var(--muted)] hover:bg-[var(--paper-hover)]"
                 }`}
-              />
-              {t(item.labelKey)}
-              {item.ai && (
-                <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                  AI
-                </span>
-              )}
-            </a>
-          ))}
+              >
+                <item.icon
+                  className={`h-4 w-4 ${
+                    isActive
+                      ? item.ai
+                        ? "text-violet-600 dark:text-violet-300"
+                        : "text-[var(--foreground)]"
+                      : item.ai
+                        ? "text-violet-500 dark:text-violet-400"
+                        : "text-[var(--muted-soft)]"
+                  }`}
+                />
+                {t(item.labelKey)}
+                {item.ai && (
+                  <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                    AI
+                  </span>
+                )}
+              </a>
+            );
+          })}
         </nav>
       </aside>
 
@@ -188,31 +211,43 @@ export default function WorkspaceLayout({
                           </div>
                         </div>
                         <nav className="space-y-1">
-                          {navItems.map((item) => (
-                            <a
-                              key={item.href}
-                              href={item.href}
-                              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-[var(--paper-hover)] ${
-                                item.ai
-                                  ? "text-violet-600 dark:text-violet-400"
-                                  : "text-[var(--muted)]"
-                              }`}
-                            >
-                              <item.icon
-                                className={`h-4 w-4 ${
-                                  item.ai
-                                    ? "text-violet-500 dark:text-violet-400"
-                                    : "text-[var(--muted-soft)]"
+                          {navItems.map((item) => {
+                            const isActive = item.href === activeHref;
+                            return (
+                              <a
+                                key={item.href}
+                                href={item.href}
+                                aria-current={isActive ? "page" : undefined}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                                  isActive
+                                    ? item.ai
+                                      ? "bg-violet-50 font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-300"
+                                      : "bg-[var(--wash)] font-semibold text-[var(--foreground)]"
+                                    : item.ai
+                                      ? "text-violet-600 hover:bg-[var(--paper-hover)] dark:text-violet-400"
+                                      : "text-[var(--muted)] hover:bg-[var(--paper-hover)]"
                                 }`}
-                              />
-                              {t(item.labelKey)}
-                              {item.ai && (
-                                <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                                  AI
-                                </span>
-                              )}
-                            </a>
-                          ))}
+                              >
+                                <item.icon
+                                  className={`h-4 w-4 ${
+                                    isActive
+                                      ? item.ai
+                                        ? "text-violet-600 dark:text-violet-300"
+                                        : "text-[var(--foreground)]"
+                                      : item.ai
+                                        ? "text-violet-500 dark:text-violet-400"
+                                        : "text-[var(--muted-soft)]"
+                                  }`}
+                                />
+                                {t(item.labelKey)}
+                                {item.ai && (
+                                  <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                                    AI
+                                  </span>
+                                )}
+                              </a>
+                            );
+                          })}
                         </nav>
                       </div>
                     </SheetContent>

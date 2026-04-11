@@ -40,7 +40,8 @@ export default function RegisterPage() {
   const passwordError = submitted && !password.trim();
   const confirmError = submitted && !confirm.trim();
   const countryError = submitted && !countryId;
-  const mismatchError = submitted && password && confirm && password !== confirm;
+  const mismatchError = !!(password && confirm && password !== confirm);
+  const passwordTooShort = password.length > 0 && password.length < 8;
 
   return (
     <section className="mx-auto w-full max-w-xl space-y-8">
@@ -65,7 +66,8 @@ export default function RegisterPage() {
                 !password.trim() ||
                 !confirm.trim() ||
                 !countryId ||
-                password !== confirm
+                password !== confirm ||
+                password.length < 8
               ) {
                 return;
               }
@@ -138,9 +140,15 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                aria-invalid={!!(passwordError || mismatchError)}
+                aria-invalid={!!(passwordError || mismatchError || passwordTooShort)}
               />
-              {passwordError && <p className="text-xs text-rose-600">{t("common.required")}</p>}
+              {passwordError ? (
+                <p className="text-xs text-rose-600">{t("common.required")}</p>
+              ) : passwordTooShort ? (
+                <p className="text-xs text-rose-600">{t("common.password_too_short")}</p>
+              ) : (
+                <p className="text-xs text-[var(--muted-soft)]">{t("common.password_hint")}</p>
+              )}
             </div>
 
             <div className="space-y-2">
