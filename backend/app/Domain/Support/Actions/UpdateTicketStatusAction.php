@@ -42,23 +42,20 @@ class UpdateTicketStatusAction
             return;
         }
 
-        $previousTenant = TenantContext::id();
         TenantContext::set($ticketOwner->tenant_id);
 
-        CaseNotification::query()->withoutGlobalScope('tenant')->create([
-            'tenant_id' => $ticketOwner->tenant_id,
-            'user_id' => $ticketOwner->id,
-            'notification_type' => 'support_status',
-            'channel' => 'in_app',
-            'title' => "Support ticket {$statusLabel}",
-            'body' => "Your ticket \"{$ticket->subject}\" has been {$statusLabel}.",
-            'status' => 'pending',
-            'scheduled_for' => now(),
-        ]);
-
-        if ($previousTenant) {
-            TenantContext::set($previousTenant);
-        } else {
+        try {
+            CaseNotification::query()->withoutGlobalScope('tenant')->create([
+                'tenant_id' => $ticketOwner->tenant_id,
+                'user_id' => $ticketOwner->id,
+                'notification_type' => 'support_status',
+                'channel' => 'in_app',
+                'title' => "Support ticket {$statusLabel}",
+                'body' => "Your ticket \"{$ticket->subject}\" has been {$statusLabel}.",
+                'status' => 'pending',
+                'scheduled_for' => now(),
+            ]);
+        } finally {
             TenantContext::clear();
         }
     }

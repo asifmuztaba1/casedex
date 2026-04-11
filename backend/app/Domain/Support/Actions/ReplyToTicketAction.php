@@ -55,23 +55,20 @@ class ReplyToTicketAction
             return;
         }
 
-        $previousTenant = TenantContext::id();
         TenantContext::set($ticketOwner->tenant_id);
 
-        CaseNotification::query()->withoutGlobalScope('tenant')->create([
-            'tenant_id' => $ticketOwner->tenant_id,
-            'user_id' => $ticketOwner->id,
-            'notification_type' => 'support_reply',
-            'channel' => 'in_app',
-            'title' => 'New reply on your support ticket',
-            'body' => "Your ticket \"{$ticket->subject}\" has a new reply.",
-            'status' => 'pending',
-            'scheduled_for' => now(),
-        ]);
-
-        if ($previousTenant) {
-            TenantContext::set($previousTenant);
-        } else {
+        try {
+            CaseNotification::query()->withoutGlobalScope('tenant')->create([
+                'tenant_id' => $ticketOwner->tenant_id,
+                'user_id' => $ticketOwner->id,
+                'notification_type' => 'support_reply',
+                'channel' => 'in_app',
+                'title' => 'New reply on your support ticket',
+                'body' => "Your ticket \"{$ticket->subject}\" has a new reply.",
+                'status' => 'pending',
+                'scheduled_for' => now(),
+            ]);
+        } finally {
             TenantContext::clear();
         }
     }
