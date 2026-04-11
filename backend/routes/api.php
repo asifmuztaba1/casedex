@@ -181,6 +181,7 @@ Route::prefix('v1')
         Route::put('/clients/{id}', [ClientController::class, 'update']);
         Route::delete('/clients/{id}', [ClientController::class, 'destroy']);
 
+        Route::get('/hearings/calendar', [HearingController::class, 'calendar']);
         Route::get('/hearings', [HearingController::class, 'index']);
         Route::post('/hearings', [HearingController::class, 'store']);
         Route::get('/hearings/{publicId}', [HearingController::class, 'show']);
