@@ -18,11 +18,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth, useLogout } from "@/features/auth/use-auth";
 import { useSubscription } from "@/features/billing/use-billing";
-import { useNotifications } from "@/features/notifications/use-notifications";
+import {
+  useMarkNotificationRead,
+  useNotifications,
+} from "@/features/notifications/use-notifications";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import type { NotificationSummary } from "@/features/notifications/use-notifications";
 import ThemeToggle from "@/components/theme-toggle";
 import {
   Bell,
@@ -33,6 +38,7 @@ import {
   CalendarDays,
   FileText,
   LayoutDashboard,
+  LibraryBig,
   LifeBuoy,
   Menu,
   Settings,
@@ -40,6 +46,23 @@ import {
   UserCircle,
   Users,
 } from "lucide-react";
+
+function notificationHref(notification: NotificationSummary): string {
+  if (notification.case_public_id) {
+    return `/cases/${notification.case_public_id}`;
+  }
+  const type = notification.notification_type ?? "";
+  if (type.includes("hearing")) {
+    return "/hearings";
+  }
+  if (type.includes("document")) {
+    return "/documents";
+  }
+  if (type.includes("invoice") || type.includes("billing")) {
+    return "/settings/billing";
+  }
+  return "/notifications";
+}
 
 const navItems = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
@@ -49,6 +72,7 @@ const navItems = [
   { href: "/hearings", labelKey: "nav.hearings", icon: Calendar },
   { href: "/calendar", labelKey: "nav.calendar", icon: CalendarDays },
   { href: "/documents", labelKey: "nav.documents", icon: FileText },
+  { href: "/library", labelKey: "nav.library", icon: LibraryBig },
   { href: "/ai", labelKey: "nav.ai", icon: Sparkles, ai: true },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
   { href: "/support", labelKey: "nav.support", icon: LifeBuoy },
@@ -68,6 +92,7 @@ export default function WorkspaceLayout({
   const { locale, setLocale, t } = useLocale();
   const pathname = usePathname();
   const { data: notificationsData } = useNotifications();
+  const markRead = useMarkNotificationRead();
   const mounted = true;
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
@@ -247,9 +272,15 @@ export default function WorkspaceLayout({
                         </div>
                       ) : (
                         sortedNotifications.map((notification) => (
-                          <div
+                          <Link
                             key={notification.public_id}
-                            className={`rounded-xl border px-3 py-2 text-sm ${
+                            href={notificationHref(notification)}
+                            onClick={() => {
+                              if (notification.status !== "read") {
+                                markRead.mutate(notification.public_id);
+                              }
+                            }}
+                            className={`block rounded-xl border px-3 py-2 text-sm transition-colors hover:bg-[var(--paper-hover)] ${
                               notification.status === "read"
                                 ? "border-[var(--border)] bg-[var(--paper)] text-[var(--muted)]"
                                 : "border-[var(--border)] bg-[var(--wash)] text-[var(--foreground)]"
@@ -266,7 +297,7 @@ export default function WorkspaceLayout({
                             <div className="mt-1 text-[11px] text-[var(--muted-soft)]">
                               {new Date(notification.created_at).toLocaleString()}
                             </div>
-                          </div>
+                          </Link>
                         ))
                       )}
                     </div>
