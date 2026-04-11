@@ -126,6 +126,7 @@ Route::prefix('v1')
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'tenant', 'throttle:api'])
     ->group(function (): void {
+        Route::put('/tenants', [TenantController::class, 'update']);
         Route::post('/billing/checkout', [BillingController::class, 'checkout']);
         Route::post('/billing/portal', [BillingController::class, 'portal']);
         Route::get('/billing/subscription', [BillingController::class, 'subscription']);

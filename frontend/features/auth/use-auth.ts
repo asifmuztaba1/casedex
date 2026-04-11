@@ -539,6 +539,37 @@ export function useCreateTenant() {
   });
 }
 
+type UpdateTenantPayload = {
+  name: string;
+};
+
+export function useUpdateTenant() {
+  const client = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: UpdateTenantPayload) => {
+      await ensureCsrfCookie();
+      return putJson<AuthResponse>("/api/v1/tenants", payload);
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["auth-me"] });
+      toast({
+        title: "Firm updated",
+        description: "Firm name updated successfully.",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update failed",
+        description: getErrorMessage(error),
+        variant: "error",
+      });
+    },
+  });
+}
+
 export function useUpdateProfile() {
   const client = useQueryClient();
   const { toast } = useToast();
