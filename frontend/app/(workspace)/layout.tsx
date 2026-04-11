@@ -124,7 +124,7 @@ export default function WorkspaceLayout({
 
       <div className="md:pl-[260px]">
         <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-4">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-3 py-3 md:gap-4 md:px-6 md:py-4">
             <div className="flex items-center gap-3">
               <Sheet>
                 {mounted ? (
@@ -177,8 +177,8 @@ export default function WorkspaceLayout({
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Input className="w-[220px]" placeholder={t("nav.search")} />
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+              <Input className="hidden w-[220px] md:block" placeholder={t("nav.search")} />
               <Badge variant="subtle">
                 {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>
@@ -206,7 +206,7 @@ export default function WorkspaceLayout({
                       )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[320px] p-2">
+                  <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] max-w-[320px] p-2">
                     <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted-soft)]">
                       {t("nav.notifications")}
                     </div>
@@ -281,7 +281,7 @@ export default function WorkspaceLayout({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1200px] px-6 py-6">
+        <main className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-6 md:py-6">
           <AuthGuard>{children}</AuthGuard>
         </main>
       </div>

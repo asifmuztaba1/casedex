@@ -129,7 +129,7 @@ function TeamSettingsContent({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_140px_140px_auto]">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-[1fr_1fr_1fr_140px_140px_auto]">
             <div className="space-y-1">
               <Input
                 placeholder={t("settings.team.name")}
@@ -170,7 +170,7 @@ function TeamSettingsContent({
             </div>
             <div>
               <select
-                className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
+                className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                 value={role}
                 onChange={(event) =>
                   setRole(event.target.value as typeof role)
@@ -185,7 +185,7 @@ function TeamSettingsContent({
             </div>
             <div className="space-y-1">
               <select
-                className={`h-10 rounded-lg border bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] ${
+                className={`h-10 w-full rounded-lg border bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] ${
                   countryError
                     ? "border-rose-500 focus-visible:ring-rose-500"
                     : "border-[var(--border)]"

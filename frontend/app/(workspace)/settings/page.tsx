@@ -309,7 +309,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-[var(--muted)]">
               <p>{t("settings.profile_card_desc")}</p>
-            <Button asChild className="mt-3 md-block">
+            <Button asChild className="mt-3">
               <Link href="/settings/profile">{t("settings.profile_card_action")}</Link>
             </Button>
           </CardContent>
@@ -321,7 +321,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-[var(--muted)]">
                 <p>{t("settings.team_card_desc")}</p>
-              <Button asChild className="mt-3 md-block">
+              <Button asChild className="mt-3">
                 <Link href="/settings/team">{t("settings.team_card_action")}</Link>
               </Button>
             </CardContent>
@@ -496,7 +496,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-[var(--muted)]">
             <p>{t("billing.subtitle")}</p>
-            <Button asChild className="mt-3 md-block">
+            <Button asChild className="mt-3">
               <Link href="/settings/billing">{t("nav.billing")}</Link>
             </Button>
           </CardContent>

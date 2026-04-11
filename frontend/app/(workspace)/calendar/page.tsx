@@ -62,7 +62,7 @@ export default function CalendarPage() {
         />
         {isAdmin && tenantUsers.length > 1 && (
           <Select value={userFilter} onValueChange={setUserFilter}>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px]">
               <SelectValue placeholder={t("hearings.filter_user")} />
             </SelectTrigger>
             <SelectContent>

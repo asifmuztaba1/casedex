@@ -76,18 +76,18 @@ export default function DocumentsPage() {
         description={t("documents.subtitle")}
       />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+        <div className="relative w-full sm:w-auto">
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
-            className="w-[260px] pl-9"
+            className="w-full pl-9 sm:w-[260px]"
             placeholder={t("documents.search_placeholder") ?? "Search documents..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[140px] sm:w-[180px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

@@ -68,13 +68,13 @@ export default function MonthCalendar({
   }, [hearings]);
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-2 md:p-4">
+      <div className="mb-3 flex items-center justify-between md:mb-4">
         <Button variant="outline" size="sm" onClick={() => onMonthChange(subMonths(currentMonth, 1))}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">
+        <div className="flex items-center gap-2 md:gap-3">
+          <h2 className="text-xs font-semibold text-[var(--foreground)] md:text-sm">
             {format(currentMonth, "MMMM yyyy")}
           </h2>
           {!isSameMonth(currentMonth, new Date()) && (
@@ -90,7 +90,7 @@ export default function MonthCalendar({
 
       <div className="grid grid-cols-7 gap-px">
         {weekdays.map((day) => (
-          <div key={day} className="py-2 text-center text-xs font-medium text-[var(--muted)]">
+          <div key={day} className="py-1 text-center text-[10px] font-medium text-[var(--muted)] md:py-2 md:text-xs">
             {day}
           </div>
         ))}
@@ -108,7 +108,7 @@ export default function MonthCalendar({
               type="button"
               onClick={() => onSelectDate(day)}
               className={[
-                "relative flex min-h-[72px] flex-col items-center rounded-lg p-1.5 text-sm transition-colors",
+                "relative flex min-h-[48px] flex-col items-center rounded-lg p-1 text-xs transition-colors md:min-h-[72px] md:p-1.5 md:text-sm",
                 inMonth ? "text-[var(--foreground)]" : "text-[var(--muted-soft)]",
                 selected
                   ? "bg-indigo-100 dark:bg-indigo-900/40"
@@ -117,7 +117,7 @@ export default function MonthCalendar({
             >
               <span
                 className={[
-                  "flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium",
+                  "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium md:h-7 md:w-7 md:text-xs",
                   today ? "bg-indigo-600 text-white" : "",
                 ].join(" ")}
               >
@@ -125,15 +125,15 @@ export default function MonthCalendar({
               </span>
 
               {dayHearings.length > 0 && (
-                <div className="mt-1 flex flex-wrap justify-center gap-0.5">
+                <div className="mt-0.5 flex flex-wrap justify-center gap-0.5 md:mt-1">
                   {dayHearings.slice(0, 3).map((h) => (
                     <span
                       key={h.public_id}
-                      className={`h-1.5 w-1.5 rounded-full ${TYPE_COLORS[h.type ?? ""] ?? "bg-gray-400"}`}
+                      className={`h-1 w-1 rounded-full md:h-1.5 md:w-1.5 ${TYPE_COLORS[h.type ?? ""] ?? "bg-gray-400"}`}
                     />
                   ))}
                   {dayHearings.length > 3 && (
-                    <span className="text-[9px] leading-none text-[var(--muted)]">
+                    <span className="hidden text-[9px] leading-none text-[var(--muted)] md:inline">
                       +{dayHearings.length - 3}
                     </span>
                   )}
