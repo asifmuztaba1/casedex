@@ -98,6 +98,20 @@ export function useDeleteNotification() {
   });
 }
 
+export function useMarkNotificationRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      apiPut<NotificationSummary>(`/api/v1/notifications/${publicId}`, {
+        status: "read",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
 type UpdateNotificationPayload = {
   publicId: string;
   data: Partial<CreateNotificationPayload>;
