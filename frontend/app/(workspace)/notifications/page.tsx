@@ -70,9 +70,9 @@ export default function NotificationsPage() {
         description={t("notifications.description")}
       />
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-[140px] sm:w-[160px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

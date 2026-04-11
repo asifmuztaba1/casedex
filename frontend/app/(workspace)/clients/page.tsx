@@ -66,18 +66,18 @@ export default function ClientsPage() {
         description={t("clients.subtitle") ?? "Your firm's client directory"}
       />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+        <div className="relative w-full sm:w-auto">
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
-            className="w-[260px] pl-9"
+            className="w-full pl-9 sm:w-[260px]"
             placeholder={t("clients.search_placeholder") ?? "Search clients..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-[140px] sm:w-[160px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

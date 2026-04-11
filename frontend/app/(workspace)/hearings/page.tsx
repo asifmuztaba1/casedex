@@ -128,20 +128,20 @@ export default function HearingsPage() {
         description={t("hearings.subtitle")}
       />
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
         {viewMode === "list" && (
           <>
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
               <Input
-                className="w-[260px] pl-9"
+                className="w-full pl-9 sm:w-[260px]"
                 placeholder={t("hearings.search_placeholder") ?? "Search hearings..."}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[160px]">
+              <SelectTrigger className="w-[140px] sm:w-[160px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -157,7 +157,7 @@ export default function HearingsPage() {
 
         {viewMode === "calendar" && isAdmin && tenantUsers.length > 1 && (
           <Select value={userFilter} onValueChange={setUserFilter}>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px]">
               <SelectValue placeholder={t("hearings.filter_user")} />
             </SelectTrigger>
             <SelectContent>
@@ -265,50 +265,52 @@ function HearingTable({
   t: (key: string) => string;
 }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t("table.date")}</TableHead>
-          <TableHead>{t("table.case")}</TableHead>
-          <TableHead>{t("table.type")}</TableHead>
-          <TableHead>{t("hearing.agenda") ?? "Agenda"}</TableHead>
-          <TableHead>{t("hearing.next_steps")}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {hearings.map((hearing) => (
-          <TableRow key={hearing.public_id}>
-            <TableCell className="whitespace-nowrap">
-              {hearing.hearing_at
-                ? format(new Date(hearing.hearing_at), "PP p")
-                : t("common.tbd")}
-            </TableCell>
-            <TableCell>
-              {hearing.case_public_id ? (
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/cases/${hearing.case_public_id}`}>
-                    {hearing.case_title ?? t("common.view_case")}
-                  </Link>
-                </Button>
-              ) : (
-                hearing.case_title ?? "-"
-              )}
-            </TableCell>
-            <TableCell>
-              <StatusBadge
-                status={hearing.type ?? "hearing"}
-                label={t(`hearing.type.${hearing.type ?? "hearing"}`)}
-              />
-            </TableCell>
-            <TableCell className="max-w-[200px] truncate">
-              {hearing.agenda ?? "-"}
-            </TableCell>
-            <TableCell className="max-w-[200px] truncate">
-              {hearing.next_steps ?? "-"}
-            </TableCell>
+    <div className="overflow-x-auto">
+      <Table className="min-w-[640px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t("table.date")}</TableHead>
+            <TableHead>{t("table.case")}</TableHead>
+            <TableHead>{t("table.type")}</TableHead>
+            <TableHead>{t("hearing.agenda") ?? "Agenda"}</TableHead>
+            <TableHead>{t("hearing.next_steps")}</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {hearings.map((hearing) => (
+            <TableRow key={hearing.public_id}>
+              <TableCell className="whitespace-nowrap">
+                {hearing.hearing_at
+                  ? format(new Date(hearing.hearing_at), "PP p")
+                  : t("common.tbd")}
+              </TableCell>
+              <TableCell>
+                {hearing.case_public_id ? (
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={`/cases/${hearing.case_public_id}`}>
+                      {hearing.case_title ?? t("common.view_case")}
+                    </Link>
+                  </Button>
+                ) : (
+                  hearing.case_title ?? "-"
+                )}
+              </TableCell>
+              <TableCell>
+                <StatusBadge
+                  status={hearing.type ?? "hearing"}
+                  label={t(`hearing.type.${hearing.type ?? "hearing"}`)}
+                />
+              </TableCell>
+              <TableCell className="max-w-[200px] truncate">
+                {hearing.agenda ?? "-"}
+              </TableCell>
+              <TableCell className="max-w-[200px] truncate">
+                {hearing.next_steps ?? "-"}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

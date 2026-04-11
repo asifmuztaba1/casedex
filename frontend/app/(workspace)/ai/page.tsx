@@ -20,6 +20,7 @@ import {
   type AiRequest,
 } from "@/features/ai/use-ai";
 import { useLocale } from "@/components/locale-provider";
+import { useAiCredits } from "@/features/billing/use-billing";
 import {
   FileSignature,
   Scale,
@@ -67,20 +68,37 @@ const FEATURES: {
 export default function AiHubPage() {
   const { t } = useLocale();
   const [active, setActive] = useState<FeatureKey | null>(null);
+  const { data: aiCredits } = useAiCredits();
+  const totalBalance = aiCredits?.total_balance ?? 0;
 
   return (
     <section className="space-y-6">
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-indigo-500" />
-          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
-            {t("ai.hub.kicker")}
-          </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-violet-500" />
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
+              {t("ai.hub.kicker")}
+            </p>
+          </div>
+          <h1 className="text-2xl font-semibold text-[var(--foreground)]">
+            {t("ai.hub.title")}
+          </h1>
+          <p className="text-sm text-[var(--muted)]">{t("ai.hub.subtitle")}</p>
         </div>
-        <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-          {t("ai.hub.title")}
-        </h1>
-        <p className="text-sm text-[var(--muted)]">{t("ai.hub.subtitle")}</p>
+        <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] px-4 py-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500">
+            <Sparkles className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <p className="text-[11px] uppercase tracking-wide text-[var(--muted-soft)]">
+              {t("ai.balance")}
+            </p>
+            <p className={`text-lg font-bold ${totalBalance > 0 ? "text-[var(--foreground)]" : "text-rose-500"}`}>
+              {totalBalance} <span className="text-xs font-normal text-[var(--muted)]">{t("ai.credits")}</span>
+            </p>
+          </div>
+        </div>
       </div>
 
       {!active ? (

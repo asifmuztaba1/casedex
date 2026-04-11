@@ -326,7 +326,7 @@ export default function DashboardPage() {
               {t("dashboard.section.hearings_desc")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <Table className="min-w-[640px]">
               <TableHeader>
                 <TableRow>
@@ -480,7 +480,7 @@ export default function DashboardPage() {
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
                 <Input
-                  className="w-[220px] pl-9"
+                  className="w-full pl-9 sm:w-[220px]"
                   placeholder={t("dashboard.search_documents")}
                 />
               </div>
@@ -502,7 +502,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table className="min-w-[640px]">
             <TableHeader>
               <TableRow>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { Input } from "@/components/ui/input";
-import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
+import { useAuth, useUpdateProfile, useUpdateTenant } from "@/features/auth/use-auth";
 import {
   useDeletePushSubscription,
   usePushSubscriptions,
@@ -65,6 +65,9 @@ export default function SettingsPage() {
   const isBusy = saveSubscription.isPending || deleteSubscription.isPending;
 
   const updateProfile = useUpdateProfile();
+  const updateTenant = useUpdateTenant();
+  const [firmName, setFirmName] = useState(user?.tenant?.name ?? "");
+  const [firmNameError, setFirmNameError] = useState("");
   const [waPhone, setWaPhone] = useState(user?.whatsapp_phone ?? "");
   const [waPhoneError, setWaPhoneError] = useState("");
   const waPhoneRef = useRef<HTMLInputElement>(null);
@@ -259,13 +262,54 @@ export default function SettingsPage() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
+        {isAdmin && (
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-lg">{t("settings.firm_card")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-[var(--muted)]">
+              <p>{t("settings.firm_card_desc")}</p>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
+                  {t("settings.firm_name_label")}
+                </label>
+                <Input
+                  value={firmName}
+                  onChange={(e) => {
+                    setFirmName(e.target.value);
+                    setFirmNameError("");
+                  }}
+                  placeholder={t("settings.firm_name_placeholder")}
+                  aria-invalid={!!firmNameError}
+                />
+                {firmNameError && (
+                  <p className="text-xs text-[var(--error)]">{firmNameError}</p>
+                )}
+              </div>
+              <Button
+                disabled={updateTenant.isPending}
+                onClick={() => {
+                  const name = firmName.trim();
+                  if (!name) {
+                    setFirmNameError(t("settings.firm_name_required"));
+                    return;
+                  }
+                  updateTenant.mutate({ name });
+                }}
+              >
+                {updateTenant.isPending ? t("common.saving") : t("settings.firm_save")}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader className="space-y-2">
             <CardTitle className="text-lg">{t("settings.profile_card")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-[var(--muted)]">
               <p>{t("settings.profile_card_desc")}</p>
-            <Button asChild className="mt-3 md-block">
+            <Button asChild className="mt-3">
               <Link href="/settings/profile">{t("settings.profile_card_action")}</Link>
             </Button>
           </CardContent>
@@ -277,7 +321,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-[var(--muted)]">
                 <p>{t("settings.team_card_desc")}</p>
-              <Button asChild className="mt-3 md-block">
+              <Button asChild className="mt-3">
                 <Link href="/settings/team">{t("settings.team_card_action")}</Link>
               </Button>
             </CardContent>
@@ -452,7 +496,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-[var(--muted)]">
             <p>{t("billing.subtitle")}</p>
-            <Button asChild className="mt-3 md-block">
+            <Button asChild className="mt-3">
               <Link href="/settings/billing">{t("nav.billing")}</Link>
             </Button>
           </CardContent>
