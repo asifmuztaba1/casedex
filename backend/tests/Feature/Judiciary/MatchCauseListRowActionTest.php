@@ -55,7 +55,7 @@ function setupMatcherTenant(): array
         'division_id' => $district->division_id,
         'district_id' => $district->id,
         'court_type_id' => $courtType->id,
-        'judiciary_portal_court_id' => random_int(1000, PHP_INT_MAX),
+        'judiciary_portal_court_id' => random_int(1000, 4294967295),
         'name' => 'Matcher Test Court '.uniqid(),
         'name_bn' => 'টেস্ট আদালত',
         'is_active' => true,
