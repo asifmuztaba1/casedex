@@ -71,7 +71,7 @@ const partySchema = z.object({
     "other",
   ]),
   phone: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.union([z.literal(""), z.string().email()]).optional(),
   address: z.string().optional(),
   identity_number: z.string().optional(),
   notes: z.string().optional(),
@@ -106,7 +106,7 @@ export default function NewCasePage() {
             .object({
               name: z.string().min(2),
               phone: z.string().optional(),
-              email: z.string().email().optional(),
+              email: z.union([z.literal(""), z.string().email()]).optional(),
               address: z.string().optional(),
               identity_number: z.string().optional(),
               notes: z.string().optional(),
@@ -251,6 +251,15 @@ export default function NewCasePage() {
       delete payload.client;
     } else {
       delete payload.client_id;
+      if (payload.client && payload.client.email === "") {
+        delete payload.client.email;
+      }
+    }
+
+    if (payload.parties) {
+      payload.parties = payload.parties.map((party) =>
+        party.email === "" ? { ...party, email: undefined } : party
+      );
     }
 
     createCase.mutate(payload, {
@@ -320,33 +329,39 @@ export default function NewCasePage() {
                   aria-invalid={!!(showErrors && clientError)}
                 />
               ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Input
-                    placeholder={t("cases.client.name")}
-                    {...register("client.name")}
-                    aria-invalid={!!(showErrors && clientError)}
-                  />
-                  <Input
-                    placeholder={t("cases.client.phone")}
-                    {...register("client.phone")}
-                  />
-                  <Input
-                    placeholder={t("cases.client.email")}
-                    {...register("client.email")}
-                  />
-                  <Input
-                    placeholder={t("cases.client.address")}
-                    {...register("client.address")}
-                  />
-                  <Input
-                    placeholder={t("cases.client.identity")}
-                    {...register("client.identity_number")}
-                  />
-                  <Input
-                    placeholder={t("cases.client.notes")}
-                    {...register("client.notes")}
-                  />
-                </div>
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input
+                      placeholder={t("cases.client.name")}
+                      {...register("client.name")}
+                      aria-invalid={!!(showErrors && clientError)}
+                    />
+                    <Input
+                      placeholder={t("cases.client.phone")}
+                      {...register("client.phone")}
+                    />
+                    <Input
+                      type="email"
+                      placeholder={t("cases.client.email_optional")}
+                      {...register("client.email")}
+                    />
+                    <Input
+                      placeholder={t("cases.client.address")}
+                      {...register("client.address")}
+                    />
+                    <Input
+                      placeholder={t("cases.client.identity")}
+                      {...register("client.identity_number")}
+                    />
+                    <Input
+                      placeholder={t("cases.client.notes")}
+                      {...register("client.notes")}
+                    />
+                  </div>
+                  <p className="text-xs text-[var(--muted-soft)]">
+                    {t("cases.client.optional_hint")}
+                  </p>
+                </>
               )}
               {showErrors && clientError && (
                 <p className="text-xs text-rose-600">{t("common.required")}</p>
