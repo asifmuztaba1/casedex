@@ -28,11 +28,13 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
+  Compass,
   MessageSquarePlus,
   Paperclip,
   Send,
   X,
 } from "lucide-react";
+import { useProductTour } from "@/components/tour-provider";
 import { format } from "date-fns";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -234,6 +236,7 @@ export default function SupportPage() {
   const [attachment, setAttachment] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const { data, isLoading } = useSupportTickets(page);
+  const { start: startTour } = useProductTour();
   const { data: selectedTicketData } = useSupportTicket(selectedTicketId ?? "");
   const createTicket = useCreateTicket();
   const tickets = data?.data ?? [];
@@ -270,7 +273,11 @@ export default function SupportPage() {
     <section className="space-y-6">
       <PageHeader title={t("support.title")} description={t("support.desc")} />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={startTour}>
+          <Compass className="mr-2 h-4 w-4" />
+          {t("tour.btn.replay")}
+        </Button>
         <Button onClick={() => setShowCreate(true)}>
           <MessageSquarePlus className="mr-2 h-4 w-4" />
           {t("support.new_ticket")}

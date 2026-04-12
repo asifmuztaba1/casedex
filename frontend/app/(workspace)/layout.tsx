@@ -1,6 +1,7 @@
 "use client";
 
 import AuthGuard from "@/components/auth-guard";
+import { TourProvider } from "@/components/tour-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,17 +70,17 @@ function notificationHref(notification: NotificationSummary): string {
 
 const navItems = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
-  { href: "/cases", labelKey: "nav.cases", icon: BookOpen },
+  { href: "/cases", labelKey: "nav.cases", icon: BookOpen, tourId: "nav-cases" },
   { href: "/clients", labelKey: "nav.clients", icon: Users },
   { href: "/contacts", labelKey: "nav.contacts", icon: BookUser },
-  { href: "/hearings", labelKey: "nav.hearings", icon: Calendar },
+  { href: "/hearings", labelKey: "nav.hearings", icon: Calendar, tourId: "nav-hearings" },
   { href: "/calendar", labelKey: "nav.calendar", icon: CalendarDays },
-  { href: "/documents", labelKey: "nav.documents", icon: FileText },
+  { href: "/documents", labelKey: "nav.documents", icon: FileText, tourId: "nav-documents" },
   { href: "/library", labelKey: "nav.library", icon: LibraryBig },
-  { href: "/ai", labelKey: "nav.ai", icon: Sparkles, ai: true },
+  { href: "/ai", labelKey: "nav.ai", icon: Sparkles, ai: true, tourId: "nav-ai" },
   { href: "/notifications", labelKey: "nav.notifications", icon: Bell },
   { href: "/support", labelKey: "nav.support", icon: LifeBuoy },
-  { href: "/settings", labelKey: "nav.settings", icon: Settings },
+  { href: "/settings", labelKey: "nav.settings", icon: Settings, tourId: "nav-settings" },
   { href: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
 ];
 
@@ -148,7 +149,7 @@ export default function WorkspaceLayout({
           </div>
           <div className="text-lg font-semibold text-[var(--foreground)]">CaseDex</div>
         </div>
-        <nav className="mt-8 space-y-1">
+        <nav className="mt-8 space-y-1" data-tour="sidebar-nav">
           {navItems.map((item) => {
             const isActive = item.href === activeHref;
             return (
@@ -156,6 +157,7 @@ export default function WorkspaceLayout({
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
+                data-tour={item.tourId}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                   isActive
                     ? item.ai
@@ -282,7 +284,7 @@ export default function WorkspaceLayout({
                 </Badge>
               )}
               <ThemeToggle />
-              {mounted && <LanguageSwitcher />}
+              {mounted && <span data-tour="lang-switcher"><LanguageSwitcher /></span>}
               {mounted ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -382,7 +384,10 @@ export default function WorkspaceLayout({
           </div>
         </header>
         <main className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-6 md:py-6">
-          <AuthGuard>{children}</AuthGuard>
+          <TourProvider>
+            <AuthGuard>{children}</AuthGuard>
+            <ProductTour />
+          </TourProvider>
         </main>
       </div>
       {showSubscriptionWall && <SubscriptionWall />}
@@ -393,6 +398,9 @@ const LanguageSwitcher = dynamic(
   () => import("@/components/language-switcher"),
   { ssr: false }
 );
+const ProductTour = dynamic(() => import("@/components/product-tour"), {
+  ssr: false,
+});
 const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"), {
   ssr: false,
 });
