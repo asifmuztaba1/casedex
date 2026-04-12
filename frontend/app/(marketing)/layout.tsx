@@ -1,9 +1,14 @@
 "use client";
 
 import OfflineIndicator from "@/components/offline-indicator";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ArrowRight, Menu } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 import CookieConsent from "@/components/cookie-consent";
 import ThemeToggle from "@/components/theme-toggle";
@@ -21,20 +26,15 @@ export default function MarketingLayout({
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:64px_64px] opacity-40" />
       <div className="relative">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-3 px-3 py-3 md:gap-6 md:px-6 md:py-4">
-            <a href="/" className="flex items-center gap-3">
+          <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-3 py-3 md:gap-6 md:px-6 md:py-4">
+            <a href="/" className="flex items-center gap-2 md:gap-3">
               <img
                 src="/icons/icon-192.svg"
                 alt="CaseDex"
-                className="h-9 w-9 rounded-lg"
+                className="h-8 w-8 rounded-lg md:h-9 md:w-9"
               />
-              <div>
-                <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
-                  {"CaseDex\u2122"}
-                </div>
-                <div className="text-[11px] text-[var(--muted-soft)]">
-                  {t("meta.tagline")}
-                </div>
+              <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
+                {"CaseDex\u2122"}
               </div>
             </a>
             <nav className="hidden items-center gap-6 text-sm text-[var(--muted)] md:flex">
@@ -52,18 +52,56 @@ export default function MarketingLayout({
               </a>
             </nav>
             <div className="flex items-center gap-2 md:gap-3">
-              <Badge variant="subtle" className="hidden sm:inline-flex">{t("nav.pwa")}</Badge>
-              <ThemeToggle />
-              <LanguageSwitcher />
+              <div className="hidden md:flex md:items-center md:gap-3">
+                <ThemeToggle />
+                <LanguageSwitcher />
+              </div>
               <Button variant="outline" size="sm" asChild>
                 <a href="/login">{t("nav.login")}</a>
               </Button>
-              <Button size="sm" asChild className="hidden sm:inline-flex">
+              <Button size="sm" asChild className="hidden md:inline-flex">
                 <a href="/dashboard" className="inline-flex items-center gap-2">
                   {t("nav.dashboard_open")}
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="md:hidden">
+                    <Menu className="h-4 w-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetTitle className="sr-only">{t("nav.workspace")}</SheetTitle>
+                  <nav className="space-y-4 pt-4">
+                    <a className="block text-base font-medium text-[var(--foreground)]" href="/about">
+                      {t("nav.about")}
+                    </a>
+                    <a className="block text-base font-medium text-[var(--foreground)]" href="/features">
+                      {t("nav.features")}
+                    </a>
+                    <a className="block text-base font-medium text-[var(--foreground)]" href="/pricing">
+                      {t("nav.pricing")}
+                    </a>
+                    <a className="block text-base font-medium text-[var(--foreground)]" href="/contact">
+                      {t("nav.contact")}
+                    </a>
+                    <div className="flex items-center gap-3 border-t border-[var(--border)] pt-4">
+                      <ThemeToggle />
+                      <LanguageSwitcher />
+                    </div>
+                    <Button asChild className="w-full">
+                      <a href="/register" className="inline-flex items-center justify-center gap-2">
+                        {t("home.cta.start")}
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </Button>
+                    <Button variant="outline" asChild className="w-full">
+                      <a href="/dashboard">{t("nav.dashboard_open")}</a>
+                    </Button>
+                  </nav>
+                </SheetContent>
+              </Sheet>
               <OfflineIndicator />
             </div>
           </div>

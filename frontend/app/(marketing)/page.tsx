@@ -50,21 +50,21 @@ export default function Home() {
   ];
 
   return (
-    <section className="space-y-24">
-      <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="space-y-8">
+    <section className="space-y-16 md:space-y-24">
+      <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
+        <div className="space-y-6 md:space-y-8">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="subtle">{t("home.badge.workspace")}</Badge>
             <Badge variant="subtle">{t("home.badge.sources")}</Badge>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">
               {t("home.hero.kicker")}
             </p>
-            <h1 className="text-5xl font-semibold leading-tight text-[var(--foreground)] md:text-6xl">
+            <h1 className="text-3xl font-semibold leading-tight text-[var(--foreground)] sm:text-4xl md:text-5xl lg:text-6xl">
               {t("home.hero.title")}
             </h1>
-            <p className="text-lg text-[var(--muted)]">
+            <p className="text-base text-[var(--muted)] md:text-lg">
               {t("home.hero.subtitle")}
             </p>
           </div>
@@ -78,21 +78,21 @@ export default function Home() {
             <Button variant="outline" size="lg" asChild>
               <a href="/features">{t("home.cta.demo")}</a>
             </Button>
-            <Button variant="ghost" size="lg" asChild>
+            <Button variant="ghost" size="lg" asChild className="hidden sm:inline-flex">
               <a href="/login">{t("home.cta.login")}</a>
             </Button>
           </div>
-          <div className="grid gap-4 text-sm text-[var(--muted)] sm:grid-cols-3">
+          <div className="grid gap-3 text-sm text-[var(--muted)] sm:grid-cols-3 sm:gap-4">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-[var(--muted-soft)]" />
+              <ShieldCheck className="h-4 w-4 shrink-0 text-[var(--muted-soft)]" />
               {t("home.trust.tenant")}
             </div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[var(--muted-soft)]" />
+              <Sparkles className="h-4 w-4 shrink-0 text-[var(--muted-soft)]" />
               {t("home.trust.ai")}
             </div>
             <div className="flex items-center gap-2">
-              <CalendarClock className="h-4 w-4 text-[var(--muted-soft)]" />
+              <CalendarClock className="h-4 w-4 shrink-0 text-[var(--muted-soft)]" />
               {t("home.trust.pwa")}
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8">
         <div className="space-y-6">
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">
             {t("home.signal.title")}
@@ -342,21 +342,21 @@ export default function Home() {
       </Card>
 
       <Card>
-        <CardContent className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
+        <CardContent className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--muted-soft)]">
               {t("home.cta.kicker")}
             </p>
-            <h2 className="text-2xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-[var(--foreground)] md:text-2xl">
               {t("home.cta.title")}
             </h2>
             <p className="text-sm text-[var(--muted)]">
               {t("home.cta.subtitle")}
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3">
             <Input placeholder={t("home.cta.email")} type="email" />
-            <Button>{t("home.cta.button")}</Button>
+            <Button className="w-full sm:w-auto">{t("home.cta.button")}</Button>
           </div>
         </CardContent>
       </Card>
