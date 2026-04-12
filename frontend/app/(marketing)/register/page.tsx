@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,8 @@ import { useRegister } from "@/features/auth/use-auth";
 import { useCountries } from "@/features/countries/use-countries";
 import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
-import type { BillingInterval } from "@/features/billing/types";
-import { PLAN_CATALOG, type PlanId } from "@/features/billing/plan-catalog";
-
 export default function RegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const registerUser = useRegister();
   const { t, locale } = useLocale();
   const { data: countriesData } = useCountries();
@@ -25,13 +21,6 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState("");
   const [countryId, setCountryId] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const selectedPlanFromQuery = (searchParams.get("plan") as PlanId) || "professional";
-  const selectedIntervalFromQuery = (searchParams.get("interval") as BillingInterval) || "monthly";
-  const plan = PLAN_CATALOG.some((item) => item.id === selectedPlanFromQuery)
-    ? selectedPlanFromQuery
-    : "professional";
-  const interval: BillingInterval = selectedIntervalFromQuery === "yearly" ? "yearly" : "monthly";
 
   const nameError = submitted && !name.trim();
   const emailError = submitted && !email.trim();
@@ -50,7 +39,7 @@ export default function RegisterPage() {
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">{t("register.kicker")}</p>
           <CardTitle className="text-2xl font-semibold">Create your account</CardTitle>
           <CardDescription>
-            Layer 1 of onboarding: create your user account. Next you will verify email, choose package, and choose payment method.
+            Create your account and start a 30-day free trial. No credit card required.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -82,7 +71,7 @@ export default function RegisterPage() {
                   locale,
                 });
 
-                router.push(`/onboarding/account?plan=${plan}&interval=${interval}`);
+                router.push("/onboarding/account");
               } catch {
                 // toast handled by hook
               }

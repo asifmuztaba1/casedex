@@ -5,12 +5,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-type Step = "account" | "plan" | "payment";
+type Step = "account" | "workspace";
 
 const STEPS: Array<{ id: Step; label: string; href: string }> = [
-  { id: "account", label: "Account", href: "/onboarding/account" },
-  { id: "plan", label: "Package", href: "/onboarding/plan" },
-  { id: "payment", label: "Payment", href: "/onboarding/payment" },
+  { id: "account", label: "Verify email", href: "/onboarding/account" },
+  { id: "workspace", label: "Start workspace", href: "/onboarding/workspace" },
 ];
 
 export default function OnboardingShell({
@@ -25,7 +24,7 @@ export default function OnboardingShell({
   children: ReactNode;
 }) {
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-6 pb-12">
+    <section className="mx-auto w-full max-w-3xl space-y-6 pb-12">
       <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[var(--paper)] via-[var(--wash)] to-blue-50 p-6 shadow-sm md:p-8">
         <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-blue-100/70 blur-2xl" />
         <div className="pointer-events-none absolute -left-14 -bottom-14 h-40 w-40 rounded-full bg-teal-100/70 blur-2xl" />
