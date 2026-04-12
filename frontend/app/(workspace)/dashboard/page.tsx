@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronDown, Filter, Plus, Search } from "lucide-react";
+import { ChevronDown, Filter, Landmark, Plus, Search } from "lucide-react";
 import { useCases } from "@/features/cases/use-cases";
 import { useHearings } from "@/features/hearings/use-hearings";
 import { useDiaryEntries } from "@/features/diary/use-diary-entries";
@@ -98,6 +98,17 @@ export default function DashboardPage() {
   ]);
 
   const recentDocuments = useMemo(() => documents.slice(0, 5), [documents]);
+
+  const casesMissingRegistry = useMemo(
+    () =>
+      cases.filter(
+        (c) =>
+          !c.registry_case_type_bn ||
+          c.registry_case_serial == null ||
+          c.registry_case_year == null
+      ),
+    [cases]
+  );
 
   const deadlineItems = useMemo(() => {
     const now = new Date();
@@ -410,6 +421,63 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                 ))
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                  <Landmark className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <CardTitle className="flex items-center gap-2">
+                    {t("dashboard.missing_registry.title")}
+                    {casesMissingRegistry.length > 0 && (
+                      <Badge variant="subtle">{casesMissingRegistry.length}</Badge>
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    {t("dashboard.missing_registry.desc")}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {casesMissingRegistry.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--wash)] px-4 py-3 text-sm text-[var(--muted)]">
+                  {t("dashboard.missing_registry.empty")}
+                </div>
+              ) : (
+                <>
+                  {casesMissingRegistry.slice(0, 5).map((c) => (
+                    <Link
+                      key={c.public_id}
+                      href={`/cases/${c.public_id}`}
+                      className="block rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm transition-colors hover:bg-[var(--paper-hover)]"
+                    >
+                      <div className="font-medium text-[var(--foreground)]">
+                        {c.title}
+                      </div>
+                      <div className="text-xs text-[var(--muted-soft)]">
+                        {t("dashboard.missing_registry.cta")}
+                      </div>
+                    </Link>
+                  ))}
+                  {casesMissingRegistry.length > 5 && (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="px-0 text-[var(--accent)] hover:bg-transparent"
+                    >
+                      <Link href="/cases?filter=missing_registry">
+                        {`${t("dashboard.missing_registry.view_all")} (${casesMissingRegistry.length})`}
+                      </Link>
+                    </Button>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>

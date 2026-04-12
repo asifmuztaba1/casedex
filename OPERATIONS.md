@@ -1,6 +1,6 @@
 # CaseDex Operations & Manual Setup Guide
 
-> Last updated: 2026-04-08
+> Last updated: 2026-04-11
 
 This document tracks everything that requires manual configuration, human intervention, or external service setup to run CaseDex in development and production.
 
@@ -149,6 +149,7 @@ Runs via `php artisan schedule:work` (or system cron):
 | `billing:send-trial-ending-reminders` | Daily 09:00 | Trial expiration emails |
 | `ai:grant-monthly-credits` | Daily 00:15 | Reset AI credits monthly |
 | `billing:apply-manual-subscription-changes` | Every 15 min | Process admin-approved payments |
+| `judiciary:scrape-causelist` | Daily 04:30 Asia/Dhaka | Scrape Bangladesh judiciary cause lists and create in-app notifications |
 
 ### Queue Workers
 
@@ -175,6 +176,28 @@ When a user pays via bKash/Nagad/bank transfer:
 ### Court Registry
 
 Bangladesh court data is seeded manually by platform admins at `/admin/courts`.
+
+- `php artisan db:seed --class=BangladeshCourtSeeder` seeds the curated 8 divisions / 64 districts / ~23 court types / 630 flagship courts.
+- `php artisan judiciary:seed-courts` layers on top (**dev-only, network-dependent**): pulls the full **4090** court catalog live from `https://causelist.judiciary.gov.bd/api?path=geo/divisions` and upserts each row keyed by `judiciary_portal_court_id`. Safe to re-run; it normalizes Bangla using NFC so `বগুড়া`/`বগুড়া` (precomposed vs. ড+nukta) collapse to one canonical entry, and it attaches portal IDs to the pre-seeded flagship courts via the `(district_id, court_type_id, name)` natural key.
+- `php artisan db:seed --class=JudiciaryPortalCourtsSeeder` (**production path**): ingests the same 4090 rows from the static file `backend/database/seeders/data/judiciary_portal_courts.json` that ships in the repo. No network calls. Runs automatically as part of `DatabaseSeeder` so `db:seed --force` on first deploy covers it. To refresh the dump from a newer portal snapshot, run `php artisan judiciary:seed-courts` on a dev machine, then `php artisan judiciary:export-portal-dump`, then commit the updated JSON.
+
+### Judiciary Cause List Integration
+
+Daily at 04:30 Asia/Dhaka, `judiciary:scrape-causelist` finds every `(tenant_id, court_id)` pair that has at least one active case with registry fields (`registry_case_type_bn`, `registry_case_serial`, `registry_case_year`) and a court with a `judiciary_portal_court_id`, then dispatches one `ScrapeJudiciaryCauseListJob` per pair.
+
+Each job:
+1. Fetches `https://causelist.judiciary.gov.bd/causelist?courtId=...&date=dd-mm-yyyy` (User-Agent `CaseDex/1.0 (+contact@casedex.app)`, 20s timeout, 2 retries).
+2. Parses the results table via Symfony DomCrawler; Bangla digits are normalized via `App\Support\BanglaDigits::toEnglish()`.
+3. Matches scraped rows against tenant cases on `(court_id, registry_case_type_bn, registry_case_serial, registry_case_year)` (tenant scope enforced by `BelongsToTenant`).
+4. For every match, creates idempotent in-app `CaseNotification` records (type `cause_list_listing`, channel `in_app`) for all case participants + tenant admins.
+5. Writes a status row to `judiciary_causelist_logs` keyed on `(tenant_id, court_id, cause_list_date)` with `ok`/`empty`/`failed`, row count, match count, notification count, and error message. Updates `courts.last_causelist_synced_at` on success.
+
+**Ops notes:**
+- Saturdays are expected to return empty lists (courts closed) — logged as `empty`, not `failed`.
+- To seed the portal courts once before the integration can do anything useful: `docker compose exec backend php artisan judiciary:seed-courts`.
+- To backfill or replay a single day: `php artisan judiciary:scrape-causelist --date=2026-04-08 [--tenant=1] [--court=123]`.
+- The scraper depends on `symfony/dom-crawler` and `symfony/css-selector` (already in `composer.json`).
+- Registry fields are captured from the case-intake form at `/cases/new` → "Court registry" section; all three fields must be filled together or left empty (validated both in the zod schema and `StoreCaseRequest`).
 
 ---
 

@@ -92,6 +92,9 @@ export type CaseSummary = {
   court: string | null;
   court_public_id?: string | null;
   case_number: string | null;
+  registry_case_type_bn: string | null;
+  registry_case_serial: number | null;
+  registry_case_year: number | null;
   status: string | null;
   client: ClientSummary | null;
   created_at: string;
@@ -140,6 +143,9 @@ type CreateCasePayload = {
   court: string;
   court_public_id?: string;
   case_number?: string;
+  registry_case_type_bn?: string;
+  registry_case_serial?: number;
+  registry_case_year?: number;
   status?: string;
   story: string;
   petition_draft: string;

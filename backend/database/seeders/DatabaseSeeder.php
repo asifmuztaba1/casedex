@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CountriesSeeder::class);
         $this->call(BangladeshCourtSeeder::class);
+        $this->call(JudiciaryPortalCourtsSeeder::class);
         $this->call(RolesAndPermissionsSeeder::class);
 
         $countryId = \App\Domain\Tenancy\Models\Country::query()

@@ -17,13 +17,19 @@ class Court extends Model
         'division_id',
         'district_id',
         'court_type_id',
+        'judiciary_portal_court_id',
+        'judiciary_portal_origin_id',
         'name',
         'name_bn',
         'is_active',
+        'last_causelist_synced_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'judiciary_portal_court_id' => 'integer',
+        'judiciary_portal_origin_id' => 'integer',
+        'last_causelist_synced_at' => 'datetime',
     ];
 
     protected static function booted(): void

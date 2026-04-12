@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+<html>
+
+<head lang="bn">
+
+    <meta charset="UTF-8">
+
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">-->
+
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>মামলার কার্যতালিকা | Causelist</title>
+
+
+
+    <link rel="apple-touch-icon" sizes="57x57" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-57x57.png">
+
+    <link rel="apple-touch-icon" sizes="60x60" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-60x60.png">
+
+    <link rel="apple-touch-icon" sizes="72x72" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-72x72.png">
+
+    <link rel="apple-touch-icon" sizes="76x76" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-76x76.png">
+
+    <link rel="apple-touch-icon" sizes="114x114" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-114x114.png">
+
+    <link rel="apple-touch-icon" sizes="120x120" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-120x120.png">
+
+    <link rel="apple-touch-icon" sizes="144x144" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-144x144.png">
+
+    <link rel="apple-touch-icon" sizes="152x152" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-152x152.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://causelist.judiciary.gov.bd/img/favicon/apple-icon-180x180.png">
+
+    <link rel="icon" type="image/png" sizes="192x192"  href="https://causelist.judiciary.gov.bd/img/favicon/android-icon-192x192.png">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="https://causelist.judiciary.gov.bd/img/favicon/favicon-32x32.png">
+
+    <link rel="icon" type="image/png" sizes="96x96" href="https://causelist.judiciary.gov.bd/img/favicon/favicon-96x96.png">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="https://causelist.judiciary.gov.bd/img/favicon/favicon-16x16.png">
+
+    <link rel="manifest" href="https://causelist.judiciary.gov.bd/img/favicon/manifest.json">
+
+    <meta name="msapplication-TileColor" content="#ffffff">
+
+    <meta name="msapplication-TileImage" content="https://causelist.judiciary.gov.bd/img/favicon/ms-icon-144x144.png">
+
+    <meta name="theme-color" content="#ffffff">
+
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/jqueryui/jquery-ui.min.css?v=2.2.9">
+
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/font-awesome/font-awesome.min.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/bootstrap/bootstrap.min.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/select2/select2.min.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/easyautocomplete/easy-autocomplete.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/lib/flatpickr/flatpickr.min.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/separate/vendor/flatpickr.min.css?v=2.2.9">
+
+
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/main.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/obd.css?v=2.2.9">
+
+    <link rel="stylesheet" href="https://causelist.judiciary.gov.bd/css/yearpicker.css?v=2.2.9">
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/jquery/jquery-3.2.1.min.js?v=2.2.9"></script>
+
+    
+
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/popper/popper.min.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/tether/tether.min.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/bootstrap/bootstrap.min.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/select2/select2.full.min.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/lib/flatpickr/flatpickr.min.js?v=2.2.9"></script>
+
+
+
+    <script type="text/javascript" src="https://causelist.judiciary.gov.bd/js/lib/jqueryui/jquery-ui.min.js?v=2.2.9"></script>
+
+    <script type="text/javascript" src="https://causelist.judiciary.gov.bd/js/lib/jquery-validation/jquery.validate.min.js?v=2.2.9"></script>
+
+    <script type="text/javascript" src="https://causelist.judiciary.gov.bd/js/lib/easyautocomplete/jquery.easy-autocomplete.min.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/app.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/yearpicker.js?v=2.2.9"></script>
+
+    <script src="https://causelist.judiciary.gov.bd/js/obd.js?v=2.2.9"></script>
+
+    <script>
+
+        var lang = 'bn';
+
+    </script>
+
+    <style>
+
+        body,.bn-font{ font-family: SolaimanLipi; font-size: 16px}
+
+        .footer_info{ font-size: 14px}
+
+        .footer_menu ul li a{ font-size: 14px}
+
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y03D6EFQ00"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y03D6EFQ00');
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H6GX24RX24"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H6GX24RX24');
+    </script>
+    
+    <link rel="stylesheet" href="/css/asb.css">
+    <script type="text/javascript" src="/js/asb.js"></script>
+</head>
+
+<body class="bg-white">
+
+    <div class="container">
+  <div class="header-left">
+    <div class="row">
+      <div class="col-md-4 col-sm-4">
+        <a href="
+					https://causelist.judiciary.gov.bd/">
+          <img src="https://causelist.judiciary.gov.bd/img/logo.png" class="my-2" height="60">
+        </a>
+        
+              </div>
+
+      <div class="col-md-8 col-sm-8">
+        <div class="portal"> 
+                     
+                
+              <span class="pull-right judicial ">
+            <a href="https://causelist.judiciary.gov.bd/caseinfo"> মামলা অনুসন্ধান করুন </a>
+          </span>
+          <span class="pull-right judicial active">
+            <a href="https://causelist.judiciary.gov.bd/"> আদালত অনুসন্ধান করুন </a>
+          </span>         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+        $('.lang-switch').on('click', function() {
+              var lang = '';
+              if ($(this).hasClass('lang-en')) {
+                lang = 'en';
+              } else {
+                lang = 'bn';
+              }
+              if (lang != '') {
+                $.ajax({
+                      type: 'GET',
+                      datType: 'json',
+                      url: 'https://causelist.judiciary.gov.bd/setLang',
+                      data: {'lang': lang},
+                      beforeSend: function () {},
+                      success: function (data) {
+                        console.log(data);
+                        location.reload(); 
+                        }
+                    });
+                }
+            });
+        });
+</script>    <div style="padding:2px 3px; margin-top:5px; background: #cc2200">
+        <div class="container">
+            <table cellpadding="0" cellspacing="0" style="width:100%">
+                <tr>
+                                        <td>
+                        <div style="background:#fff">
+                            <marquee onmouseover="this.stop();" onmouseout="this.start();" style="cursor:pointer; padding-top: 2px" _behavior="alternate"><span class="text-danger"></span> ই-কজলিস্টের তথ্য মোবাইলে জানতে ডাউনলোড করুন ‘আমার আদালত’ অ্যাপ; অথবা কল করুন ৩৩৩ (টোল ফ্রি) নম্বরে।</marquee>
+                        <div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+        <div class="banner">
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="container-fluid" style="min-height:140px">
+    <div class="after-header py-3 my-3 min-vh-100">
+        <div class="d-flex">
+            <div class="_col mb-1 mr-2" style="width: 130px">
+                <select class="custom-select custom-select-sm" name="division" data-id="3">
+                                        <option>বাছাই করুন</option>
+                                    </select>
+            </div>
+            <div class="_col mb-1 mr-2" style="width: 140px">
+                <select class="custom-select custom-select-sm" name="district" data-id="26">
+                                        <option>বাছাই করুন</option>
+                                    </select>
+            </div>
+            <div class="_col mb-1 mr-2" style="flex-grow: 1 !important;">
+                <select class="custom-select custom-select-sm" name="court_layer" data-id="4">
+                                        <option>আদালতের ধরন</option>
+                                    </select>
+            </div>
+            <div class="_col mb-1 mr-2" style="flex-grow: 1 !important;">
+                
+                <select class="custom-select custom-select-sm" name="lower_court" data-id="59">
+                                        <option>আদালত নির্বাচন করুন</option>
+                                    </select>
+            </div>
+                            <div class="_col mb-1 mr-2" style="width: 140px">
+                    <div class="position-relative">
+                        <input type="text" value="০৮-০৪-২০২৬" name="date" autocomplete="off" class="form-control form-control-sm date bn-font" required>
+                    </div>
+                </div>
+                    </div>
+        <div class="row mt-3">
+            <div class="col-5 text-center"></div>
+            <div class="col-2 text-center">
+                <a class="get-causelist searchlist-btn btn-sm text-white text-center bg-light-success pull-right bn-font border-0 ml-2 bn-font w-100 p-2"><i class="fa fa-search mr-3 blink_me"></i>অনুসন্ধান                </a>
+            </div>
+            <div class="col-5 text-center"></div>
+        </div>
+    </div>
+</div>
+<style>
+    select[name="division"],select[name="district"],select[name="lower_court"]{font-family: SolaimanLipi; font-size: 16px; padding: 3px 13px;}
+    .select2-container--arrow .select2-selection--single .select2-selection__arrow, .select2-container--default .select2-selection--single .select2-selection__arrow, .select2-container--white .select2-selection--single .select2-selection__arrow{background:none!important; color:#fff!important}
+    #select2-division-25-container{_border: 1px solid #12bb61!important;}
+    .select2-container--arrow .select2-selection--single .select2-selection__rendered, .select2-container--default .select2-selection--single .select2-selection__rendered, .select2-container--white .select2-selection--single .select2-selection__rendered{_border: 2px solid #12bb61!important;}
+</style>
+<script>
+    $('input.date').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        'dateFormat':'dd-mm-yy',
+        yearRange: "-100:+100",
+        showOn: "both",
+        buttonImage: "https://causelist.judiciary.gov.bd/img/calendar.png",
+        buttonImageOnly: true,
+        //maxDate:0,
+        beforeShowDay: noHolidays
+    });
+    function noHolidays(date){
+        if (date.getDay() === 5 || date.getDay() === 6)
+            return [ false, "closed", "Closed on Friday and Saturday" ]
+        else
+            return [ true, "", "" ]
+    }
+    var caseno = '';
+    var casedate = '08-04-2026';
+
+    var redirect;
+    if(caseno=='')
+        redirect = 'causelist';
+    else
+        redirect = 'caseinfo';
+
+    var nameLang = 'bng';
+    if(lang=='en')
+        nameLang = 'eng';
+    var division = 'বিভাগ';
+    var district = 'জেলা';
+    var courtLayer = 'আদালতের ধরন';
+    var courtName = 'আদালত নির্বাচন করুন';
+
+    if(lang=='en') {
+        division = 'Division';
+        district = 'District';
+        courtLayer = 'Select the Court';
+        courtName = 'Select the Lower Court';
+    }
+
+    $.fn.hasAttr = function(name) {
+        return this.attr(name) !== undefined;
+    };
+    
+    $.ajax({
+        type: 'GET',
+        url: 'https://causelist.judiciary.gov.bd/api',
+        data: {
+            'path': 'geo/divisions',
+        },
+
+        beforeSend: function () {
+        },
+        success: function (data) {
+            //console.log(data);
+            data = JSON.parse(data);
+            var items = [];
+            items.push('<option value="">'+division+'</option>');
+
+            for(v in data){
+                items.push('<option value="'+data[v]['geo_division_id']+'"  >'+data[v]['division_name_'+nameLang]+'</option>');
+            }
+            $('select[name="division"]').html(items.join(''));
+            if($('select[name="division"]').hasAttr('data-id')){
+                $('select[name="division"]').find('option[value="'+$('select[name="division"]').attr('data-id')+'"]').attr('selected','selected');
+            }
+            $('select[name="division"]').select2();
+        }
+    });
+    
+    var metroBN = ['বরিশাল','চট্টগ্রাম','ঢাকা','রাজশাহী','খুলনা','সিলেট','গাজীপুর','রংপুর'];
+    var metroEN = ['BARISAL','CHITTAGONG','DHAKA','RAJSHAHI','KHULNA','SYLHET','GAZIPUR','RANGPUR'];
+    var metroOrigin = [10,11,12,13,22,23,24,78,92,100,109];
+    
+    $.ajax({
+        type: 'GET',
+        url: 'https://causelist.judiciary.gov.bd/api',
+        data: {
+            'path': 'geo/districts',
+        },
+        beforeSend: function () {
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+
+            var items = [];
+            items.push('<option value="">'+district+'</option>');
+
+            for(val in data){
+                for(v in data[val]['districts']){
+                    items.push('<option value="'+data[val]['districts'][v]['geo_district_id']+'"  >'+data[val]['districts'][v]['district_name_'+nameLang]+'</option>');
+                }
+            }
+
+            $('select[name="district"]').html(items.join(''));
+            if($('select[name="district"]').hasAttr('data-id')){
+                $('select[name="district"]').find('option[value="'+$('select[name="district"]').attr('data-id')+'"]').attr('selected','selected');
+
+                districtLowerCourtChange();
+            }//else
+            //$('select[name="court_layer"],select[name="lower_court"]').select2();
+            $('select[name="district"],select[name="lower_court"]').select2();
+
+            if($('select[name="division"]').hasAttr('data-id'))
+                divisionTypeChange();
+        }
+    });
+    function divisionTypeChange(){
+        var v = $('select[name="division"]').val();
+        $.ajax({
+            type: 'GET',
+            url: 'https://causelist.judiciary.gov.bd/api',
+            data: {
+                'path': 'geo/districts',
+                'division_id':v,
+            },
+
+            beforeSend: function () {
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                //console.log(data);
+                var items = [];
+                $('select[name="district"]').find('option').remove();
+                items.push('<option value="">'+district+'</option>');
+                for(val in data){
+                    for(v in data[val]['districts']){                            
+                        items.push('<option value="'+data[val]['districts'][v]['geo_district_id']+'"  >'+data[val]['districts'][v]['district_name_'+nameLang]+'</option>');
+                        
+                        var metro = false;
+                        if($.inArray($.trim(data[val]['districts'][v]['district_name_eng']), metroEN )>-1){
+                            if(nameLang=='eng')
+                                items.push('<option value="'+data[val]['districts'][v]['geo_district_id']+'-1"  >'+data[val]['districts'][v]['district_name_eng']+' METROPOLITAN</option>');
+                            else                             
+                                items.push('<option value="'+data[val]['districts'][v]['geo_district_id']+'-1"  >'+data[val]['districts'][v]['district_name_bng']+' মহানগর</option>');
+                        }    
+                    }
+                }
+
+                $('select[name="district"]').html(items.join(''));
+                if($('select[name="district"]').hasAttr('data-id')){
+                    $('select[name="district"]').find('option[value="'+$('select[name="district"]').attr('data-id')+'"]').attr('selected','selected');
+                    districtLowerCourtChange();
+                }
+                $('select[name="district"]').select2();
+            }
+        });
+
+    }
+    $('select[name="division"]').change(function () {
+        divisionTypeChange();
+    });
+
+    // function districtCourtChange(){
+    //     var r = $('select[name="division"]').val();
+    //     var v = $('select[name="district"]').val();
+    //     $.ajax({
+    //         type: 'GET',
+    //         url: 'api',
+
+    //         data: {
+    //             'path': 'court/origins',
+    //             'division_id':r,
+    //             'district_id':v,
+    //         },
+
+    //         success: function (data) {
+    //             data = JSON.parse(data);
+    //             var items = [];
+    //             items.push('<option value="">'+courtLayer+'</option>');
+    //             console.log(data);
+
+    //             for(v in data){
+    //              items.push('<option value="'+data[v]['id']+'"  >'+data[v]['nameBn']+'</option>');
+    //             }
+    //             $('select[name="court_layer"]').html('');
+    //             $('select[name="court_layer"]').html(items.join(''));
+    //             if($('select[name="court_layer"]').hasAttr('data-id')){
+    //                 $('select[name="court_layer"]').find('option[value="'+$('select[name="court_layer"]').attr('data-id')+'"]').attr('selected','selected');
+    //                 districtAndCourtChange();
+    //             }
+    //             $('select[name="court_layer"]').select2();
+    //         }
+    //     });
+    // }
+
+    function districtLowerCourtChange(){
+        // var r = $('select[name="division"]').val();
+        var metor = false;
+        var v = $('select[name="district"]').val();
+        var va = v.split('-');
+
+        if(va.length==1)
+            v = va[0];
+        else{
+            v = va[0];
+            metor = true;
+        }
+        if(metor==true){
+            var items = '<option value="0">'+courtLayer+'</option>';
+            items += '<option value="10,11,12,88">- মহানগর দায়রা জজ আদালত</option>';
+            items += '<option value="13,22,23,24,78,92,100">- চীফ মেট্রোপলিটন ম্যাজিস্ট্রেট আদালত</option>';
+            items += '<option value="109">- বিশেষ ট্রাইব্যুনাল</option>';
+        }else{
+            var items = '<option value="0">'+courtLayer+'</option>';
+            items += '<option value="4,5,6,7,8,18,19,20,21,74,75,76,83,94,103,105">- জেলা জজ আদালত</option>';
+            items += '<option value="14,15,16,17,84,85,91,95">- চীফ জুডিসিয়াল ম্যাজিট্রেট আদালত</option>';
+            items += '<option value="89,9,72,73,77,79,80,81,82,86,87,96,102,104,110,111,112">- ট্রাইব্যুনালসমূহ</option>';
+        }
+        $('select[name="court_layer"]').html(items);
+
+        if($('select[name="court_layer"]').hasAttr('data-id')){
+            var d = $('select[name="court_layer"]').attr('data-id');
+            $('select[name="court_layer"]').find('option').removeAttr('selected');
+            $('select[name="court_layer"]').find('option').each(function(){
+                var s = $(this).val().split(',');
+                    for(w in s){
+                        if(s[w]==d){
+                            $(this).attr('selected','selected');
+                            _districtLowerCourtChange();
+                        }
+                    }
+            });
+        }
+        $('select[name="court_layer"]').select2();
+    }
+
+    function _districtLowerCourtChange(){
+        // var r = $('select[name="division"]').val();
+        var ori = $('select[name="court_layer"]').val();
+        var metor = false;
+        var v = $('select[name="district"]').val();
+        var va = v.split('-');
+        
+        if(va.length==1)
+            v = va[0];
+        else{
+            v = va[0];
+            metor = true;
+        }
+        
+        if($('select option[value="'+v+'-1"]').length==0)
+            metor = 'no';
+        
+        if(v!=''){
+            $.ajax({
+                type: 'GET',
+                url: 'https://causelist.judiciary.gov.bd/api',
+                data: {
+                    'path': 'courts',
+                    // 'division_id': r,
+                    'district_id': v,
+                    'office_origin_id': ori
+                },
+                beforeSend: function () {
+                    $('select[name="lower_court"]').html('<option>লোডিং..</option>');
+                    $('select[name="lower_court"]').select2();
+                },
+                success: function (data) {
+                    //console.log(data);
+                    data = JSON.parse(data);
+    
+                    var items = [];
+                    items.push('<option value="">'+courtName+'</option>');
+    
+                    for(v in data){
+                        if(data[v]['id']!=3198 && data[v]['id']!=3199){
+                            if(metor=='no'){
+                                items.push('<option value="'+data[v]['id']+'" data-origin-id="'+data[v]['office_origin_id']+'">- '+data[v]['office_name_'+nameLang]+'</option>');
+                            }
+                            else if(metor==false && $.inArray(data[v]['office_origin_id'],metroOrigin)<0){
+                                //console.log($.inArray(data[v]['office_origin_id'],metroOrigin)+'-'+data[v]['office_origin_id']);
+                                items.push('<option value="'+data[v]['id']+'" data-origin-id="'+data[v]['office_origin_id']+'">- '+data[v]['office_name_'+nameLang]+'</option>');
+                            }else if(metor==true && $.inArray(data[v]['office_origin_id'],metroOrigin)>-1){
+                                items.push('<option value="'+data[v]['id']+'" data-origin-id="'+data[v]['office_origin_id']+'">- '+data[v]['office_name_'+nameLang]+'</option>');
+                            }
+                        }
+                    }
+                    $('select[name="lower_court"]').html('<option>আদালত নির্বাচন করুন</option>');
+                    $('select[name="lower_court"]').html(items.join(''));
+                    if($('select[name="lower_court"]').hasAttr('data-id')){
+                        
+                        $('select[name="lower_court"]').find('option[value="'+$('select[name="lower_court"]').attr('data-id')+'"]').attr('selected','selected');
+                        //districtAndCourtChange();
+                    }
+                    $('select[name="lower_court"]').select2();
+                }
+            });
+        }
+    }
+
+    $('select[name="district"]').change(function () {
+        //districtCourtChange();
+        districtLowerCourtChange();
+    });
+
+    $('select[name="court_layer"]').change(function () {
+        //districtCourtChange();
+        _districtLowerCourtChange();
+    });
+    
+    function districtAndCourtChange(){
+        var v = $('select[name="district"]').val();
+        //var y = $('select[name="lower_court"]').val();
+        $.ajax({
+            type: 'GET',
+            url: 'https://causelist.judiciary.gov.bd/api?path=geo/getOfficeUnit?districtId='+v,
+            beforeSend: function () {
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                var items = [];
+                $('select[name="lower_court"]').find('option').remove();
+                items.push('<option value="">'+courtLayer+'</option>');
+
+                $(data).each(function(i,v){
+
+                    items.push('<option value="'+v['id']+'">'+v['unit_name_'+nameLang]+'</option>');
+                });
+
+                $('select[name="lower_court"]').html('<option>আদালত নির্বাচন করুন</option>');
+                $('select[name="lower_court"]').html(items.join(''));
+                if($('select[name="lower_court"]').hasAttr('data-id')){
+                    $('select[name="lower_court"]').find('option[value="'+$('select[name="lower_court"]').attr('data-id')+'"]').attr('selected','selected');
+                }
+                $('select[name="lower_court"]').select2();
+            }
+        });
+
+    }
+    $('select[name="district"]').change(function () {
+        //districtAndCourtChange();
+    });
+
+    $('.get-causelist').on('click',function(){
+        var a = '';
+        if($.isNumeric($('select[name="lower_court"]').val())){
+            if(a=='')
+                window.location = 'https://causelist.judiciary.gov.bd/'+redirect+'?courtId='+$('select[name="lower_court"]').val()+'&date='+$('input[name="date"]').val();
+            else
+                window.location = 'https://causelist.judiciary.gov.bd/caseinfo?courtId='+$('select[name="lower_court"]').val()+'&caseno='+$('input[name="case_no"]').val();
+        }else alert('Please select a court');
+    });
+
+    var sel = '';
+    var options = {
+        url: 'https://causelist.judiciary.gov.bd/api?path=office/allOfficeUnitName',
+        getValue: "unit_name_"+nameLang,
+        list: {
+            match: {
+                enabled: true
+            },
+            maxNumberOfElements: 6,
+
+            showAnimation: {
+                type: "slide",
+                time: 300
+            },
+            hideAnimation: {
+                type: "slide",
+                time: 300
+            },
+            onChooseEvent: function() {
+                var value = $('input[name="search"]').getSelectedItemData().id;
+                window.location = 'https://causelist.judiciary.gov.bd/causelist?courtId='+value;
+            },
+            onSelectItemEvent: function() {
+                var value = $('input[name="search"]').getSelectedItemData().id;
+                sel = value;
+            }
+        },
+        theme: "round"
+    };
+
+    $('select[name="court_layer"]').select2();
+    
+    $('input[name="search"]').easyAutocomplete(options);
+    
+    /*$('.searchlist-btn').click(function(){
+     if(sel!='')
+     window.location = ''+ redirect +'?courtId='+sel;
+
+     });*/
+
+
+</script>
+                            </div>
+        </div>
+    </div>
+
+</div>
+
+        
+        
+    <div class="container">
+        <div>
+        
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-12 text-left">
+        <div class="office-unit-name mb-2 mt-2 text-center font-weight-bold">
+            জেলা ও দায়রা জজ আদালত, মুন্সীগঞ্জ        </div>
+        <h5 class="text-center mt-1 mb-1" style="font-weight: bold; font-size: 20px">দৈনিক কার্যতালিকা</h3>
+        <div class="cause-date mb-4 text-center"><span class="font-weight-bold">তারিখঃ</span> ০৮-০৪-২০২৬ খ্রিঃ</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-6 col-12 align-left">
+        <!--             <div class="search-caseno position-relative mb-2 ">
+                <input type="text" value="" name="caseno" autocomplete="off" class="form-control form-control-sm bn-font" required>
+            </div>
+            <span class="btn btn-sm bg-success border-0 search-causelist-bycase font-weight-normal align-left bn-font"><i class="fa fa-search mr-2"></i></span> -->
+    </div>
+    <div class="col-md-6 col-sm-6 col-12 text-right align-left d-none">
+        কার্যদিবস        <div class="search-date position-relative mb-2 ">
+            <input type="text" value="০৮-০৪-২০২৬" name="date" autocomplete="off" class="form-control form-control-sm date bn-font" required>
+        </div>
+        <span class="btn btn-sm bg-success border-0 search-causelist-bydate font-weight-normal align-left bn-font"><i class="fa fa-search mr-2"></i>অনুসন্ধান</span>
+    </div>
+
+    <div class="col-12">
+        <table class="table table-striped table-bordered font-16 table-responsive-sm" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr class="text-center">
+                <th class="bg-light-purple font-weight-normal text-white" style="width:80px">ক্রমিক নং</th>
+                <th class="bg-light-purple font-weight-normal text-white" style="width:300px">মামলার নম্বর</th>
+                
+                <th class="bg-light-purple font-weight-normal text-white">কার্যক্রম </th>
+                <th class="bg-light-purple font-weight-normal text-white">পরবর্তী তারিখ</th>
+                <th class="bg-light-purple font-weight-normal text-white">সংক্ষিপ্ত আদেশ</th>
+
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-center"><td>১</td><td><span class="bn-font font-16">অর্পিত আপীল</span> - ২৮/২০১৮</td><td>আপীল শুনানী</td><td style="white-space: nowrap">০১-০৭-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>২</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ৬৬/২০২৩</td><td>আপীল শুনানী</td><td style="white-space: nowrap"></td><td><span class="text-danger">বদলী: পারিবারিক আপিল আদালত, মুন্সীগঞ্জ</span></td></tr><tr class="text-center"><td>৩</td><td><span class="bn-font font-16">অর্পিত আপীল</span> - ৪৬/২০২০</td><td>আপীল শুনানী</td><td style="white-space: nowrap"></td><td><span class="text-danger">বদলী: শিশু ধর্ষণ অপরাধ দমন ট্রাইব্যুনাল, মুন্সীগঞ্জ</span></td></tr><tr class="text-center"><td>৪</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ২০৮/২০২২</td><td>আপীল শুনানী</td><td style="white-space: nowrap">০২-০৭-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>৫</td><td><span class="bn-font font-16">দেওয়ানী রিভিশন  </span> - ৬৮/২০২৫</td><td>সমন/নোটিস ফেরত</td><td style="white-space: nowrap">০২-০৭-২০২৬ খ্রিঃ</td><td>সমন/নোটিস ফেরত</td></tr><tr class="text-center"><td>৬</td><td><span class="bn-font font-16">অর্পিত আপীল</span> - ১১/২০১৫</td><td>আপীল শুনানী</td><td style="white-space: nowrap">০১-০৭-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>৭</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ২৬৭/২০২২</td><td>দরখাস্ত শুনানী</td><td style="white-space: nowrap">২১-০৫-২০২৬ খ্রিঃ</td><td>দরখাস্ত শুনানী</td></tr><tr class="text-center"><td>৮</td><td><span class="bn-font font-16">দেওয়ানী রিভিশন  </span> - ৬২/২০২৫</td><td>রিভিশন শুনানী</td><td style="white-space: nowrap">০৭-০৫-২০২৬ খ্রিঃ</td><td>রিভিশন শুনানী</td></tr><tr class="text-center"><td>৯</td><td><span class="bn-font font-16">ফৌজদারী রিভিশন</span> - ৩৫/২০২৫</td><td>রিভিশন শুনানী</td><td style="white-space: nowrap">১৮-০৫-২০২৬ খ্রিঃ</td><td><span class="text-danger">বদলী: অতিরিক্ত জেলা ও দায়রা জজ ১ম আদালত, মুন্সীগঞ্জ</span></td></tr><tr class="text-center"><td>১০</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ১৩৬/২০২৩</td><td>আপীল শুনানী</td><td style="white-space: nowrap">১৪-০৫-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>১১</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ২২৮/২০২৩</td><td>আপীল শুনানী</td><td style="white-space: nowrap">০১-০৭-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>১২</td><td><span class="bn-font font-16">মিস লুনাসি</span> - ৪/২০২৩</td><td>সাক্ষীর জন্য</td><td style="white-space: nowrap">০১-০৭-২০২৬ খ্রিঃ</td><td>সাক্ষীর জন্য</td></tr><tr class="text-center"><td>১৩</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ১২/২০২৬</td><td>গ্রহণযোগ্যতা শুনানী</td><td style="white-space: nowrap">০১-০৭-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>১৪</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ১০৮/২০২৫</td><td>রায় প্রচার</td><td style="white-space: nowrap"></td><td></td></tr><tr class="text-center"><td>১৫</td><td><span class="bn-font font-16">দেওয়ানী আপীল</span> - ৩৬/২০২৪</td><td>আপীল শুনানী</td><td style="white-space: nowrap">১৭-০৬-২০২৬ খ্রিঃ</td><td>আপীল শুনানী</td></tr><tr class="text-center"><td>১৬</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬১৭/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap">১৫-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>১৭</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬১৯/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">মঞ্জুর</span></td></tr><tr class="text-center"><td>১৮</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬২২/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>১৯</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬২৬/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap">১৫-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>২০</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬২৭/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২১</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬২৮/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">মঞ্জুর</span></td></tr><tr class="text-center"><td>২২</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬২৯/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৩</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৩১/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap">১৫-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>২৪</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৩৪/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৫</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৩৯/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৬</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৪৫/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৭</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৪৮/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৮</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৫৮/২০২৬</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td><td style="white-space: nowrap"></td><td><span class="text-danger">না মঞ্জুর</span></td></tr><tr class="text-center"><td>২৯</td><td><span class="bn-font font-16">দেওয়ানী রিভিশন  </span> - ৫২/২০২৫</td><td>রিভিশন শুনানী</td><td style="white-space: nowrap"></td><td></td></tr><tr class="text-center"><td>৩০</td><td><span class="bn-font font-16">অর্পিত আপীল</span> - ১৯/২০২৩</td><td>রায় প্রচার</td><td style="white-space: nowrap"></td><td></td></tr><tr class="text-center"><td>৩১</td><td><span class="bn-font font-16">ফৌজদারী আপীল</span> - ২১৩/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">২৭-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩২</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৫৯/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৩</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬০/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৪</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬১/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৫</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬২/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৬</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬৩/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৭</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬৪/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৫-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr><tr class="text-center"><td>৩৮</td><td><span class="bn-font font-16">ফৌজদারী বিবিধ মামলা</span> - ৬৬৫/২০২৬</td><td>নতুন মামলা</td><td style="white-space: nowrap">১৯-০৪-২০২৬ খ্রিঃ</td><td>নিম্ন আদালতের নথি প্রাপ্তি</td></tr>            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+    /* .table thead tr th:first-child{background:#02bc59!important}
+    .table thead tr th:nth-child(2){background:#0b9c4f!important}
+    .table thead tr th:nth-child(3){background:#02bc59!important}
+    .table thead tr th:nth-child(4){background:#0b9c4f!important} */
+</style>
+<script>
+    jQuery(document).ready(function($) {
+        $('input.date').change(function(){
+            if(lang!='en')
+                $(this).val((en2bn($(this).val())));
+        });
+
+        $('input.date').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            'dateFormat':'dd-mm-yy',
+            yearRange: "-100:+100",
+            showOn: "both",
+            buttonImage: "https://causelist.judiciary.gov.bd/img/calendar.png",
+            buttonImageOnly: true,
+            //maxDate:0,
+            beforeShowDay: noHolidays
+        });
+
+        function noHolidays(date){
+            if (date.getDay() === 5 || date.getDay() === 6)  /* Monday */
+                return [ false, "closed", "Closed on Friday and Saturday" ]
+            else
+                return [ true, "", "" ]
+        }
+
+        $('.search-causelist-bydate').on('click',function(){
+            window.location = 'https://causelist.judiciary.gov.bd/causelist?courtId=59&date='+$('.search-date').find('input[name="date"]').val();
+        });
+        $('.search-causelist-bycase').on('click',function(){
+            window.location = 'https://causelist.judiciary.gov.bd/caseinfo?courtId=59&caseno='+$('.search-caseno').find('input[name="caseno"]').val();
+        });
+    });
+</script>
+        </div>
+    </div>
+    <div class="footer_new">
+    <div class="footer_menu">
+        <nav role="navigation" aria-labelledby="block-footermenubn-menu" id="block-footermenubn">
+            <ul>
+                <li>
+                    <a href="/privacy-policy" target="">গোপনীয়তার নীতিমালা</a>
+                </li>
+                <li>
+                    <a href="/terms-of-use" target="">ব্যবহারের শর্তাবলী</a>
+                </li>
+                <li>
+                    <a href="/faq" target="">সচরাচর জিজ্ঞাসা</a>
+                </li>
+                            </ul>
+        </nav>
+    </div>
+ <div class="footer_info p-2">
+     <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center">
+                    <div class="d-inline-block w-auto">
+                        <div style="position: relative"><span style="padding: 10px 6px 0px 0;display: inline-block;">বাস্তবায়নেঃ আইন ও বিচার বিভাগ</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="d-inline-block w-auto">
+                        <div style="position: relative; margin-left: 50px"><span style="padding: 10px 6px 0px 0;display: inline-block;">পরিকল্পনা ও তত্ত্বাবধানেঃ <img src="/img/logo-set.png?v=1.0.1" style="height: 35px !important; margin-left: 5px">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9eaa4e145bc3311c',t:'MTc3NTkxMzc5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"109095d0c3ea4dc9a3414a532f85c260","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+</html>
+
