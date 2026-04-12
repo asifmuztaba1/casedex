@@ -405,6 +405,12 @@ export default function CaseDetailPage() {
   const courtLabel = caseDetail.court ?? t("cases.list.court_pending");
   const caseNumberLabel =
     caseDetail.case_number ?? t("cases.list.case_number_pending");
+  const registryLabel =
+    caseDetail.registry_case_type_bn &&
+    caseDetail.registry_case_serial &&
+    caseDetail.registry_case_year
+      ? `${caseDetail.registry_case_type_bn} ${caseDetail.registry_case_serial}/${caseDetail.registry_case_year}`
+      : null;
 
   return (
     <section className="space-y-6">
@@ -420,6 +426,18 @@ export default function CaseDetailPage() {
             <span>{courtLabel}</span>
             <span className="text-[var(--muted-soft)]">•</span>
             <span>{caseNumberLabel}</span>
+            {registryLabel && (
+              <>
+                <span className="text-[var(--muted-soft)]">•</span>
+                <Badge
+                  variant="subtle"
+                  className="font-medium"
+                  title={t("cases.registry.badge_tooltip")}
+                >
+                  {registryLabel}
+                </Badge>
+              </>
+            )}
             <Badge variant="subtle" className="capitalize">
               {caseDetail.status
                 ? t(`case.status.${caseDetail.status}`)

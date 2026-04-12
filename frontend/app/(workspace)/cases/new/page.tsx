@@ -27,6 +27,28 @@ import {
   PETITION_TEMPLATES,
 } from "@/features/templates/legal-templates";
 
+const REGISTRY_CASE_TYPES: Array<{ bn: string; en: string; slug: string }> = [
+  { bn: "দেওয়ানী আপীল", en: "Civil Appeal", slug: "civil_appeal" },
+  { bn: "ফৌজদারী আপীল", en: "Criminal Appeal", slug: "criminal_appeal" },
+  { bn: "দেওয়ানী রিভিশন", en: "Civil Revision", slug: "civil_revision" },
+  { bn: "ফৌজদারী রিভিশন", en: "Criminal Revision", slug: "criminal_revision" },
+  { bn: "দেওয়ানী বিবিধ মামলা", en: "Civil Miscellaneous", slug: "civil_misc" },
+  { bn: "ফৌজদারী বিবিধ মামলা", en: "Criminal Miscellaneous", slug: "criminal_misc" },
+  { bn: "অর্পিত আপীল", en: "Entrusted Appeal", slug: "entrusted_appeal" },
+  { bn: "পারিবারিক আপিল", en: "Family Appeal", slug: "family_appeal" },
+  { bn: "পারিবারিক মামলা", en: "Family Case", slug: "family_case" },
+  { bn: "মিস লুনাসি", en: "Lunacy Miscellaneous", slug: "misc_lunacy" },
+  { bn: "মিস মামলা", en: "Miscellaneous Case", slug: "misc_case" },
+  { bn: "ফৌজদারী মামলা", en: "Criminal Case", slug: "criminal_case" },
+  { bn: "দেওয়ানী মামলা", en: "Civil Case", slug: "civil_case" },
+  { bn: "রেন্ট মামলা", en: "Rent Case", slug: "rent_case" },
+  { bn: "রেন্ট আপিল", en: "Rent Appeal", slug: "rent_appeal" },
+  { bn: "মানিলোন মামলা", en: "Money Loan Case", slug: "money_loan_case" },
+  { bn: "মানিলোন এ্যাপীল", en: "Money Loan Appeal", slug: "money_loan_appeal" },
+  { bn: "অর্থ ঋণ মামলা", en: "Artha Rin (Money Loan) Case", slug: "money_loan_case_artharin" },
+  { bn: "দায়রা মামলা", en: "Sessions Case", slug: "sessions_case" },
+];
+
 const participantSchema = z.object({
   user_public_id: z.string().min(2),
   role: z.enum(["lead_lawyer", "lawyer", "associate", "assistant", "viewer"]),
@@ -74,6 +96,9 @@ export default function NewCasePage() {
           court: z.string().min(2),
           court_public_id: z.string().optional(),
           case_number: z.string().optional(),
+          registry_case_type_bn: z.string().optional(),
+          registry_case_serial: z.coerce.number().int().min(1).optional(),
+          registry_case_year: z.coerce.number().int().min(1900).max(2100).optional(),
           story: z.string().min(2),
           petition_draft: z.string().min(2),
           client_id: z.coerce.number().int().optional(),
@@ -120,6 +145,36 @@ export default function NewCasePage() {
               message: t("cases.validation.client_required"),
               path: ["client", "name"],
             });
+          }
+
+          const hasType = Boolean(values.registry_case_type_bn);
+          const hasSerial = values.registry_case_serial !== undefined && values.registry_case_serial !== null;
+          const hasYear = values.registry_case_year !== undefined && values.registry_case_year !== null;
+          const registryCount = [hasType, hasSerial, hasYear].filter(Boolean).length;
+
+          if (registryCount > 0 && registryCount < 3) {
+            const message = t("cases.validation.registry_required");
+            if (!hasType) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message,
+                path: ["registry_case_type_bn"],
+              });
+            }
+            if (!hasSerial) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message,
+                path: ["registry_case_serial"],
+              });
+            }
+            if (!hasYear) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message,
+                path: ["registry_case_year"],
+              });
+            }
           }
         }),
     [t]
@@ -228,11 +283,12 @@ export default function NewCasePage() {
           <CardContent className="space-y-2 text-sm text-[var(--muted)]">
             <div>1. {t("cases.sections.client")}</div>
             <div>2. {t("cases.sections.basics")}</div>
-            <div>3. {t("cases.sections.story")}</div>
-            <div>4. {t("cases.sections.petition")}</div>
-            <div>5. {t("cases.sections.parties")}</div>
-            <div>6. {t("cases.sections.team")}</div>
-            <div>7. {t("cases.sections.hearing")}</div>
+            <div>3. {t("cases.sections.registry")}</div>
+            <div>4. {t("cases.sections.story")}</div>
+            <div>5. {t("cases.sections.petition")}</div>
+            <div>6. {t("cases.sections.parties")}</div>
+            <div>7. {t("cases.sections.team")}</div>
+            <div>8. {t("cases.sections.hearing")}</div>
           </CardContent>
         </Card>
 
@@ -368,6 +424,61 @@ export default function NewCasePage() {
                 placeholder={t("cases.case.number")}
                 {...register("case_number")}
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-2">
+              <CardTitle>{t("cases.sections.registry")}</CardTitle>
+              <CardDescription>{t("cases.registry.desc")}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-1">
+                <select
+                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
+                  {...register("registry_case_type_bn")}
+                  defaultValue=""
+                >
+                  <option value="">{t("cases.registry.type_placeholder")}</option>
+                  {REGISTRY_CASE_TYPES.map((type) => (
+                    <option key={type.slug} value={type.bn}>
+                      {locale === "bn" ? type.bn : `${type.en} (${type.bn})`}
+                    </option>
+                  ))}
+                </select>
+                {showErrors && formState.errors.registry_case_type_bn && (
+                  <p className="text-xs text-rose-600">
+                    {t("cases.validation.registry_required")}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <Input
+                  type="number"
+                  min={1}
+                  placeholder={t("cases.registry.serial_placeholder")}
+                  {...register("registry_case_serial")}
+                />
+                {showErrors && formState.errors.registry_case_serial && (
+                  <p className="text-xs text-rose-600">
+                    {t("cases.validation.registry_required")}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <Input
+                  type="number"
+                  min={1900}
+                  max={2100}
+                  placeholder={t("cases.registry.year_placeholder")}
+                  {...register("registry_case_year")}
+                />
+                {showErrors && formState.errors.registry_case_year && (
+                  <p className="text-xs text-rose-600">
+                    {t("cases.validation.registry_required")}
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
 

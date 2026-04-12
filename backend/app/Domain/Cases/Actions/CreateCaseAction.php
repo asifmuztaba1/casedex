@@ -72,6 +72,13 @@ class CreateCaseAction
                 'court' => $courtName,
                 'court_id' => $courtId,
                 'case_number' => $data['case_number'] ?? null,
+                'registry_case_type_bn' => $data['registry_case_type_bn'] ?? null,
+                'registry_case_serial' => isset($data['registry_case_serial'])
+                    ? (int) $data['registry_case_serial']
+                    : null,
+                'registry_case_year' => isset($data['registry_case_year'])
+                    ? (int) $data['registry_case_year']
+                    : null,
                 'status' => $data['status'] ??  CaseStatus::Open,
                 'story' => $data['story'],
                 'petition_draft' => $data['petition_draft'],

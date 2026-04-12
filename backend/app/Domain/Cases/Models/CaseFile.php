@@ -29,6 +29,9 @@ class CaseFile extends Model
         'court',
         'court_id',
         'case_number',
+        'registry_case_type_bn',
+        'registry_case_serial',
+        'registry_case_year',
         'client_id',
         'story',
         'petition_draft',
@@ -38,6 +41,8 @@ class CaseFile extends Model
 
     protected $casts = [
         'status' => CaseStatus::class,
+        'registry_case_serial' => 'integer',
+        'registry_case_year' => 'integer',
     ];
 
     protected static function booted(): void
