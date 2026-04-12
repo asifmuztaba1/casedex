@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/use-auth";
-import { loadOnboardingDraft } from "@/features/auth/onboarding-draft";
 
 export default function OnboardingIndexPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: user, isLoading } = useAuth();
 
   useEffect(() => {
@@ -31,26 +29,8 @@ export default function OnboardingIndexPage() {
       return;
     }
 
-    const draft = loadOnboardingDraft(user.email);
-    const planFromQuery = searchParams.get("plan");
-    const intervalFromQuery = searchParams.get("interval");
-
-    if (draft.plan || planFromQuery) {
-      const query = new URLSearchParams();
-      if (planFromQuery) {
-        query.set("plan", planFromQuery);
-      }
-      if (intervalFromQuery === "yearly") {
-        query.set("interval", "yearly");
-      }
-
-      const suffix = query.toString();
-      router.replace(suffix ? `/onboarding/payment?${suffix}` : "/onboarding/payment");
-      return;
-    }
-
-    router.replace("/onboarding/plan");
-  }, [isLoading, router, searchParams, user]);
+    router.replace("/onboarding/workspace");
+  }, [isLoading, router, user]);
 
   return null;
 }

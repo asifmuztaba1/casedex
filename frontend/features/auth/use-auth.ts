@@ -148,7 +148,7 @@ function resolveSanctumBase(): string {
 
 async function ensureCsrfCookie(): Promise<void> {
   const base = resolveSanctumBase();
-  const response = await fetch(`${base}/api/sanctum/csrf-cookie`, {
+  const response = await fetch(`${base}/sanctum/csrf-cookie`, {
     credentials: "include",
     headers: buildHeaders(),
   });

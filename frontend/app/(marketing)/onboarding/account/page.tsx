@@ -37,13 +37,13 @@ export default function OnboardingAccountPage() {
     if (searchParams.get("verified") === "1") {
       toast({
         title: "Email verified",
-        description: "You can continue to package selection.",
+        description: "You can now set up your workspace.",
         variant: "success",
       });
     }
 
     if (user.email_verified_at) {
-      router.replace("/onboarding/plan");
+      router.replace("/onboarding/workspace");
     }
   }, [isLoading, router, searchParams, toast, user]);
 
@@ -59,7 +59,7 @@ export default function OnboardingAccountPage() {
     <OnboardingShell
       step="account"
       title="Verify your email"
-      description="Step 1 of 3. Confirm your email address to unlock package and payment setup."
+      description="Step 1 of 2. Confirm your email address to set up your workspace."
     >
       <Card>
         <CardHeader>

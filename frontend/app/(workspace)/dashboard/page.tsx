@@ -41,6 +41,7 @@ import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
+import { useProductTour } from "@/components/tour-provider";
 
 function formatLocalizedDate(
   locale: "en" | "bn",
@@ -66,6 +67,13 @@ export default function DashboardPage() {
   const { data: diaryData } = useDiaryEntries();
   const { data: documentsData } = useDocuments();
   const { data: notificationsData } = useNotifications();
+  const { hasCompleted, start: startTour } = useProductTour();
+
+  useEffect(() => {
+    if (hasCompleted) return;
+    const timer = setTimeout(() => startTour(), 600);
+    return () => clearTimeout(timer);
+  }, [hasCompleted, startTour]);
 
   const cases = useMemo(() => casesData?.data ?? [], [casesData?.data]);
   const hearings = useMemo(() => hearingsData?.data ?? [], [hearingsData?.data]);
@@ -286,7 +294,7 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6">
+      <div data-tour="dashboard-welcome" className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6">
         <div>
           <h1 className="text-2xl font-semibold text-[var(--foreground)]">
             {t("dashboard.welcome")}{user ? `, ${user.name}` : ""}
@@ -303,7 +311,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div data-tour="dashboard-metrics" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: t("dashboard.metrics.cases"), value: `${cases.length}` },
           {
