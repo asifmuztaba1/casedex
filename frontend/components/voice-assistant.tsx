@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Mic, MicOff, Volume2, VolumeX, X } from "lucide-react";
+import { Volume2, VolumeX, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { getAssistantScript } from "@/lib/assistant-scripts";
@@ -203,16 +203,10 @@ export default function VoiceAssistant() {
         </div>
       )}
 
-      {/* Floating action button */}
+      {/* Siri-style animated orb */}
       <button
         onClick={enabled ? handleToggle : handleToggleEnabled}
-        className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105 ${
-          speaking
-            ? "animate-pulse bg-emerald-600 text-white"
-            : enabled
-              ? "bg-[var(--primary)] text-white"
-              : "bg-[var(--muted-soft)] text-white"
-        }`}
+        className="group relative flex h-14 w-14 items-center justify-center"
         title={
           enabled
             ? speaking
@@ -227,15 +221,58 @@ export default function VoiceAssistant() {
               : "Enable assistant"
         }
       >
-        {enabled ? (
-          speaking ? (
-            <Volume2 className="h-5 w-5" />
-          ) : (
-            <Mic className="h-5 w-5" />
-          )
-        ) : (
-          <MicOff className="h-5 w-5" />
+        {/* Outer glow */}
+        <span
+          className={`absolute inset-0 rounded-full blur-md transition-opacity duration-500 ${
+            speaking ? "opacity-60" : "opacity-30 group-hover:opacity-50"
+          }`}
+          style={{
+            background: enabled
+              ? "conic-gradient(from 0deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1)"
+              : "#94a3b8",
+          }}
+        />
+        {/* Spinning gradient border */}
+        <span
+          className={`absolute inset-0 rounded-full ${
+            enabled ? (speaking ? "animate-[spin_2s_linear_infinite]" : "animate-[spin_6s_linear_infinite]") : ""
+          }`}
+          style={{
+            background: enabled
+              ? "conic-gradient(from 0deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1)"
+              : "#94a3b8",
+            padding: "2.5px",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+          }}
+        />
+        {/* Inner orb */}
+        <span
+          className={`absolute inset-[3px] rounded-full transition-all duration-500 ${
+            speaking ? "scale-95" : "scale-100 group-hover:scale-95"
+          }`}
+          style={{
+            background: enabled
+              ? "radial-gradient(circle at 35% 35%, #818cf8, #6366f1 40%, #4f46e5 70%, #3730a3)"
+              : "#64748b",
+          }}
+        />
+        {/* Pulse rings when speaking */}
+        {speaking && enabled && (
+          <>
+            <span className="absolute inset-0 animate-ping rounded-full bg-indigo-400/20" style={{ animationDuration: "1.5s" }} />
+            <span className="absolute inset-[-4px] animate-ping rounded-full bg-pink-400/10" style={{ animationDuration: "2s" }} />
+          </>
         )}
+        {/* Center icon/dot */}
+        <span className={`relative z-10 h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+          speaking
+            ? "scale-150 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+            : enabled
+              ? "bg-white/80 group-hover:bg-white group-hover:shadow-[0_0_6px_rgba(255,255,255,0.6)]"
+              : "bg-white/50"
+        }`} />
       </button>
     </div>
   );
