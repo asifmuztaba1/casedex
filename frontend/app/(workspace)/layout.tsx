@@ -407,6 +407,8 @@ export default function WorkspaceLayout({
           trigger="manual"
         />
       )}
+      <LanguagePickerModal />
+      <VoiceAssistant />
     </div>
   );
 }
@@ -424,5 +426,11 @@ const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-tri
   ssr: false,
 });
 const FeedbackModal = dynamic(() => import("@/components/feedback-modal"), {
+  ssr: false,
+});
+const LanguagePickerModal = dynamic(() => import("@/components/language-picker-modal"), {
+  ssr: false,
+});
+const VoiceAssistant = dynamic(() => import("@/components/voice-assistant"), {
   ssr: false,
 });
