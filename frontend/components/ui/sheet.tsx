@@ -30,7 +30,7 @@ const SheetContent = React.forwardRef<
     <SheetPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed right-0 top-0 z-50 h-full w-[260px] border-l border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm",
+        "fixed right-0 top-0 z-50 h-full w-[260px] overflow-y-auto border-l border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm",
         className
       )}
       {...props}
