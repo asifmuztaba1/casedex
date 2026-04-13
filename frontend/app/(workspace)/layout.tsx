@@ -43,6 +43,7 @@ import {
   LibraryBig,
   LifeBuoy,
   Menu,
+  MessageSquareHeart,
   Settings,
   Sparkles,
   UserCircle,
@@ -111,6 +112,7 @@ export default function WorkspaceLayout({
   const { data: notificationsData } = useNotifications();
   const markRead = useMarkNotificationRead();
   const [mounted, setMounted] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   useEffect(() => setMounted(true), []);
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
@@ -368,6 +370,10 @@ export default function WorkspaceLayout({
                         <a href="/settings/team">{t("nav.team")}</a>
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+                      <MessageSquareHeart className="mr-2 h-4 w-4" />
+                      {t("nav.give_feedback")}
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => logout.mutate()}
                       className="text-rose-600"
@@ -394,6 +400,13 @@ export default function WorkspaceLayout({
         </main>
       </div>
       {showSubscriptionWall && <SubscriptionWall />}
+      {feedbackOpen && (
+        <FeedbackModal
+          open={feedbackOpen}
+          onOpenChange={setFeedbackOpen}
+          trigger="manual"
+        />
+      )}
     </div>
   );
 }
@@ -408,5 +421,8 @@ const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"),
   ssr: false,
 });
 const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-trigger"), {
+  ssr: false,
+});
+const FeedbackModal = dynamic(() => import("@/components/feedback-modal"), {
   ssr: false,
 });
