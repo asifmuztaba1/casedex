@@ -9,6 +9,7 @@ import { getAssistantScript } from "@/lib/assistant-scripts";
 
 const FIRST_VISIT_PREFIX = "casedex_assistant_visited_";
 const ASSISTANT_ENABLED_KEY = "casedex_assistant_enabled";
+const TIP_DISMISSED_KEY = "casedex_assistant_tip_dismissed";
 
 /** Check if a page has been visited before (for auto-play on first visit). */
 function isFirstVisit(pathname: string): boolean {
@@ -35,12 +36,21 @@ export default function VoiceAssistant() {
   const [expanded, setExpanded] = useState(false);
   const [enabled, setEnabled] = useState(true);
   const [currentText, setCurrentText] = useState("");
+  const [showTip, setShowTip] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const hasAutoPlayedRef = useRef<string | null>(null);
 
   // Load enabled state
   useEffect(() => {
     setEnabled(isAssistantEnabled());
+  }, []);
+
+  // Show tip every session until user dismisses it
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(TIP_DISMISSED_KEY)) return;
+    const timer = setTimeout(() => setShowTip(true), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   const stop = useCallback(() => {
@@ -200,6 +210,31 @@ export default function VoiceAssistant() {
               {locale === "bn" ? "সহকারী বন্ধ করুন" : "Turn off assistant"}
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Tip text */}
+      {showTip && !expanded && (
+        <div
+          className="relative flex items-center gap-1.5 rounded-lg py-1.5 pl-3 pr-1.5 text-xs font-semibold text-white shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300"
+          style={{ background: "linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)" }}
+        >
+          <span className="whitespace-nowrap">
+            {locale === "bn" ? "গাইডেন্সের জন্য ক্লিক করুন" : "Click me for guidance"}
+          </span>
+          <button
+            onClick={() => {
+              setShowTip(false);
+              sessionStorage.setItem(TIP_DISMISSED_KEY, "true");
+            }}
+            className="shrink-0 rounded p-0.5 text-white/70 transition-colors hover:text-white"
+          >
+            <X className="h-3 w-3" />
+          </button>
+          <span
+            className="absolute -bottom-1 right-6 h-2 w-2 rotate-45"
+            style={{ background: "#ec4899" }}
+          />
         </div>
       )}
 

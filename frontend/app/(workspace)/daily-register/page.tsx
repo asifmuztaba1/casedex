@@ -115,13 +115,15 @@ export default function DailyRegisterPage() {
 
   const isToday = date === format(new Date(), "yyyy-MM-dd");
 
+
+
   function handlePrint() {
     window.print();
   }
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4 print:block">
+      <div className="flex flex-wrap items-start justify-between gap-4 print:hidden">
         <PageHeader
           title={t("daily_register.title")}
           description={t("daily_register.subtitle")}
@@ -129,7 +131,7 @@ export default function DailyRegisterPage() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 print:hidden"
+          className="gap-2"
           onClick={handlePrint}
         >
           <Printer className="h-4 w-4" />
@@ -181,11 +183,23 @@ export default function DailyRegisterPage() {
       </div>
 
       {/* Print header — only visible when printing */}
-      <div className="hidden print:block print:mb-4">
-        <div className="text-center">
-          <div className="text-lg font-bold">{user?.tenant?.name ?? user?.tenant_name ?? "CaseDex"}</div>
-          <div className="text-sm">{t("daily_register.print_heading")}</div>
-          <div className="text-sm font-medium">{displayDate}</div>
+      <div className="hidden print:block print:mb-6">
+        <div className="flex items-start justify-between border-b border-black pb-3">
+          <div>
+            <div className="text-lg font-bold">{user?.name ?? "—"}</div>
+            <div className="text-xs text-gray-600">{t("daily_register.advocate")}</div>
+            {user?.email && (
+              <div className="text-xs text-gray-600">{user.email}</div>
+            )}
+          </div>
+          <div className="text-right">
+            <div className="text-base font-bold">{user?.tenant?.name ?? user?.tenant_name ?? "—"}</div>
+            <div className="text-xs text-gray-600">casedex.app</div>
+          </div>
+        </div>
+        <div className="mt-3 text-center">
+          <div className="text-sm font-semibold">{t("daily_register.print_heading")}</div>
+          <div className="text-sm">{displayDate}</div>
         </div>
       </div>
 
@@ -213,6 +227,9 @@ export default function DailyRegisterPage() {
                 </TableHead>
                 <TableHead className="print:border print:border-black">
                   {t("daily_register.col_case_no")}
+                </TableHead>
+                <TableHead className="print:border print:border-black">
+                  {t("daily_register.court")}
                 </TableHead>
                 <TableHead className="print:border print:border-black">
                   {t("daily_register.col_parties")}
@@ -250,6 +267,9 @@ export default function DailyRegisterPage() {
                     ) : (
                       <span className="text-xs">{h.case_number || "—"}</span>
                     )}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-xs print:border print:border-black">
+                    {h.court || "—"}
                   </TableCell>
                   <TableCell className="max-w-[200px] text-xs print:border print:border-black">
                     <span className="line-clamp-2">{formatPartiesVs(h)}</span>

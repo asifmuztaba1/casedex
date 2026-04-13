@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, CalendarClock, FileText, ShieldCheck } from "lucide-react";
+import { Bell, BookOpen, CalendarClock, FileText, Mic, ShieldCheck, Smartphone } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 
 const featureBlocks = [
@@ -20,6 +20,11 @@ const featureBlocks = [
     titleKey: "features.block2.title",
     descriptionKey: "features.block2.desc",
     icon: CalendarClock,
+  },
+  {
+    titleKey: "features.block5.title",
+    descriptionKey: "features.block5.desc",
+    icon: Bell,
   },
   {
     titleKey: "features.block3.title",
@@ -81,6 +86,29 @@ export default function FeaturesPageClient() {
         ].map((feature) => (
           <Card key={feature.titleKey} className="h-full">
             <CardHeader>
+              <CardTitle className="text-base">{t(feature.titleKey)}</CardTitle>
+              <CardDescription>{t(feature.descriptionKey)}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {[
+          {
+            titleKey: "features.extra4.title",
+            descriptionKey: "features.extra4.desc",
+            icon: Mic,
+          },
+          {
+            titleKey: "features.extra5.title",
+            descriptionKey: "features.extra5.desc",
+            icon: Smartphone,
+          },
+        ].map((feature) => (
+          <Card key={feature.titleKey} className="h-full">
+            <CardHeader className="space-y-3">
+              <feature.icon className="h-5 w-5 text-[var(--muted-soft)]" />
               <CardTitle className="text-base">{t(feature.titleKey)}</CardTitle>
               <CardDescription>{t(feature.descriptionKey)}</CardDescription>
             </CardHeader>

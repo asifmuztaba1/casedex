@@ -146,7 +146,7 @@ export default function WorkspaceLayout({
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex print:!hidden">
         <div className="space-y-2">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("nav.workspace")}
@@ -195,8 +195,8 @@ export default function WorkspaceLayout({
         </nav>
       </aside>
 
-      <div className="md:pl-[260px]">
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
+      <div className="md:pl-[260px] print:!pl-0">
+        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur print:!hidden">
           <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-3 py-3 md:gap-4 md:px-6 md:py-4">
             <div className="flex items-center gap-3">
               <Sheet>
@@ -268,14 +268,6 @@ export default function WorkspaceLayout({
                   </Button>
                 )}
               </Sheet>
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
-                  {t("nav.workspace")}
-                </div>
-                <div className="text-sm font-medium text-[var(--foreground)]">
-                  {t("nav.workspace_overview")}
-                </div>
-              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <Input className="hidden w-[220px] md:block" placeholder={t("nav.search")} />
