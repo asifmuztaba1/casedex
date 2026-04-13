@@ -42,7 +42,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
 
-
 function formatLocalizedDate(
   locale: "en" | "bn",
   date: Date,
@@ -67,8 +66,7 @@ export default function DashboardPage() {
   const { data: diaryData } = useDiaryEntries();
   const { data: documentsData } = useDocuments();
   const { data: notificationsData } = useNotifications();
-  // Tour auto-start removed — conflicts with Chrome's credential
-  // save popup. Users can start it from the Support page.
+  // Tour auto-start removed — use Support page to start manually.
 
   const cases = useMemo(() => casesData?.data ?? [], [casesData?.data]);
   const hearings = useMemo(() => hearingsData?.data ?? [], [hearingsData?.data]);
