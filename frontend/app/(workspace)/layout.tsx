@@ -146,7 +146,7 @@ export default function WorkspaceLayout({
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex">
         <div className="space-y-2">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("nav.workspace")}
