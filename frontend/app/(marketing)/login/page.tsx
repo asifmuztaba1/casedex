@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +14,6 @@ import { useLogin } from "@/features/auth/use-auth";
 import { useLocale } from "@/components/locale-provider";
 
 export default function LoginPage() {
-  const router = useRouter();
   const login = useLogin();
   const { t } = useLocale();
   const [email, setEmail] = useState("");
@@ -32,13 +30,15 @@ export default function LoginPage() {
     role?: string;
     tenant?: { has_workspace_access?: boolean; has_active_subscription?: boolean } | null;
   }) => {
+    // Use full-page navigation so Chrome's password save popup
+    // resolves cleanly instead of overlaying the SPA.
     if (loggedInUser.role === "platform_admin" || loggedInUser.role === "platform_editor") {
-      router.push("/admin");
+      window.location.href = "/admin";
       return;
     }
 
     if (!loggedInUser.tenant_id) {
-      router.push("/onboarding");
+      window.location.href = "/onboarding";
       return;
     }
 
@@ -48,11 +48,11 @@ export default function LoginPage() {
       false;
 
     if (!hasWorkspaceAccess) {
-      router.push("/settings/billing?onboarding=1");
+      window.location.href = "/settings/billing?onboarding=1";
       return;
     }
 
-    router.push("/dashboard");
+    window.location.href = "/dashboard";
   };
 
   return (
