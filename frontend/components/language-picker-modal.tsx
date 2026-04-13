@@ -1,13 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useLocale } from "@/components/locale-provider";
 import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
 import type { Locale } from "@/lib/locale";
@@ -18,14 +11,15 @@ export default function LanguagePickerModal() {
   const { setLocale } = useLocale();
   const { data: user } = useAuth();
   const updateProfile = useUpdateProfile();
-  const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-    // Only show if user hasn't set a locale yet and picker hasn't been shown
     if (user.locale) return;
     if (typeof window !== "undefined" && localStorage.getItem(PICKER_SHOWN_KEY)) return;
-    setOpen(true);
+    // Small delay so the page renders first
+    const timer = setTimeout(() => setVisible(true), 2000);
+    return () => clearTimeout(timer);
   }, [user]);
 
   const handleSelect = (locale: Locale) => {
@@ -39,40 +33,46 @@ export default function LanguagePickerModal() {
       });
     }
     localStorage.setItem(PICKER_SHOWN_KEY, "true");
-    setOpen(false);
+    setVisible(false);
   };
 
+  const handleDismiss = () => {
+    localStorage.setItem(PICKER_SHOWN_KEY, "true");
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
   return (
-    <Dialog open={open} onOpenChange={(v) => {
-      if (!v) {
-        localStorage.setItem(PICKER_SHOWN_KEY, "true");
-      }
-      setOpen(v);
-    }}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-xl">Choose your language</DialogTitle>
-          <DialogDescription>আপনার ভাষা নির্বাচন করুন</DialogDescription>
-        </DialogHeader>
-        <div className="mt-4 grid grid-cols-2 gap-4">
+    <div className="fixed bottom-20 right-6 z-40 w-72 animate-in slide-in-from-bottom-4 fade-in duration-300 print:hidden">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">
+        <p className="text-sm font-semibold text-[var(--foreground)]">
+          Choose your language
+        </p>
+        <p className="mt-0.5 text-xs text-[var(--muted)]">
+          আপনার ভাষা নির্বাচন করুন
+        </p>
+        <div className="mt-3 flex gap-2">
           <button
             onClick={() => handleSelect("en")}
-            className="group flex flex-col items-center gap-3 rounded-xl border-2 border-[var(--border)] bg-[var(--paper)] p-6 transition-all hover:border-[var(--primary)] hover:shadow-md"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm font-medium transition-colors hover:border-[var(--primary)] hover:bg-[var(--paper-hover)]"
           >
-            <span className="text-3xl">🇬🇧</span>
-            <span className="text-lg font-semibold text-[var(--foreground)]">English</span>
-            <span className="text-xs text-[var(--muted)]">Continue in English</span>
+            English
           </button>
           <button
             onClick={() => handleSelect("bn")}
-            className="group flex flex-col items-center gap-3 rounded-xl border-2 border-[var(--border)] bg-[var(--paper)] p-6 transition-all hover:border-[var(--primary)] hover:shadow-md"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm font-medium transition-colors hover:border-[var(--primary)] hover:bg-[var(--paper-hover)]"
           >
-            <span className="text-3xl">🇧🇩</span>
-            <span className="text-lg font-semibold text-[var(--foreground)]">বাংলা</span>
-            <span className="text-xs text-[var(--muted)]">বাংলায় চালিয়ে যান</span>
+            বাংলা
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+        <button
+          onClick={handleDismiss}
+          className="mt-2 w-full text-center text-xs text-[var(--muted-soft)] hover:text-[var(--muted)]"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
   );
 }
