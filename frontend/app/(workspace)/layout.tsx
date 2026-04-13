@@ -34,6 +34,7 @@ import {
   Bell,
   BookOpen,
   BookUser,
+  ClipboardList,
   CreditCard,
   Calendar,
   CalendarDays,
@@ -42,6 +43,7 @@ import {
   LibraryBig,
   LifeBuoy,
   Menu,
+  MessageSquareHeart,
   Settings,
   Sparkles,
   UserCircle,
@@ -74,6 +76,7 @@ const navItems = [
   { href: "/clients", labelKey: "nav.clients", icon: Users },
   { href: "/contacts", labelKey: "nav.contacts", icon: BookUser },
   { href: "/hearings", labelKey: "nav.hearings", icon: Calendar, tourId: "nav-hearings" },
+  { href: "/daily-register", labelKey: "nav.daily_register", icon: ClipboardList },
   { href: "/calendar", labelKey: "nav.calendar", icon: CalendarDays },
   { href: "/documents", labelKey: "nav.documents", icon: FileText, tourId: "nav-documents" },
   { href: "/library", labelKey: "nav.library", icon: LibraryBig },
@@ -109,6 +112,7 @@ export default function WorkspaceLayout({
   const { data: notificationsData } = useNotifications();
   const markRead = useMarkNotificationRead();
   const [mounted, setMounted] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   useEffect(() => setMounted(true), []);
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
@@ -366,6 +370,10 @@ export default function WorkspaceLayout({
                         <a href="/settings/team">{t("nav.team")}</a>
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+                      <MessageSquareHeart className="mr-2 h-4 w-4" />
+                      {t("nav.give_feedback")}
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => logout.mutate()}
                       className="text-rose-600"
@@ -392,6 +400,13 @@ export default function WorkspaceLayout({
         </main>
       </div>
       {showSubscriptionWall && <SubscriptionWall />}
+      {feedbackOpen && (
+        <FeedbackModal
+          open={feedbackOpen}
+          onOpenChange={setFeedbackOpen}
+          trigger="manual"
+        />
+      )}
     </div>
   );
 }
@@ -406,5 +421,8 @@ const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"),
   ssr: false,
 });
 const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-trigger"), {
+  ssr: false,
+});
+const FeedbackModal = dynamic(() => import("@/components/feedback-modal"), {
   ssr: false,
 });
