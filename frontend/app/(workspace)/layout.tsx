@@ -394,13 +394,12 @@ export default function WorkspaceLayout({
         <main className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-6 md:py-6">
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
-            {/* All auto-showing overlays disabled — re-enable one at a time */}
-            {/* <ProductTour /> */}
-            {/* <FeedbackTriggerComponent /> */}
+            <ProductTour />
+            <TourAutoStart delayMs={15_000} />
           </TourProvider>
         </main>
       </div>
-      {/* {showSubscriptionWall && <SubscriptionWall />} */}
+      {showSubscriptionWall && <SubscriptionWall />}
       {feedbackOpen && (
         <FeedbackModal
           open={feedbackOpen}
@@ -408,7 +407,9 @@ export default function WorkspaceLayout({
           trigger="manual"
         />
       )}
-      {/* <LanguagePickerModal /> */}
+      <CookieConsentLazy delayMs={5_000} />
+      <InstallPromptLazy delayMs={10_000} />
+      <LanguagePickerModal />
       <VoiceAssistant />
     </div>
   );
@@ -433,5 +434,14 @@ const LanguagePickerModal = dynamic(() => import("@/components/language-picker-m
   ssr: false,
 });
 const VoiceAssistant = dynamic(() => import("@/components/voice-assistant"), {
+  ssr: false,
+});
+const TourAutoStart = dynamic(() => import("@/components/tour-auto-start"), {
+  ssr: false,
+});
+const CookieConsentLazy = dynamic(() => import("@/components/cookie-consent"), {
+  ssr: false,
+});
+const InstallPromptLazy = dynamic(() => import("@/pwa/install-prompt"), {
   ssr: false,
 });
