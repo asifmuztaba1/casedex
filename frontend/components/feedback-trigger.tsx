@@ -7,8 +7,9 @@ import FeedbackModal from "@/components/feedback-modal";
 
 const TRIAL_DAYS = 30;
 const TRIAL_DELAY_DAYS = 3;
-const FIRST_CASE_DELAY_MS = 2000;
-const FRESH_LOGIN_GRACE_MS = 10_000;
+const FIRST_CASE_DELAY_MS = 5_000;
+/** Wait at least 60s after page load before showing the feedback prompt. */
+const QUIET_PERIOD_MS = 60_000;
 
 function isAlreadyHandled(trigger: FeedbackTriggerType): boolean {
   if (typeof window === "undefined") return true;
@@ -18,30 +19,16 @@ function isAlreadyHandled(trigger: FeedbackTriggerType): boolean {
   );
 }
 
-/** Returns true if the user logged in less than FRESH_LOGIN_GRACE_MS ago. */
-function isFreshLogin(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const loginAt = sessionStorage.getItem("casedex_login_at");
-    if (!loginAt) return false;
-    return Date.now() - Number(loginAt) < FRESH_LOGIN_GRACE_MS;
-  } catch {
-    return false;
-  }
-}
-
 export default function FeedbackTrigger() {
   const { data: subscription } = useSubscription();
   const [activeTrigger, setActiveTrigger] = useState<FeedbackTriggerType | null>(null);
   const [ready, setReady] = useState(false);
 
-  // Gate: wait for the fresh-login grace period before evaluating triggers.
+  // Always wait QUIET_PERIOD_MS before considering any trigger.
+  // This prevents the feedback modal from covering the page on load.
   useEffect(() => {
-    if (isFreshLogin()) {
-      const timer = setTimeout(() => setReady(true), FRESH_LOGIN_GRACE_MS);
-      return () => clearTimeout(timer);
-    }
-    setReady(true);
+    const timer = setTimeout(() => setReady(true), QUIET_PERIOD_MS);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
