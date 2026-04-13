@@ -82,7 +82,7 @@ export default async function RootLayout({
       >
         <Providers initialLocale={initialLocale}>
           {children}
-          {/* <InstallPrompt /> */}
+          <InstallPrompt />
         </Providers>
         <Toaster />
         <ServiceWorkerRegister />

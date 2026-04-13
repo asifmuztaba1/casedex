@@ -11,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISSED_KEY = "casedex-pwa-dismissed";
+const SHOW_DELAY_MS = 10_000;
 
 export default function InstallPrompt() {
   const { t } = useLocale();
@@ -29,14 +30,24 @@ export default function InstallPrompt() {
       if (Date.now() - dismissedAt < 7 * 24 * 60 * 60 * 1000) return;
     }
 
+    let saved: BeforeInstallPromptEvent | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setVisible(true);
+      saved = e as BeforeInstallPromptEvent;
+      // Wait 10s before showing so it doesn't overlay on page load
+      timer = setTimeout(() => {
+        setDeferredPrompt(saved);
+        setVisible(true);
+      }, SHOW_DELAY_MS);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const handleInstall = async () => {
