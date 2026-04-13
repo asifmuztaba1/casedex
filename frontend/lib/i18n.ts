@@ -1299,6 +1299,26 @@ const en: Dictionary = {
   "tour.btn.skip": "Skip tour",
   "tour.btn.replay": "Take a tour",
   "tour.step_counter": "{current} of {total}",
+
+  "common.error": "Error",
+  "common.try_again": "Something went wrong. Please try again.",
+
+  "feedback.title": "How's your experience?",
+  "feedback.description": "We'd love to hear your feedback to make CaseDex better for you.",
+  "feedback.comment_placeholder": "Any additional thoughts? (optional)",
+  "feedback.submit": "Submit feedback",
+  "feedback.submitting": "Submitting...",
+  "feedback.star_label": "star",
+  "feedback.stars_label": "stars",
+  "feedback.thanks_title": "Thank you!",
+  "feedback.thanks_description": "Your feedback helps us improve CaseDex.",
+  "feedback.admin_title": "User Feedback",
+  "feedback.search_placeholder": "Search by name or email...",
+  "feedback.filter_rating": "Filter by rating",
+  "feedback.all_ratings": "All ratings",
+  "feedback.no_feedback": "No feedback received yet.",
+
+  "admin.nav.feedback": "Feedback",
 };
 
 const bn: Dictionary = {
@@ -2556,6 +2576,26 @@ const bn: Dictionary = {
   "tour.btn.skip": "ট্যুর এড়িয়ে যান",
   "tour.btn.replay": "ট্যুর দেখুন",
   "tour.step_counter": "{current} / {total}",
+
+  "common.error": "ত্রুটি",
+  "common.try_again": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
+
+  "feedback.title": "আপনার অভিজ্ঞতা কেমন?",
+  "feedback.description": "CaseDex আরও ভালো করতে আপনার মতামত জানান।",
+  "feedback.comment_placeholder": "অতিরিক্ত কিছু বলতে চান? (ঐচ্ছিক)",
+  "feedback.submit": "মতামত জমা দিন",
+  "feedback.submitting": "জমা হচ্ছে...",
+  "feedback.star_label": "তারা",
+  "feedback.stars_label": "তারা",
+  "feedback.thanks_title": "ধন্যবাদ!",
+  "feedback.thanks_description": "আপনার মতামত CaseDex উন্নত করতে সাহায্য করে।",
+  "feedback.admin_title": "ব্যবহারকারীর মতামত",
+  "feedback.search_placeholder": "নাম বা ইমেইল দিয়ে খুঁজুন...",
+  "feedback.filter_rating": "রেটিং দিয়ে ফিল্টার",
+  "feedback.all_ratings": "সকল রেটিং",
+  "feedback.no_feedback": "এখনো কোনো মতামত পাওয়া যায়নি।",
+
+  "admin.nav.feedback": "মতামত",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,

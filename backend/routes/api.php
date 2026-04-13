@@ -34,7 +34,9 @@ use App\Http\Controllers\Api\V1\Admin\PlatformAnalyticsController as AdminPlatfo
 use App\Http\Controllers\Api\V1\Admin\SupportTicketController as AdminSupportTicketController;
 use App\Http\Controllers\Api\V1\Admin\TenantController as AdminTenantController;
 use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
+use App\Http\Controllers\Api\V1\Admin\FeedbackController as AdminFeedbackController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -65,6 +67,8 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/support/tickets/{publicId}/messages', [SupportTicketController::class, 'reply']);
         Route::get('/support/attachments/{messagePublicId}', [SupportTicketController::class, 'attachment'])
             ->name('api.v1.support.attachment');
+
+        Route::post('/feedback', [FeedbackController::class, 'store']);
     });
 });
 
@@ -121,6 +125,8 @@ Route::prefix('v1')
         Route::get('/admin/support/tickets/{publicId}/messages', [AdminSupportTicketController::class, 'messages']);
         Route::post('/admin/support/tickets/{publicId}/messages', [AdminSupportTicketController::class, 'reply']);
         Route::post('/admin/support/tickets/{publicId}/status', [AdminSupportTicketController::class, 'updateStatus']);
+
+        Route::get('/admin/feedback', [AdminFeedbackController::class, 'index']);
     });
 
 Route::prefix('v1')
