@@ -395,7 +395,7 @@ export default function WorkspaceLayout({
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
             <ProductTour />
-            <FeedbackTriggerComponent />
+            {/* <FeedbackTriggerComponent /> */}
           </TourProvider>
         </main>
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, X } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
+import { apiPost } from "@/lib/api-client";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -11,6 +12,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISSED_KEY = "casedex-pwa-dismissed";
+const SHOW_DELAY_MS = 10_000;
 
 export default function InstallPrompt() {
   const { t } = useLocale();
@@ -29,14 +31,24 @@ export default function InstallPrompt() {
       if (Date.now() - dismissedAt < 7 * 24 * 60 * 60 * 1000) return;
     }
 
+    let saved: BeforeInstallPromptEvent | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setVisible(true);
+      saved = e as BeforeInstallPromptEvent;
+      // Wait 10s before showing so it doesn't overlay on page load
+      timer = setTimeout(() => {
+        setDeferredPrompt(saved);
+        setVisible(true);
+      }, SHOW_DELAY_MS);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const handleInstall = async () => {
@@ -45,6 +57,11 @@ export default function InstallPrompt() {
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === "accepted") {
       setVisible(false);
+      try {
+        await apiPost("/api/v1/profile/pwa-install", {});
+      } catch {
+        // best-effort tracking
+      }
     }
     setDeferredPrompt(null);
   };

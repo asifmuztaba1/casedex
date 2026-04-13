@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,44 +14,66 @@ import { useLogin } from "@/features/auth/use-auth";
 import { useLocale } from "@/components/locale-provider";
 
 export default function LoginPage() {
-  const router = useRouter();
   const login = useLogin();
   const { t } = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const emailError = submitted && !email.trim();
   const emailInvalid =
     submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordError = submitted && !password.trim();
 
-  const handleLoginSuccess = (loggedInUser: {
+  const handleLoginSuccess = async (loggedInUser: {
     tenant_id: number | null;
     role?: string;
     tenant?: { has_workspace_access?: boolean; has_active_subscription?: boolean } | null;
   }) => {
+    setRedirecting(true);
+
+    let dest = "/dashboard";
+
     if (loggedInUser.role === "platform_admin" || loggedInUser.role === "platform_editor") {
-      router.push("/admin");
-      return;
+      dest = "/admin";
+    } else if (!loggedInUser.tenant_id) {
+      dest = "/onboarding";
+    } else {
+      const hasWorkspaceAccess =
+        loggedInUser.tenant?.has_workspace_access ??
+        loggedInUser.tenant?.has_active_subscription ??
+        false;
+
+      if (!hasWorkspaceAccess) {
+        dest = "/settings/billing?onboarding=1";
+      }
     }
 
-    if (!loggedInUser.tenant_id) {
-      router.push("/onboarding");
-      return;
+    // Use the Credential Management API to proactively store the
+    // credential. This tells Chrome "we handled it" and suppresses
+    // the default "Save password?" popup overlay.
+    try {
+      const CredCtor = (window as unknown as Record<string, unknown>).PasswordCredential as
+        | (new (data: { id: string; password: string }) => Credential)
+        | undefined;
+      if (CredCtor) {
+        const cred = new CredCtor({ id: email, password });
+        await navigator.credentials.store(cred);
+      }
+    } catch {
+      // API unavailable (non-Chrome or insecure context) — continue
     }
 
-    const hasWorkspaceAccess =
-      loggedInUser.tenant?.has_workspace_access ??
-      loggedInUser.tenant?.has_active_subscription ??
-      false;
-
-    if (!hasWorkspaceAccess) {
-      router.push("/settings/billing?onboarding=1");
-      return;
+    // Mark fresh login so workspace overlays (FeedbackTrigger etc.)
+    // don't fire immediately.
+    try {
+      sessionStorage.setItem("casedex_login_at", Date.now().toString());
+    } catch {
+      // sessionStorage unavailable (e.g. private browsing)
     }
 
-    router.push("/dashboard");
+    window.location.href = dest;
   };
 
   return (
@@ -82,7 +103,7 @@ export default function LoginPage() {
                 { email, password },
                 {
                   onSuccess: (response) => {
-                    handleLoginSuccess(response.data);
+                    void handleLoginSuccess(response.data);
                   },
                 }
               );
@@ -93,6 +114,8 @@ export default function LoginPage() {
                 {t("login.email")}
               </label>
               <Input
+                name="email"
+                autoComplete="email"
                 placeholder="you@firm.com"
                 type="email"
                 value={email}
@@ -111,6 +134,8 @@ export default function LoginPage() {
                 {t("login.password")}
               </label>
               <Input
+                name="password"
+                autoComplete="current-password"
                 placeholder="********"
                 type="password"
                 value={password}
@@ -127,10 +152,12 @@ export default function LoginPage() {
               </a>
             </div>
             <div className="flex flex-col gap-3">
-              <Button className="w-full" type="submit" disabled={login.isPending}>
-                {login.isPending
-                  ? t("login.button_pending")
-                  : t("login.button")}
+              <Button className="w-full" type="submit" disabled={login.isPending || redirecting}>
+                {redirecting
+                  ? t("login.redirecting")
+                  : login.isPending
+                    ? t("login.button_pending")
+                    : t("login.button")}
               </Button>
               <Button className="w-full" variant="outline" asChild>
                 <a href="/register">{t("login.create_account")}</a>

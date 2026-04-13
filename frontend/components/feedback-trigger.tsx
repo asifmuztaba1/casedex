@@ -7,7 +7,9 @@ import FeedbackModal from "@/components/feedback-modal";
 
 const TRIAL_DAYS = 30;
 const TRIAL_DELAY_DAYS = 3;
-const FIRST_CASE_DELAY_MS = 2000;
+const FIRST_CASE_DELAY_MS = 5_000;
+/** Wait at least 60s after page load before showing the feedback prompt. */
+const QUIET_PERIOD_MS = 60_000;
 
 function isAlreadyHandled(trigger: FeedbackTriggerType): boolean {
   if (typeof window === "undefined") return true;
@@ -20,8 +22,18 @@ function isAlreadyHandled(trigger: FeedbackTriggerType): boolean {
 export default function FeedbackTrigger() {
   const { data: subscription } = useSubscription();
   const [activeTrigger, setActiveTrigger] = useState<FeedbackTriggerType | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Always wait QUIET_PERIOD_MS before considering any trigger.
+  // This prevents the feedback modal from covering the page on load.
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), QUIET_PERIOD_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
+    if (!ready) return;
+
     // Trial reminder: show after 3+ days into trial
     if (subscription?.on_trial && subscription?.trial_ends_at) {
       if (!isAlreadyHandled("trial_reminder")) {
@@ -47,7 +59,7 @@ export default function FeedbackTrigger() {
       }, FIRST_CASE_DELAY_MS);
       return () => clearTimeout(timer);
     }
-  }, [subscription]);
+  }, [ready, subscription]);
 
   if (!activeTrigger) return null;
 

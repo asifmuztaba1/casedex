@@ -58,6 +58,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/auth/email/verification-notification', [AuthVerificationController::class, 'resend'])
             ->middleware('throttle:6,1');
         Route::put('/profile', [ProfileController::class, 'update']);
+        Route::post('/profile/pwa-install', [ProfileController::class, 'pwaInstalled']);
         Route::post('/tenants', [TenantController::class, 'store']);
 
         Route::get('/support/tickets', [SupportTicketController::class, 'index']);
