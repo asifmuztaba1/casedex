@@ -387,6 +387,7 @@ export default function WorkspaceLayout({
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
             <ProductTour />
+            <FeedbackTriggerComponent />
           </TourProvider>
         </main>
       </div>
@@ -402,5 +403,8 @@ const ProductTour = dynamic(() => import("@/components/product-tour"), {
   ssr: false,
 });
 const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"), {
+  ssr: false,
+});
+const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-trigger"), {
   ssr: false,
 });

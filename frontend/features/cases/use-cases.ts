@@ -195,6 +195,9 @@ export function useCreateCase() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cases"] });
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("casedex_first_case_created", "true");
+      }
       toast({
         title: t("cases.toast.created_title"),
         description: t("cases.toast.created_body"),
