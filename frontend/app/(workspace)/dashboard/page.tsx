@@ -41,7 +41,7 @@ import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
-import { useProductTour } from "@/components/tour-provider";
+
 
 function formatLocalizedDate(
   locale: "en" | "bn",
@@ -67,13 +67,8 @@ export default function DashboardPage() {
   const { data: diaryData } = useDiaryEntries();
   const { data: documentsData } = useDocuments();
   const { data: notificationsData } = useNotifications();
-  const { hasCompleted, start: startTour } = useProductTour();
-
-  useEffect(() => {
-    if (hasCompleted) return;
-    const timer = setTimeout(() => startTour(), 600);
-    return () => clearTimeout(timer);
-  }, [hasCompleted, startTour]);
+  // Tour auto-start removed — conflicts with Chrome's credential
+  // save popup. Users can start it from the Support page.
 
   const cases = useMemo(() => casesData?.data ?? [], [casesData?.data]);
   const hearings = useMemo(() => hearingsData?.data ?? [], [hearingsData?.data]);
