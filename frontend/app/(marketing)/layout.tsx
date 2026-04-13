@@ -169,7 +169,7 @@ export default function MarketingLayout({
             </div>
           </div>
         </footer>
-        <CookieConsent />
+        {/* <CookieConsent /> */}
       </div>
     </div>
   );

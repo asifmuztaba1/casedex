@@ -395,7 +395,7 @@ export default function WorkspaceLayout({
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
             <ProductTour />
-            {/* <FeedbackTriggerComponent /> */}
+            <TourAutoStart delayMs={15_000} />
           </TourProvider>
         </main>
       </div>
@@ -407,6 +407,10 @@ export default function WorkspaceLayout({
           trigger="manual"
         />
       )}
+      <CookieConsentLazy delayMs={5_000} />
+      <InstallPromptLazy delayMs={10_000} />
+      <LanguagePickerModal />
+      <VoiceAssistant />
     </div>
   );
 }
@@ -424,5 +428,20 @@ const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-tri
   ssr: false,
 });
 const FeedbackModal = dynamic(() => import("@/components/feedback-modal"), {
+  ssr: false,
+});
+const LanguagePickerModal = dynamic(() => import("@/components/language-picker-modal"), {
+  ssr: false,
+});
+const VoiceAssistant = dynamic(() => import("@/components/voice-assistant"), {
+  ssr: false,
+});
+const TourAutoStart = dynamic(() => import("@/components/tour-auto-start"), {
+  ssr: false,
+});
+const CookieConsentLazy = dynamic(() => import("@/components/cookie-consent"), {
+  ssr: false,
+});
+const InstallPromptLazy = dynamic(() => import("@/pwa/install-prompt"), {
   ssr: false,
 });
