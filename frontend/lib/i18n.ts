@@ -1319,6 +1319,25 @@ const en: Dictionary = {
   "feedback.no_feedback": "No feedback received yet.",
 
   "admin.nav.feedback": "Feedback",
+
+  "nav.daily_register": "Seresta",
+  "daily_register.title": "Seresta",
+  "daily_register.subtitle": "Your daily cause list — all hearings for the selected date.",
+  "daily_register.print": "Print",
+  "daily_register.print_heading": "Seresta — Daily Cause List",
+  "daily_register.today": "Today",
+  "daily_register.empty": "No hearings scheduled for this date.",
+  "daily_register.col_case_type": "Type",
+  "daily_register.col_case_no": "Case No.",
+  "daily_register.col_parties": "Parties",
+  "daily_register.col_time": "Time",
+  "daily_register.col_outcome": "Outcome",
+  "daily_register.col_next_date": "Next Steps",
+  "daily_register.outcome_placeholder": "Click to add...",
+  "daily_register.next_date_placeholder": "Click to add...",
+  "daily_register.total": "Total",
+  "daily_register.recorded": "Recorded",
+  "daily_register.pending": "Pending",
 };
 
 const bn: Dictionary = {
@@ -2596,6 +2615,25 @@ const bn: Dictionary = {
   "feedback.no_feedback": "এখনো কোনো মতামত পাওয়া যায়নি।",
 
   "admin.nav.feedback": "মতামত",
+
+  "nav.daily_register": "সেরেস্তা",
+  "daily_register.title": "সেরেস্তা",
+  "daily_register.subtitle": "আজকের কজ লিষ্ট — নির্বাচিত তারিখের সকল শুনানি।",
+  "daily_register.print": "প্রিন্ট",
+  "daily_register.print_heading": "সেরেস্তা — দৈনিক কজ লিষ্ট",
+  "daily_register.today": "আজ",
+  "daily_register.empty": "এই তারিখে কোনো শুনানি নেই।",
+  "daily_register.col_case_type": "ধরন",
+  "daily_register.col_case_no": "মামলা নং",
+  "daily_register.col_parties": "পক্ষসমূহ",
+  "daily_register.col_time": "সময়",
+  "daily_register.col_outcome": "আদেশ",
+  "daily_register.col_next_date": "পরবর্তী পদক্ষেপ",
+  "daily_register.outcome_placeholder": "যোগ করুন...",
+  "daily_register.next_date_placeholder": "যোগ করুন...",
+  "daily_register.total": "মোট",
+  "daily_register.recorded": "রেকর্ড করা",
+  "daily_register.pending": "বাকি",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,

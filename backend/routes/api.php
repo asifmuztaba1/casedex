@@ -189,6 +189,7 @@ Route::prefix('v1')
         Route::delete('/clients/{id}', [ClientController::class, 'destroy']);
 
         Route::get('/hearings/calendar', [HearingController::class, 'calendar']);
+        Route::get('/hearings/daily-register', [HearingController::class, 'dailyRegister']);
         Route::get('/hearings', [HearingController::class, 'index']);
         Route::post('/hearings', [HearingController::class, 'store']);
         Route::get('/hearings/{publicId}', [HearingController::class, 'show']);
