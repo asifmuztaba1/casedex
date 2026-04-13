@@ -19,13 +19,21 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search } from "lucide-react";
+import { Eye, Search } from "lucide-react";
+import type { DiaryEntrySummary } from "@/features/diary/use-diary-entries";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function DiaryPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useDiaryEntries();
   const entries = data?.data ?? [];
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<DiaryEntrySummary | null>(null);
 
   const filtered = useMemo(() => {
     if (!search) return entries;
@@ -88,6 +96,7 @@ export default function DiaryPage() {
                   <TableHead>{t("table.case")}</TableHead>
                   <TableHead>{t("common.entry")}</TableHead>
                   <TableHead>{t("diary.body") ?? "Notes"}</TableHead>
+                  <TableHead className="w-[60px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -115,6 +124,15 @@ export default function DiaryPage() {
                     <TableCell className="max-w-[300px] truncate text-[var(--muted-soft)]">
                       {entry.body ? entry.body.slice(0, 120) : "-"}
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelected(entry)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -122,6 +140,38 @@ export default function DiaryPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Detail dialog */}
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{selected?.title ?? t("common.entry")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            {selected?.case_title && (
+              <div>
+                <span className="font-medium text-[var(--muted-soft)]">{t("table.case")}:</span>{" "}
+                {selected.case_public_id ? (
+                  <Link href={`/cases/${selected.case_public_id}`} className="text-[var(--primary)] hover:underline">
+                    {selected.case_title}
+                  </Link>
+                ) : (
+                  selected.case_title
+                )}
+              </div>
+            )}
+            {selected?.entry_at && (
+              <div>
+                <span className="font-medium text-[var(--muted-soft)]">{t("table.date")}:</span>{" "}
+                {format(new Date(selected.entry_at), "PPP")}
+              </div>
+            )}
+            <div className="whitespace-pre-wrap leading-relaxed text-[var(--foreground)]">
+              {selected?.body || "-"}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
