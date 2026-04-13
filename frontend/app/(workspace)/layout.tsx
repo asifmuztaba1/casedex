@@ -394,12 +394,13 @@ export default function WorkspaceLayout({
         <main className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-6 md:py-6">
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
-            <ProductTour />
+            {/* All auto-showing overlays disabled — re-enable one at a time */}
+            {/* <ProductTour /> */}
             {/* <FeedbackTriggerComponent /> */}
           </TourProvider>
         </main>
       </div>
-      {showSubscriptionWall && <SubscriptionWall />}
+      {/* {showSubscriptionWall && <SubscriptionWall />} */}
       {feedbackOpen && (
         <FeedbackModal
           open={feedbackOpen}
@@ -407,7 +408,7 @@ export default function WorkspaceLayout({
           trigger="manual"
         />
       )}
-      <LanguagePickerModal />
+      {/* <LanguagePickerModal /> */}
       <VoiceAssistant />
     </div>
   );
