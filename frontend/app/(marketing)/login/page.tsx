@@ -30,29 +30,28 @@ export default function LoginPage() {
     role?: string;
     tenant?: { has_workspace_access?: boolean; has_active_subscription?: boolean } | null;
   }) => {
-    // Use full-page navigation so Chrome's password save popup
-    // resolves cleanly instead of overlaying the SPA.
+    let dest = "/dashboard";
+
     if (loggedInUser.role === "platform_admin" || loggedInUser.role === "platform_editor") {
-      window.location.href = "/admin";
-      return;
+      dest = "/admin";
+    } else if (!loggedInUser.tenant_id) {
+      dest = "/onboarding";
+    } else {
+      const hasWorkspaceAccess =
+        loggedInUser.tenant?.has_workspace_access ??
+        loggedInUser.tenant?.has_active_subscription ??
+        false;
+
+      if (!hasWorkspaceAccess) {
+        dest = "/settings/billing?onboarding=1";
+      }
     }
 
-    if (!loggedInUser.tenant_id) {
-      window.location.href = "/onboarding";
-      return;
-    }
-
-    const hasWorkspaceAccess =
-      loggedInUser.tenant?.has_workspace_access ??
-      loggedInUser.tenant?.has_active_subscription ??
-      false;
-
-    if (!hasWorkspaceAccess) {
-      window.location.href = "/settings/billing?onboarding=1";
-      return;
-    }
-
-    window.location.href = "/dashboard";
+    // Small delay lets Chrome's credential manager process the
+    // form submission before we navigate away.
+    setTimeout(() => {
+      window.location.href = dest;
+    }, 100);
   };
 
   return (
