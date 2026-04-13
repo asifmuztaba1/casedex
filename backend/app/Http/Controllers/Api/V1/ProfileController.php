@@ -6,6 +6,8 @@ use App\Domain\Notifications\Actions\SendPasswordChangedMailAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\UpdateProfileRequest;
 use App\Http\Resources\Api\V1\UserResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
@@ -46,5 +48,16 @@ class ProfileController extends Controller
         }
 
         return new UserResource($user);
+    }
+
+    public function pwaInstalled(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user->pwa_installed_at) {
+            $user->pwa_installed_at = now();
+            $user->save();
+        }
+
+        return response()->json(['status' => 'ok']);
     }
 }

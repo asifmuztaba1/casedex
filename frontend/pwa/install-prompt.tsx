@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, X } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
+import { apiPost } from "@/lib/api-client";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -56,6 +57,11 @@ export default function InstallPrompt() {
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === "accepted") {
       setVisible(false);
+      try {
+        await apiPost("/api/v1/profile/pwa-install", {});
+      } catch {
+        // best-effort tracking
+      }
     }
     setDeferredPrompt(null);
   };
