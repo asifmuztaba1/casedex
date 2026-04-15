@@ -6,10 +6,24 @@ return [
     'trial_days' => (int) env('BILLING_TRIAL_DAYS', 30),
 
     'storage_limits' => [
-        TenantPlan::Starter->value => 1 * 1024 * 1024 * 1024,
-        TenantPlan::Professional->value => 5 * 1024 * 1024 * 1024,
-        TenantPlan::Chambers->value => 10 * 1024 * 1024 * 1024,
-        TenantPlan::Trial->value => 1 * 1024 * 1024 * 1024,
+        TenantPlan::Starter->value => 2 * 1024 * 1024 * 1024,
+        TenantPlan::Professional->value => 10 * 1024 * 1024 * 1024,
+        TenantPlan::Chambers->value => 50 * 1024 * 1024 * 1024,
+        TenantPlan::Trial->value => 2 * 1024 * 1024 * 1024,
+    ],
+
+    'seat_limits' => [
+        TenantPlan::Starter->value => 1,
+        TenantPlan::Professional->value => 5,
+        TenantPlan::Chambers->value => null,
+        TenantPlan::Trial->value => 5,
+    ],
+
+    'cause_list_alert_limits' => [
+        TenantPlan::Starter->value => 10,
+        TenantPlan::Professional->value => null,
+        TenantPlan::Chambers->value => null,
+        TenantPlan::Trial->value => null,
     ],
 
     'features' => [
@@ -17,9 +31,26 @@ return [
             TenantPlan::Professional->value,
             TenantPlan::Chambers->value,
         ],
+        'bulk_import' => [
+            TenantPlan::Professional->value,
+            TenantPlan::Chambers->value,
+        ],
+        'client_portal' => [
+            TenantPlan::Chambers->value,
+        ],
+        'sso' => [
+            TenantPlan::Chambers->value,
+        ],
         'priority_support' => [
             TenantPlan::Chambers->value,
         ],
+    ],
+
+    'support_tiers' => [
+        TenantPlan::Starter->value => 'community',
+        TenantPlan::Professional->value => 'email',
+        TenantPlan::Chambers->value => 'email_whatsapp',
+        TenantPlan::Trial->value => 'email',
     ],
 
     'variants' => [
@@ -47,22 +78,28 @@ return [
         'temporary_access_hours' => (int) env('BILLING_MANUAL_TEMPORARY_ACCESS_HOURS', 24),
         'prices' => [
             TenantPlan::Starter->value => [
-                'monthly' => (float) env('BILLING_MANUAL_STARTER_MONTHLY', 1900),
-                'yearly' => (float) env('BILLING_MANUAL_STARTER_YEARLY', 19000),
+                'monthly' => (float) env('BILLING_MANUAL_STARTER_MONTHLY', 500),
+                'yearly' => (float) env('BILLING_MANUAL_STARTER_YEARLY', 5000),
             ],
             TenantPlan::Professional->value => [
-                'monthly' => (float) env('BILLING_MANUAL_PROFESSIONAL_MONTHLY', 4900),
-                'yearly' => (float) env('BILLING_MANUAL_PROFESSIONAL_YEARLY', 49000),
+                'monthly' => (float) env('BILLING_MANUAL_PROFESSIONAL_MONTHLY', 1900),
+                'yearly' => (float) env('BILLING_MANUAL_PROFESSIONAL_YEARLY', 19000),
             ],
             TenantPlan::Chambers->value => [
-                'monthly' => (float) env('BILLING_MANUAL_CHAMBERS_MONTHLY', 9900),
-                'yearly' => (float) env('BILLING_MANUAL_CHAMBERS_YEARLY', 99000),
+                'monthly' => (float) env('BILLING_MANUAL_CHAMBERS_MONTHLY', 4900),
+                'yearly' => (float) env('BILLING_MANUAL_CHAMBERS_YEARLY', 49000),
             ],
         ],
     ],
 
     'ai' => [
         'monthly_free_credits' => (int) env('AI_MONTHLY_FREE_CREDITS', 100),
+        'monthly_credits_by_plan' => [
+            TenantPlan::Starter->value => (int) env('AI_MONTHLY_CREDITS_STARTER', 100),
+            TenantPlan::Professional->value => (int) env('AI_MONTHLY_CREDITS_PROFESSIONAL', 300),
+            TenantPlan::Chambers->value => (int) env('AI_MONTHLY_CREDITS_CHAMBERS', 1000),
+            TenantPlan::Trial->value => (int) env('AI_MONTHLY_CREDITS_TRIAL', 100),
+        ],
         'feature_costs' => [
             'hearing_summary' => (int) env('AI_COST_HEARING_SUMMARY', 4),
             'diary_summary' => (int) env('AI_COST_DIARY_SUMMARY', 3),

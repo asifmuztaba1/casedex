@@ -10,6 +10,7 @@ use App\Domain\Ai\Models\AiCreditPack;
 use App\Domain\Ai\Models\AiCreditWallet;
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Notifications\Models\CaseNotification;
+use App\Domain\Tenancy\Enums\TenantPlan;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Jobs\DispatchCaseNotificationJob;
 use App\Models\User;
@@ -24,8 +25,16 @@ class AiCreditService
     {
     }
 
-    public function monthlyFreeCredits(): int
+    public function monthlyFreeCredits(?Tenant $tenant = null): int
     {
+        if ($tenant !== null) {
+            $plan = $tenant->plan ?? TenantPlan::Trial;
+            $byPlan = config('billing.ai.monthly_credits_by_plan', []);
+            if (array_key_exists($plan->value, $byPlan)) {
+                return (int) $byPlan[$plan->value];
+            }
+        }
+
         return (int) config('billing.ai.monthly_free_credits', 100);
     }
 
@@ -41,7 +50,7 @@ class AiCreditService
             [
                 'free_balance' => 0,
                 'paid_balance' => 0,
-                'monthly_free_credits' => $this->monthlyFreeCredits(),
+                'monthly_free_credits' => $this->monthlyFreeCredits($tenant),
             ]
         );
 
@@ -63,12 +72,12 @@ class AiCreditService
             if ($wallet === null) {
                 $wallet = AiCreditWallet::query()->create([
                     'tenant_id' => $tenant->id,
-                    'monthly_free_credits' => $this->monthlyFreeCredits(),
+                    'monthly_free_credits' => $this->monthlyFreeCredits($tenant),
                 ]);
                 $wallet = AiCreditWallet::query()->where('id', $wallet->id)->lockForUpdate()->firstOrFail();
             }
 
-            $monthlyCredits = $wallet->monthly_free_credits > 0 ? $wallet->monthly_free_credits : $this->monthlyFreeCredits();
+            $monthlyCredits = $this->monthlyFreeCredits($tenant);
             $needsGrant = $wallet->next_free_grant_at === null || $wallet->next_free_grant_at->lessThanOrEqualTo($now);
 
             if (! $needsGrant) {
