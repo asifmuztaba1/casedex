@@ -32,6 +32,7 @@ class StoreDocumentRequest extends FormRequest
             'hearing_public_id' => ['nullable', 'string'],
             'category' => ['required', Rule::in(array_column(DocumentCategory::cases(), 'value'))],
             'original_name' => ['nullable', 'string', 'max:255'],
+            'due_at' => ['nullable', 'date'],
             'file' => ['required', 'file'],
         ];
     }

@@ -434,6 +434,7 @@ const en: Dictionary = {
   "document.category.other": "Other",
   "document.link_hearing": "Link to hearing (optional)",
   "document.name_placeholder": "Document name",
+  "document.due_date": "Due date (optional)",
   "document.download": "Download",
   "documents.kicker": "Documents",
   "documents.title": "Case documents",
@@ -1361,6 +1362,19 @@ const en: Dictionary = {
   "feedback.no_feedback": "No feedback received yet.",
 
   "admin.nav.feedback": "Feedback",
+
+  "briefing.good_morning": "Good morning",
+  "briefing.good_afternoon": "Good afternoon",
+  "briefing.good_evening": "Good evening",
+  "briefing.hearings_today_prefix": "Today you have",
+  "briefing.hearing_word": "hearing",
+  "briefing.hearings_word": "hearings",
+  "briefing.first": "First",
+  "briefing.pending_outcomes": "hearings from yesterday have no outcome recorded",
+  "briefing.cause_list_matches": "cases on today's cause list",
+  "briefing.document_deadlines": "document deadlines today",
+  "briefing.got_it": "Got it",
+  "briefing.open_daily_register": "Open Seresta",
 
   "nav.daily_register": "Seresta",
   "daily_register.title": "Seresta",
@@ -2341,6 +2355,7 @@ const bn: Dictionary = {
   "party.role.state": "স্টেইট",
   "party.role.other": "অন্যান্য",
   "document.name_placeholder": "ডকুমেন্টের নাম",
+  "document.due_date": "ডেডলাইন (ঐচ্ছিক)",
 
   "meta.tagline": "প্রতিটি মামলা, প্রতিটি শুনানি — এক জায়গায়।",
   "meta.description": "CaseDex আইন পেশাজীবী এবং আইনের শিক্ষার্থীদের জন্য একটি কাঠামোবদ্ধ মামলা ওয়ার্কস্পেস। শুনানি, দলিল, ডায়েরি এন্ট্রি এবং গবেষণা এক নিরাপদ ওয়ার্কস্পেসে সাজান।",
@@ -2701,6 +2716,19 @@ const bn: Dictionary = {
   "feedback.no_feedback": "এখনো কোনো মতামত পাওয়া যায়নি।",
 
   "admin.nav.feedback": "মতামত",
+
+  "briefing.good_morning": "শুভ সকাল",
+  "briefing.good_afternoon": "শুভ অপরাহ্ণ",
+  "briefing.good_evening": "শুভ সন্ধ্যা",
+  "briefing.hearings_today_prefix": "আজ আপনার",
+  "briefing.hearing_word": "শুনানি আছে",
+  "briefing.hearings_word": "শুনানি আছে",
+  "briefing.first": "প্রথম",
+  "briefing.pending_outcomes": "গতকালের শুনানির ফলাফল রেকর্ড করা হয়নি",
+  "briefing.cause_list_matches": "কেস আজকের কজলিস্টে আছে",
+  "briefing.document_deadlines": "ডকুমেন্ট ডেডলাইন আজ",
+  "briefing.got_it": "ঠিক আছে",
+  "briefing.open_daily_register": "সেরেস্তা খুলুন",
 
   "nav.daily_register": "সেরেস্তা",
   "daily_register.title": "সেরেস্তা",

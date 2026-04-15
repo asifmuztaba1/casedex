@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\AuthVerificationController;
 use App\Http\Controllers\Api\V1\AiController;
 use App\Http\Controllers\Api\V1\Admin\AiManualPaymentController as AdminAiManualPaymentController;
 use App\Http\Controllers\Api\V1\CountryController;
+use App\Http\Controllers\Api\V1\DailyBriefingController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -216,6 +217,8 @@ Route::prefix('v1')
         Route::get('/research-notes/{publicId}', [ResearchNoteController::class, 'show']);
         Route::put('/research-notes/{publicId}', [ResearchNoteController::class, 'update']);
         Route::delete('/research-notes/{publicId}', [ResearchNoteController::class, 'destroy']);
+
+        Route::get('/daily-briefing/today', [DailyBriefingController::class, 'today']);
 
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications', [NotificationController::class, 'store']);

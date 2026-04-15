@@ -82,6 +82,7 @@ class CreateDocumentAction
             'size' => $file->getSize(),
             'storage_key' => $storageKey,
             'uploaded_by' => $user?->id,
+            'due_at' => $data['due_at'] ?? null,
         ]);
 
         $this->auditLog->handle(

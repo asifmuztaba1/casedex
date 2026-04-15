@@ -36,6 +36,7 @@ class DocumentResource extends JsonResource
             'size' => $this->size,
             'storage_key' => $this->storage_key,
             'download_url' => $downloadUrl,
+            'due_at' => $this->due_at,
             'created_at' => $this->created_at,
         ];
     }
