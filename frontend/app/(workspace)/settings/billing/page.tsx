@@ -43,6 +43,7 @@ import { useLocale } from "@/components/locale-provider";
 import { PLAN_CATALOG, STORAGE_ADDON_FEATURES, type PlanId } from "@/features/billing/plan-catalog";
 import { useToast } from "@/components/ui/use-toast";
 import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
+import { useIsBdtPricing } from "@/lib/use-locale-currency";
 import { cn } from "@/lib/utils";
 import {
   BadgeCheck,
@@ -62,6 +63,7 @@ export default function BillingSettingsPage() {
   const { t, locale } = useLocale();
   const searchParams = useSearchParams();
   const manualOnlyLaunch = isManualMfsOnlyLaunch();
+  const isBdt = useIsBdtPricing();
   const fromOnboarding = searchParams.get("onboarding") === "1";
   const preferManual = searchParams.get("source") === "manual";
   const initialInterval = searchParams.get("interval") === "yearly" ? "yearly" : "monthly";
@@ -883,138 +885,175 @@ export default function BillingSettingsPage() {
         </Dialog>
       )}
 
-      {activeSectionTab === "ai" && (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-[var(--muted)]" />AI Credits</CardTitle>
-          <CardDescription>
-            {manualOnlyLaunch
-              ? "Monthly free credits plus bKash / Rocket top-ups for extra AI usage during beta."
-              : "Monthly free credits + paid top-ups for AI actions."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Free</div>
-              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.free_balance ?? 0}</div>
-            </div>
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Paid</div>
-              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.paid_balance ?? 0}</div>
-            </div>
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Total</div>
-              <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.total_balance ?? 0}</div>
-            </div>
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Next free grant</div>
-              <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
-                {aiCredits?.next_free_grant_at ? new Date(aiCredits.next_free_grant_at).toLocaleDateString() : "N/A"}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-3">
-            {aiCredits?.pack_catalog?.map((pack) => (
-              <button
-                key={pack.public_id}
-                type="button"
-                onClick={() => setSelectedAiPackId(pack.public_id)}
-                className={cn(
-                  "rounded-xl border p-4 text-left transition",
-                  activeAiPackId === pack.public_id
-                    ? "border-[var(--foreground)] bg-[var(--foreground)] text-white shadow-lg"
-                    : "border-[var(--border)] bg-[var(--paper)] hover:border-[var(--border)]"
+      {activeSectionTab === "ai" && (() => {
+        const monthlyAllotment = subscription?.plan_limits?.monthly_ai_credits ?? aiCredits?.monthly_free_credits ?? 0;
+        const freeBalance = aiCredits?.free_balance ?? 0;
+        const usedThisCycle = Math.max(monthlyAllotment - freeBalance, 0);
+        const allotmentPct = monthlyAllotment > 0 ? Math.min((usedThisCycle / monthlyAllotment) * 100, 100) : 0;
+        const formatPackPrimary = (pack: { price_usd_cents: number; price_bdt: number }) =>
+          isBdt ? `৳${pack.price_bdt.toLocaleString()}` : `$${(pack.price_usd_cents / 100).toFixed(2)}`;
+        const formatPackSecondary = (pack: { price_usd_cents: number; price_bdt: number }) =>
+          isBdt ? `$${(pack.price_usd_cents / 100).toFixed(2)} USD` : `৳${pack.price_bdt.toLocaleString()} BDT`;
+        const ledgerLabel = (event_type: string) => {
+          const key = `billing.ai.ledger.${event_type}`;
+          const translated = t(key);
+          return translated === key ? event_type.replace(/_/g, " ") : translated;
+        };
+        const showManualPay = manualEnabled && isBdt;
+        return (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-[var(--muted)]" />{t("billing.ai.title")}</CardTitle>
+            <CardDescription>
+              {manualOnlyLaunch ? t("billing.ai.desc_manual") : t("billing.ai.desc_default")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="grid gap-3 md:grid-cols-4">
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+                <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ai.free")}</div>
+                <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">
+                  {freeBalance}
+                  {monthlyAllotment > 0 && (
+                    <span className="text-sm font-normal text-[var(--muted-soft)]"> / {monthlyAllotment}</span>
+                  )}
+                </div>
+                {monthlyAllotment > 0 && (
+                  <>
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--border)]">
+                      <div
+                        className="h-full rounded-full bg-[var(--foreground)]"
+                        style={{ width: `${allotmentPct}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 text-[10px] text-[var(--muted-soft)]">
+                      {t("billing.ai.monthly_allotment")
+                        .replace("{used}", String(usedThisCycle))
+                        .replace("{total}", String(monthlyAllotment))}
+                    </div>
+                  </>
                 )}
-              >
-                <div className="text-sm font-semibold">{pack.name}</div>
-                <div className={cn("mt-1 text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted)]")}>
-                  {pack.credits} credits
+              </div>
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+                <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ai.paid")}</div>
+                <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.paid_balance ?? 0}</div>
+              </div>
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+                <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ai.total")}</div>
+                <div className="mt-1 text-xl font-semibold text-[var(--foreground)]">{aiCredits?.total_balance ?? 0}</div>
+              </div>
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--wash)] p-3">
+                <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ai.next_grant")}</div>
+                <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
+                  {aiCredits?.next_free_grant_at ? new Date(aiCredits.next_free_grant_at).toLocaleDateString(locale === "bn" ? "bn-BD" : "en-US") : "—"}
                 </div>
-                <div className="mt-3 text-lg font-bold">
-                  ${(pack.price_usd_cents / 100).toFixed(2)}
-                </div>
-                <div className={cn("text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted-soft)]")}>
-                  {pack.price_bdt} BDT
-                </div>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {!manualOnlyLaunch && (
-              <Button onClick={startAiCheckout} disabled={!selectedAiPack || aiCheckout.isPending}>
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span className="inline-flex items-center gap-2">
-                  <AiIcon />
-                  {aiCheckout.isPending ? "Starting checkout..." : "Buy with Lemon"}
-                </span>
-              </Button>
-            )}
-            {manualEnabled && (
-              <Button variant="outline" onClick={() => aiManualSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                <Smartphone className="mr-2 h-4 w-4" />
-                <span className="inline-flex items-center gap-2">
-                  <AiIcon />
-                  {manualOnlyLaunch ? "Use bKash/Rocket for AI top-up" : "Use bKash/Rocket for AI top-up"}
-                </span>
-              </Button>
-            )}
-          </div>
-
-          {manualOnlyLaunch && !manualEnabled && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-              AI top-ups run through bKash / Rocket in this beta, but the payment channels are not configured yet.
+              </div>
             </div>
-          )}
 
-          {manualEnabled && selectedAiPack && (
-            <div ref={aiManualSectionRef} className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-3">
-              <div className="text-sm font-semibold text-[var(--foreground)]">AI credit top-up details</div>
-              <div className="text-xs text-[var(--muted)]">
-                Selected pack: {selectedAiPack.name} ({selectedAiPack.credits} credits), amount: {selectedAiPack.price_bdt} BDT.
-              </div>
-              <div className="grid gap-3 md:grid-cols-2">
-                <Input value={aiSenderNumber} onChange={(event) => setAiSenderNumber(event.target.value)} placeholder="Sender number" />
-                <Input value={aiTransactionId} onChange={(event) => setAiTransactionId(event.target.value)} placeholder="Transaction ID" />
-                <Input type="datetime-local" value={aiSentAt} onChange={(event) => setAiSentAt(event.target.value)} />
-                <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => setAiScreenshot(event.target.files?.[0] ?? null)} />
-              </div>
-              <div className="flex items-center gap-2">
-                <Button onClick={onSubmitAiManual} disabled={submitAiMfsRequest.isPending}>
-                  <FileClock className="mr-2 h-4 w-4" />
+            <div className="grid gap-3 md:grid-cols-3">
+              {aiCredits?.pack_catalog?.map((pack) => (
+                <button
+                  key={pack.public_id}
+                  type="button"
+                  onClick={() => setSelectedAiPackId(pack.public_id)}
+                  className={cn(
+                    "rounded-xl border p-4 text-left transition",
+                    activeAiPackId === pack.public_id
+                      ? "border-[var(--foreground)] bg-[var(--foreground)] text-white shadow-lg"
+                      : "border-[var(--border)] bg-[var(--paper)] hover:border-[var(--border)]"
+                  )}
+                >
+                  <div className="text-sm font-semibold">{pack.name}</div>
+                  <div className={cn("mt-1 text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted)]")}>
+                    {pack.credits} {t("billing.ai.credits_suffix")}
+                  </div>
+                  <div className="mt-3 text-lg font-bold">
+                    {formatPackPrimary(pack)}
+                  </div>
+                  <div className={cn("text-xs", activeAiPackId === pack.public_id ? "text-slate-200" : "text-[var(--muted-soft)]")}>
+                    {formatPackSecondary(pack)}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {!manualOnlyLaunch && (
+                <Button onClick={startAiCheckout} disabled={!selectedAiPack || aiCheckout.isPending}>
+                  <CreditCard className="mr-2 h-4 w-4" />
                   <span className="inline-flex items-center gap-2">
                     <AiIcon />
-                    {submitAiMfsRequest.isPending ? "Sending..." : "Share AI top-up details"}
+                    {aiCheckout.isPending ? t("billing.ai.starting_checkout") : t("billing.ai.buy_with_lemon")}
                   </span>
                 </Button>
-                {aiMfsStatus && <Badge>Status: {aiMfsStatus.status}</Badge>}
+              )}
+              {showManualPay && (
+                <Button variant="outline" onClick={() => aiManualSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                  <Smartphone className="mr-2 h-4 w-4" />
+                  <span className="inline-flex items-center gap-2">
+                    <AiIcon />
+                    {t("billing.ai.use_mfs")}
+                  </span>
+                </Button>
+              )}
+            </div>
+
+            {manualOnlyLaunch && !manualEnabled && isBdt && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                {t("billing.ai.mfs_not_configured")}
+              </div>
+            )}
+
+            {showManualPay && selectedAiPack && (
+              <div ref={aiManualSectionRef} className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-3">
+                <div className="text-sm font-semibold text-[var(--foreground)]">{t("billing.ai.topup_title")}</div>
+                <div className="text-xs text-[var(--muted)]">
+                  {t("billing.ai.topup_selected")
+                    .replace("{name}", selectedAiPack.name)
+                    .replace("{credits}", String(selectedAiPack.credits))
+                    .replace("{amount}", `৳${selectedAiPack.price_bdt.toLocaleString()}`)}
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Input value={aiSenderNumber} onChange={(event) => setAiSenderNumber(event.target.value)} placeholder={t("billing.ai.sender_placeholder")} />
+                  <Input value={aiTransactionId} onChange={(event) => setAiTransactionId(event.target.value)} placeholder={t("billing.ai.transaction_placeholder")} />
+                  <Input type="datetime-local" value={aiSentAt} onChange={(event) => setAiSentAt(event.target.value)} />
+                  <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => setAiScreenshot(event.target.files?.[0] ?? null)} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button onClick={onSubmitAiManual} disabled={submitAiMfsRequest.isPending}>
+                    <FileClock className="mr-2 h-4 w-4" />
+                    <span className="inline-flex items-center gap-2">
+                      <AiIcon />
+                      {submitAiMfsRequest.isPending ? t("billing.ai.sending") : t("billing.ai.share_topup")}
+                    </span>
+                  </Button>
+                  {aiMfsStatus && <Badge>{t("billing.ai.status_label")}: {aiMfsStatus.status}</Badge>}
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]"><History className="h-4 w-4 text-[var(--muted-soft)]" />{t("billing.ai.recent_events")}</div>
+              <div className="mt-2 space-y-2">
+                {aiLedger.slice(0, 5).map((event) => (
+                  <div key={event.public_id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-2 text-xs">
+                    <div>
+                      <div className="font-medium">{ledgerLabel(event.event_type)}</div>
+                      <div className="text-[var(--muted-soft)]">{event.feature ?? t("billing.ai.wallet_feature")}</div>
+                    </div>
+                    <div className={cn("font-semibold", event.credits_delta < 0 ? "text-rose-600" : "text-emerald-600")}>
+                      {event.credits_delta > 0 ? "+" : ""}
+                      {event.credits_delta}
+                    </div>
+                  </div>
+                ))}
+                {aiLedger.length === 0 && <div className="text-xs text-[var(--muted-soft)]">{t("billing.ai.no_events")}</div>}
               </div>
             </div>
-          )}
-
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]"><History className="h-4 w-4 text-[var(--muted-soft)]" />Recent AI credit events</div>
-            <div className="mt-2 space-y-2">
-              {aiLedger.slice(0, 5).map((event) => (
-                <div key={event.public_id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-2 text-xs">
-                  <div>
-                    <div className="font-medium">{event.event_type}</div>
-                    <div className="text-[var(--muted-soft)]">{event.feature ?? "wallet"}</div>
-                  </div>
-                  <div className={cn("font-semibold", event.credits_delta < 0 ? "text-rose-600" : "text-emerald-600")}>
-                    {event.credits_delta > 0 ? "+" : ""}
-                    {event.credits_delta}
-                  </div>
-                </div>
-              ))}
-              {aiLedger.length === 0 && <div className="text-xs text-[var(--muted-soft)]">No AI credit events yet.</div>}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      )}
+          </CardContent>
+        </Card>
+        );
+      })()}
 
       {activeSectionTab === "invoices" && (
       <Card>
