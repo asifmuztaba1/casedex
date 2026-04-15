@@ -1,6 +1,5 @@
 "use client";
 
-import { Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,15 +11,17 @@ import { useLocale } from "@/components/locale-provider";
 import { useAuth, useUpdateProfile } from "@/features/auth/use-auth";
 import type { Locale } from "@/lib/locale";
 
-const options: Array<{ label: string; value: Locale }> = [
-  { label: "বাংলা", value: "bn" },
-  { label: "English", value: "en" },
+const options: Array<{ label: string; flag: string; value: Locale }> = [
+  { label: "বাংলা", flag: "\u{1F1E7}\u{1F1E9}", value: "bn" },
+  { label: "English", flag: "\u{1F1EC}\u{1F1E7}", value: "en" },
 ];
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocale();
   const { data: user } = useAuth();
   const updateProfile = useUpdateProfile();
+
+  const active = options.find((option) => option.value === locale) ?? options[1];
 
   const handleChange = (next: Locale) => {
     setLocale(next);
@@ -39,7 +40,7 @@ export default function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" aria-label="Language">
-          <Globe className="h-4 w-4" />
+          <span className="text-lg leading-none">{active.flag}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -49,6 +50,7 @@ export default function LanguageSwitcher() {
             onClick={() => handleChange(option.value)}
             className={locale === option.value ? "font-semibold" : ""}
           >
+            <span className="mr-2 text-base leading-none">{option.flag}</span>
             {option.label}
           </DropdownMenuItem>
         ))}
