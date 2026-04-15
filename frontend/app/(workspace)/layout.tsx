@@ -402,6 +402,7 @@ export default function WorkspaceLayout({
       <CookieConsentLazy delayMs={5_000} />
       <InstallPromptLazy delayMs={10_000} />
       <LanguagePickerModal />
+      <MorningGreetingModal />
       <VoiceAssistant />
     </div>
   );
@@ -428,6 +429,10 @@ const LanguagePickerModal = dynamic(() => import("@/components/language-picker-m
 const VoiceAssistant = dynamic(() => import("@/components/voice-assistant"), {
   ssr: false,
 });
+const MorningGreetingModal = dynamic(
+  () => import("@/components/morning-greeting-modal"),
+  { ssr: false }
+);
 const TourAutoStart = dynamic(() => import("@/components/tour-auto-start"), {
   ssr: false,
 });

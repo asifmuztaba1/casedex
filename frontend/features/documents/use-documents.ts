@@ -20,6 +20,7 @@ export type DocumentSummary = {
   mime: string | null;
   size: number | null;
   download_url: string | null;
+  due_at: string | null;
   created_at: string;
 };
 
@@ -49,6 +50,7 @@ type CreateDocumentPayload = {
   file: File;
   original_name?: string;
   hearing_public_id?: string;
+  due_at?: string;
 };
 
 export function useCreateDocument() {
@@ -66,6 +68,9 @@ export function useCreateDocument() {
       }
       if (payload.hearing_public_id) {
         formData.append("hearing_public_id", payload.hearing_public_id);
+      }
+      if (payload.due_at) {
+        formData.append("due_at", payload.due_at);
       }
       return apiPostForm<DocumentSummary>("/api/v1/documents", formData);
     },
@@ -100,6 +105,7 @@ type UpdateDocumentPayload = {
     category?: string;
     file?: File;
     hearing_public_id?: string;
+    due_at?: string | null;
   };
 };
 
@@ -121,6 +127,9 @@ export function useUpdateDocument() {
       }
       if (data.hearing_public_id) {
         formData.append("hearing_public_id", data.hearing_public_id);
+      }
+      if (data.due_at !== undefined) {
+        formData.append("due_at", data.due_at ?? "");
       }
       return apiPutForm<DocumentSummary>(`/api/v1/documents/${publicId}`, formData);
     },

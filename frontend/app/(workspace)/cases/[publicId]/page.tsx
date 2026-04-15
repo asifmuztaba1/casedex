@@ -200,12 +200,14 @@ export default function CaseDetailPage() {
     name_base: string;
     extension: string;
     hearing_public_id: string;
+    due_at: string;
   }>({
     category: "petition",
     file: null,
     name_base: "",
     extension: "",
     hearing_public_id: "",
+    due_at: "",
   });
   const [documentSubmitted, setDocumentSubmitted] = useState(false);
 
@@ -1113,6 +1115,21 @@ export default function CaseDetailPage() {
                       </div>
                     ) : null}
                   </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-[var(--muted)]">
+                      {t("document.due_date")}
+                    </label>
+                    <Input
+                      type="date"
+                      value={documentForm.due_at}
+                      onChange={(event) =>
+                        setDocumentForm((prev) => ({
+                          ...prev,
+                          due_at: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -1131,6 +1148,7 @@ export default function CaseDetailPage() {
                             : documentForm.name_base || undefined,
                           hearing_public_id:
                             documentForm.hearing_public_id || undefined,
+                          due_at: documentForm.due_at || undefined,
                         },
                         {
                           onSuccess: () => {

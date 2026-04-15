@@ -13,3 +13,9 @@ Schedule::command('judiciary:scrape-causelist')
     ->timezone('Asia/Dhaka')
     ->withoutOverlapping()
     ->runInBackground();
+
+Schedule::command('app:send-daily-briefing')
+    ->dailyAt('07:00')
+    ->timezone('Asia/Dhaka')
+    ->withoutOverlapping()
+    ->runInBackground();

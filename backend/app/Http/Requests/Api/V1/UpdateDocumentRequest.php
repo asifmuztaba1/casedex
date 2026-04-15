@@ -22,6 +22,7 @@ class UpdateDocumentRequest extends FormRequest
             'case_public_id' => ['sometimes', 'required', 'string'],
             'hearing_public_id' => ['nullable', 'string'],
             'category' => ['sometimes', 'required', Rule::in(array_column(DocumentCategory::cases(), 'value'))],
+            'due_at' => ['nullable', 'date'],
             'file' => ['sometimes', 'file'],
         ];
     }

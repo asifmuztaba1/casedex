@@ -27,10 +27,12 @@ class Document extends Model
         'size',
         'storage_key',
         'uploaded_by',
+        'due_at',
     ];
 
     protected $casts = [
         'category' => DocumentCategory::class,
+        'due_at' => 'datetime',
     ];
 
     protected static function booted(): void
