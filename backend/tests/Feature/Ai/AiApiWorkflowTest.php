@@ -183,6 +183,7 @@ it('deduplicates ai requests by idempotency key without double charging', functi
 
 it('blocks ai requests when credits are insufficient', function (): void {
     Config::set('billing.ai.monthly_free_credits', 0);
+    Config::set('billing.ai.monthly_credits_by_plan.starter', 0);
 
     Http::fake([
         'https://ai.test/*' => Http::response([
@@ -229,6 +230,7 @@ it('blocks ai requests when credits are insufficient', function (): void {
 
 it('refunds credits when provider execution fails', function (): void {
     Config::set('billing.ai.monthly_free_credits', 6);
+    Config::set('billing.ai.monthly_credits_by_plan.starter', 6);
 
     Http::fake([
         'https://ai.test/*' => Http::response(['error' => 'provider_down'], 500),
