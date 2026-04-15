@@ -78,6 +78,33 @@ class PlanFeatureService
         );
     }
 
+    public function hasBulkImport(TenantPlan $plan): bool
+    {
+        return in_array(
+            $plan->value,
+            config('billing.features.bulk_import', []),
+            true
+        );
+    }
+
+    public function hasClientPortal(TenantPlan $plan): bool
+    {
+        return in_array(
+            $plan->value,
+            config('billing.features.client_portal', []),
+            true
+        );
+    }
+
+    public function hasSso(TenantPlan $plan): bool
+    {
+        return in_array(
+            $plan->value,
+            config('billing.features.sso', []),
+            true
+        );
+    }
+
     public function hasPrioritySupport(TenantPlan $plan): bool
     {
         return in_array(
@@ -85,6 +112,40 @@ class PlanFeatureService
             config('billing.features.priority_support', []),
             true
         );
+    }
+
+    public function supportTier(TenantPlan $plan): string
+    {
+        return (string) Arr::get(
+            config('billing.support_tiers', []),
+            $plan->value,
+            'community'
+        );
+    }
+
+    public function seatLimit(TenantPlan $plan): ?int
+    {
+        $value = Arr::get(config('billing.seat_limits', []), $plan->value);
+
+        return $value === null ? null : (int) $value;
+    }
+
+    public function causeListAlertLimit(TenantPlan $plan): ?int
+    {
+        $value = Arr::get(config('billing.cause_list_alert_limits', []), $plan->value);
+
+        return $value === null ? null : (int) $value;
+    }
+
+    public function monthlyAiCredits(TenantPlan $plan): int
+    {
+        $value = Arr::get(config('billing.ai.monthly_credits_by_plan', []), $plan->value);
+
+        if ($value === null) {
+            return (int) config('billing.ai.monthly_free_credits', 100);
+        }
+
+        return (int) $value;
     }
 
     public function isTrialExpired(Tenant $tenant): bool
@@ -338,7 +399,14 @@ class PlanFeatureService
             'storage_remaining_bytes' => $hasUnlimitedStorage ? null : max(0, $storageLimit - $storageUsed),
             'has_unlimited_storage' => $hasUnlimitedStorage,
             'has_audit_export' => $this->hasAuditExport($plan),
+            'has_bulk_import' => $this->hasBulkImport($plan),
+            'has_client_portal' => $this->hasClientPortal($plan),
+            'has_sso' => $this->hasSso($plan),
             'has_priority_support' => $this->hasPrioritySupport($plan),
+            'support_tier' => $this->supportTier($plan),
+            'seat_limit' => $this->seatLimit($plan),
+            'cause_list_alert_limit' => $this->causeListAlertLimit($plan),
+            'monthly_ai_credits' => $this->monthlyAiCredits($plan),
         ];
     }
 }

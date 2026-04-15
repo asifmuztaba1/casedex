@@ -16,13 +16,22 @@ export type SubscriptionStatus =
   | "cancelled"
   | "expired";
 
+export type SupportTier = "community" | "email" | "email_whatsapp";
+
 export type PlanLimits = {
   storage_limit_bytes: number | null;
   storage_used_bytes: number;
   storage_remaining_bytes: number | null;
   has_unlimited_storage: boolean;
   has_audit_export: boolean;
+  has_bulk_import: boolean;
+  has_client_portal: boolean;
+  has_sso: boolean;
   has_priority_support: boolean;
+  support_tier: SupportTier;
+  seat_limit: number | null;
+  cause_list_alert_limit: number | null;
+  monthly_ai_credits: number;
 };
 
 export type SubscriptionState = {

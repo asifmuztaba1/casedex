@@ -52,7 +52,14 @@ export type AuthUser = {
       storage_remaining_bytes?: number | null;
       has_unlimited_storage?: boolean;
       has_audit_export?: boolean;
+      has_bulk_import?: boolean;
+      has_client_portal?: boolean;
+      has_sso?: boolean;
       has_priority_support?: boolean;
+      support_tier?: "community" | "email" | "email_whatsapp";
+      seat_limit?: number | null;
+      cause_list_alert_limit?: number | null;
+      monthly_ai_credits?: number;
     } | null;
   } | null;
   tenant_name?: string | null;
