@@ -1430,6 +1430,9 @@ const en: Dictionary = {
   "nav.home": "Home",
   "nav.more": "More",
   "nav.back": "Back",
+
+  "pwa.update_available": "Update available",
+  "pwa.update_reload": "Reload",
 };
 
 const bn: Dictionary = {
@@ -2818,6 +2821,9 @@ const bn: Dictionary = {
   "nav.home": "হোম",
   "nav.more": "আরও",
   "nav.back": "ফিরে যান",
+
+  "pwa.update_available": "আপডেট এসেছে",
+  "pwa.update_reload": "রিলোড করুন",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,
