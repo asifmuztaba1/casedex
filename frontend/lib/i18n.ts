@@ -1426,6 +1426,10 @@ const en: Dictionary = {
   "billing.ai.ledger.refund": "Refund",
   "billing.ai.ledger.expire": "Expired credits",
   "billing.ai.ledger.adjustment": "Adjustment",
+
+  "nav.home": "Home",
+  "nav.more": "More",
+  "nav.back": "Back",
 };
 
 const bn: Dictionary = {
@@ -2810,6 +2814,10 @@ const bn: Dictionary = {
   "billing.ai.ledger.refund": "রিফান্ড",
   "billing.ai.ledger.expire": "মেয়াদোত্তীর্ণ ক্রেডিট",
   "billing.ai.ledger.adjustment": "সমন্বয়",
+
+  "nav.home": "হোম",
+  "nav.more": "আরও",
+  "nav.back": "ফিরে যান",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,
