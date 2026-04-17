@@ -20,7 +20,14 @@ RUN apt-get update \
        php8.4-mbstring php8.4-xml php8.4-zip php8.4-bcmath \
        php8.4-intl php8.4-readline php8.4-redis \
     && curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
-    && apt-get install -y mysql-client \
+    && apt-get -y autoremove && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# mysql-client-core-8.0 is isolated so transient Ubuntu mirror hangs
+# don't invalidate the large PHP/composer layer above on retry.
+# Only mysqldump is needed (spatie/laravel-backup runs nightly at 01:30).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends mysql-client-core-8.0 \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
