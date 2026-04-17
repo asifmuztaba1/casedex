@@ -21,10 +21,14 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # apt to hang only forces the small failing step to retry, not the
 # entire toolchain. The builder runs under a 10-minute per-step timeout.
 
-# Base tools
+# Base tools — supervisor intentionally excluded: each container
+# (backend, horizon, scheduler) runs a single process with its own CMD,
+# so supervisor would be unused. Keeping it dragged in ~50 transitive
+# deps including python3.12 from archive.ubuntu.com/noble-updates,
+# which was the mirror hang causing repeated build timeouts.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       gnupg gosu curl ca-certificates zip unzip git supervisor \
+       gnupg gosu curl ca-certificates zip unzip git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add ondrej/php PPA. curl -fsSL fails on HTTP error (was silently
