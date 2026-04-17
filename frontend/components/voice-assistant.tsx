@@ -157,7 +157,7 @@ export default function VoiceAssistant() {
   if (!script) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 print:hidden">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-40 flex flex-col items-end gap-3 lg:bottom-6 lg:right-6 print:hidden">
       {/* Expanded panel showing transcript */}
       {expanded && (
         <div className="w-80 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">

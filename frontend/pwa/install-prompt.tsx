@@ -73,7 +73,7 @@ export default function InstallPrompt({ delayMs = 0 }: { delayMs?: number }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-in slide-in-from-bottom-4 fade-in duration-300">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 mx-auto max-w-md animate-in slide-in-from-bottom-4 fade-in duration-300 lg:bottom-4">
       <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">
         <img
           src="/icons/icon-192.svg"

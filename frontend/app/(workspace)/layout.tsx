@@ -6,17 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MobileTopBar, MobileBottomNav } from "@/components/workspace/mobile-shell";
 import { useAuth, useLogout } from "@/features/auth/use-auth";
 import { useSubscription } from "@/features/billing/use-billing";
 import {
@@ -42,7 +37,6 @@ import {
   LayoutDashboard,
   LibraryBig,
   LifeBuoy,
-  Menu,
   MessageSquareHeart,
   Settings,
   Sparkles,
@@ -146,7 +140,7 @@ export default function WorkspaceLayout({
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 md:flex print:!hidden">
+      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 lg:flex print:!hidden">
         <div className="space-y-2">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("nav.workspace")}
@@ -195,81 +189,12 @@ export default function WorkspaceLayout({
         </nav>
       </aside>
 
-      <div className="md:pl-[260px] print:!pl-0">
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur print:!hidden">
-          <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-3 py-3 md:gap-4 md:px-6 md:py-4">
+      <div className="lg:pl-[260px] print:!pl-0">
+        <MobileTopBar onOpenFeedback={() => setFeedbackOpen(true)} />
+        <header className="sticky top-0 z-20 hidden border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur lg:block print:!hidden">
+          <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 py-4">
+            <div className="flex items-center gap-3" />
             <div className="flex items-center gap-3">
-              <Sheet>
-                {mounted ? (
-                  <>
-                    <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="md:hidden">
-                        <Menu className="h-4 w-4" />
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <SheetTitle className="sr-only">
-                        {t("nav.workspace")}
-                      </SheetTitle>
-                      <div className="space-y-6">
-                        <div>
-                          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
-                            {t("nav.workspace")}
-                          </div>
-                          <div className="text-lg font-semibold text-[var(--foreground)]">
-                            CaseDex
-                          </div>
-                        </div>
-                        <nav className="space-y-1">
-                          {navItems.map((item) => {
-                            const isActive = item.href === activeHref;
-                            return (
-                              <a
-                                key={item.href}
-                                href={item.href}
-                                aria-current={isActive ? "page" : undefined}
-                                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                                  isActive
-                                    ? item.ai
-                                      ? "bg-violet-50 font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-300"
-                                      : "bg-[var(--wash)] font-semibold text-[var(--foreground)]"
-                                    : item.ai
-                                      ? "text-violet-600 hover:bg-[var(--paper-hover)] dark:text-violet-400"
-                                      : "text-[var(--muted)] hover:bg-[var(--paper-hover)]"
-                                }`}
-                              >
-                                <item.icon
-                                  className={`h-4 w-4 ${
-                                    isActive
-                                      ? item.ai
-                                        ? "text-violet-600 dark:text-violet-300"
-                                        : "text-[var(--foreground)]"
-                                      : item.ai
-                                        ? "text-violet-500 dark:text-violet-400"
-                                        : "text-[var(--muted-soft)]"
-                                  }`}
-                                />
-                                {t(item.labelKey)}
-                                {item.ai && (
-                                  <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                                    AI
-                                  </span>
-                                )}
-                              </a>
-                            );
-                          })}
-                        </nav>
-                      </div>
-                    </SheetContent>
-                  </>
-                ) : (
-                  <Button variant="outline" size="sm" className="md:hidden" disabled>
-                    <Menu className="h-4 w-4" />
-                  </Button>
-                )}
-              </Sheet>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <Input className="hidden w-[220px] md:block" placeholder={t("nav.search")} />
               <Badge variant="subtle">
                 {user?.tenant?.name ?? user?.tenant_name ?? "-"}
@@ -383,13 +308,16 @@ export default function WorkspaceLayout({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-6 md:py-6">
+        <main
+          className="mx-auto w-full max-w-[1200px] px-3 py-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:px-6 md:py-6 lg:pb-6"
+        >
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
             <ProductTour />
             <TourAutoStart delayMs={15_000} />
           </TourProvider>
         </main>
+        <MobileBottomNav />
       </div>
       {showSubscriptionWall && <SubscriptionWall />}
       {feedbackOpen && (

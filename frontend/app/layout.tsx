@@ -83,9 +83,9 @@ export default async function RootLayout({
         <Providers initialLocale={initialLocale}>
           {children}
           {/* <InstallPrompt /> */}
+          <ServiceWorkerRegister />
         </Providers>
         <Toaster />
-        <ServiceWorkerRegister />
       </body>
     </html>
   );
