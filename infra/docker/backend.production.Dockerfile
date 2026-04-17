@@ -33,7 +33,7 @@ RUN apt-get update \
 # PHP extensions not bundled in php:8.4-fpm base.
 # gd needs freetype + jpeg configured before install.
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" pdo_mysql gd zip bcmath intl
+    && docker-php-ext-install -j"$(nproc)" pdo_mysql gd zip bcmath intl pcntl
 
 # Redis via pecl (pecl.php.net is a separate network from ubuntu mirrors).
 RUN pecl install redis \
