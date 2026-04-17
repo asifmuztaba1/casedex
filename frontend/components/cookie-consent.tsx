@@ -26,8 +26,8 @@ export default function CookieConsent({ delayMs = 0 }: { delayMs?: number }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur animate-in slide-in-from-bottom fade-in duration-300">
-      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 py-3">
+    <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur animate-in slide-in-from-bottom fade-in duration-300 lg:bottom-0">
+      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-3 px-3 py-3 md:px-6">
         <p className="text-xs text-[var(--muted)]">{t("cookie.message")}</p>
         <Button size="sm" variant="outline" onClick={accept}>
           {t("cookie.accept")}

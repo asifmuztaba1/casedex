@@ -1,5 +1,6 @@
-const STATIC_CACHE = "casedex-static-v1";
-const DATA_CACHE = "casedex-data-v1";
+const BUILD_HASH = "__BUILD_HASH__";
+const STATIC_CACHE = `casedex-static-${BUILD_HASH}`;
+const DATA_CACHE = `casedex-data-${BUILD_HASH}`;
 
 const STATIC_ASSETS = ["/", "/offline.html", "/manifest.json"];
 
@@ -7,7 +8,12 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
   );
-  self.skipWaiting();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {
