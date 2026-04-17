@@ -306,27 +306,36 @@ export default function DashboardPage() {
 
       <div data-tour="dashboard-metrics" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: t("dashboard.metrics.cases"), value: `${cases.length}` },
+          { label: t("dashboard.metrics.cases"), value: `${cases.length}`, href: "/cases" },
           {
             label: t("dashboard.metrics.hearings"),
             value: `${upcomingHearings.length}`,
+            href: "/hearings",
           },
-          { label: t("dashboard.metrics.diary"), value: `${diaryEntries.length}` },
+          { label: t("dashboard.metrics.diary"), value: `${diaryEntries.length}`, href: "/diary" },
           {
             label: t("dashboard.metrics.notifications"),
             value: `${notifications.length}`,
+            href: "/notifications",
           },
         ].map((metric) => (
-          <Card key={metric.label}>
-            <CardHeader className="space-y-1">
-              <p className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">
-                {metric.label}
-              </p>
-              <CardTitle className="text-3xl font-semibold">
-                {metric.value}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <Link
+            key={metric.label}
+            href={metric.href}
+            aria-label={metric.label}
+            className="block rounded-2xl transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+          >
+            <Card className="h-full transition-colors hover:bg-[var(--paper-hover)]">
+              <CardHeader className="space-y-1">
+                <p className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">
+                  {metric.label}
+                </p>
+                <CardTitle className="text-3xl font-semibold">
+                  {metric.value}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </Link>
         ))}
       </div>
 
