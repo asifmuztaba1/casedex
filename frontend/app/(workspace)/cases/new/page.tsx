@@ -247,35 +247,37 @@ export default function NewCasePage() {
       : t("cases.wizard.opposite_lawyer_for_plaintiff");
 
   return (
-    <section className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">
-          {t("nav.new_case")}
-        </p>
-        <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-          {step === 1 ? t("cases.wizard.step1_title") : t("cases.wizard.step2_title")}
-        </h1>
-        <p className="text-sm text-[var(--muted)]">
-          {step === 1 ? t("cases.wizard.step1_desc") : t("cases.wizard.step2_desc")}
-        </p>
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[var(--muted-soft)]">
-          <span
-            className={cn(
-              "rounded-full px-2 py-1",
-              step === 1 ? "bg-[var(--foreground)] text-[var(--paper)]" : "bg-[var(--wash)]"
-            )}
-          >
-            1
-          </span>
-          <span
-            className={cn(
-              "rounded-full px-2 py-1",
-              step === 2 ? "bg-[var(--foreground)] text-[var(--paper)]" : "bg-[var(--wash)]"
-            )}
-          >
-            2
-          </span>
-          <span>
+    <section className="space-y-4 lg:space-y-6">
+      <div
+        className="sticky top-14 z-20 -mx-3 border-b border-[var(--border)] bg-[var(--paper)]/95 px-3 py-3 backdrop-blur md:-mx-6 md:px-6 lg:static lg:-mx-0 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-0"
+      >
+        <div className="space-y-1">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--muted-soft)] lg:text-xs">
+            {t("nav.new_case")}
+          </p>
+          <h1 className="text-xl font-semibold text-[var(--foreground)] lg:text-2xl">
+            {step === 1 ? t("cases.wizard.step1_title") : t("cases.wizard.step2_title")}
+          </h1>
+          <p className="hidden text-sm text-[var(--muted)] lg:block">
+            {step === 1 ? t("cases.wizard.step1_desc") : t("cases.wizard.step2_desc")}
+          </p>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <div className="flex flex-1 items-center gap-1.5">
+            <div
+              className={cn(
+                "h-1.5 flex-1 rounded-full transition-colors",
+                step >= 1 ? "bg-[var(--foreground)]" : "bg-[var(--border)]"
+              )}
+            />
+            <div
+              className={cn(
+                "h-1.5 flex-1 rounded-full transition-colors",
+                step >= 2 ? "bg-[var(--foreground)]" : "bg-[var(--border)]"
+              )}
+            />
+          </div>
+          <span className="shrink-0 text-[11px] font-medium text-[var(--muted-soft)]">
             {t("cases.wizard.step_indicator")
               .replace("{current}", String(step))
               .replace("{total}", "2")}
@@ -283,7 +285,10 @@ export default function NewCasePage() {
         </div>
       </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit(submit)}>
+      <form
+        className="space-y-4 pb-36 lg:space-y-6 lg:pb-0"
+        onSubmit={handleSubmit(submit)}
+      >
         <input type="hidden" {...register("court_public_id")} />
 
         {step === 1 && (
@@ -416,7 +421,7 @@ export default function NewCasePage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="hidden flex-wrap items-center gap-3 pt-2 lg:flex">
                 <Button
                   type="submit"
                   variant="outline"
@@ -469,7 +474,7 @@ export default function NewCasePage() {
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-3">
                 <select
-                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                  className="h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                   {...register("registry_case_type_bn")}
                   defaultValue=""
                 >
@@ -514,7 +519,7 @@ export default function NewCasePage() {
                   }
                 />
                 <textarea
-                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm"
+                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-base md:text-sm"
                   placeholder={t("cases.story.placeholder")}
                   {...register("story")}
                 />
@@ -541,7 +546,7 @@ export default function NewCasePage() {
                   }
                 />
                 <textarea
-                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm"
+                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-base md:text-sm"
                   placeholder={t("cases.petition.placeholder")}
                   {...register("petition_draft")}
                 />
@@ -570,7 +575,7 @@ export default function NewCasePage() {
                         {...register(`parties.${index}.name`)}
                       />
                       <select
-                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        className="h-11 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                         {...register(`parties.${index}.type`)}
                       >
                         <option value="person">{t("party.type.person")}</option>
@@ -579,7 +584,7 @@ export default function NewCasePage() {
                         </option>
                       </select>
                       <select
-                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        className="h-11 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                         {...register(`parties.${index}.side`)}
                       >
                         <option value="opponent">{t("party.side.opponent")}</option>
@@ -589,7 +594,7 @@ export default function NewCasePage() {
                         <option value="client">{t("party.side.client")}</option>
                       </select>
                       <select
-                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        className="h-11 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                         {...register(`parties.${index}.role`)}
                       >
                         <option value="petitioner">{t("party.role.petitioner")}</option>
@@ -726,7 +731,7 @@ export default function NewCasePage() {
                       )}
                     </div>
                     <select
-                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                      className="h-11 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                       {...register(`participants.${index}.role`)}
                     >
                       <option value="lead_lawyer">{t("roles.lead_lawyer")}</option>
@@ -777,7 +782,7 @@ export default function NewCasePage() {
                 />
                 <div className="grid gap-4 md:grid-cols-2">
                   <select
-                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                    className="h-11 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-base md:h-10 md:text-sm"
                     {...register("first_hearing_type")}
                   >
                     <option value="mention">{t("hearing.type.mention")}</option>
@@ -798,7 +803,7 @@ export default function NewCasePage() {
               </CardContent>
             </Card>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="hidden flex-wrap items-center gap-3 lg:flex">
               <Button type="button" variant="outline" onClick={() => setStep(1)}>
                 ← {t("cases.wizard.go_back")}
               </Button>
@@ -815,6 +820,63 @@ export default function NewCasePage() {
             </div>
           </>
         )}
+
+        {/* Mobile sticky bottom action bar — sits above the workspace tab bar */}
+        <div
+          className="fixed inset-x-0 z-20 border-t border-[var(--border)] bg-[var(--paper)]/95 px-3 py-3 backdrop-blur lg:hidden print:hidden"
+          style={{ bottom: "calc(4rem + env(safe-area-inset-bottom))" }}
+        >
+          {step === 1 ? (
+            <div className="flex items-center gap-2">
+              <Button
+                type="submit"
+                variant="outline"
+                size="lg"
+                disabled={createCase.isPending}
+                className="flex-1"
+              >
+                {createCase.isPending
+                  ? t("cases.actions.saving")
+                  : t("cases.actions.create")}
+              </Button>
+              <Button
+                type="button"
+                size="lg"
+                onClick={handleStep1Continue}
+                className="flex-1"
+              >
+                {t("cases.wizard.continue")}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={() => setStep(1)}
+                className="shrink-0"
+              >
+                ←
+              </Button>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={createCase.isPending}
+                className="flex-1"
+              >
+                {createCase.isPending
+                  ? t("cases.actions.saving")
+                  : t("cases.wizard.save_finish")}
+              </Button>
+            </div>
+          )}
+          {Object.keys(formState.errors).length > 0 && (
+            <p className="mt-2 text-center text-xs text-rose-600">
+              {t("cases.actions.review_required")}
+            </p>
+          )}
+        </div>
       </form>
     </section>
   );
