@@ -125,8 +125,11 @@ it('validates required fields on case creation', function (): void {
     $this->actingAs($user);
 
     $response = $this->postJson('/api/v1/cases', []);
+    // After the wizard refactor, only court + client name are required at
+    // creation time. title/story/petition_draft are now optional and can be
+    // filled in step 2 / on the case detail page later.
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['title', 'story', 'petition_draft']);
+        ->assertJsonValidationErrors(['court', 'client.name']);
 });
 
 it('creates a rural client with only a name and stores null contact fields', function (): void {

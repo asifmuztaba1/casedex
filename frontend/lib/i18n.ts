@@ -1433,6 +1433,25 @@ const en: Dictionary = {
 
   "pwa.update_available": "Update available",
   "pwa.update_reload": "Reload",
+
+  "cases.wizard.step1_title": "Quick start",
+  "cases.wizard.step1_desc": "Just five fields to register the case. Fill the rest later.",
+  "cases.wizard.step2_title": "Add details",
+  "cases.wizard.step2_desc": "Optional. Enrich the case with story, petition draft, parties, team, and registry numbers.",
+  "cases.wizard.step_indicator": "Step {current} of {total}",
+  "cases.wizard.continue": "Continue",
+  "cases.wizard.skip": "Skip for now",
+  "cases.wizard.save_finish": "Save & finish",
+  "cases.wizard.go_back": "Back",
+  "cases.wizard.plaintiff": "Plaintiff (বাদী)",
+  "cases.wizard.defendant": "Defendant (বিবাদী)",
+  "cases.wizard.plaintiff_placeholder": "Plaintiff name",
+  "cases.wizard.defendant_placeholder": "Defendant name",
+  "cases.wizard.represent_label": "I represent",
+  "cases.wizard.opposite_lawyer": "Opposite lawyer name",
+  "cases.wizard.opposite_lawyer_for_defendant": "Defendant's lawyer name",
+  "cases.wizard.opposite_lawyer_for_plaintiff": "Plaintiff's lawyer name",
+  "cases.wizard.next_date": "Next hearing date",
 };
 
 const bn: Dictionary = {
@@ -2824,6 +2843,25 @@ const bn: Dictionary = {
 
   "pwa.update_available": "আপডেট এসেছে",
   "pwa.update_reload": "রিলোড করুন",
+
+  "cases.wizard.step1_title": "দ্রুত শুরু",
+  "cases.wizard.step1_desc": "মাত্র পাঁচটি field দিয়ে মামলা তৈরি করুন। বাকি তথ্য পরে পূরণ করা যাবে।",
+  "cases.wizard.step2_title": "বিস্তারিত যোগ করুন",
+  "cases.wizard.step2_desc": "ঐচ্ছিক। গল্প, আরজি, পক্ষ, টিম এবং রেজিস্ট্রি নম্বর যোগ করুন।",
+  "cases.wizard.step_indicator": "ধাপ {current} / {total}",
+  "cases.wizard.continue": "এগিয়ে যান",
+  "cases.wizard.skip": "এখনই এড়িয়ে যান",
+  "cases.wizard.save_finish": "সংরক্ষণ ও সম্পন্ন",
+  "cases.wizard.go_back": "পেছনে",
+  "cases.wizard.plaintiff": "বাদী",
+  "cases.wizard.defendant": "বিবাদী",
+  "cases.wizard.plaintiff_placeholder": "বাদীর নাম",
+  "cases.wizard.defendant_placeholder": "বিবাদীর নাম",
+  "cases.wizard.represent_label": "আমি কার পক্ষে",
+  "cases.wizard.opposite_lawyer": "বিপক্ষের উকিলের নাম",
+  "cases.wizard.opposite_lawyer_for_defendant": "বিবাদীর উকিলের নাম",
+  "cases.wizard.opposite_lawyer_for_plaintiff": "বাদীর উকিলের নাম",
+  "cases.wizard.next_date": "পরবর্তী শুনানির তারিখ",
 };
 export const dictionaries: Record<Locale, Dictionary> = {
   en,

@@ -24,7 +24,7 @@ class StoreCaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:200'],
+            'title' => ['nullable', 'string', 'max:200'],
             'court' => ['required_without:court_public_id', 'string', 'max:200'],
             'court_public_id' => ['nullable', 'string', 'exists:courts,public_id'],
             'case_number' => ['nullable', 'string', 'max:120'],
@@ -32,8 +32,9 @@ class StoreCaseRequest extends FormRequest
             'registry_case_serial' => ['nullable', 'integer', 'min:1', 'required_with:registry_case_type_bn,registry_case_year'],
             'registry_case_year' => ['nullable', 'integer', 'min:1900', 'max:2100', 'required_with:registry_case_type_bn,registry_case_serial'],
             'status' => ['nullable', Rule::in(array_column(CaseStatus::cases(), 'value'))],
-            'story' => ['required', 'string'],
-            'petition_draft' => ['required', 'string'],
+            'story' => ['nullable', 'string'],
+            'petition_draft' => ['nullable', 'string'],
+            'opposite_lawyer_name' => ['nullable', 'string', 'max:200'],
 
             'client_id' => ['nullable', 'integer', 'exists:clients,id'],
             'client' => ['nullable', 'array'],

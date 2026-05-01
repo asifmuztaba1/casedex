@@ -96,6 +96,7 @@ export type CaseSummary = {
   registry_case_serial: number | null;
   registry_case_year: number | null;
   status: string | null;
+  opposite_lawyer_name: string | null;
   client: ClientSummary | null;
   created_at: string;
 };
@@ -139,7 +140,7 @@ export function useCaseDetail(publicId: string) {
 }
 
 type CreateCasePayload = {
-  title: string;
+  title?: string;
   court: string;
   court_public_id?: string;
   case_number?: string;
@@ -147,8 +148,9 @@ type CreateCasePayload = {
   registry_case_serial?: number;
   registry_case_year?: number;
   status?: string;
-  story: string;
-  petition_draft: string;
+  story?: string;
+  petition_draft?: string;
+  opposite_lawyer_name?: string;
   client_id?: number;
   client?: {
     name: string;

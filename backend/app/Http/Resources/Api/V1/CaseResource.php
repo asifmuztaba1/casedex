@@ -23,6 +23,7 @@ class CaseResource extends JsonResource
             'registry_case_serial' => $this->registry_case_serial,
             'registry_case_year' => $this->registry_case_year,
             'status' => $this->status?->value,
+            'opposite_lawyer_name' => $this->opposite_lawyer_name,
             'client' => new ClientResource($this->whenLoaded('client')),
             'created_at' => $this->created_at,
         ];
