@@ -35,6 +35,7 @@ class CaseFile extends Model
         'client_id',
         'story',
         'petition_draft',
+        'opposite_lawyer_name',
         'created_by',
         'status',
     ];

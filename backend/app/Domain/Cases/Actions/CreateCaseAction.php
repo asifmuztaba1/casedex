@@ -67,8 +67,14 @@ class CreateCaseAction
                 $courtName = $court->displayName(app()->getLocale());
             }
 
+            $title = $data['title'] ?? null;
+
+            if ($title === null || trim($title) === '') {
+                $title = $this->autoTitle($data, $clientId);
+            }
+
             $case = CaseFile::create([
-                'title' => $data['title'],
+                'title' => $title,
                 'court' => $courtName,
                 'court_id' => $courtId,
                 'case_number' => $data['case_number'] ?? null,
@@ -80,8 +86,9 @@ class CreateCaseAction
                     ? (int) $data['registry_case_year']
                     : null,
                 'status' => $data['status'] ??  CaseStatus::Open,
-                'story' => $data['story'],
-                'petition_draft' => $data['petition_draft'],
+                'story' => $data['story'] ?? null,
+                'petition_draft' => $data['petition_draft'] ?? null,
+                'opposite_lawyer_name' => $data['opposite_lawyer_name'] ?? null,
                 'client_id' => $clientId,
                 'created_by' => $user?->id,
             ]);
@@ -190,5 +197,35 @@ class CreateCaseAction
 
             return $case;
         });
+    }
+
+    /**
+     * Build a title from client + opponent names when the user submitted
+     * the wizard's Step 1 without filling the title field.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function autoTitle(array $data, ?int $clientId): string
+    {
+        $opponentName = null;
+        foreach (($data['parties'] ?? []) as $party) {
+            if (($party['side'] ?? null) === PartySide::Opponent->value) {
+                $opponentName = $party['name'] ?? null;
+                break;
+            }
+        }
+
+        $clientName = $data['client']['name'] ?? null;
+        if ($clientName === null && $clientId !== null) {
+            $clientName = Client::query()->where('id', $clientId)->value('name');
+        }
+
+        if ($clientName !== null && $opponentName !== null) {
+            return sprintf('%s বনাম %s', $clientName, $opponentName);
+        }
+
+        return $clientName
+            ?? $opponentName
+            ?? __('messages.untitled_case', [], 'en') ?? 'Untitled case';
     }
 }

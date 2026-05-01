@@ -26,6 +26,7 @@ import {
   HEARING_AGENDA_TEMPLATES,
   PETITION_TEMPLATES,
 } from "@/features/templates/legal-templates";
+import { cn } from "@/lib/utils";
 
 const REGISTRY_CASE_TYPES: Array<{ bn: string; en: string; slug: string }> = [
   { bn: "দেওয়ানী আপীল", en: "Civil Appeal", slug: "civil_appeal" },
@@ -77,6 +78,8 @@ const partySchema = z.object({
   notes: z.string().optional(),
 });
 
+type Side = "plaintiff" | "defendant";
+
 export default function NewCasePage() {
   const router = useRouter();
   const createCase = useCreateCase();
@@ -84,118 +87,56 @@ export default function NewCasePage() {
   const { data: user } = useAuth();
   const { data: usersData } = useUsers(Boolean(user?.tenant_id));
   const tenantUsers = usersData ?? [];
-  const [useExistingClient, setUseExistingClient] = useState(false);
-  const [includeFirstHearing, setIncludeFirstHearing] = useState(false);
+
+  const [step, setStep] = useState<1 | 2>(1);
+  const [representSide, setRepresentSide] = useState<Side>("plaintiff");
   const [selectedCourt, setSelectedCourt] = useState<CourtLookup | null>(null);
 
   const caseSchema = useMemo(
     () =>
-      z
-        .object({
-          title: z.string().min(2),
-          court: z.string().min(2),
-          court_public_id: z.string().optional(),
-          case_number: z.string().optional(),
-          registry_case_type_bn: z.string().optional(),
-          registry_case_serial: z.coerce.number().int().min(1).optional(),
-          registry_case_year: z.coerce.number().int().min(1900).max(2100).optional(),
-          story: z.string().min(2),
-          petition_draft: z.string().min(2),
-          client_id: z.coerce.number().int().optional(),
-          client: z
-            .object({
-              name: z.string().min(2),
-              phone: z.string().optional(),
-              email: z.union([z.literal(""), z.string().email()]).optional(),
-              address: z.string().optional(),
-              identity_number: z.string().optional(),
-              notes: z.string().optional(),
-            })
-            .optional(),
-          client_party_role: z
-            .enum([
-              "petitioner",
-              "respondent",
-              "appellant",
-              "defendant",
-              "claimant",
-              "plaintiff",
-              "applicant",
-              "accused",
-              "state",
-              "other",
-            ])
-            .optional(),
-          client_party_type: z.enum(["person", "organization"]).optional(),
-          parties: z.array(partySchema).optional(),
-          participants: z.array(participantSchema).optional(),
-          first_hearing: z
-            .object({
-              hearing_at: z.string().min(2),
-              type: z.enum(["mention", "hearing", "trial", "order"]),
-              agenda: z.string().optional(),
-              location: z.string().optional(),
-            })
-            .optional(),
-        })
-        .superRefine((values, ctx) => {
-          if (!values.client_id && !values.client?.name) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: t("cases.validation.client_required"),
-              path: ["client", "name"],
-            });
-          }
+      z.object({
+        // Step 1 — required
+        plaintiff_name: z.string().min(2, t("common.required")),
+        defendant_name: z.string().min(2, t("common.required")),
+        opposite_lawyer_name: z.string().min(2, t("common.required")),
+        court: z.string().min(2, t("common.required")),
+        court_public_id: z.string().optional(),
+        next_hearing_at: z.string().min(2, t("common.required")),
 
-          const hasType = Boolean(values.registry_case_type_bn);
-          const hasSerial = values.registry_case_serial !== undefined && values.registry_case_serial !== null;
-          const hasYear = values.registry_case_year !== undefined && values.registry_case_year !== null;
-          const registryCount = [hasType, hasSerial, hasYear].filter(Boolean).length;
-
-          if (registryCount > 0 && registryCount < 3) {
-            const message = t("cases.validation.registry_required");
-            if (!hasType) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message,
-                path: ["registry_case_type_bn"],
-              });
-            }
-            if (!hasSerial) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message,
-                path: ["registry_case_serial"],
-              });
-            }
-            if (!hasYear) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message,
-                path: ["registry_case_year"],
-              });
-            }
-          }
-        }),
+        // Step 2 — optional
+        title: z.string().optional(),
+        case_number: z.string().optional(),
+        registry_case_type_bn: z.string().optional(),
+        registry_case_serial: z
+          .union([z.coerce.number().int().min(1), z.literal("")])
+          .optional(),
+        registry_case_year: z
+          .union([z.coerce.number().int().min(1900).max(2100), z.literal("")])
+          .optional(),
+        story: z.string().optional(),
+        petition_draft: z.string().optional(),
+        client_phone: z.string().optional(),
+        client_email: z.union([z.literal(""), z.string().email()]).optional(),
+        client_address: z.string().optional(),
+        parties: z.array(partySchema).optional(),
+        participants: z.array(participantSchema).optional(),
+        first_hearing_type: z.enum(["mention", "hearing", "trial", "order"]).optional(),
+        first_hearing_agenda: z.string().optional(),
+        first_hearing_location: z.string().optional(),
+      }),
     [t]
   );
 
   type CaseFormValues = z.infer<typeof caseSchema>;
 
-  const { register, handleSubmit, control, formState, setValue } =
+  const { register, handleSubmit, control, formState, setValue, trigger } =
     useForm<CaseFormValues>({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       resolver: zodResolver(caseSchema) as any,
       defaultValues: {
-        client_party_role: "petitioner",
-        client_party_type: "person",
         parties: [],
-        participants: [
-          {
-            user_public_id: "",
-            role: "lead_lawyer",
-          },
-        ],
+        participants: [{ user_public_id: "", role: "lead_lawyer" }],
+        first_hearing_type: "hearing",
       },
     });
 
@@ -203,71 +144,107 @@ export default function NewCasePage() {
   const storyValue = useWatch({ control, name: "story" }) ?? "";
   const petitionValue = useWatch({ control, name: "petition_draft" }) ?? "";
   const firstHearingAgendaValue =
-    useWatch({ control, name: "first_hearing.agenda" }) ?? "";
+    useWatch({ control, name: "first_hearing_agenda" }) ?? "";
   const selectedParticipants = useWatch({ control, name: "participants" }) ?? [];
   const [participantQuery, setParticipantQuery] = useState<Record<string, string>>(
     {}
   );
-  const showErrors = formState.submitCount > 0;
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "participants",
   });
-
   const {
     fields: partyFields,
     append: appendParty,
     remove: removeParty,
-  } = useFieldArray({
-    control,
-    name: "parties",
-  });
-
-  const clientError = Boolean(formState.errors.client?.name);
-  const titleError = Boolean(formState.errors.title);
-  const courtError = Boolean(formState.errors.court);
-  const storyError = Boolean(formState.errors.story);
-  const petitionError = Boolean(formState.errors.petition_draft);
+  } = useFieldArray({ control, name: "parties" });
 
   const mergeTemplateText = (current: string | undefined, template: string) => {
     const trimmedCurrent = current?.trim() ?? "";
-    if (!trimmedCurrent) {
-      return template;
-    }
-    return `${trimmedCurrent}\n\n${template}`;
+    return trimmedCurrent ? `${trimmedCurrent}\n\n${template}` : template;
   };
 
-  const onSubmit = (values: CaseFormValues) => {
-    const payload: CaseFormValues = {
-      ...values,
-    };
+  const buildPayload = (values: CaseFormValues) => {
+    const isPlaintiff = representSide === "plaintiff";
+    const clientName = isPlaintiff ? values.plaintiff_name : values.defendant_name;
+    const opponentName = isPlaintiff ? values.defendant_name : values.plaintiff_name;
+    const clientRole = isPlaintiff ? "petitioner" : "respondent";
+    const opponentRole = isPlaintiff ? "respondent" : "petitioner";
 
-    if (!includeFirstHearing) {
-      delete payload.first_hearing;
-    }
+    const userParties = (values.parties ?? []).map((p) =>
+      p.email === "" ? { ...p, email: undefined } : p
+    );
 
-    if (useExistingClient) {
-      delete payload.client;
-    } else {
-      delete payload.client_id;
-      if (payload.client && payload.client.email === "") {
-        delete payload.client.email;
-      }
-    }
-
-    if (payload.parties) {
-      payload.parties = payload.parties.map((party) =>
-        party.email === "" ? { ...party, email: undefined } : party
-      );
-    }
-
-    createCase.mutate(payload, {
-      onSuccess: (data) => {
-        router.push(`/cases/${data.public_id}`);
+    return {
+      title: values.title?.trim() || undefined,
+      court: values.court,
+      court_public_id: values.court_public_id || undefined,
+      case_number: values.case_number || undefined,
+      registry_case_type_bn: values.registry_case_type_bn || undefined,
+      registry_case_serial:
+        values.registry_case_serial === "" || values.registry_case_serial == null
+          ? undefined
+          : Number(values.registry_case_serial),
+      registry_case_year:
+        values.registry_case_year === "" || values.registry_case_year == null
+          ? undefined
+          : Number(values.registry_case_year),
+      story: values.story?.trim() || undefined,
+      petition_draft: values.petition_draft?.trim() || undefined,
+      opposite_lawyer_name: values.opposite_lawyer_name,
+      client: {
+        name: clientName,
+        phone: values.client_phone || undefined,
+        email: values.client_email || undefined,
+        address: values.client_address || undefined,
       },
+      client_party_role: clientRole,
+      client_party_type: "person" as const,
+      parties: [
+        {
+          name: opponentName,
+          type: "person" as const,
+          side: "opponent" as const,
+          role: opponentRole,
+        },
+        ...userParties,
+      ],
+      participants: values.participants?.filter(
+        (p) => p.user_public_id && p.user_public_id.length > 0
+      ),
+      first_hearing: values.next_hearing_at
+        ? {
+            hearing_at: values.next_hearing_at,
+            type: values.first_hearing_type ?? "hearing",
+            agenda: values.first_hearing_agenda || undefined,
+            location: values.first_hearing_location || undefined,
+          }
+        : undefined,
+    };
+  };
+
+  const submit = (values: CaseFormValues) => {
+    createCase.mutate(buildPayload(values), {
+      onSuccess: (data) => router.push(`/cases/${data.public_id}`),
     });
   };
+
+  const handleStep1Continue = async () => {
+    const ok = await trigger([
+      "plaintiff_name",
+      "defendant_name",
+      "opposite_lawyer_name",
+      "court",
+      "next_hearing_at",
+    ]);
+    if (ok) setStep(2);
+  };
+
+  const oppositeLawyerLabel =
+    representSide === "plaintiff"
+      ? t("cases.wizard.opposite_lawyer_for_defendant")
+      : t("cases.wizard.opposite_lawyer_for_plaintiff");
 
   return (
     <section className="space-y-6">
@@ -276,181 +253,223 @@ export default function NewCasePage() {
           {t("nav.new_case")}
         </p>
         <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-          {t("cases.new.title")}
+          {step === 1 ? t("cases.wizard.step1_title") : t("cases.wizard.step2_title")}
         </h1>
         <p className="text-sm text-[var(--muted)]">
-          {t("cases.new.subtitle")}
+          {step === 1 ? t("cases.wizard.step1_desc") : t("cases.wizard.step2_desc")}
         </p>
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[var(--muted-soft)]">
+          <span
+            className={cn(
+              "rounded-full px-2 py-1",
+              step === 1 ? "bg-[var(--foreground)] text-[var(--paper)]" : "bg-[var(--wash)]"
+            )}
+          >
+            1
+          </span>
+          <span
+            className={cn(
+              "rounded-full px-2 py-1",
+              step === 2 ? "bg-[var(--foreground)] text-[var(--paper)]" : "bg-[var(--wash)]"
+            )}
+          >
+            2
+          </span>
+          <span>
+            {t("cases.wizard.step_indicator")
+              .replace("{current}", String(step))
+              .replace("{total}", "2")}
+          </span>
+        </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
-        <Card className="h-fit">
-          <CardHeader className="space-y-2">
-            <CardTitle className="text-base">{t("cases.sections.title")}</CardTitle>
-            <CardDescription>{t("cases.sections.desc")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-[var(--muted)]">
-            <div>1. {t("cases.sections.client")}</div>
-            <div>2. {t("cases.sections.basics")}</div>
-            <div>3. {t("cases.sections.registry")}</div>
-            <div>4. {t("cases.sections.story")}</div>
-            <div>5. {t("cases.sections.petition")}</div>
-            <div>6. {t("cases.sections.parties")}</div>
-            <div>7. {t("cases.sections.team")}</div>
-            <div>8. {t("cases.sections.hearing")}</div>
-          </CardContent>
-        </Card>
+      <form className="space-y-6" onSubmit={handleSubmit(submit)}>
+        <input type="hidden" {...register("court_public_id")} />
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <input type="hidden" {...register("court_public_id")} />
+        {step === 1 && (
           <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.client")}</CardTitle>
-              <CardDescription>
-                {t("cases.new.subtitle")}
-              </CardDescription>
+            <CardHeader>
+              <CardTitle>{t("cases.wizard.step1_title")}</CardTitle>
+              <CardDescription>{t("cases.wizard.step1_desc")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
-                <input
-                  type="checkbox"
-                  checked={useExistingClient}
-                  onChange={(event) =>
-                    setUseExistingClient(event.target.checked)
-                  }
-                />
-                {t("cases.client.use_existing")}
-              </label>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-[var(--muted)]">
+                    {t("cases.wizard.plaintiff")}
+                  </label>
+                  <Input
+                    placeholder={t("cases.wizard.plaintiff_placeholder")}
+                    {...register("plaintiff_name")}
+                    aria-invalid={Boolean(formState.errors.plaintiff_name)}
+                  />
+                  {formState.errors.plaintiff_name && (
+                    <p className="text-xs text-rose-600">
+                      {formState.errors.plaintiff_name.message as string}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-[var(--muted)]">
+                    {t("cases.wizard.defendant")}
+                  </label>
+                  <Input
+                    placeholder={t("cases.wizard.defendant_placeholder")}
+                    {...register("defendant_name")}
+                    aria-invalid={Boolean(formState.errors.defendant_name)}
+                  />
+                  {formState.errors.defendant_name && (
+                    <p className="text-xs text-rose-600">
+                      {formState.errors.defendant_name.message as string}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-              {useExistingClient ? (
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-[var(--muted)]">
+                  {t("cases.wizard.represent_label")}
+                </label>
+                <div className="inline-flex rounded-lg border border-[var(--border)] p-1">
+                  {(["plaintiff", "defendant"] as const).map((side) => (
+                    <button
+                      key={side}
+                      type="button"
+                      onClick={() => setRepresentSide(side)}
+                      className={cn(
+                        "rounded-md px-3 py-1.5 text-sm transition-colors",
+                        representSide === side
+                          ? "bg-[var(--foreground)] text-[var(--paper)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                      )}
+                    >
+                      {t(
+                        side === "plaintiff"
+                          ? "cases.wizard.plaintiff"
+                          : "cases.wizard.defendant"
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-[var(--muted)]">
+                  {oppositeLawyerLabel}
+                </label>
                 <Input
-                  placeholder={t("cases.client.id")}
-                  {...register("client_id")}
-                  aria-invalid={!!(showErrors && clientError)}
+                  placeholder={oppositeLawyerLabel}
+                  {...register("opposite_lawyer_name")}
+                  aria-invalid={Boolean(formState.errors.opposite_lawyer_name)}
                 />
-              ) : (
-                <>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Input
-                      placeholder={t("cases.client.name")}
-                      {...register("client.name")}
-                      aria-invalid={!!(showErrors && clientError)}
-                    />
-                    <Input
-                      placeholder={t("cases.client.phone")}
-                      {...register("client.phone")}
-                    />
-                    <Input
-                      type="email"
-                      placeholder={t("cases.client.email_optional")}
-                      {...register("client.email")}
-                    />
-                    <Input
-                      placeholder={t("cases.client.address")}
-                      {...register("client.address")}
-                    />
-                    <Input
-                      placeholder={t("cases.client.identity")}
-                      {...register("client.identity_number")}
-                    />
-                    <Input
-                      placeholder={t("cases.client.notes")}
-                      {...register("client.notes")}
-                    />
-                  </div>
-                  <p className="text-xs text-[var(--muted-soft)]">
-                    {t("cases.client.optional_hint")}
+                {formState.errors.opposite_lawyer_name && (
+                  <p className="text-xs text-rose-600">
+                    {formState.errors.opposite_lawyer_name.message as string}
                   </p>
-                </>
-              )}
-              {showErrors && clientError && (
-                <p className="text-xs text-rose-600">{t("common.required")}</p>
-              )}
-              <div className="grid gap-3 md:grid-cols-2">
-                <select
-                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                  {...register("client_party_type")}
+                )}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-[var(--muted)]">
+                    {t("cases.case.court")}
+                  </label>
+                  <CourtSelect
+                    value={courtValue}
+                    selectedCourt={selectedCourt}
+                    invalid={Boolean(formState.errors.court)}
+                    onValueChange={(value) => {
+                      setSelectedCourt(null);
+                      setValue("court", value, { shouldValidate: true });
+                      setValue("court_public_id", undefined);
+                    }}
+                    onSelect={(court) => {
+                      setSelectedCourt(court);
+                      setValue(
+                        "court",
+                        court ? (locale === "bn" ? court.name_bn : court.name) : "",
+                        { shouldValidate: true }
+                      );
+                      setValue("court_public_id", court?.public_id);
+                    }}
+                  />
+                  {formState.errors.court && (
+                    <p className="text-xs text-rose-600">
+                      {formState.errors.court.message as string}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-[var(--muted)]">
+                    {t("cases.wizard.next_date")}
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    {...register("next_hearing_at")}
+                    aria-invalid={Boolean(formState.errors.next_hearing_at)}
+                  />
+                  {formState.errors.next_hearing_at && (
+                    <p className="text-xs text-rose-600">
+                      {formState.errors.next_hearing_at.message as string}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Button
+                  type="submit"
+                  variant="outline"
+                  disabled={createCase.isPending}
                 >
-                  <option value="person">{t("party.type.person")}</option>
-                  <option value="organization">{t("party.type.organization")}</option>
-                </select>
-                <select
-                  className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                  {...register("client_party_role")}
-                >
-                  <option value="petitioner">{t("party.role.petitioner")}</option>
-                  <option value="respondent">{t("party.role.respondent")}</option>
-                  <option value="appellant">{t("party.role.appellant")}</option>
-                  <option value="defendant">{t("party.role.defendant")}</option>
-                  <option value="claimant">{t("party.role.claimant")}</option>
-                  <option value="plaintiff">{t("party.role.plaintiff")}</option>
-                  <option value="applicant">{t("party.role.applicant")}</option>
-                  <option value="accused">{t("party.role.accused")}</option>
-                  <option value="state">{t("party.role.state")}</option>
-                  <option value="other">{t("party.role.other")}</option>
-                </select>
+                  {createCase.isPending
+                    ? t("cases.actions.saving")
+                    : t("cases.actions.create")}
+                </Button>
+                <Button type="button" onClick={handleStep1Continue}>
+                  {t("cases.wizard.continue")}
+                </Button>
               </div>
             </CardContent>
           </Card>
+        )}
 
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.basics")}</CardTitle>
-              <CardDescription>
-                {t("cases.new.subtitle")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-1">
+        {step === 2 && (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.basics")}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <Input placeholder={t("cases.case.title")} {...register("title")} />
                 <Input
-                  placeholder={t("cases.case.title")}
-                  {...register("title")}
-                  aria-invalid={!!(showErrors && titleError)}
+                  placeholder={t("cases.case.number")}
+                  {...register("case_number")}
                 />
-                {showErrors && titleError && (
-                  <p className="text-xs text-rose-600">{t("common.required")}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <CourtSelect
-                  value={courtValue}
-                  selectedCourt={selectedCourt}
-                  invalid={showErrors && courtError}
-                  onValueChange={(value) => {
-                    setSelectedCourt(null);
-                    setValue("court", value, { shouldValidate: true });
-                    setValue("court_public_id", undefined);
-                  }}
-                  onSelect={(court) => {
-                    setSelectedCourt(court);
-                    setValue(
-                      "court",
-                      court ? (locale === "bn" ? court.name_bn : court.name) : "",
-                      { shouldValidate: true }
-                    );
-                    setValue("court_public_id", court?.public_id);
-                  }}
+                <Input
+                  placeholder={t("cases.client.phone")}
+                  {...register("client_phone")}
                 />
-                {showErrors && courtError && (
-                  <p className="text-xs text-rose-600">{t("common.required")}</p>
-                )}
-              </div>
-              <Input
-                placeholder={t("cases.case.number")}
-                {...register("case_number")}
-              />
-            </CardContent>
-          </Card>
+                <Input
+                  placeholder={t("cases.client.email_optional")}
+                  {...register("client_email")}
+                />
+                <Input
+                  placeholder={t("cases.client.address")}
+                  {...register("client_address")}
+                  className="md:col-span-2"
+                />
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.registry")}</CardTitle>
-              <CardDescription>{t("cases.registry.desc")}</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.registry")}</CardTitle>
+                <CardDescription>{t("cases.registry.desc")}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-3">
                 <select
-                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
+                  className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
                   {...register("registry_case_type_bn")}
                   defaultValue=""
                 >
@@ -461,26 +480,12 @@ export default function NewCasePage() {
                     </option>
                   ))}
                 </select>
-                {showErrors && formState.errors.registry_case_type_bn && (
-                  <p className="text-xs text-rose-600">
-                    {t("cases.validation.registry_required")}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1">
                 <Input
                   type="number"
                   min={1}
                   placeholder={t("cases.registry.serial_placeholder")}
                   {...register("registry_case_serial")}
                 />
-                {showErrors && formState.errors.registry_case_serial && (
-                  <p className="text-xs text-rose-600">
-                    {t("cases.validation.registry_required")}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1">
                 <Input
                   type="number"
                   min={1900}
@@ -488,177 +493,127 @@ export default function NewCasePage() {
                   placeholder={t("cases.registry.year_placeholder")}
                   {...register("registry_case_year")}
                 />
-                {showErrors && formState.errors.registry_case_year && (
-                  <p className="text-xs text-rose-600">
-                    {t("cases.validation.registry_required")}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.story")}</CardTitle>
+                <CardDescription>{t("cases.story.placeholder")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <TemplatePresetPicker
+                  title={t("templates.story.title")}
+                  description={t("templates.story.desc")}
+                  locale={locale}
+                  templates={CASE_STORY_TEMPLATES}
+                  onSelect={(template) =>
+                    setValue("story", mergeTemplateText(storyValue, template), {
+                      shouldDirty: true,
+                    })
+                  }
+                />
+                <textarea
+                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm"
+                  placeholder={t("cases.story.placeholder")}
+                  {...register("story")}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.petition")}</CardTitle>
+                <CardDescription>{t("cases.petition.placeholder")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <TemplatePresetPicker
+                  title={t("templates.petition.title")}
+                  description={t("templates.petition.desc")}
+                  locale={locale}
+                  templates={PETITION_TEMPLATES}
+                  onSelect={(template) =>
+                    setValue(
+                      "petition_draft",
+                      mergeTemplateText(petitionValue, template),
+                      { shouldDirty: true }
+                    )
+                  }
+                />
+                <textarea
+                  className="h-32 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm"
+                  placeholder={t("cases.petition.placeholder")}
+                  {...register("petition_draft")}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.parties")}</CardTitle>
+                <CardDescription>{t("case.detail.parties")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {partyFields.length === 0 && (
+                  <p className="text-sm text-[var(--muted)]">
+                    {t("cases.parties.empty")}
                   </p>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.story")}</CardTitle>
-              <CardDescription>
-                {t("cases.story.placeholder")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <TemplatePresetPicker
-                title={t("templates.story.title")}
-                description={t("templates.story.desc")}
-                locale={locale}
-                templates={CASE_STORY_TEMPLATES}
-                onSelect={(template) =>
-                  setValue("story", mergeTemplateText(storyValue, template), {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
-              />
-              <textarea
-                className={`h-32 w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 ${
-                  showErrors && storyError
-                    ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-[var(--border)] focus-visible:ring-[var(--foreground)]"
-                }`}
-                placeholder={t("cases.story.placeholder")}
-                {...register("story")}
-              />
-              {showErrors && storyError && (
-                <p className="mt-2 text-xs text-rose-600">{t("common.required")}</p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.petition")}</CardTitle>
-              <CardDescription>
-                {t("cases.petition.placeholder")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <TemplatePresetPicker
-                title={t("templates.petition.title")}
-                description={t("templates.petition.desc")}
-                locale={locale}
-                templates={PETITION_TEMPLATES}
-                onSelect={(template) =>
-                  setValue(
-                    "petition_draft",
-                    mergeTemplateText(petitionValue, template),
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    }
-                  )
-                }
-              />
-              <textarea
-                className={`h-32 w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 ${
-                  showErrors && petitionError
-                    ? "border-rose-500 focus-visible:ring-rose-500"
-                    : "border-[var(--border)] focus-visible:ring-[var(--foreground)]"
-                }`}
-                placeholder={t("cases.petition.placeholder")}
-                {...register("petition_draft")}
-              />
-              {showErrors && petitionError && (
-                <p className="mt-2 text-xs text-rose-600">{t("common.required")}</p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.parties")}</CardTitle>
-              <CardDescription>
-                {t("case.detail.parties")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {partyFields.length === 0 && (
-                <p className="text-sm text-[var(--muted)]">
-                  {t("cases.parties.empty")}
-                </p>
-              )}
-              {partyFields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="grid gap-3 rounded-2xl border border-[var(--border)] p-4"
-                >
-                  <div className="grid gap-3 md:grid-cols-2">
-                    <div className="space-y-1">
+                {partyFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="grid gap-3 rounded-2xl border border-[var(--border)] p-4"
+                  >
+                    <div className="grid gap-3 md:grid-cols-2">
                       <Input
                         placeholder={t("cases.parties.name")}
                         {...register(`parties.${index}.name`)}
-                        aria-invalid={
-                          showErrors &&
-                          Boolean(formState.errors.parties?.[index]?.name)
-                        }
                       />
-                      {showErrors && formState.errors.parties?.[index]?.name && (
-                        <p className="text-xs text-rose-600">
-                          {t("common.required")}
-                        </p>
-                      )}
+                      <select
+                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        {...register(`parties.${index}.type`)}
+                      >
+                        <option value="person">{t("party.type.person")}</option>
+                        <option value="organization">
+                          {t("party.type.organization")}
+                        </option>
+                      </select>
+                      <select
+                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        {...register(`parties.${index}.side`)}
+                      >
+                        <option value="opponent">{t("party.side.opponent")}</option>
+                        <option value="third_party">
+                          {t("party.side.third_party")}
+                        </option>
+                        <option value="client">{t("party.side.client")}</option>
+                      </select>
+                      <select
+                        className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                        {...register(`parties.${index}.role`)}
+                      >
+                        <option value="petitioner">{t("party.role.petitioner")}</option>
+                        <option value="respondent">{t("party.role.respondent")}</option>
+                        <option value="appellant">{t("party.role.appellant")}</option>
+                        <option value="defendant">{t("party.role.defendant")}</option>
+                        <option value="claimant">{t("party.role.claimant")}</option>
+                        <option value="plaintiff">{t("party.role.plaintiff")}</option>
+                        <option value="applicant">{t("party.role.applicant")}</option>
+                        <option value="accused">{t("party.role.accused")}</option>
+                        <option value="state">{t("party.role.state")}</option>
+                        <option value="other">{t("party.role.other")}</option>
+                      </select>
                     </div>
-                    <select
-                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                      {...register(`parties.${index}.type`)}
-                    >
-                      <option value="person">{t("party.type.person")}</option>
-                      <option value="organization">{t("party.type.organization")}</option>
-                    </select>
-                    <select
-                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                      {...register(`parties.${index}.side`)}
-                    >
-                      <option value="opponent">{t("party.side.opponent")}</option>
-                      <option value="third_party">{t("party.side.third_party")}</option>
-                      <option value="client">{t("party.side.client")}</option>
-                    </select>
-                    <select
-                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                      {...register(`parties.${index}.role`)}
-                    >
-                      <option value="petitioner">{t("party.role.petitioner")}</option>
-                      <option value="respondent">{t("party.role.respondent")}</option>
-                      <option value="appellant">{t("party.role.appellant")}</option>
-                      <option value="defendant">{t("party.role.defendant")}</option>
-                      <option value="claimant">{t("party.role.claimant")}</option>
-                      <option value="plaintiff">{t("party.role.plaintiff")}</option>
-                      <option value="applicant">{t("party.role.applicant")}</option>
-                      <option value="accused">{t("party.role.accused")}</option>
-                      <option value="state">{t("party.role.state")}</option>
-                      <option value="other">{t("party.role.other")}</option>
-                    </select>
-                  </div>
-                  <div className="grid gap-3 md:grid-cols-2">
-                    <Input
-                      placeholder={t("cases.parties.phone")}
-                      {...register(`parties.${index}.phone`)}
-                    />
-                    <Input
-                      placeholder={t("cases.parties.email")}
-                      {...register(`parties.${index}.email`)}
-                    />
-                    <Input
-                      placeholder={t("cases.parties.address")}
-                      {...register(`parties.${index}.address`)}
-                    />
-                    <Input
-                      placeholder={t("cases.parties.identity")}
-                      {...register(`parties.${index}.identity_number`)}
-                    />
-                  </div>
-                  <Input
-                    placeholder={t("cases.parties.notes")}
-                    {...register(`parties.${index}.notes`)}
-                  />
-                  <div>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <Input
+                        placeholder={t("cases.parties.phone")}
+                        {...register(`parties.${index}.phone`)}
+                      />
+                      <Input
+                        placeholder={t("cases.parties.email")}
+                        {...register(`parties.${index}.email`)}
+                      />
+                    </div>
                     <Button
                       type="button"
                       variant="outline"
@@ -667,230 +622,200 @@ export default function NewCasePage() {
                       {t("cases.parties.remove")}
                     </Button>
                   </div>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() =>
-                  appendParty({
-                    name: "",
-                    type: "person",
-                    side: "opponent",
-                    role: "respondent",
-                    phone: "",
-                    email: "",
-                    address: "",
-                    identity_number: "",
-                    notes: "",
-                  })
-                }
-              >
-                {t("cases.parties.add")}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.team")}</CardTitle>
-              <CardDescription>
-                {t("cases.sections.team")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {fields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="grid gap-3 md:grid-cols-[2fr_1fr_auto]"
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    appendParty({
+                      name: "",
+                      type: "person",
+                      side: "third_party",
+                      role: "other",
+                      phone: "",
+                      email: "",
+                      address: "",
+                      identity_number: "",
+                      notes: "",
+                    })
+                  }
                 >
-                  <input
-                    type="hidden"
-                    {...register(`participants.${index}.user_public_id`)}
-                  />
-                  <div className="relative">
-                    <Input
-                      placeholder={t("cases.team.user_public_id")}
-                      value={participantQuery[field.id] ?? ""}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setParticipantQuery((prev) => ({
-                          ...prev,
-                          [field.id]: value,
-                        }));
-                        setValue(`participants.${index}.user_public_id`, "");
-                      }}
-                      aria-invalid={
-                        showErrors &&
-                        Boolean(formState.errors.participants?.[index]?.user_public_id)
-                      }
+                  {t("cases.parties.add")}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.team")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {fields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="grid gap-3 md:grid-cols-[2fr_1fr_auto]"
+                  >
+                    <input
+                      type="hidden"
+                      {...register(`participants.${index}.user_public_id`)}
                     />
-                    {showErrors &&
-                      formState.errors.participants?.[index]?.user_public_id && (
-                        <p className="mt-1 text-xs text-rose-600">
-                          {t("common.required")}
-                        </p>
-                      )}
-                    {Boolean(participantQuery[field.id]) && (
-                      <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-sm">
-                        {tenantUsers
-                          .filter((member) => {
-                            const query =
-                              participantQuery[field.id]?.trim().toLowerCase() ??
-                              "";
-                            if (!query) {
-                              return false;
-                            }
-                            const name = member.name?.toLowerCase() ?? "";
-                            const email = member.email?.toLowerCase() ?? "";
-                            const matches = name.includes(query) || email.includes(query);
-                            const selectedIds = new Set(
-                              selectedParticipants
-                                .map((participant) => participant?.user_public_id)
-                                .filter(Boolean)
-                            );
-                            const currentId =
-                              selectedParticipants[index]?.user_public_id ?? "";
-                            if (member.public_id === currentId) {
-                              return matches;
-                            }
-                            return matches && !selectedIds.has(member.public_id);
-                          })
-                          .map((member) => (
-                            <button
-                              key={member.public_id}
-                              type="button"
-                              className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
-                              onClick={() => {
-                                setValue(
-                                  `participants.${index}.user_public_id`,
-                                  member.public_id,
-                                  { shouldValidate: true }
-                                );
-                                setParticipantQuery((prev) => ({
-                                  ...prev,
-                                  [field.id]: member.email
-                                    ? `${member.name} (${member.email})`
-                                    : member.name,
-                                }));
-                              }}
-                            >
-                              <span className="text-[var(--foreground)]">{member.name}</span>
-                              {member.email && (
-                                <span className="text-xs text-[var(--muted-soft)]">
-                                  {member.email}
+                    <div className="relative">
+                      <Input
+                        placeholder={t("cases.team.user_public_id")}
+                        value={participantQuery[field.id] ?? ""}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setParticipantQuery((prev) => ({
+                            ...prev,
+                            [field.id]: value,
+                          }));
+                          setValue(`participants.${index}.user_public_id`, "");
+                        }}
+                      />
+                      {Boolean(participantQuery[field.id]) && (
+                        <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-sm">
+                          {tenantUsers
+                            .filter((member) => {
+                              const query =
+                                participantQuery[field.id]?.trim().toLowerCase() ??
+                                "";
+                              if (!query) return false;
+                              const name = member.name?.toLowerCase() ?? "";
+                              const email = member.email?.toLowerCase() ?? "";
+                              const matches =
+                                name.includes(query) || email.includes(query);
+                              const selectedIds = new Set(
+                                selectedParticipants
+                                  .map((p) => p?.user_public_id)
+                                  .filter(Boolean)
+                              );
+                              const currentId =
+                                selectedParticipants[index]?.user_public_id ?? "";
+                              if (member.public_id === currentId) return matches;
+                              return matches && !selectedIds.has(member.public_id);
+                            })
+                            .map((member) => (
+                              <button
+                                key={member.public_id}
+                                type="button"
+                                className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
+                                onClick={() => {
+                                  setValue(
+                                    `participants.${index}.user_public_id`,
+                                    member.public_id
+                                  );
+                                  setParticipantQuery((prev) => ({
+                                    ...prev,
+                                    [field.id]: member.email
+                                      ? `${member.name} (${member.email})`
+                                      : member.name,
+                                  }));
+                                }}
+                              >
+                                <span className="text-[var(--foreground)]">
+                                  {member.name}
                                 </span>
-                              )}
-                            </button>
-                          ))}
-                      </div>
-                    )}
-                  </div>
-                  <select
-                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                    {...register(`participants.${index}.role`)}
-                  >
-                    <option value="lead_lawyer">{t("roles.lead_lawyer")}</option>
-                    <option value="lawyer">{t("roles.lawyer")}</option>
-                    <option value="associate">{t("roles.associate")}</option>
-                    <option value="assistant">{t("roles.assistant")}</option>
-                    <option value="viewer">{t("roles.viewer")}</option>
-                  </select>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => remove(index)}
-                  >
-                    {t("cases.team.remove")}
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => append({ user_public_id: "", role: "associate" })}
-              >
-                {t("cases.team.add")}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-2">
-              <CardTitle>{t("cases.sections.hearing")}</CardTitle>
-              <CardDescription>
-                {t("cases.sections.hearing")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
-                <input
-                  type="checkbox"
-                  checked={includeFirstHearing}
-                  onChange={(event) => setIncludeFirstHearing(event.target.checked)}
-                />
-                {t("cases.hearing.add")}
-              </label>
-              {includeFirstHearing && (
-                <div className="space-y-4">
-                  <TemplatePresetPicker
-                    title={t("templates.hearing.title")}
-                    description={t("templates.hearing.desc")}
-                    locale={locale}
-                    templates={HEARING_AGENDA_TEMPLATES}
-                    onSelect={(template) =>
-                      setValue(
-                        "first_hearing.agenda",
-                        mergeTemplateText(firstHearingAgendaValue, template),
-                        {
-                          shouldDirty: true,
-                          shouldValidate: true,
-                        }
-                      )
-                    }
-                  />
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Input
-                      type="datetime-local"
-                      {...register("first_hearing.hearing_at")}
-                    />
+                                {member.email && (
+                                  <span className="text-xs text-[var(--muted-soft)]">
+                                    {member.email}
+                                  </span>
+                                )}
+                              </button>
+                            ))}
+                        </div>
+                      )}
+                    </div>
                     <select
-                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2"
-                      {...register("first_hearing.type")}
+                      className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                      {...register(`participants.${index}.role`)}
                     >
-                      <option value="mention">{t("hearing.type.mention")}</option>
-                      <option value="hearing">{t("hearing.type.hearing")}</option>
-                      <option value="trial">{t("hearing.type.trial")}</option>
-                      <option value="order">{t("hearing.type.order")}</option>
+                      <option value="lead_lawyer">{t("roles.lead_lawyer")}</option>
+                      <option value="lawyer">{t("roles.lawyer")}</option>
+                      <option value="associate">{t("roles.associate")}</option>
+                      <option value="assistant">{t("roles.assistant")}</option>
+                      <option value="viewer">{t("roles.viewer")}</option>
                     </select>
-                    <Input
-                      placeholder={t("cases.hearing.agenda")}
-                      {...register("first_hearing.agenda")}
-                    />
-                    <Input
-                      placeholder={t("cases.hearing.location")}
-                      {...register("first_hearing.location")}
-                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => remove(index)}
+                    >
+                      {t("cases.team.remove")}
+                    </Button>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    append({ user_public_id: "", role: "associate" })
+                  }
+                >
+                  {t("cases.team.add")}
+                </Button>
+              </CardContent>
+            </Card>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" disabled={createCase.isPending}>
-              {createCase.isPending
-                ? t("cases.actions.saving")
-                : t("cases.actions.create")}
-            </Button>
-            {Object.keys(formState.errors).length > 0 && (
-              <Badge variant="subtle">
-                {t("cases.actions.review_required")}
-              </Badge>
-            )}
-          </div>
-        </form>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("cases.sections.hearing")}</CardTitle>
+                <CardDescription>{t("cases.hearing.agenda")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <TemplatePresetPicker
+                  title={t("templates.hearing.title")}
+                  description={t("templates.hearing.desc")}
+                  locale={locale}
+                  templates={HEARING_AGENDA_TEMPLATES}
+                  onSelect={(template) =>
+                    setValue(
+                      "first_hearing_agenda",
+                      mergeTemplateText(firstHearingAgendaValue, template),
+                      { shouldDirty: true }
+                    )
+                  }
+                />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <select
+                    className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
+                    {...register("first_hearing_type")}
+                  >
+                    <option value="mention">{t("hearing.type.mention")}</option>
+                    <option value="hearing">{t("hearing.type.hearing")}</option>
+                    <option value="trial">{t("hearing.type.trial")}</option>
+                    <option value="order">{t("hearing.type.order")}</option>
+                  </select>
+                  <Input
+                    placeholder={t("cases.hearing.location")}
+                    {...register("first_hearing_location")}
+                  />
+                  <Input
+                    placeholder={t("cases.hearing.agenda")}
+                    {...register("first_hearing_agenda")}
+                    className="md:col-span-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                ← {t("cases.wizard.go_back")}
+              </Button>
+              <Button type="submit" disabled={createCase.isPending}>
+                {createCase.isPending
+                  ? t("cases.actions.saving")
+                  : t("cases.wizard.save_finish")}
+              </Button>
+              {Object.keys(formState.errors).length > 0 && (
+                <Badge variant="subtle">
+                  {t("cases.actions.review_required")}
+                </Badge>
+              )}
+            </div>
+          </>
+        )}
+      </form>
     </section>
   );
 }

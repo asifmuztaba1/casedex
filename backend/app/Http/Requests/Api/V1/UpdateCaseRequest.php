@@ -27,8 +27,9 @@ class UpdateCaseRequest extends FormRequest
             'registry_case_serial' => ['nullable', 'integer', 'min:1'],
             'registry_case_year' => ['nullable', 'integer', 'min:1900', 'max:2100'],
             'status' => ['nullable', Rule::in(array_column(CaseStatus::cases(), 'value'))],
-            'story' => ['sometimes', 'required', 'string'],
-            'petition_draft' => ['sometimes', 'required', 'string'],
+            'story' => ['sometimes', 'nullable', 'string'],
+            'petition_draft' => ['sometimes', 'nullable', 'string'],
+            'opposite_lawyer_name' => ['sometimes', 'nullable', 'string', 'max:200'],
             'client_id' => ['nullable', 'integer', 'exists:clients,id'],
         ];
     }

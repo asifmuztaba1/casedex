@@ -26,6 +26,7 @@ class CaseDetailResource extends JsonResource
             'status' => $this->status?->value,
             'story' => $this->story,
             'petition_draft' => $this->petition_draft,
+            'opposite_lawyer_name' => $this->opposite_lawyer_name,
             'client' => new ClientResource($this->whenLoaded('client')),
             'participants' => CaseParticipantResource::collection($this->whenLoaded('participants')),
             'parties' => CasePartyResource::collection($this->whenLoaded('parties')),
