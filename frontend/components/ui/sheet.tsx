@@ -23,15 +23,25 @@ SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 type SheetSide = "right" | "left" | "top" | "bottom";
 
+// Position-only presets. Width is applied separately so consumers can
+// override with their own w-* class without fighting tailwind-merge over
+// arbitrary values.
 const SHEET_SIDE_CLASSES: Record<SheetSide, string> = {
   right:
-    "right-0 top-0 h-full w-[260px] border-l border-[var(--border)]",
+    "inset-y-0 right-0 max-w-full border-l border-[var(--border)]",
   left:
-    "left-0 top-0 h-full w-[260px] border-r border-[var(--border)]",
+    "inset-y-0 left-0 max-w-full border-r border-[var(--border)]",
   top:
-    "left-0 right-0 top-0 w-full border-b border-[var(--border)]",
+    "inset-x-0 top-0 max-h-full border-b border-[var(--border)]",
   bottom:
-    "left-0 right-0 bottom-0 w-full border-t border-[var(--border)]",
+    "inset-x-0 bottom-0 max-h-full border-t border-[var(--border)]",
+};
+
+const SHEET_DEFAULT_WIDTH: Record<SheetSide, string> = {
+  right: "w-[260px]",
+  left: "w-[260px]",
+  top: "w-full",
+  bottom: "w-full",
 };
 
 type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & {
@@ -41,20 +51,25 @@ type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Co
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ className, side = "right", ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed z-50 overflow-y-auto bg-[var(--paper)] p-6 shadow-sm",
-        SHEET_SIDE_CLASSES[side],
-        className
-      )}
-      {...props}
-    />
-  </SheetPortal>
-));
+>(({ className, side = "right", ...props }, ref) => {
+  const userClass = className ?? "";
+  const hasWidth = /(?:^|\s)(?:w-|max-w-)/.test(userClass);
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed z-50 overflow-y-auto bg-[var(--paper)] p-6 shadow-sm",
+          SHEET_SIDE_CLASSES[side],
+          hasWidth ? "" : SHEET_DEFAULT_WIDTH[side],
+          className
+        )}
+        {...props}
+      />
+    </SheetPortal>
+  );
+});
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 function SheetHeader({
