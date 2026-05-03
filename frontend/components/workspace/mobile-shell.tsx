@@ -231,7 +231,7 @@ export function MobileTopBar({
               <UserCircle className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[85vw] max-w-[360px] overflow-y-auto">
+          <SheetContent side="right" className="w-80 max-w-[90vw] overflow-y-auto">
             <SheetTitle className="sr-only">{t("nav.profile")}</SheetTitle>
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
