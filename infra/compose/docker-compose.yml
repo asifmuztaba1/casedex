@@ -4,7 +4,7 @@ services:
       context: ../../
       dockerfile: infra/docker/nginx.Dockerfile
     ports:
-      - "8080:80"
+      - "${NGINX_PORT:-8080}:80"
     depends_on:
       - frontend
       - backend
@@ -21,7 +21,7 @@ services:
       - frontend_node_modules:/app/node_modules
     command: ["sh", "-lc", "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3000"]
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
 
   backend:
     build:
@@ -45,7 +45,7 @@ services:
     working_dir: /var/www/html
     command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     depends_on:
       - mysql
       - redis
@@ -108,14 +108,14 @@ services:
       - MYSQL_PASSWORD=casedex
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - "3301:3306"
+      - "${MYSQL_PORT:-3301}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
 
   minio:
     image: minio/minio:latest
@@ -124,16 +124,16 @@ services:
       - MINIO_ROOT_PASSWORD=minio123
     command: ["server", "/data", "--console-address", ":9001"]
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio_data:/data
 
   mailhog:
     image: mailhog/mailhog:latest
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_UI_PORT:-8025}:8025"
 
 volumes:
   mysql_data:
