@@ -79,3 +79,7 @@ Homestead.json
 Homestead.yaml
 frontend/.pnpm-store
 frontend/.pnpm-store/*
+
+backend/casedex
+*.sqlite
+*.sqlite-journal
