@@ -23,6 +23,7 @@ class ManualPaymentRequestResource extends JsonResource
             'amount' => (float) $this->amount,
             'currency' => $this->currency,
             'sender_number' => $this->sender_number,
+            'channel' => $this->channel?->value,
             'transaction_id' => $this->transaction_id,
             'sent_at' => $this->sent_at,
             'status' => $this->status?->value ?? (string) $this->status,

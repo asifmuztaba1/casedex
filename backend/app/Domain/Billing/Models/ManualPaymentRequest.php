@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Domain\Billing\Enums\ManualPaymentChannel;
 
 class ManualPaymentRequest extends Model
 {
@@ -23,6 +24,7 @@ class ManualPaymentRequest extends Model
         'amount',
         'currency',
         'sender_number',
+        'channel',
         'transaction_id',
         'sent_at',
         'screenshot_disk',
@@ -39,6 +41,7 @@ class ManualPaymentRequest extends Model
     protected $casts = [
         'plan' => TenantPlan::class,
         'status' => ManualPaymentRequestStatus::class,
+        'channel' => ManualPaymentChannel::class,
         'amount' => 'decimal:2',
         'sent_at' => 'datetime',
         'temporary_access_expires_at' => 'datetime',

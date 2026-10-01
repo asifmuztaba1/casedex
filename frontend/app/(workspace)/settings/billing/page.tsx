@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import AiIcon from "@/components/ai-icon";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -43,6 +43,7 @@ import { useLocale } from "@/components/locale-provider";
 import { PLAN_CATALOG, STORAGE_ADDON_FEATURES, type PlanId } from "@/features/billing/plan-catalog";
 import { useToast } from "@/components/ui/use-toast";
 import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
+import { billingStatusLabel, planLabel } from "@/features/billing/labels";
 import { useIsBdtPricing } from "@/lib/use-locale-currency";
 import { cn } from "@/lib/utils";
 import {
@@ -67,10 +68,13 @@ export default function BillingSettingsPage() {
   const fromOnboarding = searchParams.get("onboarding") === "1";
   const preferManual = searchParams.get("source") === "manual";
   const initialInterval = searchParams.get("interval") === "yearly" ? "yearly" : "monthly";
-  const initialPlan = (searchParams.get("plan") as PlanId) || "professional";
+  const planFromUrl = searchParams.get("plan");
+  const isCatalogPlan = (value: string | null | undefined): value is PlanId =>
+    PLAN_CATALOG.some((item) => item.id === value);
   const [interval, setInterval] = useState<BillingInterval>(initialInterval);
-  const [manualPlan, setManualPlan] = useState<PlanId>(
-    PLAN_CATALOG.some((item) => item.id === initialPlan) ? initialPlan : "professional"
+  // null until the user picks; defaults to the ?plan= link, then the current plan.
+  const [manualPlanChoice, setManualPlan] = useState<PlanId | null>(
+    isCatalogPlan(planFromUrl) ? planFromUrl : null
   );
   const [senderNumber, setSenderNumber] = useState("");
   const [transactionId, setTransactionId] = useState("");
@@ -83,6 +87,8 @@ export default function BillingSettingsPage() {
   const aiManualSectionRef = useRef<HTMLDivElement | null>(null);
   const [sectionTab, setSectionTab] = useState<"plans" | "manual" | "ai" | "invoices">(preferManual ? "manual" : "plans");
   const { data: subscription } = useSubscription();
+  const manualPlan: PlanId =
+    manualPlanChoice ?? (isCatalogPlan(subscription?.plan) ? subscription.plan : "professional");
   const { data: invoices = [] } = useInvoices();
   const { data: manualMethods } = useManualMethods();
   const { data: manualRequestStatus } = useManualRequestStatus();
@@ -120,6 +126,12 @@ export default function BillingSettingsPage() {
         addSuffix: true,
       })
     : null;
+  const paidEndsAt =
+    manualRequestStatus?.status === "approved" && manualRequestStatus.approved_ends_at
+      ? new Date(manualRequestStatus.approved_ends_at)
+      : null;
+  const paidUntil = paidEndsAt ? format(paidEndsAt, "PP") : null;
+  const paidAccessEnded = paidEndsAt !== null && subscription?.has_access === false;
   const manualEnabled = Boolean(manualMethods?.enabled);
   const activeSectionTab = !manualEnabled && sectionTab === "manual" ? "plans" : sectionTab;
   const manualCanSubmitNow = manualMethods?.can_submit_now ?? true;
@@ -250,6 +262,7 @@ export default function BillingSettingsPage() {
         interval,
         amount: expectedAmount,
         sender_number: senderNumber,
+        channel: selectedManualMethod.channel,
         transaction_id: transactionId,
         sent_at: sentAtIso,
         screenshot,
@@ -378,6 +391,10 @@ export default function BillingSettingsPage() {
         : "Trial access";
   const nextStepLabel = manualRequestStatus?.status === "pending"
     ? "Review in progress"
+    : paidUntil
+      ? paidAccessEnded
+        ? t("billing.renew_to_restore")
+        : `${t("billing.renew_by")} ${paidUntil}`
     : !manualCanSubmitNow
       ? `Share details after trial${trialEndsOn ? ` on ${trialEndsOn}` : ""}`
       : manualOnlyLaunch
@@ -393,7 +410,11 @@ export default function BillingSettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><BadgeCheck className="h-5 w-5 text-emerald-700" />{t("billing.onboarding_title")}</CardTitle>
             <CardDescription>
-              {t("billing.onboarding_desc")}
+              {manualOnlyLaunch
+                ? subscription?.status === "expired"
+                  ? t("billing.onboarding_desc_manual_expired")
+                  : t("billing.onboarding_desc_manual_trial")
+                : t("billing.onboarding_desc")}
             </CardDescription>
             {preferManual && (
               <div className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
@@ -415,17 +436,21 @@ export default function BillingSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="subtle">{subscription?.plan ?? "trial"}</Badge>
-            <Badge>{subscription?.status ?? "on_trial"}</Badge>
+            <Badge variant="subtle">{planLabel(t, subscription?.plan)}</Badge>
+            <Badge>{billingStatusLabel(t, subscription?.status ?? "on_trial")}</Badge>
             {subscription?.billing_source === "manual_mfs" && (
               <Badge>bKash / Rocket</Badge>
             )}
-            {trialText && <span className="inline-flex items-center gap-1 text-xs text-[var(--muted-soft)]"><CalendarClock className="h-3.5 w-3.5" />{t("billing.trial_ends")}: {trialText}</span>}
+            {paidUntil ? (
+              <span className="inline-flex items-center gap-1 text-xs text-[var(--muted-soft)]"><CalendarClock className="h-3.5 w-3.5" />{t("billing.paid_until")}: {paidUntil}</span>
+            ) : (
+              trialText && <span className="inline-flex items-center gap-1 text-xs text-[var(--muted-soft)]"><CalendarClock className="h-3.5 w-3.5" />{t("billing.trial_ends")}: {trialText}</span>
+            )}
           </div>
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
               <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Current plan</div>
-              <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{subscription?.plan ?? "trial"}</div>
+              <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{planLabel(t, subscription?.plan)}</div>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
               <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Billing route</div>
@@ -665,7 +690,7 @@ export default function BillingSettingsPage() {
                     <Button onClick={onSubmitManualLifecycle} disabled={submitManualSubscriptionChange.isPending}>
                       {submitManualSubscriptionChange.isPending ? "Sending..." : "Send update request"}
                     </Button>
-                    {manualChangeStatus && <Badge>Update status: {manualChangeStatus.status}</Badge>}
+                    {manualChangeStatus && <Badge>Update status: {billingStatusLabel(t, manualChangeStatus.status)}</Badge>}
                   </div>
                   {manualChangeStatus?.rejection_reason && (
                     <p className="text-xs text-rose-700">Update needed: {manualChangeStatus.rejection_reason}</p>
@@ -741,7 +766,7 @@ export default function BillingSettingsPage() {
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="text-sm font-semibold text-[var(--foreground)]">Latest billing submission</div>
-                    <Badge>Status: {manualRequestStatus.status}</Badge>
+                    <Badge>Status: {billingStatusLabel(t, manualRequestStatus.status)}</Badge>
                   </div>
                   <div className="mt-3 grid gap-2 text-xs text-[var(--muted)] md:grid-cols-2">
                     <div>Plan: {manualRequestStatus.plan} ({manualRequestStatus.interval})</div>
@@ -838,7 +863,7 @@ export default function BillingSettingsPage() {
                 </Button>
                 {manualRequestStatus && (
                   <Badge>
-                    Status: {manualRequestStatus.status}
+                    Status: {billingStatusLabel(t, manualRequestStatus.status)}
                   </Badge>
                 )}
               </div>
@@ -1027,7 +1052,7 @@ export default function BillingSettingsPage() {
                       {submitAiMfsRequest.isPending ? t("billing.ai.sending") : t("billing.ai.share_topup")}
                     </span>
                   </Button>
-                  {aiMfsStatus && <Badge>{t("billing.ai.status_label")}: {aiMfsStatus.status}</Badge>}
+                  {aiMfsStatus && <Badge>{t("billing.ai.status_label")}: {billingStatusLabel(t, aiMfsStatus.status)}</Badge>}
                 </div>
               </div>
             )}

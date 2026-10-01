@@ -96,6 +96,7 @@ export type ManualPaymentRequest = {
   amount: number;
   currency: string;
   sender_number: string;
+  channel: "bkash" | "rocket" | null;
   transaction_id: string;
   sent_at: string;
   status: ManualPaymentStatus;

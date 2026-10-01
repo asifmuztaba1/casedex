@@ -29,6 +29,7 @@ import {
 } from "@/features/admin/use-admin-platform";
 import { useLocale } from "@/components/locale-provider";
 import { CheckCircle, XCircle, Image as ImageIcon } from "lucide-react";
+import { billingStatusLabel } from "@/features/billing/labels";
 
 const STATUS_OPTIONS = ["", "pending", "approved", "rejected", "expired"];
 
@@ -134,7 +135,7 @@ export default function AdminAiPaymentsPage() {
                       </TableCell>
                       <TableCell className="text-xs font-mono">{p.transaction_id ?? "—"}</TableCell>
                       <TableCell>
-                        <Badge className={statusColors[p.status ?? ""] ?? ""}>{p.status ?? "—"}</Badge>
+                        <Badge className={statusColors[p.status ?? ""] ?? ""}>{billingStatusLabel(t, p.status)}</Badge>
                       </TableCell>
                       <TableCell className="text-xs">
                         {new Date(p.created_at).toLocaleDateString()}
