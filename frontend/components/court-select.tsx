@@ -163,8 +163,10 @@ export default function CourtSelect({
                       key={court.public_id}
                       type="button"
                       onClick={() => {
-                        onSelect(court);
+                        // Text first, then the selection: parents clear the selected
+                        // court when the text changes, so the reverse order dropped it.
                         onValueChange(label);
+                        onSelect(court);
                         setSearch(label);
                         setOpen(false);
                       }}
