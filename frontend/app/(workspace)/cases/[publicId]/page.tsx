@@ -913,7 +913,7 @@ export default function CaseDetailPage() {
                     {hearings.map((hearing) => (
                       <option key={hearing.public_id} value={hearing.public_id}>
                         {hearing.hearing_at
-                          ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
+                          ? formatDate(new Date(hearing.hearing_at), "PPp", locale)
                           : t("hearing.type.hearing")}
                       </option>
                     ))}
@@ -1059,7 +1059,7 @@ export default function CaseDetailPage() {
                     {hearings.map((hearing) => (
                       <option key={hearing.public_id} value={hearing.public_id}>
                         {hearing.hearing_at
-                          ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
+                          ? formatDate(new Date(hearing.hearing_at), "PPp", locale)
                           : t("hearing.type.hearing")}
                       </option>
                     ))}
@@ -1227,7 +1227,7 @@ export default function CaseDetailPage() {
                   <>
                     <div className="text-sm font-semibold text-[var(--foreground)]">
                       {nextHearing.hearing_at
-                        ? formatDate(new Date(nextHearing.hearing_at), "PPpp", locale)
+                        ? formatDate(new Date(nextHearing.hearing_at), "PPp", locale)
                         : t("common.tbd")}
                     </div>
                     <div className="capitalize">
@@ -1395,7 +1395,7 @@ export default function CaseDetailPage() {
                       <TableRow key={hearing.public_id}>
                         <TableCell>
                           {hearing.hearing_at
-                            ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
+                            ? formatDate(new Date(hearing.hearing_at), "PPp", locale)
                             : t("common.tbd")}
                         </TableCell>
                         <TableCell>
@@ -1421,7 +1421,7 @@ export default function CaseDetailPage() {
                                     {hearing.hearing_at
                                       ? format(
                                           new Date(hearing.hearing_at),
-                                          "PPpp"
+                                          "PPp"
                                         )
                                       : t("common.tbd")}
                                   </SheetDescription>
