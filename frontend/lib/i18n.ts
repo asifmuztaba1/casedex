@@ -101,7 +101,7 @@ const en: Dictionary = {
   "home.cta.subtitle":
     "We will follow up with onboarding steps and a guided walkthrough.",
   "home.cta.email": "Work email",
-  "home.cta.button": "Book a demo",
+  "home.cta.button": "Request access",
   "features.badge": "Features",
   "features.title": "Every module mapped to the legal workflow",
   "features.subtitle":
@@ -1549,7 +1549,7 @@ const bn: Dictionary = {
   "home.cta.title": "ডেমো বুক করুন অথবা অ্যাক্সেস চান।",
   "home.cta.subtitle": "আমরা অনবোর্ডিং প্রক্রিয়া ও গাইডেড ওয়াকথ্রু দেব।",
   "home.cta.email": "কাজের ইমেইল",
-  "home.cta.button": "ডেমো বুক করুন",
+  "home.cta.button": "অ্যাক্সেসের অনুরোধ করুন",
   "features.badge": "বৈশিষ্ট্যসমূহ",
   "features.title": "প্রতিটি মডিউল আইনি কার্যপ্রবাহের সাথে সামঞ্জস্যপূর্ণ",
   "features.subtitle": "CaseDex আপনার ওয়ার্কস্পেস সুশৃঙ্খল রাখে যাতে টিম প্রসঙ্গ না হারিয়ে দ্রুত কাজ করতে পারে।",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,12 +11,14 @@ import { useLocale } from "@/components/locale-provider";
 import { formatCountryLabel } from "@/features/countries/country-label";
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const registerUser = useRegister();
   const { t, locale } = useLocale();
   const { data: countriesData } = useCountries();
   const countries = useMemo(() => countriesData?.data ?? [], [countriesData]);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // Prefilled when arriving from the homepage "request access" form.
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [countryId, setCountryId] = useState("");

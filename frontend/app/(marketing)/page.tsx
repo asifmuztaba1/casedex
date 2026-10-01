@@ -354,10 +354,17 @@ export default function Home() {
               {t("home.cta.subtitle")}
             </p>
           </div>
-          <div className="flex flex-col gap-3">
-            <Input placeholder={t("home.cta.email")} type="email" />
-            <Button className="w-full sm:w-auto">{t("home.cta.button")}</Button>
-          </div>
+          <form action="/register" method="get" className="flex flex-col gap-3">
+            <Input
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder={t("home.cta.email")}
+              aria-label={t("home.cta.email")}
+            />
+            <Button type="submit" className="w-full sm:w-auto">{t("home.cta.button")}</Button>
+          </form>
         </CardContent>
       </Card>
     </section>
