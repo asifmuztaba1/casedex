@@ -28,6 +28,7 @@ import {
   Calendar,
   Printer,
 } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 function formatPartiesVs(h: DailyRegisterHearing): string {
   const client = h.client_name || "—";
@@ -98,7 +99,7 @@ function InlineOutcome({
 }
 
 export default function DailyRegisterPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { data: user } = useAuth();
   const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
 
@@ -107,11 +108,11 @@ export default function DailyRegisterPage() {
 
   const displayDate = useMemo(() => {
     try {
-      return format(new Date(date + "T00:00:00"), "EEEE, MMMM d, yyyy");
+      return formatDate(new Date(date + "T00:00:00"), "EEEE, MMMM d, yyyy", locale);
     } catch {
       return date;
     }
-  }, [date]);
+  }, [date, locale]);
 
   const isToday = date === format(new Date(), "yyyy-MM-dd");
 
@@ -276,7 +277,7 @@ export default function DailyRegisterPage() {
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-xs text-[var(--muted)] print:border print:border-black">
                     {h.hearing_at
-                      ? format(new Date(h.hearing_at), "h:mm a")
+                      ? formatDate(new Date(h.hearing_at), "h:mm a", locale)
                       : "—"}
                   </TableCell>
                   <TableCell className="print:border print:border-black">

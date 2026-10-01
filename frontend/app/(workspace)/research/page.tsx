@@ -27,8 +27,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
 import { Pencil, Plus, Trash2 } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const schema = z.object({
   title: z.string().min(2),
@@ -38,7 +38,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function ResearchPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { data, isLoading, isError } = useResearchNotes();
   const notes = data?.data ?? [];
   const createNote = useCreateResearchNote();
@@ -129,7 +129,7 @@ export default function ResearchPage() {
                     </p>
                   )}
                   <p className="text-xs text-[var(--muted-soft)]">
-                    {format(new Date(note.created_at), "PP")}
+                    {formatDate(new Date(note.created_at), "PP", locale)}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
@@ -188,7 +188,7 @@ export default function ResearchPage() {
                 type="button"
                 onClick={() => setEditingNote(null)}
               >
-                {t("common.cancel") ?? "Cancel"}
+                {t("common.cancel") ?? t("common.cancel")}
               </Button>
               <Button type="submit" disabled={updateNote.isPending}>
                 {updateNote.isPending ? "..." : t("research.save")}
@@ -203,7 +203,7 @@ export default function ResearchPage() {
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title={t("research.delete")}
-        description={t("research.delete_confirm") ?? "Are you sure you want to delete this note?"}
+        description={t("research.delete_confirm") ?? t("research.delete_confirm")}
         confirmLabel={t("research.delete")}
         onConfirm={() => {
           if (deleteTarget) deleteNote.mutate(deleteTarget);

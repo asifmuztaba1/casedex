@@ -4,12 +4,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale-provider";
 
 type Step = "account" | "workspace";
 
-const STEPS: Array<{ id: Step; label: string; href: string }> = [
-  { id: "account", label: "Verify email", href: "/onboarding/account" },
-  { id: "workspace", label: "Start workspace", href: "/onboarding/workspace" },
+const STEPS: Array<{ id: Step; labelKey: string; href: string }> = [
+  { id: "account", labelKey: "onboarding.step_verify_email", href: "/onboarding/account" },
+  { id: "workspace", labelKey: "onboarding.step_start_workspace", href: "/onboarding/workspace" },
 ];
 
 export default function OnboardingShell({
@@ -23,12 +24,13 @@ export default function OnboardingShell({
   description: string;
   children: ReactNode;
 }) {
+  const { t } = useLocale();
   return (
     <section className="mx-auto w-full max-w-3xl space-y-6 pb-12">
       <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[var(--paper)] via-[var(--wash)] to-blue-50 p-6 shadow-sm md:p-8">
         <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-blue-100/70 blur-2xl" />
         <div className="pointer-events-none absolute -left-14 -bottom-14 h-40 w-40 rounded-full bg-teal-100/70 blur-2xl" />
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted-soft)]">Onboarding</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted-soft)]">{t("onboarding.kicker")}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">{title}</h1>
         <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">{description}</p>
         <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -37,7 +39,7 @@ export default function OnboardingShell({
             return (
               <div key={item.id} className="flex items-center gap-2">
                 <Link href={item.href}>
-                  <Badge className={cn(active && "bg-[var(--foreground)] text-white border-[var(--foreground)]", "cursor-pointer")}>{index + 1}. {item.label}</Badge>
+                  <Badge className={cn(active && "bg-[var(--foreground)] text-white border-[var(--foreground)]", "cursor-pointer")}>{index + 1}. {t(item.labelKey)}</Badge>
                 </Link>
                 {index < STEPS.length - 1 ? <span className="text-[var(--muted-soft)]">/</span> : null}
               </div>

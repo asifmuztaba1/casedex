@@ -46,6 +46,7 @@ import {
   Users,
 } from "lucide-react";
 import OfflineIndicator from "@/components/offline-indicator";
+import { formatDate } from "@/lib/date-format";
 
 function notificationHref(notification: NotificationSummary): string {
   if (notification.case_public_id) {
@@ -212,7 +213,7 @@ export default function WorkspaceLayout({
               </Badge>
               {subscription?.on_trial && subscription?.trial_ends_at && (
                 <Badge>
-                  {t("billing.trial_ends")}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
+                  {t("billing.trial_ends")}: {formatDate(subscription.trial_ends_at, "PP", locale)}
                 </Badge>
               )}
               <ThemeToggle />
@@ -224,7 +225,7 @@ export default function WorkspaceLayout({
                       variant="outline"
                       size="sm"
                       className="relative"
-                      aria-label="Notifications"
+                      aria-label={t("nav.notifications")}
                     >
                       <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
@@ -268,7 +269,7 @@ export default function WorkspaceLayout({
                               </div>
                             )}
                             <div className="mt-1 text-[11px] text-[var(--muted-soft)]">
-                              {new Date(notification.created_at).toLocaleString()}
+                              {formatDate(notification.created_at, "PPp", locale)}
                             </div>
                           </Link>
                         ))
@@ -277,7 +278,7 @@ export default function WorkspaceLayout({
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button variant="outline" size="sm" aria-label="Notifications" disabled>
+                <Button variant="outline" size="sm" aria-label={t("nav.notifications")} disabled>
                   <Bell className="h-4 w-4" />
                 </Button>
               )}

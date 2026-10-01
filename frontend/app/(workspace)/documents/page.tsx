@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
 import PageHeader from "@/components/page-header";
 import StatusBadge from "@/components/status-badge";
@@ -28,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Download, FileText, Search } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const categoryOptions = [
   "all",
@@ -40,7 +40,7 @@ const categoryOptions = [
 ] as const;
 
 export default function DocumentsPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { data, isLoading, isError } = useDocuments();
   const documents = useMemo(() => data?.data ?? [], [data?.data]);
   const [search, setSearch] = useState("");
@@ -81,7 +81,7 @@ export default function DocumentsPage() {
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-full pl-9 sm:w-[260px]"
-            placeholder={t("documents.search_placeholder") ?? "Search documents..."}
+            placeholder={t("documents.search_placeholder") ?? t("documents.search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -134,7 +134,7 @@ export default function DocumentsPage() {
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-[var(--muted-soft)]" />
                         <span className="font-medium text-[var(--foreground)]">
-                          {doc.original_name ?? "Untitled"}
+                          {doc.original_name ?? t("documents.untitled")}
                         </span>
                         {doc.size && (
                           <span className="text-xs text-[var(--muted-soft)]">
@@ -166,7 +166,7 @@ export default function DocumentsPage() {
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-[var(--muted-soft)]">
                       {doc.created_at
-                        ? format(new Date(doc.created_at), "PP")
+                        ? formatDate(new Date(doc.created_at), "PP", locale)
                         : "-"}
                     </TableCell>
                     <TableCell className="text-right">

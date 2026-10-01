@@ -17,7 +17,7 @@ const options: Array<{ label: string; flag: string; value: Locale }> = [
 ];
 
 export default function LanguageSwitcher() {
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale, t } = useLocale();
   const { data: user } = useAuth();
   const updateProfile = useUpdateProfile();
 
@@ -39,7 +39,7 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Language">
+        <Button variant="outline" size="icon" aria-label={t("nav.language")}>
           <span className="text-lg leading-none">{active.flag}</span>
         </Button>
       </DropdownMenuTrigger>

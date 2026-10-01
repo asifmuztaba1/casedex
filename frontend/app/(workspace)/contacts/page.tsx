@@ -69,8 +69,8 @@ export default function ContactsPage() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title={t("contacts.title") ?? "Contacts"}
-        description={t("contacts.subtitle") ?? "All contacts and parties across your cases"}
+        title={t("contacts.title") ?? t("nav.contacts")}
+        description={t("contacts.subtitle") ?? t("contacts.subtitle_all")}
       />
 
       <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -78,7 +78,7 @@ export default function ContactsPage() {
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-full pl-9 sm:w-[260px]"
-            placeholder={t("contacts.search_placeholder") ?? "Search contacts..."}
+            placeholder={t("contacts.search_placeholder") ?? t("contacts.search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -107,8 +107,8 @@ export default function ContactsPage() {
                 {opt === "all"
                   ? (t("status.all") ?? "All")
                   : opt === "clients"
-                    ? (t("contacts.filter_clients") ?? "Clients")
-                    : (t("contacts.filter_non_clients") ?? "Non-clients")}
+                    ? (t("contacts.filter_clients") ?? t("nav.clients"))
+                    : (t("contacts.filter_non_clients") ?? t("contacts.non_clients"))}
               </SelectItem>
             ))}
           </SelectContent>
@@ -117,12 +117,12 @@ export default function ContactsPage() {
 
       {isError ? (
         <div className="text-sm text-rose-600">
-          {t("contacts.error") ?? "Failed to load contacts."}
+          {t("contacts.error") ?? t("contacts.error")}
         </div>
       ) : contacts.length === 0 ? (
         <EmptyState
-          title={t("contacts.empty_title") ?? "No contacts yet"}
-          description={t("contacts.empty_desc") ?? "Contacts will appear here as you add parties to cases."}
+          title={t("contacts.empty_title") ?? t("contacts.empty_title")}
+          description={t("contacts.empty_desc") ?? t("contacts.empty_desc_parties")}
         />
       ) : (
         <Card>
@@ -132,11 +132,11 @@ export default function ContactsPage() {
                 <TableRow>
                   <TableHead>{t("table.name") ?? "Name"}</TableHead>
                   <TableHead>{t("table.type") ?? "Type"}</TableHead>
-                  <TableHead>{t("contact.client") ?? "Client?"}</TableHead>
-                  <TableHead>{t("table.phone") ?? "Phone"}</TableHead>
-                  <TableHead>{t("table.email") ?? "Email"}</TableHead>
-                  <TableHead>{t("table.cases") ?? "Cases"}</TableHead>
-                  <TableHead>{t("table.actions") ?? "Actions"}</TableHead>
+                  <TableHead>{t("contact.client") ?? t("contacts.is_client")}</TableHead>
+                  <TableHead>{t("table.phone") ?? t("table.phone")}</TableHead>
+                  <TableHead>{t("table.email") ?? t("login.email")}</TableHead>
+                  <TableHead>{t("table.cases") ?? t("nav.cases")}</TableHead>
+                  <TableHead>{t("table.actions") ?? t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

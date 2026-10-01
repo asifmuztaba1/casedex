@@ -11,6 +11,7 @@ import OnboardingShell from "@/components/onboarding-shell";
 import { useAuth, useCreateTenant } from "@/features/auth/use-auth";
 import { clearOnboardingDraft } from "@/features/auth/onboarding-draft";
 import { ArrowRight, CalendarClock, Rocket } from "lucide-react";
+import { useLocale } from "@/components/locale-provider";
 
 export default function OnboardingWorkspacePage() {
   const queryClient = useQueryClient();
@@ -18,11 +19,14 @@ export default function OnboardingWorkspacePage() {
   const { data: user, isLoading } = useAuth();
   const createTenant = useCreateTenant();
   const { toast } = useToast();
+  const { t } = useLocale();
   // null until the user types, so the suggested default can be derived from the user.
   const [workspaceNameInput, setWorkspaceName] = useState<string | null>(null);
   const workspaceName =
     workspaceNameInput ??
-    (user ? `${user.name.trim().split(/\s+/)[0] || "My"}'s Workspace` : "");
+    (user
+      ? t("onboarding.default_workspace_name").replace("{name}", user.name.trim().split(/\s+/)[0] || t("onboarding.default_workspace_owner"))
+      : "");
 
   useEffect(() => {
     if (isLoading) {
@@ -54,8 +58,8 @@ export default function OnboardingWorkspacePage() {
     const name = workspaceName.trim();
     if (!name) {
       toast({
-        title: "Workspace name required",
-        description: "Please enter a name for your workspace.",
+        title: t("onboarding.name_required"),
+        description: t("onboarding.name_required_desc"),
         variant: "error",
       });
       return;
@@ -63,8 +67,8 @@ export default function OnboardingWorkspacePage() {
 
     if (!user.country_id) {
       toast({
-        title: "Country is required",
-        description: "Please update your profile country and try again.",
+        title: t("onboarding.country_required"),
+        description: t("onboarding.country_required_desc"),
         variant: "error",
       });
       return;
@@ -82,15 +86,15 @@ export default function OnboardingWorkspacePage() {
       clearOnboardingDraft(user.email);
       await queryClient.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Welcome to CaseDex!",
-        description: "Your 30-day free trial has started.",
+        title: t("onboarding.welcome"),
+        description: t("onboarding.trial_started"),
         variant: "success",
       });
       router.push("/dashboard");
     } catch (error) {
       toast({
-        title: "Something went wrong",
-        description: error instanceof Error ? error.message : "Please try again.",
+        title: t("onboarding.error"),
+        description: error instanceof Error ? error.message : t("onboarding.try_again"),
         variant: "error",
       });
     }
@@ -99,41 +103,41 @@ export default function OnboardingWorkspacePage() {
   return (
     <OnboardingShell
       step="workspace"
-      title="Set up your workspace"
-      description="Step 2 of 2. Name your workspace and start your 30-day free trial."
+      title={t("onboarding.workspace_title")}
+      description={t("onboarding.workspace_desc")}
     >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Rocket className="h-5 w-5 text-[var(--muted)]" />
-            Almost there
+            {t("onboarding.almost_there")}
           </CardTitle>
           <CardDescription>
-            Your workspace is where your team manages cases, hearings, documents, and more.
+            {t("onboarding.workspace_explainer")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
             <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
-              Workspace name
+              {t("onboarding.workspace_name")}
             </label>
             <Input
               value={workspaceName}
               onChange={(e) => setWorkspaceName(e.target.value)}
-              placeholder="e.g. Rahman & Associates"
+              placeholder={t("onboarding.workspace_placeholder")}
             />
             <p className="text-xs text-[var(--muted-soft)]">
-              You can change this later in Settings.
+              {t("onboarding.change_later")}
             </p>
           </div>
 
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
             <div className="flex items-center gap-2 font-semibold">
               <CalendarClock className="h-4 w-4" />
-              30-day free trial
+              {t("onboarding.trial_title")}
             </div>
             <p className="mt-1">
-              Full access to all features. No credit card required. You can choose a plan when the trial ends.
+              {t("onboarding.trial_desc")}
             </p>
           </div>
 
@@ -144,7 +148,7 @@ export default function OnboardingWorkspacePage() {
             className="w-full sm:w-auto"
           >
             <ArrowRight className="mr-2 h-4 w-4" />
-            {createTenant.isPending ? "Creating workspace..." : "Start free trial"}
+            {createTenant.isPending ? t("onboarding.creating") : t("onboarding.start_trial")}
           </Button>
         </CardContent>
       </Card>

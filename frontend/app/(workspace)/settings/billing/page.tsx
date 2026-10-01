@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { format, formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import AiIcon from "@/components/ai-icon";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -59,6 +59,7 @@ import {
   Smartphone,
   Wallet,
 } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 export default function BillingSettingsPage() {
   const { t, locale } = useLocale();
@@ -130,7 +131,7 @@ export default function BillingSettingsPage() {
     manualRequestStatus?.status === "approved" && manualRequestStatus.approved_ends_at
       ? new Date(manualRequestStatus.approved_ends_at)
       : null;
-  const paidUntil = paidEndsAt ? format(paidEndsAt, "PP") : null;
+  const paidUntil = paidEndsAt ? formatDate(paidEndsAt, "PP", locale) : null;
   const paidAccessEnded = paidEndsAt !== null && subscription?.has_access === false;
   const manualEnabled = Boolean(manualMethods?.enabled);
   const activeSectionTab = !manualEnabled && sectionTab === "manual" ? "plans" : sectionTab;
@@ -381,7 +382,7 @@ export default function BillingSettingsPage() {
 
   const isLemonBilling = subscription?.billing_source === "lemon";
   const canManageLemonSubscription = isLemonBilling && Boolean(subscription?.status && subscription.status !== "expired");
-  const trialEndsOn = manualMethods?.trial_ends_at ? new Date(manualMethods.trial_ends_at).toLocaleDateString() : null;
+  const trialEndsOn = manualMethods?.trial_ends_at ? formatDate(manualMethods.trial_ends_at, "PP", locale) : null;
   const billingRouteLabel = manualOnlyLaunch
     ? t("billing.ui.mfs_beta_flow")
     : isLemonBilling
@@ -772,12 +773,12 @@ export default function BillingSettingsPage() {
                     <div>{t("billing.ui.plan")}: {planLabel(t, manualRequestStatus.plan)} ({t(manualRequestStatus.interval === "yearly" ? "billing.ui.yearly" : "billing.ui.monthly")})</div>
                     <div>{t("billing.ui.amount")}: {manualRequestStatus.amount} {manualRequestStatus.currency}</div>
                     <div>{t("billing.ui.transaction_id")}: {manualRequestStatus.transaction_id}</div>
-                    <div>{t("billing.ui.sent_at")}: {new Date(manualRequestStatus.sent_at).toLocaleString()}</div>
+                    <div>{t("billing.ui.sent_at")}: {formatDate(manualRequestStatus.sent_at, "PPp", locale)}</div>
                     {manualRequestStatus.temporary_access_expires_at && (
-                      <div>{t("billing.ui.temp_access_until")}: {new Date(manualRequestStatus.temporary_access_expires_at).toLocaleString()}</div>
+                      <div>{t("billing.ui.temp_access_until")}: {formatDate(manualRequestStatus.temporary_access_expires_at, "PPp", locale)}</div>
                     )}
                     {manualRequestStatus.approved_ends_at && (
-                      <div>{t("billing.ui.approved_access_until")}: {new Date(manualRequestStatus.approved_ends_at).toLocaleString()}</div>
+                      <div>{t("billing.ui.approved_access_until")}: {formatDate(manualRequestStatus.approved_ends_at, "PPp", locale)}</div>
                     )}
                   </div>
                   {temporaryAccessText && manualRequestStatus.status === "pending" && (
@@ -1094,7 +1095,7 @@ export default function BillingSettingsPage() {
                 <div key={invoice.id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3 text-sm">
                   <div>
                     <div className="font-medium">#{invoice.order_number}</div>
-                    <div className="text-xs text-[var(--muted-soft)]">{new Date(invoice.ordered_at).toLocaleDateString()}</div>
+                    <div className="text-xs text-[var(--muted-soft)]">{formatDate(invoice.ordered_at, "PP", locale)}</div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span>{invoice.total / 100} {invoice.currency.toUpperCase()}</span>

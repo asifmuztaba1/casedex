@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type ContactSummary = {
@@ -88,6 +91,7 @@ type CreateClientPayload = {
 export function useCreateClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: CreateClientPayload) =>
@@ -95,14 +99,14 @@ export function useCreateClient() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
-        title: "Contact saved",
-        description: "The contact was created successfully.",
+        title: t("toast.contact_saved"),
+        description: t("toast.contact_saved_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Contact not saved",
+        title: t("toast.contact_not_saved"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -118,6 +122,7 @@ type UpdateClientPayload = {
 export function useUpdateClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ id, data }: UpdateClientPayload) =>
@@ -126,14 +131,14 @@ export function useUpdateClient() {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       queryClient.invalidateQueries({ queryKey: ["clients", payload.id] });
       toast({
-        title: "Contact updated",
-        description: "Changes saved successfully.",
+        title: t("toast.contact_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -144,20 +149,21 @@ export function useUpdateClient() {
 export function useDeleteClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/api/v1/clients/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
-        title: "Contact removed",
-        description: "The contact was deleted.",
+        title: t("toast.contact_removed"),
+        description: t("toast.contact_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete failed",
+        title: t("cases.toast.delete_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });

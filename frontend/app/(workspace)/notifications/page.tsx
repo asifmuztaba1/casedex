@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
 import PageHeader from "@/components/page-header";
 import StatusBadge from "@/components/status-badge";
@@ -30,11 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Bell, CheckCircle } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const statusOptions = ["all", "pending", "sent", "read"] as const;
 
 export default function NotificationsPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { data, isLoading, isError } = useNotifications();
   const notifications = useMemo(() => data?.data ?? [], [data?.data]);
   const updateNotification = useUpdateNotification();
@@ -107,7 +107,7 @@ export default function NotificationsPage() {
                   <TableHead>{t("table.case")}</TableHead>
                   <TableHead>{t("notifications.table.status")}</TableHead>
                   <TableHead>{t("table.date") ?? "Date"}</TableHead>
-                  <TableHead className="text-right">{t("common.actions") ?? "Actions"}</TableHead>
+                  <TableHead className="text-right">{t("common.actions") ?? t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,9 +147,9 @@ export default function NotificationsPage() {
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-[var(--muted-soft)]">
                       {note.scheduled_for
-                        ? format(new Date(note.scheduled_for), "PP")
+                        ? formatDate(new Date(note.scheduled_for), "PP", locale)
                         : note.created_at
-                          ? format(new Date(note.created_at), "PP")
+                          ? formatDate(new Date(note.created_at), "PP", locale)
                           : "-"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -160,7 +160,7 @@ export default function NotificationsPage() {
                           onClick={() => markAsRead(note.public_id)}
                         >
                           <CheckCircle className="mr-1 h-3.5 w-3.5" />
-                          {t("notifications.mark_read") ?? "Mark read"}
+                          {t("notifications.mark_read") ?? t("notifications.mark_read")}
                         </Button>
                       )}
                     </TableCell>

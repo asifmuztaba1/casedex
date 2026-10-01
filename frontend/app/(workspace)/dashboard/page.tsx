@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,6 +40,7 @@ import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
+import { formatDate } from "@/lib/date-format";
 
 function formatLocalizedDate(
   locale: "en" | "bn",
@@ -269,8 +269,8 @@ export default function DashboardPage() {
 
       if (hasAccess) {
         toast({
-          title: "Subscription active",
-          description: "Payment completed successfully. Your workspace is now active.",
+          title: t("dashboard.toast.subscription_active"),
+          description: t("dashboard.toast.subscription_active_desc"),
           variant: "success",
         });
         router.replace("/dashboard");
@@ -279,8 +279,8 @@ export default function DashboardPage() {
 
       if (attempts >= maxAttempts) {
         toast({
-          title: "Payment processing",
-          description: "Your payment was received. Subscription sync is still pending.",
+          title: t("dashboard.toast.payment_processing"),
+          description: t("dashboard.toast.payment_processing_desc"),
           variant: "error",
         });
         router.replace("/settings/billing?onboarding=1");
@@ -295,7 +295,7 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [queryClient, refetchSubscription, router, searchParams, toast]);
+  }, [queryClient, refetchSubscription, router, searchParams, t, toast]);
 
   if (casesLoading || hearingsLoading) {
     return (
@@ -396,7 +396,7 @@ export default function DashboardPage() {
                   <TableRow key={hearing.public_id}>
                     <TableCell>
                       {hearing.hearing_at
-                        ? format(new Date(hearing.hearing_at), "PPpp")
+                        ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
                         : "TBD"}
                     </TableCell>
                     <TableCell>
@@ -560,7 +560,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-xs text-[var(--muted-soft)]">
                       {entry.entry_at
-                        ? format(new Date(entry.entry_at), "PP")
+                        ? formatDate(new Date(entry.entry_at), "PP", locale)
                         : ""}
                     </div>
                   </div>
@@ -662,7 +662,7 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>
                     {doc.created_at
-                      ? format(new Date(doc.created_at), "PP")
+                      ? formatDate(new Date(doc.created_at), "PP", locale)
                       : "-"}
                   </TableCell>
                 </TableRow>

@@ -26,7 +26,7 @@ export default function ContactCaseHistory({
   if (caseHistory.length === 0) {
     return (
       <p className="text-sm text-[var(--muted-soft)]">
-        {t("contact.no_cases") ?? "No case history"}
+        {t("contact.no_cases") ?? t("contact.no_case_history")}
       </p>
     );
   }
@@ -36,8 +36,8 @@ export default function ContactCaseHistory({
       <TableHeader>
         <TableRow>
           <TableHead>{t("table.case") ?? "Case"}</TableHead>
-          <TableHead>{t("table.case_number") ?? "Case Number"}</TableHead>
-          <TableHead>{t("table.status") ?? "Status"}</TableHead>
+          <TableHead>{t("table.case_number") ?? t("table.case_number")}</TableHead>
+          <TableHead>{t("table.status") ?? t("notifications.table.status")}</TableHead>
           <TableHead>{t("contact.side") ?? "Side"}</TableHead>
           <TableHead>{t("contact.role") ?? "Role"}</TableHead>
         </TableRow>

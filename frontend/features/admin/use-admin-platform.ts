@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
 
 export type PlatformAnalytics = {
   total_tenants: number;
@@ -140,6 +141,7 @@ export function useAdminAiPayments(filters?: { status?: string; search?: string 
 export function useApproveAiPayment() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async ({ publicId }: { publicId: string }) => {
@@ -147,10 +149,10 @@ export function useApproveAiPayment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "ai-payments"] });
-      toast({ title: "AI payment approved", variant: "success" });
+      toast({ title: t("toast.ai_payment_approved"), variant: "success" });
     },
     onError: () => {
-      toast({ title: "Failed to approve", variant: "error" });
+      toast({ title: t("toast.approve_failed"), variant: "error" });
     },
   });
 }
@@ -158,6 +160,7 @@ export function useApproveAiPayment() {
 export function useRejectAiPayment() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async ({ publicId, reason }: { publicId: string; reason?: string }) => {
@@ -165,10 +168,10 @@ export function useRejectAiPayment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "ai-payments"] });
-      toast({ title: "AI payment rejected", variant: "success" });
+      toast({ title: t("toast.ai_payment_rejected"), variant: "success" });
     },
     onError: () => {
-      toast({ title: "Failed to reject", variant: "error" });
+      toast({ title: t("toast.reject_failed"), variant: "error" });
     },
   });
 }
@@ -176,6 +179,7 @@ export function useRejectAiPayment() {
 export function useUpdateUserRole() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async ({ publicId, role }: { publicId: string; role: string }) => {
@@ -187,10 +191,10 @@ export function useUpdateUserRole() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "analytics"] });
-      toast({ title: "Role updated", variant: "success" });
+      toast({ title: t("toast.role_updated"), variant: "success" });
     },
     onError: () => {
-      toast({ title: "Failed to update role", variant: "error" });
+      toast({ title: t("toast.role_update_failed"), variant: "error" });
     },
   });
 }

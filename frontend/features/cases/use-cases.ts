@@ -2,12 +2,14 @@
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type ClientSummary = {

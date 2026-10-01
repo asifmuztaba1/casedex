@@ -8,7 +8,7 @@ import type { Locale } from "@/lib/locale";
 const PICKER_SHOWN_KEY = "casedex_lang_picker_shown";
 
 export default function LanguagePickerModal() {
-  const { setLocale } = useLocale();
+  const { setLocale, t } = useLocale();
   const { data: user } = useAuth();
   const updateProfile = useUpdateProfile();
   const [visible, setVisible] = useState(false);
@@ -47,7 +47,7 @@ export default function LanguagePickerModal() {
     <div className="fixed bottom-20 right-6 z-40 w-72 animate-in slide-in-from-bottom-4 fade-in duration-300 print:hidden">
       <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">
         <p className="text-sm font-semibold text-[var(--foreground)]">
-          Choose your language
+          {t("language.choose")}
         </p>
         <p className="mt-0.5 text-xs text-[var(--muted)]">
           আপনার ভাষা নির্বাচন করুন

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
 import type { HearingSummary } from "./use-hearings";
+import { formatDate } from "@/lib/date-format";
 
 const TYPE_BADGE: Record<string, string> = {
   mention: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
@@ -20,7 +20,7 @@ type Props = {
 };
 
 export default function DayHearingsList({ hearings, selectedDate }: Props) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   if (hearings.length === 0) {
     return (
@@ -33,7 +33,7 @@ export default function DayHearingsList({ hearings, selectedDate }: Props) {
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">
-        {format(selectedDate, "EEEE, MMMM d, yyyy")}
+        {formatDate(selectedDate, "EEEE, MMMM d, yyyy", locale)}
       </h3>
       <div className="space-y-2">
         {hearings.map((h) => (
@@ -42,7 +42,7 @@ export default function DayHearingsList({ hearings, selectedDate }: Props) {
             className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-3"
           >
             <div className="min-w-[52px] text-xs font-medium text-[var(--muted)]">
-              {h.hearing_at ? format(new Date(h.hearing_at), "h:mm a") : "TBD"}
+              {h.hearing_at ? formatDate(new Date(h.hearing_at), "h:mm a", locale) : "TBD"}
             </div>
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-2">

@@ -6,9 +6,12 @@ function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 import { CaseParticipantSummary } from "@/features/cases/use-cases";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 type CaseParticipantListResponse = {
   data: CaseParticipantSummary[];
@@ -34,6 +37,7 @@ type AddParticipantPayload = {
 export function useAddCaseParticipant() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: AddParticipantPayload) =>
@@ -52,14 +56,14 @@ export function useAddCaseParticipant() {
         queryKey: ["cases", payload.casePublicId],
       });
       toast({
-        title: "Participant added",
-        description: "The participant has been added to the case.",
+        title: t("toast.participant_added"),
+        description: t("toast.participant_added_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Add failed",
+        title: t("toast.add_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -75,6 +79,7 @@ type RemoveParticipantPayload = {
 export function useRemoveCaseParticipant() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ casePublicId, participantId }: RemoveParticipantPayload) =>
@@ -87,14 +92,14 @@ export function useRemoveCaseParticipant() {
         queryKey: ["cases", payload.casePublicId],
       });
       toast({
-        title: "Participant removed",
-        description: "The participant has been removed from the case.",
+        title: t("toast.participant_removed"),
+        description: t("toast.participant_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Remove failed",
+        title: t("toast.remove_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });

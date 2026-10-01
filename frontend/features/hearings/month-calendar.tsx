@@ -18,6 +18,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import type { HearingSummary } from "./use-hearings";
+import { formatDate } from "@/lib/date-format";
 
 const TYPE_COLORS: Record<string, string> = {
   mention: "bg-blue-500",
@@ -75,7 +76,7 @@ export default function MonthCalendar({
         </Button>
         <div className="flex items-center gap-2 md:gap-3">
           <h2 className="text-xs font-semibold text-[var(--foreground)] md:text-sm">
-            {format(currentMonth, "MMMM yyyy")}
+            {formatDate(currentMonth, "MMMM yyyy", locale)}
           </h2>
           {!isSameMonth(currentMonth, new Date()) && (
             <Button variant="outline" size="sm" onClick={() => onMonthChange(new Date())}>

@@ -64,7 +64,7 @@ export default function PricingPageClient() {
             featured={plan.id === "professional"}
             ctaLabel={
               user?.tenant_id
-                ? (isManualMfsOnlyLaunch() ? "Open billing details" : t("billing.upgrade"))
+                ? (isManualMfsOnlyLaunch() ? t("pricing.open_billing") : t("billing.upgrade"))
                 : t("pricing.cta")
             }
             ctaHref={
