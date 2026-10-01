@@ -277,7 +277,7 @@ export default function Home() {
             Plans
           </p>
           <CardTitle className="text-2xl font-semibold">
-            Choose a package based on storage and support
+            {t("home.plans_title")}
           </CardTitle>
           <CardDescription>
             Unlimited cases and team members are included in every plan. Upgrade by storage and service level.

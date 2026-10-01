@@ -25,7 +25,7 @@ export default function SubscriptionWall() {
         <CardContent className="space-y-4">
           <p className="text-sm text-[var(--muted)]">
             {isManualMfsOnlyLaunch()
-              ? "This beta activates subscriptions through a guided bKash / Rocket review flow."
+              ? t("subscription_wall.mfs_beta")
               : t("billing.wall_desc")}
           </p>
           <div className="grid gap-3 md:grid-cols-3">

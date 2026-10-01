@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, List, CalendarDays } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const typeOptions = ["all", "mention", "hearing", "trial", "order"] as const;
 const VIEW_KEY = "casedex-hearings-view";
@@ -135,7 +136,7 @@ export default function HearingsPage() {
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
               <Input
                 className="w-full pl-9 sm:w-[260px]"
-                placeholder={t("hearings.search_placeholder") ?? "Search hearings..."}
+                placeholder={t("hearings.search_placeholder") ?? t("hearings.search_placeholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -237,7 +238,7 @@ export default function HearingsPage() {
             <Card>
               <CardContent className="pt-6">
                 <h2 className="mb-4 text-base font-semibold text-[var(--muted-soft)]">
-                  {t("hearings.past") ?? "Past hearings"}
+                  {t("hearings.past") ?? t("hearings.past")}
                 </h2>
                 <HearingTable hearings={past} t={t} />
               </CardContent>
@@ -264,6 +265,7 @@ function HearingTable({
   }>;
   t: (key: string) => string;
 }) {
+  const { locale } = useLocale();
   return (
     <div className="overflow-x-auto">
       <Table className="min-w-[640px]">
@@ -272,7 +274,7 @@ function HearingTable({
             <TableHead>{t("table.date")}</TableHead>
             <TableHead>{t("table.case")}</TableHead>
             <TableHead>{t("table.type")}</TableHead>
-            <TableHead>{t("hearing.agenda") ?? "Agenda"}</TableHead>
+            <TableHead>{t("hearing.agenda") ?? t("hearing.agenda")}</TableHead>
             <TableHead>{t("hearing.next_steps")}</TableHead>
           </TableRow>
         </TableHeader>
@@ -281,7 +283,7 @@ function HearingTable({
             <TableRow key={hearing.public_id}>
               <TableCell className="whitespace-nowrap">
                 {hearing.hearing_at
-                  ? format(new Date(hearing.hearing_at), "PP p")
+                  ? formatDate(new Date(hearing.hearing_at), "PP p", locale)
                   : t("common.tbd")}
               </TableCell>
               <TableCell>

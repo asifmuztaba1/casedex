@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
 import EmptyState from "@/components/empty-state";
 import PageHeader from "@/components/page-header";
 import { useLocale } from "@/components/locale-provider";
@@ -27,9 +26,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { formatDate } from "@/lib/date-format";
 
 export default function DiaryPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { data, isLoading, isError } = useDiaryEntries();
   const entries = useMemo(() => data?.data ?? [], [data?.data]);
   const [search, setSearch] = useState("");
@@ -68,7 +68,7 @@ export default function DiaryPage() {
         <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
         <Input
           className="w-[260px] pl-9"
-          placeholder={t("diary.search_placeholder") ?? "Search diary entries..."}
+          placeholder={t("diary.search_placeholder") ?? t("diary.search_placeholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -95,7 +95,7 @@ export default function DiaryPage() {
                   <TableHead>{t("table.date")}</TableHead>
                   <TableHead>{t("table.case")}</TableHead>
                   <TableHead>{t("common.entry")}</TableHead>
-                  <TableHead>{t("diary.body") ?? "Notes"}</TableHead>
+                  <TableHead>{t("diary.body") ?? t("table.notes")}</TableHead>
                   <TableHead className="w-[60px]" />
                 </TableRow>
               </TableHeader>
@@ -104,7 +104,7 @@ export default function DiaryPage() {
                   <TableRow key={entry.public_id}>
                     <TableCell className="whitespace-nowrap">
                       {entry.entry_at
-                        ? format(new Date(entry.entry_at), "PP")
+                        ? formatDate(new Date(entry.entry_at), "PP", locale)
                         : t("common.tbd")}
                     </TableCell>
                     <TableCell>
@@ -163,7 +163,7 @@ export default function DiaryPage() {
             {selected?.entry_at && (
               <div>
                 <span className="font-medium text-[var(--muted-soft)]">{t("table.date")}:</span>{" "}
-                {format(new Date(selected.entry_at), "PPP")}
+                {formatDate(new Date(selected.entry_at), "PPP", locale)}
               </div>
             )}
             <div className="whitespace-pre-wrap leading-relaxed text-[var(--foreground)]">

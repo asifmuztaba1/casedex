@@ -27,7 +27,7 @@ function markVisited(pathname: string): void {
 
 
 export default function VoiceAssistant() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const pathname = usePathname();
   const [speaking, setSpeaking] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -198,7 +198,7 @@ export default function VoiceAssistant() {
               onClick={handleToggleEnabled}
               className="ml-auto text-xs text-[var(--muted)]"
             >
-              {locale === "bn" ? "সহকারী বন্ধ করুন" : "Turn off assistant"}
+              {locale === "bn" ? "সহকারী বন্ধ করুন" : t("assistant.turn_off")}
             </Button>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function VoiceAssistant() {
           style={{ background: "linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)" }}
         >
           <span className="whitespace-nowrap">
-            {locale === "bn" ? "গাইডেন্সের জন্য ক্লিক করুন" : "Click me for guidance"}
+            {locale === "bn" ? "গাইডেন্সের জন্য ক্লিক করুন" : t("assistant.click_for_guidance")}
           </span>
           <button
             onClick={() => {
@@ -244,7 +244,7 @@ export default function VoiceAssistant() {
                 : "Listen to assistant"
             : locale === "bn"
               ? "সহকারী চালু করুন"
-              : "Enable assistant"
+              : t("assistant.enable")
         }
       >
         {/* Outer glow */}

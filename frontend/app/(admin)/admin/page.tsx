@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
                   </div>
                 ))}
                 {data?.recent_tenants.length === 0 && (
-                  <p className="py-4 text-center text-sm text-[var(--muted-soft)]">No tenants yet.</p>
+                  <p className="py-4 text-center text-sm text-[var(--muted-soft)]">{t("admin.no_tenants")}</p>
                 )}
               </div>
             )}
@@ -129,13 +129,13 @@ export default function AdminDashboardPage() {
                     <div className="text-right">
                       <Badge>{user.role}</Badge>
                       <div className="mt-1 text-[10px] text-[var(--muted-soft)]">
-                        {user.tenant_name ?? "No firm"}
+                        {user.tenant_name ?? t("admin.no_firm")}
                       </div>
                     </div>
                   </div>
                 ))}
                 {data?.recent_users.length === 0 && (
-                  <p className="py-4 text-center text-sm text-[var(--muted-soft)]">No users yet.</p>
+                  <p className="py-4 text-center text-sm text-[var(--muted-soft)]">{t("admin.no_users")}</p>
                 )}
               </div>
             )}

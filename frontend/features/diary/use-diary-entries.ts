@@ -1,12 +1,15 @@
 ﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type DiaryEntrySummary = {
@@ -52,6 +55,7 @@ type CreateDiaryEntryPayload = {
 export function useCreateDiaryEntry() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: CreateDiaryEntryPayload) =>
@@ -65,14 +69,14 @@ export function useCreateDiaryEntry() {
         queryKey: ["cases", payload.case_public_id],
       });
       toast({
-        title: "Diary entry saved",
-        description: "The diary entry was added.",
+        title: t("toast.diary_saved"),
+        description: t("toast.diary_saved_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Entry not saved",
+        title: t("toast.entry_not_saved"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -88,6 +92,7 @@ type UpdateDiaryEntryPayload = {
 export function useUpdateDiaryEntry() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateDiaryEntryPayload) =>
@@ -95,14 +100,14 @@ export function useUpdateDiaryEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       toast({
-        title: "Diary entry updated",
-        description: "Changes saved successfully.",
+        title: t("toast.diary_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -113,6 +118,7 @@ export function useUpdateDiaryEntry() {
 export function useDeleteDiaryEntry() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (publicId: string) =>
@@ -120,14 +126,14 @@ export function useDeleteDiaryEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diary-entries"] });
       toast({
-        title: "Diary entry removed",
-        description: "The diary entry was deleted.",
+        title: t("toast.diary_removed"),
+        description: t("toast.diary_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete failed",
+        title: t("cases.toast.delete_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });

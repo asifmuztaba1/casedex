@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
                       <TableCell className="font-medium text-[var(--foreground)]">
                         {user.name}
                         {user.whatsapp_opted_in && (
-                          <span className="ml-1 text-emerald-600" title="WhatsApp enabled">WA</span>
+                          <span className="ml-1 text-emerald-600" title={t("admin.users.whatsapp_enabled")}>WA</span>
                         )}
                       </TableCell>
                       <TableCell className="text-xs">{user.email}</TableCell>
@@ -152,9 +152,9 @@ export default function AdminUsersPage() {
                       <TableCell className="text-xs">{user.tenant_name ?? "—"}</TableCell>
                       <TableCell>
                         {user.email_verified_at ? (
-                          <Badge className="bg-emerald-100 text-emerald-800">Verified</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-800">{t("admin.users.verified")}</Badge>
                         ) : (
-                          <Badge className="bg-amber-100 text-amber-800">Unverified</Badge>
+                          <Badge className="bg-amber-100 text-amber-800">{t("admin.users.unverified")}</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-xs">

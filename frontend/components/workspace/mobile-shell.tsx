@@ -48,6 +48,7 @@ import {
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import OfflineIndicator from "@/components/offline-indicator";
+import { formatDate } from "@/lib/date-format";
 
 const LanguageSwitcher = dynamic(
   () => import("@/components/language-switcher"),
@@ -104,7 +105,7 @@ export function MobileTopBar({
 }: {
   onOpenFeedback: () => void;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const { data: user } = useAuth();
@@ -212,7 +213,7 @@ export function MobileTopBar({
                       <div className="text-xs text-[var(--muted)]">{notification.body}</div>
                     )}
                     <div className="mt-1 text-[11px] text-[var(--muted-soft)]">
-                      {new Date(notification.created_at).toLocaleString()}
+                      {formatDate(notification.created_at, "PPp", locale)}
                     </div>
                   </Link>
                 ))
@@ -257,7 +258,7 @@ export function MobileTopBar({
                   className="gap-2"
                 >
                   {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                  {theme === "dark" ? "Light" : "Dark"}
+                  {theme === "dark" ? t("theme.light") : t("theme.dark")}
                 </Button>
                 <LanguageSwitcher />
               </div>

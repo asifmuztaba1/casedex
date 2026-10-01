@@ -1,12 +1,16 @@
 ﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
+import { useAuth } from "@/features/auth/use-auth";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type NotificationSummary = {
@@ -31,9 +35,14 @@ type NotificationListResponse = {
 };
 
 export function useNotifications() {
+  const { data: user } = useAuth();
+  // Without workspace access (expired trial) the API answers 403; don't ask.
+  const hasAccess = Boolean(user?.tenant_id) && user?.tenant?.has_workspace_access !== false;
+
   return useQuery({
     queryKey: ["notifications"],
     queryFn: () => apiGet<NotificationListResponse>("/api/v1/notifications"),
+    enabled: hasAccess,
   });
 }
 
@@ -51,6 +60,7 @@ type CreateNotificationPayload = {
 export function useCreateNotification() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: CreateNotificationPayload) =>
@@ -58,14 +68,14 @@ export function useCreateNotification() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast({
-        title: "Notification saved",
-        description: "The notification was created.",
+        title: t("toast.notification_saved"),
+        description: t("toast.notification_saved_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Notification failed",
+        title: t("toast.notification_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -76,6 +86,7 @@ export function useCreateNotification() {
 export function useDeleteNotification() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (publicId: string) =>
@@ -83,14 +94,14 @@ export function useDeleteNotification() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast({
-        title: "Notification removed",
-        description: "The notification was deleted.",
+        title: t("toast.notification_removed"),
+        description: t("toast.notification_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete failed",
+        title: t("cases.toast.delete_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -120,6 +131,7 @@ type UpdateNotificationPayload = {
 export function useUpdateNotification() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateNotificationPayload) =>
@@ -127,14 +139,14 @@ export function useUpdateNotification() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast({
-        title: "Notification updated",
-        description: "Changes saved successfully.",
+        title: t("toast.notification_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });

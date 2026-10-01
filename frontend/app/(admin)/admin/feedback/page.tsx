@@ -35,9 +35,9 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 const TRIGGER_LABELS: Record<string, string> = {
-  trial_reminder: "Trial Reminder",
-  first_case: "First Case",
-  manual: "Manual",
+  trial_reminder: "admin.feedback.trigger_trial_reminder",
+  first_case: "admin.feedback.trigger_first_case",
+  manual: "admin.feedback.trigger_manual",
 };
 
 export default function AdminFeedbackPage() {
@@ -124,7 +124,7 @@ export default function AdminFeedbackPage() {
                     <div className="flex items-center gap-3">
                       <StarRating rating={fb.rating} />
                       <span className="rounded-full bg-[var(--wash)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted)]">
-                        {TRIGGER_LABELS[fb.trigger] ?? fb.trigger}
+                        {TRIGGER_LABELS[fb.trigger] ? t(TRIGGER_LABELS[fb.trigger]) : fb.trigger}
                       </span>
                     </div>
                     {fb.comment && (

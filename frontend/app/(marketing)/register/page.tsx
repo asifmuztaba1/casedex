@@ -39,7 +39,7 @@ export default function RegisterPage() {
       <Card>
         <CardHeader className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-soft)]">{t("register.kicker")}</p>
-          <CardTitle className="text-2xl font-semibold">Create your account</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t("register.title")}</CardTitle>
           <CardDescription>
             Create your account and start a 30-day free trial. No credit card required.
           </CardDescription>
@@ -157,7 +157,7 @@ export default function RegisterPage() {
 
             <div className="flex flex-col gap-3">
               <Button className="w-full" type="submit" disabled={registerUser.isPending}>
-                {registerUser.isPending ? "Creating account..." : "Create account"}
+                {registerUser.isPending ? t("register.creating") : t("register.button")}
               </Button>
               <Button className="w-full" variant="outline" asChild>
                 <a href="/login">{t("register.have_account")}</a>

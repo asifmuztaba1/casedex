@@ -119,3 +119,34 @@ it('runs every scheduled billing and credit command without a request tenant con
     'billing:apply-manual-subscription-changes',
     'ai:grant-monthly-credits',
 ]);
+
+it('sends trial-ending reminders in-app and by email at 7, 3 and 1 days', function (int $days): void {
+    $ctx = scheduledTenant('Trial');
+    $ctx['tenant']->update(['trial_ends_at' => now()->addDays($days)->setTime(12, 0)]);
+    $ctx['admin']->update(['email' => 'trial-admin@example.test']);
+
+    $this->artisan('billing:send-trial-ending-reminders')->assertSuccessful();
+
+    $sent = CaseNotification::query()
+        ->withoutGlobalScopes()
+        ->where('tenant_id', $ctx['tenant']->id)
+        ->where('notification_type', "billing_trial_ending_{$days}d")
+        ->pluck('channel')
+        ->sort()
+        ->values()
+        ->all();
+    expect($sent)->toBe(['email', 'in_app']);
+
+    // Same day re-run does not duplicate.
+    $this->artisan('billing:send-trial-ending-reminders')->assertSuccessful();
+    expect(CaseNotification::query()->withoutGlobalScopes()->where('tenant_id', $ctx['tenant']->id)->count())->toBe(2);
+})->with([7, 3, 1]);
+
+it('does not send trial-ending reminders on other days', function (): void {
+    $ctx = scheduledTenant('Trial');
+    $ctx['tenant']->update(['trial_ends_at' => now()->addDays(5)->setTime(12, 0)]);
+
+    $this->artisan('billing:send-trial-ending-reminders')->assertSuccessful();
+
+    expect(CaseNotification::query()->withoutGlobalScopes()->where('tenant_id', $ctx['tenant']->id)->count())->toBe(0);
+});

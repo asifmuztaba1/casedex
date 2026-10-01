@@ -3,12 +3,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { getStoredLocale } from "@/lib/locale";
 import { apiFetch } from "@/lib/api-client";
 import { clearOfflineUserData } from "@/pwa/offline-cache";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 type ApiErrorPayload = {
@@ -286,6 +288,7 @@ export function useAuth() {
 export function useLogin() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
@@ -298,14 +301,14 @@ export function useLogin() {
       client.setQueryData(["auth-me"], response.data);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Signed in",
-        description: "Welcome back.",
+        title: t("toast.signed_in"),
+        description: t("toast.welcome_back"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Sign in failed",
+        title: t("toast.sign_in_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -316,6 +319,7 @@ export function useLogin() {
 export function useRegister() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: RegisterPayload) => {
@@ -328,14 +332,14 @@ export function useRegister() {
       client.setQueryData(["auth-me"], response.data);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Account created",
-        description: "Your account is ready.",
+        title: t("toast.account_created"),
+        description: t("toast.account_ready"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Registration failed",
+        title: t("toast.registration_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -345,6 +349,7 @@ export function useRegister() {
 
 export function useResendVerificationEmail() {
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async () => {
@@ -353,14 +358,14 @@ export function useResendVerificationEmail() {
     },
     onSuccess: () => {
       toast({
-        title: "Verification sent",
-        description: "Check your inbox for the verification link.",
+        title: t("toast.verification_sent"),
+        description: t("toast.check_inbox_verify"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Request failed",
+        title: t("billing.ui.request_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -370,6 +375,7 @@ export function useResendVerificationEmail() {
 
 export function useForgotPassword() {
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: ForgotPasswordPayload) => {
@@ -378,14 +384,14 @@ export function useForgotPassword() {
     },
     onSuccess: () => {
       toast({
-        title: "Email sent",
-        description: "Check your inbox for the reset link.",
+        title: t("toast.email_sent"),
+        description: t("toast.check_inbox_reset"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Request failed",
+        title: t("billing.ui.request_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -395,6 +401,7 @@ export function useForgotPassword() {
 
 export function useResetPassword() {
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: ResetPasswordPayload) => {
@@ -403,14 +410,14 @@ export function useResetPassword() {
     },
     onSuccess: () => {
       toast({
-        title: "Password updated",
-        description: "You can sign in with the new password.",
+        title: t("toast.password_updated"),
+        description: t("toast.sign_in_new_password"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Reset failed",
+        title: t("toast.reset_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -421,6 +428,7 @@ export function useResetPassword() {
 export function useLogout() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async () => {
@@ -432,14 +440,14 @@ export function useLogout() {
       client.setQueryData(["auth-me"], null);
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Signed out",
-        description: "You have been signed out.",
+        title: t("toast.signed_out"),
+        description: t("toast.signed_out_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Sign out failed",
+        title: t("toast.sign_out_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -470,6 +478,7 @@ export function useUsers(enabled: boolean) {
 export function useCreateUser() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: CreateUserPayload) => {
@@ -479,14 +488,14 @@ export function useCreateUser() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["tenant-users"] });
       toast({
-        title: "Team member added",
-        description: "The user has been added.",
+        title: t("toast.member_added"),
+        description: t("toast.member_added_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "User not created",
+        title: t("toast.user_not_created"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -497,6 +506,7 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: UpdateUserPayload) => {
@@ -506,14 +516,14 @@ export function useUpdateUser() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["tenant-users"] });
       toast({
-        title: "Team member updated",
-        description: "Changes saved successfully.",
+        title: t("toast.member_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -524,6 +534,7 @@ export function useUpdateUser() {
 export function useCreateTenant() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: CreateTenantPayload) => {
@@ -537,8 +548,8 @@ export function useCreateTenant() {
       client.invalidateQueries({ queryKey: ["auth-me"] });
       if (!variables.skipToast) {
         toast({
-          title: "Firm created",
-          description: "Your firm workspace is ready.",
+          title: t("toast.firm_created"),
+          description: t("toast.firm_ready"),
           variant: "success",
         });
       }
@@ -546,7 +557,7 @@ export function useCreateTenant() {
     onError: (error, variables) => {
       if (!variables.skipToast) {
         toast({
-          title: "Firm not created",
+          title: t("toast.firm_not_created"),
           description: getErrorMessage(error),
           variant: "error",
         });
@@ -562,6 +573,7 @@ type UpdateTenantPayload = {
 export function useUpdateTenant() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: UpdateTenantPayload) => {
@@ -571,14 +583,14 @@ export function useUpdateTenant() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Firm updated",
-        description: "Firm name updated successfully.",
+        title: t("toast.firm_updated"),
+        description: t("toast.firm_name_updated"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -589,6 +601,7 @@ export function useUpdateTenant() {
 export function useUpdateProfile() {
   const client = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: async (payload: UpdateProfilePayload) => {
@@ -598,14 +611,14 @@ export function useUpdateProfile() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
-        title: "Profile updated",
-        description: "Changes saved successfully.",
+        title: t("toast.profile_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });

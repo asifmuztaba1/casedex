@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type ResearchNoteSummary = {
@@ -35,6 +38,7 @@ type CreateResearchNotePayload = {
 export function useCreateResearchNote() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: CreateResearchNotePayload) =>
@@ -42,14 +46,14 @@ export function useCreateResearchNote() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["research-notes"] });
       toast({
-        title: "Research note saved",
-        description: "The note has been created.",
+        title: t("toast.research_saved"),
+        description: t("toast.research_saved_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Save failed",
+        title: t("toast.save_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -60,6 +64,7 @@ export function useCreateResearchNote() {
 export function useDeleteResearchNote() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (publicId: string) =>
@@ -67,14 +72,14 @@ export function useDeleteResearchNote() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["research-notes"] });
       toast({
-        title: "Research note removed",
-        description: "The note has been deleted.",
+        title: t("toast.research_removed"),
+        description: t("toast.research_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete failed",
+        title: t("cases.toast.delete_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -90,6 +95,7 @@ type UpdateResearchNotePayload = {
 export function useUpdateResearchNote() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ publicId, data }: UpdateResearchNotePayload) =>
@@ -97,14 +103,14 @@ export function useUpdateResearchNote() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["research-notes"] });
       toast({
-        title: "Research note updated",
-        description: "Changes saved successfully.",
+        title: t("toast.research_updated"),
+        description: t("cases.toast.updated_body"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });

@@ -15,6 +15,7 @@ import { useLocale } from "@/components/locale-provider";
 import { useAuth } from "@/features/auth/use-auth";
 import { useDailyBriefing } from "@/features/daily-briefing/use-daily-briefing";
 import { CalendarClock, ClipboardList, FileClock, ListChecks } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const TOUR_COMPLETED_KEY = "casedex_tour_completed";
 const SHOWN_PREFIX = "casedex_briefing_shown_";
@@ -86,7 +87,7 @@ export default function MorningGreetingModal() {
 
   const firstHearing = briefing.first_hearing;
   const firstHearingTime = firstHearing?.at
-    ? format(new Date(firstHearing.at), "h:mm a")
+    ? formatDate(new Date(firstHearing.at), "h:mm a", locale)
     : null;
 
   return (

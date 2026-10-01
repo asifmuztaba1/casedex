@@ -62,8 +62,8 @@ export default function ClientsPage() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title={t("clients.title") ?? "Clients"}
-        description={t("clients.subtitle") ?? "Your firm's client directory"}
+        title={t("clients.title") ?? t("nav.clients")}
+        description={t("clients.subtitle") ?? t("clients.subtitle_directory")}
       />
 
       <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -71,7 +71,7 @@ export default function ClientsPage() {
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
           <Input
             className="w-full pl-9 sm:w-[260px]"
-            placeholder={t("clients.search_placeholder") ?? "Search clients..."}
+            placeholder={t("clients.search_placeholder") ?? t("clients.search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -94,12 +94,12 @@ export default function ClientsPage() {
 
       {isError ? (
         <div className="text-sm text-rose-600">
-          {t("clients.error") ?? "Failed to load clients."}
+          {t("clients.error") ?? t("clients.error")}
         </div>
       ) : clients.length === 0 ? (
         <EmptyState
-          title={t("clients.empty_title") ?? "No clients yet"}
-          description={t("clients.empty_desc") ?? "Add a client to get started."}
+          title={t("clients.empty_title") ?? t("clients.empty_title")}
+          description={t("clients.empty_desc") ?? t("clients.empty_desc_add")}
         />
       ) : (
         <Card>
@@ -109,10 +109,10 @@ export default function ClientsPage() {
                 <TableRow>
                   <TableHead>{t("table.name") ?? "Name"}</TableHead>
                   <TableHead>{t("table.type") ?? "Type"}</TableHead>
-                  <TableHead>{t("table.phone") ?? "Phone"}</TableHead>
-                  <TableHead>{t("table.email") ?? "Email"}</TableHead>
-                  <TableHead>{t("table.cases") ?? "Cases"}</TableHead>
-                  <TableHead>{t("table.actions") ?? "Actions"}</TableHead>
+                  <TableHead>{t("table.phone") ?? t("table.phone")}</TableHead>
+                  <TableHead>{t("table.email") ?? t("login.email")}</TableHead>
+                  <TableHead>{t("table.cases") ?? t("nav.cases")}</TableHead>
+                  <TableHead>{t("table.actions") ?? t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

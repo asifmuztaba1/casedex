@@ -39,7 +39,7 @@ export default function ClientDetailPage() {
           </Link>
         </Button>
         <div className="text-sm text-rose-600">
-          {t("clients.error_detail") ?? "Failed to load client details."}
+          {t("clients.error_detail") ?? t("clients.detail_error")}
         </div>
       </section>
     );
@@ -60,7 +60,7 @@ export default function ClientDetailPage() {
           <div className="flex items-center gap-2">
             {client.is_client && (
               <Badge variant="subtle">
-                {t("contact.client") ?? "Client"}
+                {t("contact.client") ?? t("contact.client")}
               </Badge>
             )}
             <Badge>
@@ -75,7 +75,7 @@ export default function ClientDetailPage() {
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <dt className="text-sm font-medium text-[var(--muted-soft)]">
-                {t("table.phone") ?? "Phone"}
+                {t("table.phone") ?? t("table.phone")}
               </dt>
               <dd className="mt-1 text-sm text-[var(--foreground)]">
                 {client.phone ?? "-"}
@@ -83,7 +83,7 @@ export default function ClientDetailPage() {
             </div>
             <div>
               <dt className="text-sm font-medium text-[var(--muted-soft)]">
-                {t("table.email") ?? "Email"}
+                {t("table.email") ?? t("login.email")}
               </dt>
               <dd className="mt-1 text-sm text-[var(--foreground)]">
                 {client.email ?? "-"}
@@ -91,7 +91,7 @@ export default function ClientDetailPage() {
             </div>
             <div>
               <dt className="text-sm font-medium text-[var(--muted-soft)]">
-                {t("contact.address") ?? "Address"}
+                {t("contact.address") ?? t("contact.address")}
               </dt>
               <dd className="mt-1 text-sm text-[var(--foreground)]">
                 {client.address ?? "-"}
@@ -99,7 +99,7 @@ export default function ClientDetailPage() {
             </div>
             <div>
               <dt className="text-sm font-medium text-[var(--muted-soft)]">
-                {t("contact.identity_number") ?? "Identity Number"}
+                {t("contact.identity_number") ?? t("contact.identity_number")}
               </dt>
               <dd className="mt-1 text-sm text-[var(--foreground)]">
                 {client.identity_number ?? "-"}
@@ -108,7 +108,7 @@ export default function ClientDetailPage() {
             {client.notes && (
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-[var(--muted-soft)]">
-                  {t("contact.notes") ?? "Notes"}
+                  {t("contact.notes") ?? t("table.notes")}
                 </dt>
                 <dd className="mt-1 text-sm text-[var(--foreground)] whitespace-pre-wrap">
                   {client.notes}
@@ -121,7 +121,7 @@ export default function ClientDetailPage() {
 
       <div>
         <h2 className="mb-4 text-base font-semibold text-[var(--foreground)]">
-          {t("contact.case_history") ?? "Case History"}
+          {t("contact.case_history") ?? t("contact.case_history")}
         </h2>
         <Card>
           <CardContent className="pt-6">

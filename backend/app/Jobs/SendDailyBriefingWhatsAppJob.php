@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Support\TenantContext;
 
 class SendDailyBriefingWhatsAppJob implements ShouldQueue
 {
@@ -31,6 +32,19 @@ class SendDailyBriefingWhatsAppJob implements ShouldQueue
     }
 
     public function handle(WhatsAppTransport $transport): void
+    {
+        // Queue workers have no request tenant; scope this job to its own tenant
+        // so tenant-scoped models (case, hearing) used by mail views resolve.
+        TenantContext::set($this->tenantId);
+
+        try {
+            $this->process($transport);
+        } finally {
+            TenantContext::clear();
+        }
+    }
+
+    private function process(WhatsAppTransport $transport): void
     {
         $notification = CaseNotification::query()
             ->withoutGlobalScopes()

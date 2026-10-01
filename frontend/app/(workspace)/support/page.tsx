@@ -35,7 +35,7 @@ import {
   X,
 } from "lucide-react";
 import { useProductTour } from "@/components/tour-provider";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/date-format";
 
 const STATUS_COLORS: Record<string, string> = {
   open: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
@@ -60,7 +60,7 @@ function TicketConversation({
   ticket: SupportTicket;
   onBack: () => void;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [page, setPage] = useState(1);
   const [replyBody, setReplyBody] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
@@ -97,7 +97,7 @@ function TicketConversation({
           <div className="min-w-0 flex-1">
             <CardTitle className="text-lg">{ticket.subject}</CardTitle>
             <p className="mt-1 text-xs text-[var(--muted)]">
-              {format(new Date(ticket.created_at), "PPp")}
+              {formatDate(new Date(ticket.created_at), "PPp", locale)}
             </p>
           </div>
           <StatusBadge status={ticket.status} />
@@ -132,7 +132,7 @@ function TicketConversation({
                         )}
                       </span>
                       <span className={`text-[11px] ${isPlatform ? "opacity-60" : "text-[var(--muted-soft)]"}`}>
-                        {format(new Date(msg.created_at), "PPp")}
+                        {formatDate(new Date(msg.created_at), "PPp", locale)}
                       </span>
                     </div>
                     <p className={`mt-1 whitespace-pre-wrap text-sm ${isPlatform ? "" : "text-[var(--foreground)]"}`}>
@@ -227,7 +227,7 @@ function TicketConversation({
 }
 
 export default function SupportPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [page, setPage] = useState(1);
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -319,7 +319,7 @@ export default function SupportPage() {
                   )}
                 </div>
                 <span className="shrink-0 text-xs text-[var(--muted-soft)]">
-                  {format(new Date(ticket.created_at), "PP")}
+                  {formatDate(new Date(ticket.created_at), "PP", locale)}
                 </span>
               </CardContent>
             </Card>

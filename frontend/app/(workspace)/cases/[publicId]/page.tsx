@@ -88,6 +88,7 @@ import {
   HEARING_AGENDA_TEMPLATES,
   PETITION_TEMPLATES,
 } from "@/features/templates/legal-templates";
+import { formatDate } from "@/lib/date-format";
 
 // Make option arrays literal so we can derive union types from them.
 const statusOptions = ["open", "active", "closed", "archived"] as const;
@@ -308,7 +309,7 @@ export default function CaseDetailPage() {
                   setActiveAiRequestId(null);
                 }}
               >
-                Apply result
+                {t("ai.apply_result")}
               </Button>
             )}
             <Button type="button" size="sm" variant="outline" onClick={() => setActiveAiRequestId(null)}>
@@ -330,7 +331,7 @@ export default function CaseDetailPage() {
     if (activeAiStatus === "failed") {
       return (
         <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-          {activeAiError ?? "Unable to process AI request."}
+          {activeAiError ?? t("ai.process_error")}
         </div>
       );
     }
@@ -608,8 +609,8 @@ export default function CaseDetailPage() {
                         setActiveAiRequestId(response.public_id);
                       } catch (error) {
                         toast({
-                          title: "AI request failed",
-                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          title: t("ai.request_failed"),
+                          description: error instanceof Error ? error.message : t("ai.summary_start_error"),
                           variant: "error",
                         });
                       }
@@ -618,12 +619,12 @@ export default function CaseDetailPage() {
                   >
                     <span className="inline-flex items-center gap-2">
                       <AiIcon />
-                      {aiResearchSummary.isPending ? "Queuing..." : "AI summarize petition (5 credits)"}
+                      {aiResearchSummary.isPending ? t("ai.queuing") : "AI summarize petition (5 credits)"}
                     </span>
                   </Button>
                   {renderAiFeedback({
                     feature: "research_summary",
-                    title: "AI petition summary",
+                    title: t("ai.petition_summary"),
                     onApply: (result) =>
                       updateEditForm((prev) => ({
                         ...prev,
@@ -739,8 +740,8 @@ export default function CaseDetailPage() {
                         setActiveAiRequestId(response.public_id);
                       } catch (error) {
                         toast({
-                          title: "AI request failed",
-                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          title: t("ai.request_failed"),
+                          description: error instanceof Error ? error.message : t("ai.summary_start_error"),
                           variant: "error",
                         });
                       }
@@ -749,12 +750,12 @@ export default function CaseDetailPage() {
                   >
                     <span className="inline-flex items-center gap-2">
                       <AiIcon />
-                      {aiHearingSummary.isPending ? "Queuing..." : "AI summarize hearing (4 credits)"}
+                      {aiHearingSummary.isPending ? t("ai.queuing") : "AI summarize hearing (4 credits)"}
                     </span>
                   </Button>
                   {renderAiFeedback({
                     feature: "hearing_summary",
-                    title: "AI hearing summary",
+                    title: t("ai.hearing_summary"),
                     onApply: (result) =>
                       setHearingForm((prev) => ({
                         ...prev,
@@ -912,7 +913,7 @@ export default function CaseDetailPage() {
                     {hearings.map((hearing) => (
                       <option key={hearing.public_id} value={hearing.public_id}>
                         {hearing.hearing_at
-                          ? format(new Date(hearing.hearing_at), "PPpp")
+                          ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
                           : t("hearing.type.hearing")}
                       </option>
                     ))}
@@ -944,8 +945,8 @@ export default function CaseDetailPage() {
                         setActiveAiRequestId(response.public_id);
                       } catch (error) {
                         toast({
-                          title: "AI request failed",
-                          description: error instanceof Error ? error.message : "Unable to start AI summary.",
+                          title: t("ai.request_failed"),
+                          description: error instanceof Error ? error.message : t("ai.summary_start_error"),
                           variant: "error",
                         });
                       }
@@ -954,12 +955,12 @@ export default function CaseDetailPage() {
                   >
                     <span className="inline-flex items-center gap-2">
                       <AiIcon />
-                      {aiDiarySummary.isPending ? "Queuing..." : "AI rewrite diary (3 credits)"}
+                      {aiDiarySummary.isPending ? t("ai.queuing") : "AI rewrite diary (3 credits)"}
                     </span>
                   </Button>
                   {renderAiFeedback({
                     feature: "diary_summary",
-                    title: "AI diary rewrite",
+                    title: t("ai.diary_rewrite"),
                     onApply: (result) =>
                       setDiaryForm((prev) => ({
                         ...prev,
@@ -1058,7 +1059,7 @@ export default function CaseDetailPage() {
                     {hearings.map((hearing) => (
                       <option key={hearing.public_id} value={hearing.public_id}>
                         {hearing.hearing_at
-                          ? format(new Date(hearing.hearing_at), "PPpp")
+                          ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
                           : t("hearing.type.hearing")}
                       </option>
                     ))}
@@ -1226,7 +1227,7 @@ export default function CaseDetailPage() {
                   <>
                     <div className="text-sm font-semibold text-[var(--foreground)]">
                       {nextHearing.hearing_at
-                        ? format(new Date(nextHearing.hearing_at), "PPpp")
+                        ? formatDate(new Date(nextHearing.hearing_at), "PPpp", locale)
                         : t("common.tbd")}
                     </div>
                     <div className="capitalize">
@@ -1307,11 +1308,11 @@ export default function CaseDetailPage() {
                   recentDiaryEntries.map((entry) => (
                     <div key={entry.public_id} className="space-y-1">
                       <div className="text-sm font-medium text-[var(--foreground)]">
-                        {entry.title ?? "Diary entry"}
+                        {entry.title ?? t("diary.entry_fallback")}
                       </div>
                       <div className="text-xs text-[var(--muted-soft)]">
                         {entry.entry_at
-                          ? format(new Date(entry.entry_at), "PP")
+                          ? formatDate(new Date(entry.entry_at), "PP", locale)
                           : ""}
                       </div>
                       <div className="text-sm text-[var(--muted)]">
@@ -1394,7 +1395,7 @@ export default function CaseDetailPage() {
                       <TableRow key={hearing.public_id}>
                         <TableCell>
                           {hearing.hearing_at
-                            ? format(new Date(hearing.hearing_at), "PPpp")
+                            ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
                             : t("common.tbd")}
                         </TableCell>
                         <TableCell>
@@ -1493,7 +1494,7 @@ export default function CaseDetailPage() {
                       <TableRow key={entry.public_id}>
                         <TableCell>
                           {entry.entry_at
-                            ? format(new Date(entry.entry_at), "PP")
+                            ? formatDate(new Date(entry.entry_at), "PP", locale)
                             : t("common.tbd")}
                         </TableCell>
                         <TableCell>{entry.title ?? t("common.entry")}</TableCell>
@@ -1527,7 +1528,7 @@ export default function CaseDetailPage() {
                 <Input
                   value={documentQaQuestion}
                   onChange={(event) => setDocumentQaQuestion(event.target.value)}
-                  placeholder="Ask a question about uploaded case documents"
+                  placeholder={t("ai.doc_qa_placeholder")}
                 />
                 <Button
                   type="button"
@@ -1543,8 +1544,8 @@ export default function CaseDetailPage() {
                       setActiveAiRequestId(response.public_id);
                     } catch (error) {
                       toast({
-                        title: "AI request failed",
-                        description: error instanceof Error ? error.message : "Unable to start document Q&A.",
+                        title: t("ai.request_failed"),
+                        description: error instanceof Error ? error.message : t("ai.doc_qa_start_error"),
                         variant: "error",
                       });
                     }
@@ -1553,12 +1554,12 @@ export default function CaseDetailPage() {
                 >
                   <span className="inline-flex items-center gap-2">
                     <AiIcon />
-                    {aiDocumentQa.isPending ? "Queuing..." : "Ask AI"}
+                    {aiDocumentQa.isPending ? t("ai.queuing") : "Ask AI"}
                   </span>
                 </Button>
                 {renderAiFeedback({
                   feature: "document_qa",
-                  title: "AI answer",
+                  title: t("ai.answer"),
                 })}
               </div>
               {documents.length === 0 ? (
@@ -1793,7 +1794,7 @@ export default function CaseDetailPage() {
                       />
                       {partyForm.client_id && (
                         <p className="text-xs text-emerald-600">
-                          {t("contact.linked") ?? "Linked to existing contact"}
+                          {t("contact.linked") ?? t("contact.linked")}
                         </p>
                       )}
                       {showContactSuggestions && (contactSearchResults?.data?.length ?? 0) > 0 && (
@@ -1948,7 +1949,7 @@ export default function CaseDetailPage() {
                           }
                           className="rounded border-[var(--border)]"
                         />
-                        {t("contact.save_as_contact") ?? "Save as known contact"}
+                        {t("contact.save_as_contact") ?? t("contact.save_as_contact")}
                       </label>
                     )}
                     <Button
@@ -2061,7 +2062,7 @@ export default function CaseDetailPage() {
                                     {party.client_id && (
                                       <Button variant="ghost" size="sm" asChild>
                                         <Link href={`/contacts/${party.client_id}`}>
-                                          {t("contact.view_history") ?? "History"}
+                                          {t("contact.view_history") ?? t("common.history")}
                                         </Link>
                                       </Button>
                                     )}

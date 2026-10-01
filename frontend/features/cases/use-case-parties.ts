@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
+import { translate } from "@/lib/i18n";
+import { getStoredLocale } from "@/lib/locale";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Something went wrong.";
+  return translate(getStoredLocale(), "common.something_wrong");
 }
 
 export type CasePartySummary = {
@@ -60,6 +63,7 @@ type AddPartyPayload = {
 export function useAddCaseParty() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: AddPartyPayload) =>
@@ -85,14 +89,14 @@ export function useAddCaseParty() {
         queryKey: ["cases", payload.casePublicId],
       });
       toast({
-        title: "Party added",
-        description: "The party was added to the case.",
+        title: t("toast.party_added"),
+        description: t("toast.party_added_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Add failed",
+        title: t("toast.add_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -109,6 +113,7 @@ type UpdatePartyPayload = {
 export function useUpdateCaseParty() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ casePublicId, partyId, data }: UpdatePartyPayload) =>
@@ -124,14 +129,14 @@ export function useUpdateCaseParty() {
         queryKey: ["cases", payload.casePublicId],
       });
       toast({
-        title: "Party updated",
-        description: "Party details were saved.",
+        title: t("toast.party_updated"),
+        description: t("toast.party_saved_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
+        title: t("cases.toast.update_failed_title"),
         description: getErrorMessage(error),
         variant: "error",
       });
@@ -147,6 +152,7 @@ type RemovePartyPayload = {
 export function useRemoveCaseParty() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: ({ casePublicId, partyId }: RemovePartyPayload) =>
@@ -159,14 +165,14 @@ export function useRemoveCaseParty() {
         queryKey: ["cases", payload.casePublicId],
       });
       toast({
-        title: "Party removed",
-        description: "The party was removed from the case.",
+        title: t("toast.party_removed"),
+        description: t("toast.party_removed_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Remove failed",
+        title: t("toast.remove_failed"),
         description: getErrorMessage(error),
         variant: "error",
       });

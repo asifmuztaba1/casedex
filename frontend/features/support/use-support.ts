@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPostForm } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useLocale } from "@/components/locale-provider";
 
 export type TicketStatus = "open" | "awaiting_reply" | "resolved" | "closed";
 
@@ -76,6 +77,7 @@ export function useTicketMessages(publicId: string, page = 1) {
 export function useCreateTicket() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: { subject: string; body: string; attachment?: File }) => {
@@ -93,15 +95,15 @@ export function useCreateTicket() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
       toast({
-        title: "Ticket submitted",
-        description: "Our team will respond shortly.",
+        title: t("toast.ticket_submitted"),
+        description: t("toast.ticket_submitted_desc"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
-        title: "Failed to submit ticket",
-        description: error instanceof Error ? error.message : "Something went wrong.",
+        title: t("toast.ticket_failed"),
+        description: error instanceof Error ? error.message : t("common.something_wrong"),
         variant: "error",
       });
     },
@@ -111,6 +113,7 @@ export function useCreateTicket() {
 export function useReplyToTicket(publicId: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (payload: { body: string; attachment?: File }) => {
@@ -132,8 +135,8 @@ export function useReplyToTicket(publicId: string) {
     },
     onError: (error) => {
       toast({
-        title: "Failed to send reply",
-        description: error instanceof Error ? error.message : "Something went wrong.",
+        title: t("toast.reply_failed"),
+        description: error instanceof Error ? error.message : t("common.something_wrong"),
         variant: "error",
       });
     },
@@ -194,6 +197,7 @@ export function useAdminReplyToTicket(publicId: string) {
 export function useAdminUpdateTicketStatus(publicId: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLocale();
 
   return useMutation({
     mutationFn: (status: TicketStatus) =>
@@ -204,7 +208,7 @@ export function useAdminUpdateTicketStatus(publicId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-support-tickets"] });
       toast({
-        title: "Status updated",
+        title: t("toast.status_updated"),
         variant: "success",
       });
     },

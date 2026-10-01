@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,17 +40,7 @@ import { useAuth } from "@/features/auth/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
-
-function formatLocalizedDate(
-  locale: "en" | "bn",
-  date: Date,
-  withTime = false
-) {
-  return new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-US", {
-    dateStyle: "medium",
-    ...(withTime ? { timeStyle: "short" } : {}),
-  }).format(date);
-}
+import { formatDate } from "@/lib/date-format";
 
 const DOCUMENT_CATEGORY_FILTERS = [
   "all",
@@ -168,10 +157,7 @@ export default function DashboardPage() {
         items.push({
           id: "trial-access",
           title: t("dashboard.deadlines.trial_title"),
-          detail: `${t("dashboard.deadlines.trial_desc")} ${formatLocalizedDate(
-            locale,
-            trialEndsAt
-          )}`,
+          detail: `${t("dashboard.deadlines.trial_desc")} ${formatDate(trialEndsAt, "PP", locale)}`,
           badge: resolveBadge(
             trialEndsAt,
             t("dashboard.deadlines.badge.billing")
@@ -192,11 +178,7 @@ export default function DashboardPage() {
         items.push({
           id: "billing-review",
           title: t("dashboard.deadlines.review_title"),
-          detail: `${t("dashboard.deadlines.review_desc")} ${formatLocalizedDate(
-            locale,
-            reviewEndsAt,
-            true
-          )}`,
+          detail: `${t("dashboard.deadlines.review_desc")} ${formatDate(reviewEndsAt, "PPp", locale)}`,
           badge: resolveBadge(
             reviewEndsAt,
             t("dashboard.deadlines.badge.billing")
@@ -224,11 +206,7 @@ export default function DashboardPage() {
       items.push({
         id: hearing.public_id,
         title: hearing.case_title ?? t("dashboard.deadlines.hearing_title"),
-        detail: `${hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")} · ${formatLocalizedDate(
-          locale,
-          hearingDate,
-          true
-        )}`,
+        detail: `${hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")} · ${formatDate(hearingDate, "PPp", locale)}`,
         badge: resolveBadge(hearingDate, t("dashboard.deadlines.badge.week")),
         href: hearing.case_public_id
           ? `/cases/${hearing.case_public_id}`
@@ -269,8 +247,8 @@ export default function DashboardPage() {
 
       if (hasAccess) {
         toast({
-          title: "Subscription active",
-          description: "Payment completed successfully. Your workspace is now active.",
+          title: t("dashboard.toast.subscription_active"),
+          description: t("dashboard.toast.subscription_active_desc"),
           variant: "success",
         });
         router.replace("/dashboard");
@@ -279,8 +257,8 @@ export default function DashboardPage() {
 
       if (attempts >= maxAttempts) {
         toast({
-          title: "Payment processing",
-          description: "Your payment was received. Subscription sync is still pending.",
+          title: t("dashboard.toast.payment_processing"),
+          description: t("dashboard.toast.payment_processing_desc"),
           variant: "error",
         });
         router.replace("/settings/billing?onboarding=1");
@@ -295,7 +273,7 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [queryClient, refetchSubscription, router, searchParams, toast]);
+  }, [queryClient, refetchSubscription, router, searchParams, t, toast]);
 
   if (casesLoading || hearingsLoading) {
     return (
@@ -396,7 +374,7 @@ export default function DashboardPage() {
                   <TableRow key={hearing.public_id}>
                     <TableCell>
                       {hearing.hearing_at
-                        ? format(new Date(hearing.hearing_at), "PPpp")
+                        ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
                         : "TBD"}
                     </TableCell>
                     <TableCell>
@@ -410,7 +388,7 @@ export default function DashboardPage() {
                         hearing.case_title ?? t("dashboard.table.case")
                       )}
                     </TableCell>
-                    <TableCell>{hearing.type ?? t("nav.hearings")}</TableCell>
+                    <TableCell>{hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")}</TableCell>
                     <TableCell>{hearing.next_steps ?? "-"}</TableCell>
                   </TableRow>
                 ))}
@@ -560,7 +538,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-xs text-[var(--muted-soft)]">
                       {entry.entry_at
-                        ? format(new Date(entry.entry_at), "PP")
+                        ? formatDate(new Date(entry.entry_at), "PP", locale)
                         : ""}
                     </div>
                   </div>
@@ -662,7 +640,7 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>
                     {doc.created_at
-                      ? format(new Date(doc.created_at), "PP")
+                      ? formatDate(new Date(doc.created_at), "PP", locale)
                       : "-"}
                   </TableCell>
                 </TableRow>
