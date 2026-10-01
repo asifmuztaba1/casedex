@@ -13,6 +13,7 @@ use App\Support\TenantContext;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Support\NotificationText;
 
 class SendHearingReminders extends Command
 {
@@ -74,8 +75,8 @@ class SendHearingReminders extends Command
                                 'scheduled_for' => $tomorrowStart,
                             ],
                             [
-                                'title' => 'Hearing reminder',
-                                'body' => 'Reminder: hearing scheduled for tomorrow.',
+                                'title' => NotificationText::get($participant->user, 'hearing_reminder_title'),
+                                'body' => NotificationText::get($participant->user, 'hearing_reminder_body'),
                                 'status' => 'pending',
                                 'channel' => 'in_app',
                             ]
@@ -101,8 +102,8 @@ class SendHearingReminders extends Command
                                     'scheduled_for' => $tomorrowStart,
                                 ],
                                 [
-                                    'title' => 'Hearing reminder',
-                                    'body' => 'Reminder: hearing scheduled for tomorrow.',
+                                    'title' => NotificationText::get($participant->user, 'hearing_reminder_title'),
+                                    'body' => NotificationText::get($participant->user, 'hearing_reminder_body'),
                                     'status' => 'pending',
                                 ]
                             );

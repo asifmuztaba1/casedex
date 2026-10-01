@@ -16,11 +16,12 @@ class TeamMemberInviteMail extends Mailable
         public readonly string $temporaryPassword,
         public readonly string $loginUrl
     ) {
+        $this->locale(in_array($this->user?->locale, ['en', 'bn'], true) ? $this->user->locale : config('app.locale'));
     }
 
     public function build(): self
     {
-        return $this->subject('You have been added to a CaseDex™ workspace')
+        return $this->subject(__('emails.invite_subject'))
             ->view('emails.team-member-invite')
             ->with([
                 'user' => $this->user,

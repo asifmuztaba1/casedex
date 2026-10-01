@@ -10,6 +10,7 @@ use App\Jobs\DispatchCaseNotificationJob;
 use App\Models\User;
 use App\Support\TenantContext;
 use LemonSqueezy\Laravel\Subscription;
+use App\Support\NotificationText;
 
 class RejectManualPaymentRequestAction
 {
@@ -56,7 +57,7 @@ class RejectManualPaymentRequestAction
             $adminUsers = User::query()
                 ->where('tenant_id', $request->tenant_id)
                 ->where('role', 'admin')
-                ->get(['id']);
+                ->get(['id', 'locale']);
 
             foreach ($adminUsers as $adminUser) {
                 foreach (['in_app', 'email'] as $channel) {
@@ -67,10 +68,10 @@ class RejectManualPaymentRequestAction
                         'hearing_id' => null,
                         'notification_type' => 'billing_manual_payment_rejected',
                         'channel' => $channel,
-                        'title' => 'Manual payment rejected',
+                        'title' => NotificationText::get($adminUser, 'manual_payment_rejected_title'),
                         'body' => $reason !== null && $reason !== ''
-                            ? 'Manual payment was rejected: '.$reason
-                            : 'Manual payment was rejected. Submit a new request to restore access.',
+                            ? NotificationText::get($adminUser, 'manual_payment_rejected_body_reason', ['reason' => $reason])
+                            : NotificationText::get($adminUser, 'manual_payment_rejected_body'),
                         'status' => 'pending',
                         'scheduled_for' => now(),
                         'sent_at' => now(),

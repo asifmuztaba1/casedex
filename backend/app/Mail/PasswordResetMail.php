@@ -15,11 +15,12 @@ class PasswordResetMail extends Mailable
         public readonly User $user,
         public readonly string $resetUrl
     ) {
+        $this->locale(in_array($this->user?->locale, ['en', 'bn'], true) ? $this->user->locale : config('app.locale'));
     }
 
     public function build(): self
     {
-        return $this->subject('Reset your CaseDex™ password')
+        return $this->subject(__('emails.reset_subject'))
             ->view('emails.password-reset')
             ->with([
                 'user' => $this->user,

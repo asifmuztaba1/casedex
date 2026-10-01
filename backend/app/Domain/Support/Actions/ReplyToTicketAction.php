@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use App\Support\NotificationText;
 
 class ReplyToTicketAction
 {
@@ -63,8 +64,8 @@ class ReplyToTicketAction
                 'user_id' => $ticketOwner->id,
                 'notification_type' => 'support_reply',
                 'channel' => 'in_app',
-                'title' => 'New reply on your support ticket',
-                'body' => "Your ticket \"{$ticket->subject}\" has a new reply.",
+                'title' => NotificationText::get($ticketOwner, 'support_reply_title'),
+                'body' => NotificationText::get($ticketOwner, 'support_reply_body', ['subject' => $ticket->subject]),
                 'status' => 'pending',
                 'scheduled_for' => now(),
             ]);

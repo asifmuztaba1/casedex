@@ -6,6 +6,7 @@ use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Support\Enums\TicketStatus;
 use App\Domain\Support\Models\SupportTicket;
 use App\Support\TenantContext;
+use App\Support\NotificationText;
 
 class UpdateTicketStatusAction
 {
@@ -50,8 +51,13 @@ class UpdateTicketStatusAction
                 'user_id' => $ticketOwner->id,
                 'notification_type' => 'support_status',
                 'channel' => 'in_app',
-                'title' => "Support ticket {$statusLabel}",
-                'body' => "Your ticket \"{$ticket->subject}\" has been {$statusLabel}.",
+                'title' => NotificationText::get($ticketOwner, 'support_status_title', [
+                    'status' => NotificationText::get($ticketOwner, "support_status_{$statusLabel}"),
+                ]),
+                'body' => NotificationText::get($ticketOwner, 'support_status_body', [
+                    'subject' => $ticket->subject,
+                    'status' => NotificationText::get($ticketOwner, "support_status_{$statusLabel}"),
+                ]),
                 'status' => 'pending',
                 'scheduled_for' => now(),
             ]);

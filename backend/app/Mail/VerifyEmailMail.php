@@ -15,11 +15,12 @@ class VerifyEmailMail extends Mailable
         public readonly User $user,
         public readonly string $verificationUrl
     ) {
+        $this->locale(in_array($this->user?->locale, ['en', 'bn'], true) ? $this->user->locale : config('app.locale'));
     }
 
     public function build(): self
     {
-        return $this->subject('Verify your CaseDex™ email')
+        return $this->subject(__('emails.verify_subject'))
             ->view('emails.verify-email')
             ->with([
                 'user' => $this->user,

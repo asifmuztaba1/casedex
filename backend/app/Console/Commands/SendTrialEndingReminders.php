@@ -9,6 +9,7 @@ use App\Jobs\DispatchCaseNotificationJob;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Console\Command;
+use App\Support\NotificationText;
 
 class SendTrialEndingReminders extends Command
 {
@@ -43,7 +44,7 @@ class SendTrialEndingReminders extends Command
                         $adminUsers = User::query()
                             ->where('tenant_id', $tenant->id)
                             ->where('role', 'admin')
-                            ->get(['id']);
+                            ->get(['id', 'locale']);
 
                         foreach ($adminUsers as $adminUser) {
                             foreach (['in_app', 'email'] as $channel) {
@@ -67,8 +68,8 @@ class SendTrialEndingReminders extends Command
                                     'hearing_id' => null,
                                     'notification_type' => $notificationType,
                                     'channel' => $channel,
-                                    'title' => sprintf('Trial ends in %d day%s', $daysLeft, $daysLeft === 1 ? '' : 's'),
-                                    'body' => 'To continue after trial, complete your payment method setup.',
+                                    'title' => NotificationText::choice($adminUser, 'trial_ending_title', $daysLeft),
+                                    'body' => NotificationText::get($adminUser, 'trial_ending_body'),
                                     'status' => 'pending',
                                     'scheduled_for' => now(),
                                     'sent_at' => now(),

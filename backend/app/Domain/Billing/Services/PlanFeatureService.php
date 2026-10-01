@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Support\TenantContext;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Arr;
+use App\Support\NotificationText;
 
 class PlanFeatureService
 {
@@ -257,7 +258,7 @@ class PlanFeatureService
             $adminUsers = User::query()
                 ->where('tenant_id', $request->tenant_id)
                 ->where('role', 'admin')
-                ->get(['id']);
+                ->get(['id', 'locale']);
 
             foreach ($adminUsers as $adminUser) {
                 foreach (['in_app', 'email'] as $channel) {
@@ -268,8 +269,8 @@ class PlanFeatureService
                         'hearing_id' => null,
                         'notification_type' => 'billing_manual_payment_expired',
                         'channel' => $channel,
-                        'title' => 'Manual payment request expired',
-                        'body' => 'Temporary access window expired. Submit a new payment request to continue.',
+                        'title' => NotificationText::get($adminUser, 'manual_payment_expired_title'),
+                        'body' => NotificationText::get($adminUser, 'manual_payment_expired_body'),
                         'status' => 'pending',
                         'scheduled_for' => now(),
                         'sent_at' => now(),

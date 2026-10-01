@@ -18,6 +18,7 @@ use App\Support\TenantContext;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Support\NotificationText;
 
 class AiCreditService
 {
@@ -370,7 +371,7 @@ class AiCreditService
                 return;
             }
 
-            $adminUsers = User::query()->where('tenant_id', $tenant->id)->where('role', 'admin')->get(['id']);
+            $adminUsers = User::query()->where('tenant_id', $tenant->id)->where('role', 'admin')->get(['id', 'locale']);
 
             foreach ($rules as $rule) {
                 if ($rule->last_triggered_at !== null && $rule->last_triggered_at->isAfter(now()->subHours(24))) {
@@ -386,8 +387,8 @@ class AiCreditService
                             'hearing_id' => null,
                             'notification_type' => 'ai_credit_threshold_reached',
                             'channel' => 'in_app',
-                            'title' => 'AI credit balance is low',
-                            'body' => sprintf('AI credits dropped to %d. Consider topping up.', $total),
+                            'title' => NotificationText::get($adminUser, 'ai_credit_low_title'),
+                            'body' => NotificationText::get($adminUser, 'ai_credit_low_body', ['total' => (int) $total]),
                             'status' => 'pending',
                             'scheduled_for' => now(),
                             'sent_at' => now(),
@@ -404,8 +405,8 @@ class AiCreditService
                             'hearing_id' => null,
                             'notification_type' => 'ai_credit_threshold_reached',
                             'channel' => 'email',
-                            'title' => 'AI credit balance is low',
-                            'body' => sprintf('AI credits dropped to %d. Consider topping up.', $total),
+                            'title' => NotificationText::get($adminUser, 'ai_credit_low_title'),
+                            'body' => NotificationText::get($adminUser, 'ai_credit_low_body', ['total' => (int) $total]),
                             'status' => 'pending',
                             'scheduled_for' => now(),
                             'sent_at' => now(),

@@ -15,6 +15,7 @@ use App\Support\TenantContext;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Support\NotificationText;
 
 class SubmitManualPaymentRequestAction
 {
@@ -106,12 +107,12 @@ class SubmitManualPaymentRequestAction
             ['transaction_id' => $request->transaction_id]
         );
 
-        $this->notifyTenantAdmins($tenant, $user, 'Manual payment submitted', 'Your payment request is pending admin approval.');
+        $this->notifyTenantAdmins($tenant, $user);
 
         return $request->fresh(['tenant', 'user']);
     }
 
-    private function notifyTenantAdmins(Tenant $tenant, User $actor, string $title, string $body): void
+    private function notifyTenantAdmins(Tenant $tenant, User $actor): void
     {
         TenantContext::set($tenant->id);
 
@@ -119,7 +120,7 @@ class SubmitManualPaymentRequestAction
             $adminUsers = User::query()
                 ->where('tenant_id', $tenant->id)
                 ->where('role', 'admin')
-                ->get(['id']);
+                ->get(['id', 'locale']);
 
             foreach ($adminUsers as $adminUser) {
                 foreach (['in_app', 'email'] as $channel) {
@@ -130,8 +131,8 @@ class SubmitManualPaymentRequestAction
                         'hearing_id' => null,
                         'notification_type' => 'billing_manual_payment_submitted',
                         'channel' => $channel,
-                        'title' => $title,
-                        'body' => $body,
+                        'title' => NotificationText::get($adminUser, 'manual_payment_submitted_title'),
+                        'body' => NotificationText::get($adminUser, 'manual_payment_submitted_body'),
                         'status' => 'pending',
                         'scheduled_for' => now(),
                         'sent_at' => now(),
