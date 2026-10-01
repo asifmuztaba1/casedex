@@ -4,6 +4,7 @@ namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Support\WallClock;
 
 class HearingResource extends JsonResource
 {
@@ -17,7 +18,7 @@ class HearingResource extends JsonResource
             'case_id' => $this->case_id,
             'case_public_id' => $this->case?->public_id,
             'case_title' => $this->case?->title,
-            'hearing_at' => $this->hearing_at,
+            'hearing_at' => WallClock::toJson($this->hearing_at),
             'type' => $this->type?->value,
             'agenda' => $this->agenda,
             'location' => $this->location,

@@ -9,6 +9,7 @@ use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use App\Support\WallClock;
 
 class BuildDailyBriefingAction
 {
@@ -44,7 +45,7 @@ class BuildDailyBriefingAction
         if ($first !== null) {
             $courtName = $first->case?->court?->name ?? $first->case?->court ?? null;
             $firstHearing = [
-                'at' => $first->hearing_at,
+                'at' => WallClock::toJson($first->hearing_at),
                 'case_title' => $first->case?->title,
                 'case_public_id' => $first->case?->public_id,
                 'court' => $courtName,

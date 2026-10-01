@@ -5,6 +5,7 @@ namespace App\Http\Resources\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
+use App\Support\WallClock;
 
 class DocumentResource extends JsonResource
 {
@@ -36,7 +37,7 @@ class DocumentResource extends JsonResource
             'size' => $this->size,
             'storage_key' => $this->storage_key,
             'download_url' => $downloadUrl,
-            'due_at' => $this->due_at,
+            'due_at' => WallClock::toJson($this->due_at),
             'created_at' => $this->created_at,
         ];
     }
