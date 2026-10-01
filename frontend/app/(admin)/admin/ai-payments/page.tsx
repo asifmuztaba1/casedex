@@ -30,11 +30,12 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import { CheckCircle, XCircle, Image as ImageIcon } from "lucide-react";
 import { billingStatusLabel } from "@/features/billing/labels";
+import { formatDate } from "@/lib/date-format";
 
 const STATUS_OPTIONS = ["", "pending", "approved", "rejected", "expired"];
 
 export default function AdminAiPaymentsPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [status, setStatus] = useState("pending");
   const [search, setSearch] = useState("");
   const [rejectId, setRejectId] = useState<string | null>(null);
@@ -89,7 +90,7 @@ export default function AdminAiPaymentsPage() {
             >
               <option value="">{t("admin.ai_payments.all_statuses")}</option>
               {STATUS_OPTIONS.filter(Boolean).map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>{billingStatusLabel(t, s)}</option>
               ))}
             </select>
           </div>
@@ -133,12 +134,17 @@ export default function AdminAiPaymentsPage() {
                       <TableCell className="text-xs font-medium">
                         {p.currency} {p.amount}
                       </TableCell>
-                      <TableCell className="text-xs font-mono">{p.transaction_id ?? "—"}</TableCell>
+                      <TableCell className="text-xs">
+                        <div className="font-mono">{p.transaction_id ?? "—"}</div>
+                        {p.sender_number && (
+                          <div className="text-[var(--muted)]">{t("admin.mfs.from")}: {p.sender_number}</div>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Badge className={statusColors[p.status ?? ""] ?? ""}>{billingStatusLabel(t, p.status)}</Badge>
                       </TableCell>
                       <TableCell className="text-xs">
-                        {new Date(p.created_at).toLocaleDateString()}
+                        {formatDate(p.created_at, "PP", locale)}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
@@ -148,6 +154,7 @@ export default function AdminAiPaymentsPage() {
                               size="sm"
                               className="h-7 w-7 p-0"
                               title={t("admin.ai_payments.view_screenshot")}
+                              aria-label={t("admin.ai_payments.view_screenshot")}
                               onClick={() => window.open(p.screenshot_download_url ?? undefined, "_blank")}
                             >
                               <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
@@ -161,16 +168,20 @@ export default function AdminAiPaymentsPage() {
                                 className="h-7 w-7 p-0 text-emerald-600 hover:text-emerald-700"
                                 onClick={() => approve.mutate({ publicId: p.public_id })}
                                 disabled={approve.isPending}
+                                aria-label={t("admin.mfs.approve")}
+                                title={t("admin.mfs.approve")}
                               >
-                                <CheckCircle className="h-3.5 w-3.5" />
+                                <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0 text-rose-600 hover:text-rose-700"
                                 onClick={() => setRejectId(p.public_id)}
+                                aria-label={t("admin.mfs.reject")}
+                                title={t("admin.mfs.reject")}
                               >
-                                <XCircle className="h-3.5 w-3.5" />
+                                <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
                               </Button>
                             </>
                           )}

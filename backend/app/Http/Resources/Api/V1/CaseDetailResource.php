@@ -18,7 +18,8 @@ class CaseDetailResource extends JsonResource
             'title' => $this->title,
             'court' => $this->court,
             'court_id' => $this->court_id,
-            'court_public_id' => $this->whenLoaded('court', fn () => optional($this->court)->public_id),
+            // `court` is also a text column, so $this->court returns the name; read the relation.
+            'court_public_id' => $this->whenLoaded('court', fn () => $this->resource->getRelation('court')?->public_id),
             'case_number' => $this->case_number,
             'registry_case_type_bn' => $this->registry_case_type_bn,
             'registry_case_serial' => $this->registry_case_serial,

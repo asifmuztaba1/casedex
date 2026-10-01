@@ -374,7 +374,7 @@ export default function DashboardPage() {
                   <TableRow key={hearing.public_id}>
                     <TableCell>
                       {hearing.hearing_at
-                        ? formatDate(new Date(hearing.hearing_at), "PPpp", locale)
+                        ? formatDate(new Date(hearing.hearing_at), "PPp", locale)
                         : "TBD"}
                     </TableCell>
                     <TableCell>

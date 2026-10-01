@@ -51,7 +51,8 @@ const REGISTRY_CASE_TYPES: Array<{ bn: string; en: string; slug: string }> = [
 ];
 
 const participantSchema = z.object({
-  user_public_id: z.string().min(2),
+  // The team row starts empty and is optional; empty rows are dropped in buildPayload.
+  user_public_id: z.string(),
   role: z.enum(["lead_lawyer", "lawyer", "associate", "assistant", "viewer"]),
 });
 
