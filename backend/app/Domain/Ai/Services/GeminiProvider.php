@@ -44,9 +44,12 @@ class GeminiProvider implements AiProviderInterface
             ];
         }
 
+        // Key goes in a header, never the URL: HTTP client errors include the
+        // full URL, and those messages can reach logs or users.
         $response = Http::acceptJson()
+            ->withHeaders(['x-goog-api-key' => $apiKey])
             ->post(
-                sprintf('%s/models/%s:generateContent?key=%s', $baseUrl, $model, urlencode($apiKey)),
+                sprintf('%s/models/%s:generateContent', $baseUrl, $model),
                 $payload
             )
             ->throw()
