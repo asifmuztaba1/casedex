@@ -73,6 +73,8 @@ export default function LoginPage() {
       // sessionStorage unavailable (e.g. private browsing)
     }
 
+    // Full reload on purpose: resets client caches and service worker state for the new session.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = dest;
   };
 

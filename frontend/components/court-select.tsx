@@ -52,15 +52,18 @@ export default function CourtSelect({
   const { locale, t } = useLocale();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState(value);
+  // Keep the search text in step with the selected value (adjust state during
+  // render rather than in an effect).
+  const [syncedValue, setSyncedValue] = useState(value);
+  if (value !== syncedValue) {
+    setSyncedValue(value);
+    setSearch(value);
+  }
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const countryCode = user?.country_code ?? undefined;
 
   const { data, isLoading } = useCourtLookup(search, countryCode, open);
   const courts = data?.data ?? [];
-
-  useEffect(() => {
-    setSearch(value);
-  }, [value]);
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {

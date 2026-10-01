@@ -22,7 +22,10 @@ export function LocaleProvider({
   children: React.ReactNode;
   initialLocale?: Locale;
 }) {
-  const [locale, setLocaleState] = React.useState<Locale>(initialLocale ?? "en");
+  // The root layout passes the cookie locale; fall back to stored locale on the client.
+  const [locale, setLocaleState] = React.useState<Locale>(
+    () => initialLocale ?? (typeof window !== "undefined" ? getStoredLocale() : "en")
+  );
 
   const setLocale = (nextLocale: Locale) => {
     setLocaleState(nextLocale);
@@ -30,15 +33,8 @@ export function LocaleProvider({
   };
 
   React.useEffect(() => {
-    if (!initialLocale) {
-      const stored = getStoredLocale();
-      if (stored !== locale) {
-        setLocaleState(stored);
-        return;
-      }
-    }
     setStoredLocale(locale);
-  }, [initialLocale, locale]);
+  }, [locale]);
 
   const value = React.useMemo(
     () => ({
