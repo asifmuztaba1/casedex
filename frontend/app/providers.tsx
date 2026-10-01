@@ -21,6 +21,13 @@ export default function Providers({
             staleTime: 1000 * 30,
             retry: 1,
             refetchOnWindowFocus: false,
+            // Offline, still try once: the service worker answers from its cache.
+            networkMode: "offlineFirst",
+          },
+          mutations: {
+            // No offline writes in MVP: fail right away with the offline message
+            // instead of pausing and silently replaying when back online.
+            networkMode: "always",
           },
         },
       })

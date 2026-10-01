@@ -1,3 +1,4 @@
+import { translate } from "@/lib/i18n";
 import { getStoredLocale } from "@/lib/locale";
 
 const API_BASE_URL =
@@ -40,6 +41,24 @@ function withXsrf(headers: HeadersInit = {}): HeadersInit {
   };
 }
 
+/**
+ * fetch() rejects with a TypeError when the network is unreachable. Turn that
+ * into a readable message instead of the browser's "Failed to fetch".
+ */
+export async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(input, init);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+      throw new Error(
+        translate(getStoredLocale(), offline ? "offline.write_blocked" : "network.unreachable")
+      );
+    }
+    throw error;
+  }
+}
+
 function extractErrorMessage(payload: ApiErrorPayload): string | null {
   if (payload?.errors) {
     const firstError = Object.values(payload.errors)[0];
@@ -70,7 +89,7 @@ async function throwForResponse(response: Response): Promise<never> {
 }
 
 export async function apiGet<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
@@ -87,7 +106,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 }
 
 export async function apiGetBlob(path: string): Promise<Response> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     credentials: "include",
     headers: {
       Accept: "text/csv, application/json",
@@ -104,7 +123,7 @@ export async function apiGetBlob(path: string): Promise<Response> {
 }
 
 export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     credentials: "include",
     headers: withXsrf({
@@ -121,7 +140,7 @@ export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
 }
 
 export async function apiPut<T>(path: string, payload: unknown): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "PUT",
     credentials: "include",
     headers: withXsrf({
@@ -138,7 +157,7 @@ export async function apiPut<T>(path: string, payload: unknown): Promise<T> {
 }
 
 export async function apiDelete(path: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "DELETE",
     credentials: "include",
     headers: withXsrf(),
@@ -153,7 +172,7 @@ export async function apiPostForm<T>(
   path: string,
   payload: FormData
 ): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     credentials: "include",
     headers: withXsrf(),
@@ -171,7 +190,7 @@ export async function apiPutForm<T>(
   path: string,
   payload: FormData
 ): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "PUT",
     credentials: "include",
     headers: withXsrf(),
