@@ -8,6 +8,8 @@ use App\Domain\Judiciary\Dto\CauseListRow;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use App\Support\NotificationText;
+use App\Support\LocalizedDate;
 
 class CreateCauseListNotificationAction
 {
@@ -40,19 +42,15 @@ class CreateCauseListNotificationAction
             }
         }
 
-        $title = "Case listed on cause list: {$row->caseTypeBn} - {$row->caseSerial}/{$row->caseYear}";
-        $body = sprintf(
-            '%s %d/%d is listed at %s on %s. Activity: %s.%s',
-            $row->caseTypeBn,
-            $row->caseSerial,
-            $row->caseYear,
-            $courtName,
-            $causeListDate->toDateString(),
-            $row->activity ?? '-',
-            $row->nextDate !== null
-                ? ' Next date: '.$row->nextDate->toDateString().'.'
-                : '',
-        );
+        // Text is written per recipient below, in their language.
+        $listing = [
+            'type' => $row->caseTypeBn,
+            'serial' => (int) $row->caseSerial,
+            'year' => (int) $row->caseYear,
+            'court' => $courtName,
+            'date' => $causeListDate->toDateString(),
+            'activity' => $row->activity ?? '-',
+        ];
 
         $created = 0;
         foreach ($participants as $participant) {
@@ -70,8 +68,15 @@ class CreateCauseListNotificationAction
                     'scheduled_for' => $causeListDate->startOfDay(),
                 ],
                 [
-                    'title' => $title,
-                    'body' => $body,
+                    'title' => NotificationText::get($participant->user, 'cause_list_title', $listing),
+                    'body' => NotificationText::get($participant->user, 'cause_list_body', [
+                        'date' => LocalizedDate::date($causeListDate, NotificationText::localeFor($participant->user)),
+                    ] + $listing)
+                        .($row->nextDate !== null
+                            ? NotificationText::get($participant->user, 'cause_list_next_date', [
+                                'date' => LocalizedDate::date($row->nextDate, NotificationText::localeFor($participant->user)),
+                            ])
+                            : ''),
                     'status' => 'pending',
                 ]
             );

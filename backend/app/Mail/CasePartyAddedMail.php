@@ -25,6 +25,8 @@ class CasePartyAddedMail extends Mailable
         public readonly ?User $actor
     ) {
         $this->tenantId = (int) $case->tenant_id;
+        // The party is outside the firm and has no profile; write in the sender's language.
+        $this->locale(in_array($actor?->locale, ['en', 'bn'], true) ? $actor->locale : config('app.locale'));
     }
 
     /**
@@ -46,7 +48,7 @@ class CasePartyAddedMail extends Mailable
 
     public function build(): self
     {
-        return $this->subject('You have been added to a case')
+        return $this->subject(__('emails.party_added_subject'))
             ->view('emails.case-party-added')
             ->with([
                 'case' => $this->case,

@@ -1,8 +1,8 @@
-@extends('emails.layouts.base', ['subject' => 'Hearing reminder'])
+@extends('emails.layouts.base', ['subject' => __('emails.hearing_reminder_subject')])
 
 @section('content')
-<p style="margin:0 0 12px;">A hearing is scheduled for tomorrow.</p>
-<p style="margin:0 0 6px;"><strong>Case:</strong> {{ $notification->case?->title ?? 'Case' }}</p>
-<p style="margin:0 0 16px;"><strong>Hearing time:</strong> {{ optional($notification->hearing)->hearing_at }}</p>
-<p style="margin:0;color:#475569;">Review hearing notes and required next steps before session time.</p>
+<p style="margin:0 0 12px;">{{ __('emails.hearing_reminder_intro') }}</p>
+<p style="margin:0 0 6px;"><strong>{{ __('emails.label_case') }}:</strong> {{ $notification->case?->title ?? __('emails.value_case') }}</p>
+<p style="margin:0 0 16px;"><strong>{{ __('emails.label_hearing_time') }}:</strong> {{ \App\Support\LocalizedDate::dateTime($notification->hearing?->hearing_at) }}</p>
+<p style="margin:0;color:#475569;">{{ __('emails.hearing_reminder_outro') }}</p>
 @endsection

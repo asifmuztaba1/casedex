@@ -7,6 +7,7 @@ use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Jobs\DispatchCaseNotificationJob;
 use LemonSqueezy\Laravel\Events\SubscriptionPaymentFailed;
+use App\Support\NotificationText;
 
 class SubscriptionPaymentFailedListener
 {
@@ -18,7 +19,7 @@ class SubscriptionPaymentFailedListener
 
         $admins = $event->billable->users()
             ->where('role', UserRole::Admin->value)
-            ->get(['id']);
+            ->get(['id', 'locale']);
 
         foreach ($admins as $admin) {
             $notification = CaseNotification::query()->create([
@@ -28,8 +29,8 @@ class SubscriptionPaymentFailedListener
                 'hearing_id' => null,
                 'notification_type' => 'billing_payment_failed',
                 'channel' => 'in_app',
-                'title' => 'Payment failed',
-                'body' => 'Subscription payment failed. Please update billing details to keep workspace access.',
+                'title' => NotificationText::get($admin, 'payment_failed_title'),
+                'body' => NotificationText::get($admin, 'payment_failed_body'),
                 'status' => 'pending',
                 'scheduled_for' => now(),
             ]);

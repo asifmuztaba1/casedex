@@ -15,6 +15,7 @@ use App\Support\TenantContext;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Support\NotificationText;
 
 class SubmitAiManualPaymentRequestAction
 {
@@ -99,7 +100,7 @@ class SubmitAiManualPaymentRequestAction
             ]
         );
 
-        $adminUsers = User::query()->where('tenant_id', $tenant->id)->where('role', 'admin')->get(['id']);
+        $adminUsers = User::query()->where('tenant_id', $tenant->id)->where('role', 'admin')->get(['id', 'locale']);
         TenantContext::set($tenant->id);
         try {
             foreach ($adminUsers as $adminUser) {
@@ -110,8 +111,8 @@ class SubmitAiManualPaymentRequestAction
                     'hearing_id' => null,
                     'notification_type' => 'billing_ai_manual_payment_submitted',
                     'channel' => 'in_app',
-                    'title' => 'AI credit payment submitted',
-                    'body' => 'Your AI credit payment request is pending admin approval.',
+                    'title' => NotificationText::get($adminUser, 'ai_payment_submitted_title'),
+                    'body' => NotificationText::get($adminUser, 'ai_payment_submitted_body'),
                     'status' => 'pending',
                     'scheduled_for' => now(),
                     'sent_at' => now(),

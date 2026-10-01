@@ -11,6 +11,7 @@ use App\Jobs\DispatchCaseNotificationJob;
 use App\Models\User;
 use App\Support\TenantContext;
 use LemonSqueezy\Laravel\Subscription;
+use App\Support\NotificationText;
 
 class ApproveManualPaymentRequestAction
 {
@@ -74,7 +75,7 @@ class ApproveManualPaymentRequestAction
             $adminUsers = User::query()
                 ->where('tenant_id', $request->tenant_id)
                 ->where('role', 'admin')
-                ->get(['id']);
+                ->get(['id', 'locale']);
 
             foreach ($adminUsers as $adminUser) {
                 foreach (['in_app', 'email'] as $channel) {
@@ -85,8 +86,8 @@ class ApproveManualPaymentRequestAction
                         'hearing_id' => null,
                         'notification_type' => 'billing_manual_payment_approved',
                         'channel' => $channel,
-                        'title' => 'Manual payment approved',
-                        'body' => 'Your manual payment has been approved. Workspace access is active.',
+                        'title' => NotificationText::get($adminUser, 'manual_payment_approved_title'),
+                        'body' => NotificationText::get($adminUser, 'manual_payment_approved_body'),
                         'status' => 'pending',
                         'scheduled_for' => now(),
                         'sent_at' => now(),

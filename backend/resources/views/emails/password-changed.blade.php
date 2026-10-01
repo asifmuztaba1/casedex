@@ -1,9 +1,9 @@
-@extends('emails.layouts.base', ['subject' => 'Your CaseDex password was updated'])
+@extends('emails.layouts.base', ['subject' => __('emails.password_changed_subject')])
 
 @section('content')
-<p style="margin:0 0 12px;">Hello {{ $user->name }},</p>
-<p style="margin:0 0 12px;">Your password was changed successfully.</p>
-<p style="margin:0 0 8px;"><strong>Time:</strong> {{ $changedAt }}</p>
-<p style="margin:0 0 16px;"><strong>IP address:</strong> {{ $ipAddress }}</p>
-<p style="margin:0;color:#475569;">If you did not perform this action, reset your password immediately.</p>
+<p style="margin:0 0 12px;">{{ __('emails.hello', ['name' => $user->name]) }}</p>
+<p style="margin:0 0 12px;">{{ __('emails.password_changed_intro') }}</p>
+<p style="margin:0 0 8px;"><strong>{{ __('emails.label_time') }}:</strong> {{ $changedAt }}</p>
+<p style="margin:0 0 16px;"><strong>{{ __('emails.label_ip') }}:</strong> {{ $ipAddress }}</p>
+<p style="margin:0;color:#475569;">{{ __('emails.password_changed_outro') }}</p>
 @endsection
