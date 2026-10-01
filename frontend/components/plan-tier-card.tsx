@@ -21,6 +21,8 @@ type PlanTierCardProps = {
   featured?: boolean;
   active?: boolean;
   disabled?: boolean;
+  /** Trial terms box; hide it for workspaces that are already paying. */
+  showTrialNotice?: boolean;
   className?: string;
 };
 
@@ -33,6 +35,7 @@ export default function PlanTierCard({
   featured = false,
   active = false,
   disabled = false,
+  showTrialNotice = true,
   className,
 }: PlanTierCardProps) {
   const { t } = useLocale();
@@ -123,20 +126,22 @@ export default function PlanTierCard({
             </div>
           ))}
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-3 text-xs text-[var(--muted)]">
-          <div>{t("billing.trial_notice_line1")}</div>
-          {isManualMfsOnlyLaunch() ? (
-            <>
-              <div>{t("billing.trial_notice_manual_line2")}</div>
-              <div>{t("billing.trial_notice_manual_line3")}</div>
-            </>
-          ) : (
-            <>
-              <div>{t("billing.trial_notice_line2")}</div>
-              <div>{t("billing.trial_notice_line3")}</div>
-            </>
-          )}
-        </div>
+        {showTrialNotice && (
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-3 text-xs text-[var(--muted)]">
+            <div>{t("billing.trial_notice_line1")}</div>
+            {isManualMfsOnlyLaunch() ? (
+              <>
+                <div>{t("billing.trial_notice_manual_line2")}</div>
+                <div>{t("billing.trial_notice_manual_line3")}</div>
+              </>
+            ) : (
+              <>
+                <div>{t("billing.trial_notice_line2")}</div>
+                <div>{t("billing.trial_notice_line3")}</div>
+              </>
+            )}
+          </div>
+        )}
 
         {ctaHref ? (
           <Button asChild className="w-full" variant={featured ? "default" : "outline"}>

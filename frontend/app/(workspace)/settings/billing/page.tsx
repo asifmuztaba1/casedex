@@ -571,6 +571,7 @@ export default function BillingSettingsPage() {
                   interval={interval}
                   featured={plan.id === "professional"}
                   active={subscription?.plan === plan.id}
+                  showTrialNotice={!subscription || subscription.on_trial}
                   ctaLabel={
                     subscription?.plan === plan.id
                       ? t("billing.ui.current_plan")

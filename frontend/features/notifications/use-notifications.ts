@@ -4,6 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useLocale } from "@/components/locale-provider";
 import { translate } from "@/lib/i18n";
 import { getStoredLocale } from "@/lib/locale";
+import { useAuth } from "@/features/auth/use-auth";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
@@ -34,9 +35,14 @@ type NotificationListResponse = {
 };
 
 export function useNotifications() {
+  const { data: user } = useAuth();
+  // Without workspace access (expired trial) the API answers 403; don't ask.
+  const hasAccess = Boolean(user?.tenant_id) && user?.tenant?.has_workspace_access !== false;
+
   return useQuery({
     queryKey: ["notifications"],
     queryFn: () => apiGet<NotificationListResponse>("/api/v1/notifications"),
+    enabled: hasAccess,
   });
 }
 
