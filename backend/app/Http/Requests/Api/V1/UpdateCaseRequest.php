@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\V1;
 use App\Domain\Cases\Enums\CaseStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Support\TenantContext;
 
 class UpdateCaseRequest extends FormRequest
 {
@@ -30,7 +31,7 @@ class UpdateCaseRequest extends FormRequest
             'story' => ['sometimes', 'nullable', 'string'],
             'petition_draft' => ['sometimes', 'nullable', 'string'],
             'opposite_lawyer_name' => ['sometimes', 'nullable', 'string', 'max:200'],
-            'client_id' => ['nullable', 'integer', 'exists:clients,id'],
+            'client_id' => ['nullable', 'integer', Rule::exists('clients', 'id')->where('tenant_id', TenantContext::id())],
         ];
     }
 }

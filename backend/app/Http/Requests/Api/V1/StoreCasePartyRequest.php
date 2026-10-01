@@ -7,6 +7,7 @@ use App\Domain\Cases\Enums\PartySide;
 use App\Domain\Cases\Enums\PartyType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Support\TenantContext;
 
 class StoreCasePartyRequest extends FormRequest
 {
@@ -26,7 +27,7 @@ class StoreCasePartyRequest extends FormRequest
             'side' => ['required', Rule::in(array_column(PartySide::cases(), 'value'))],
             'role' => ['nullable', Rule::in(array_column(PartyRole::cases(), 'value'))],
             'is_client' => ['nullable', 'boolean'],
-            'client_id' => ['nullable', 'integer', 'exists:clients,id'],
+            'client_id' => ['nullable', 'integer', Rule::exists('clients', 'id')->where('tenant_id', TenantContext::id())],
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:200'],
             'address' => ['nullable', 'string', 'max:255'],

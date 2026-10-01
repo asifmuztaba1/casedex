@@ -3,6 +3,7 @@
 namespace App\Domain\Cases\Actions;
 
 use App\Domain\Auth\Actions\RecordAuditLogAction;
+use App\Domain\Cases\Enums\PartyRole;
 use App\Domain\Cases\Models\CaseParty;
 use App\Domain\Cases\Models\CaseFile;
 use App\Domain\Clients\Models\Client;
@@ -68,7 +69,7 @@ class AddCasePartyAction
             'type' => $data['type'],
             'name' => $data['name'],
             'side' => $data['side'],
-            'role' => $data['role'] ?? null,
+            'role' => $data['role'] ?? PartyRole::Other->value,
             'is_client' => $isClient,
             'phone' => $data['phone'] ?? null,
             'email' => $data['email'] ?? null,
