@@ -10,6 +10,7 @@ use App\Domain\Cases\Enums\PartyType;
 use App\Domain\Hearings\Enums\HearingType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Support\TenantContext;
 
 class StoreCaseRequest extends FormRequest
 {
@@ -36,7 +37,7 @@ class StoreCaseRequest extends FormRequest
             'petition_draft' => ['nullable', 'string'],
             'opposite_lawyer_name' => ['nullable', 'string', 'max:200'],
 
-            'client_id' => ['nullable', 'integer', 'exists:clients,id'],
+            'client_id' => ['nullable', 'integer', Rule::exists('clients', 'id')->where('tenant_id', TenantContext::id())],
             'client' => ['nullable', 'array'],
             'client.name' => ['required_without:client_id', 'string', 'max:200'],
             'client.phone' => ['nullable', 'string', 'max:50'],
