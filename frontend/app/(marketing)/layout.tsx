@@ -13,6 +13,7 @@ import { useLocale } from "@/components/locale-provider";
 import CookieConsent from "@/components/cookie-consent";
 import ThemeToggle from "@/components/theme-toggle";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 export default function MarketingLayout({
   children,
@@ -27,7 +28,7 @@ export default function MarketingLayout({
       <div className="relative">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-3 py-3 md:gap-6 md:px-6 md:py-4">
-            <a href="/" className="flex items-center gap-2 md:gap-3">
+            <Link href="/" className="flex items-center gap-2 md:gap-3">
               <img
                 src="/icons/icon-192.svg"
                 alt="CaseDex"
@@ -36,7 +37,7 @@ export default function MarketingLayout({
               <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
                 {"CaseDex\u2122"}
               </div>
-            </a>
+            </Link>
             <nav className="hidden items-center gap-6 text-sm text-[var(--muted)] md:flex">
               <a className="hover:text-[var(--foreground)]" href="/about">
                 {t("nav.about")}

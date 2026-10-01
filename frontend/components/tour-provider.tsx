@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { TOUR_STEPS } from "@/lib/tour-steps";
+import { useLocalStorageValue } from "@/lib/client-store";
 
 const STORAGE_KEY = "casedex_tour_completed";
 
@@ -21,20 +22,18 @@ const TourContext = createContext<TourContextValue | undefined>(undefined);
 export function TourProvider({ children }: { children: React.ReactNode }) {
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  // Default to true to prevent flash on first render
-  const [hasCompleted, setHasCompleted] = useState(true);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    setHasCompleted(stored === "true");
-  }, []);
+  // Server/hydration value is "true" to prevent the tour flashing on first render.
+  const stored = useLocalStorageValue(STORAGE_KEY, "true");
+  const [completedThisSession, setCompletedThisSession] = useState(false);
+  const hasCompleted = completedThisSession || stored === "true";
 
   const markComplete = useCallback(() => {
-    if (typeof window !== "undefined") {
+    try {
       window.localStorage.setItem(STORAGE_KEY, "true");
+    } catch {
+      // Storage unavailable; completion still holds for this session.
     }
-    setHasCompleted(true);
+    setCompletedThisSession(true);
   }, []);
 
   const start = useCallback(() => {

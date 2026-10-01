@@ -22,6 +22,7 @@ import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useIsClient } from "@/lib/client-store";
 import { usePathname } from "next/navigation";
 import type { NotificationSummary } from "@/features/notifications/use-notifications";
 import ThemeToggle from "@/components/theme-toggle";
@@ -105,9 +106,8 @@ export default function WorkspaceLayout({
   }, [pathname]);
   const { data: notificationsData } = useNotifications();
   const markRead = useMarkNotificationRead();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  useEffect(() => setMounted(true), []);
   const notifications = notificationsData?.data ?? [];
   const unreadCount = notifications.filter(
     (notification) => notification.status !== "read"

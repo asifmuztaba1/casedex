@@ -18,7 +18,11 @@ export default function OnboardingWorkspacePage() {
   const { data: user, isLoading } = useAuth();
   const createTenant = useCreateTenant();
   const { toast } = useToast();
-  const [workspaceName, setWorkspaceName] = useState("");
+  // null until the user types, so the suggested default can be derived from the user.
+  const [workspaceNameInput, setWorkspaceName] = useState<string | null>(null);
+  const workspaceName =
+    workspaceNameInput ??
+    (user ? `${user.name.trim().split(/\s+/)[0] || "My"}'s Workspace` : "");
 
   useEffect(() => {
     if (isLoading) {
@@ -40,12 +44,7 @@ export default function OnboardingWorkspacePage() {
       router.replace("/onboarding/account");
       return;
     }
-
-    if (!workspaceName) {
-      const firstPart = user.name.trim().split(/\s+/)[0] ?? "My";
-      setWorkspaceName(`${firstPart}'s Workspace`);
-    }
-  }, [isLoading, router, user, workspaceName]);
+  }, [isLoading, router, user]);
 
   if (isLoading || !user || user.tenant_id) {
     return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;

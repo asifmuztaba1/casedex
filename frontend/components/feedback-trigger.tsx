@@ -42,8 +42,9 @@ export default function FeedbackTrigger() {
         const daysSinceStart = (Date.now() - trialStart) / (24 * 60 * 60 * 1000);
 
         if (daysSinceStart >= TRIAL_DELAY_DAYS) {
-          setActiveTrigger("trial_reminder");
-          return;
+          // Deferred like the first-case trigger, so state is set from a callback.
+          const timer = setTimeout(() => setActiveTrigger("trial_reminder"), 0);
+          return () => clearTimeout(timer);
         }
       }
     }

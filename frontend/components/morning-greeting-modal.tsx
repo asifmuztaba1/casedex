@@ -21,6 +21,16 @@ const SHOWN_PREFIX = "casedex_briefing_shown_";
 /** Small buffer after mount so modal doesn't stack with product tour / install prompt. */
 const APPEAR_DELAY_MS = 3000;
 
+function markShown() {
+  if (typeof window === "undefined") return;
+  try {
+    const todayKey = `${SHOWN_PREFIX}${format(new Date(), "yyyy-MM-dd")}`;
+    window.localStorage.setItem(todayKey, "true");
+  } catch {
+    // Storage unavailable; the modal may show again today.
+  }
+}
+
 function greetingKey(hour: number): "good_morning" | "good_afternoon" | "good_evening" {
   if (hour >= 5 && hour < 12) return "good_morning";
   if (hour >= 12 && hour < 17) return "good_afternoon";
@@ -31,7 +41,7 @@ export default function MorningGreetingModal() {
   const { t, locale } = useLocale();
   const { data: user } = useAuth();
   const [eligible, setEligible] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   // Eligibility gate — run once on mount. Skip if:
   //  - already shown today
@@ -53,25 +63,19 @@ export default function MorningGreetingModal() {
   const briefing = data?.data;
 
   // Open once briefing is fetched and it has content
+  const open = eligible && Boolean(briefing?.has_any) && !dismissed;
+
   useEffect(() => {
-    if (!eligible || !briefing) return;
-    if (!briefing.has_any) {
-      // Nothing interesting to show — mark shown so we don't keep polling today
-      markShown();
-      return;
-    }
-    setOpen(true);
+    if (!eligible || !briefing || briefing.has_any) return;
+    // Nothing interesting to show — mark shown so we don't keep polling today
+    markShown();
   }, [eligible, briefing]);
 
-  function markShown() {
-    if (typeof window === "undefined") return;
-    const todayKey = `${SHOWN_PREFIX}${format(new Date(), "yyyy-MM-dd")}`;
-    window.localStorage.setItem(todayKey, "true");
-  }
-
   function handleOpenChange(next: boolean) {
-    if (!next) markShown();
-    setOpen(next);
+    if (!next) {
+      markShown();
+      setDismissed(true);
+    }
   }
 
   if (!briefing || !briefing.has_any) return null;

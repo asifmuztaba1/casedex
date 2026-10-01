@@ -6,6 +6,7 @@ import { Volume2, VolumeX, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { getAssistantScript } from "@/lib/assistant-scripts";
+import { useLocalStorageValue, writeLocalStorage } from "@/lib/client-store";
 
 const FIRST_VISIT_PREFIX = "casedex_assistant_visited_";
 const ASSISTANT_ENABLED_KEY = "casedex_assistant_enabled";
@@ -24,26 +25,17 @@ function markVisited(pathname: string): void {
   localStorage.setItem(key, "true");
 }
 
-function isAssistantEnabled(): boolean {
-  if (typeof window === "undefined") return true;
-  return localStorage.getItem(ASSISTANT_ENABLED_KEY) !== "false";
-}
 
 export default function VoiceAssistant() {
   const { locale } = useLocale();
   const pathname = usePathname();
   const [speaking, setSpeaking] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [enabled, setEnabled] = useState(true);
+  const enabled = useLocalStorageValue(ASSISTANT_ENABLED_KEY) !== "false";
   const [currentText, setCurrentText] = useState("");
   const [showTip, setShowTip] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const hasAutoPlayedRef = useRef<string | null>(null);
-
-  // Load enabled state
-  useEffect(() => {
-    setEnabled(isAssistantEnabled());
-  }, []);
 
   // Show tip every session until user dismisses it
   useEffect(() => {
@@ -140,8 +132,7 @@ export default function VoiceAssistant() {
 
   const handleToggleEnabled = () => {
     const next = !enabled;
-    setEnabled(next);
-    localStorage.setItem(ASSISTANT_ENABLED_KEY, String(next));
+    writeLocalStorage(ASSISTANT_ENABLED_KEY, String(next));
     if (!next) {
       stop();
       setExpanded(false);
