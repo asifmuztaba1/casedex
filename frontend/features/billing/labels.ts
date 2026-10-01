@@ -25,3 +25,29 @@ export function billingStatusLabel(t: Translate, status: string | null | undefin
   const label = t(key);
   return label === key ? humanize(status) : label;
 }
+
+type CatalogPlan = {
+  id: string;
+  summary: string;
+  bestFor: string;
+  storage: string;
+  badge?: string;
+  features: string[];
+};
+
+/** Translated card copy for a catalog plan; falls back to the catalog's English text. */
+export function planCopy(t: Translate, plan: CatalogPlan) {
+  const tr = (key: string, fallback: string) => {
+    const value = t(key);
+    return value === key ? fallback : value;
+  };
+  const base = `plan.${plan.id}`;
+  return {
+    name: planLabel(t, plan.id),
+    summary: tr(`${base}.summary`, plan.summary),
+    bestFor: tr(`${base}.best_for`, plan.bestFor),
+    storage: tr(`${base}.storage`, plan.storage),
+    badge: plan.badge ? tr(`${base}.badge`, plan.badge) : undefined,
+    features: plan.features.map((feature, index) => tr(`${base}.feature.${index}`, feature)),
+  };
+}

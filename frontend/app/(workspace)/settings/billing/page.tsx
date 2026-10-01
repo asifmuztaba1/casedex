@@ -164,8 +164,8 @@ export default function BillingSettingsPage() {
       }
     } catch (error) {
       toast({
-        title: "Billing update failed",
-        description: error instanceof Error ? error.message : "Unable to update billing.",
+        title: t("billing.ui.update_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.update_error"),
         variant: "error",
       });
     }
@@ -176,10 +176,10 @@ export default function BillingSettingsPage() {
     setPaymentChoiceOpen(false);
     scrollToManualSection();
     toast({
-      title: manualOnlyLaunch ? "bKash / Rocket billing selected" : "bKash / Rocket selected",
+      title: manualOnlyLaunch ? t("billing.ui.mfs_billing_selected") : t("billing.ui.mfs_selected"),
       description: manualOnlyLaunch
-        ? "This beta uses bKash / Rocket billing. Review the steps below to continue."
-        : "Complete the bKash / Rocket details below to continue.",
+        ? t("billing.ui.beta_uses_mfs")
+        : t("billing.ui.complete_details_below"),
     });
   };
 
@@ -190,8 +190,8 @@ export default function BillingSettingsPage() {
       if (manualOnlyLaunch) {
         if (!manualEnabled) {
           toast({
-            title: "MFS billing unavailable",
-            description: "bKash / Rocket methods are not configured yet.",
+            title: t("billing.ui.mfs_unavailable"),
+            description: t("billing.ui.mfs_not_configured"),
             variant: "error",
           });
           return;
@@ -203,8 +203,8 @@ export default function BillingSettingsPage() {
           setManualLifecycleInterval(interval);
           scrollToManualSection();
           toast({
-            title: "Plan change request prepared",
-            description: "Review the subscription update form below and send it when you are ready.",
+            title: t("billing.ui.plan_change_prepared"),
+            description: t("billing.ui.review_update_form"),
           });
           return;
         }
@@ -229,8 +229,8 @@ export default function BillingSettingsPage() {
       await changePlan.mutateAsync({ plan, interval });
     } catch (error) {
       toast({
-        title: "Billing update failed",
-        description: error instanceof Error ? error.message : "Unable to update billing.",
+        title: t("billing.ui.update_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.update_error"),
         variant: "error",
       });
     }
@@ -239,8 +239,8 @@ export default function BillingSettingsPage() {
   const onSubmitManual = async () => {
       if (!manualCanSubmitNow) {
         toast({
-          title: "Payment not needed yet",
-          description: "You can submit MFS payment after your 30-day trial ends.",
+          title: t("billing.ui.payment_not_needed"),
+          description: t("billing.ui.submit_after_trial"),
           variant: "error",
         });
         return;
@@ -248,8 +248,8 @@ export default function BillingSettingsPage() {
 
       if (!selectedManualMethod || !expectedAmount || !senderNumber || !transactionId || !sentAt || !screenshot) {
         toast({
-          title: "Payment details required",
-          description: "Choose a channel, fill all fields, and attach the screenshot.",
+          title: t("billing.ui.payment_details_required"),
+          description: t("billing.ui.fill_all_with_channel"),
           variant: "error",
         });
         return;
@@ -269,8 +269,8 @@ export default function BillingSettingsPage() {
       });
 
       toast({
-        title: "Billing details received",
-        description: "Your workspace stays available while the team reviews this submission.",
+        title: t("billing.ui.details_received"),
+        description: t("billing.ui.workspace_available_during_review"),
       });
 
       setSenderNumber("");
@@ -279,8 +279,8 @@ export default function BillingSettingsPage() {
       setScreenshot(null);
     } catch (error) {
       toast({
-        title: "Billing submission failed",
-        description: error instanceof Error ? error.message : "Unable to submit request.",
+        title: t("billing.ui.submission_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.submit_error"),
         variant: "error",
       });
     }
@@ -289,8 +289,8 @@ export default function BillingSettingsPage() {
   const startAiCheckout = async () => {
     if (!selectedAiPack) {
       toast({
-        title: "Select AI pack",
-        description: "Choose a pack before checkout.",
+        title: t("billing.ui.select_ai_pack"),
+        description: t("billing.ui.choose_pack"),
         variant: "error",
       });
       return;
@@ -303,8 +303,8 @@ export default function BillingSettingsPage() {
       }
     } catch (error) {
       toast({
-        title: "AI top-up failed",
-        description: error instanceof Error ? error.message : "Unable to start checkout.",
+        title: t("billing.ui.ai_topup_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.checkout_error"),
         variant: "error",
       });
     }
@@ -313,8 +313,8 @@ export default function BillingSettingsPage() {
   const onSubmitAiManual = async () => {
     if (!selectedAiPack || !aiSenderNumber || !aiTransactionId || !aiSentAt || !aiScreenshot) {
       toast({
-        title: "AI top-up details required",
-        description: "Fill all fields and attach screenshot.",
+        title: t("billing.ui.ai_topup_required"),
+        description: t("billing.ui.fill_all"),
         variant: "error",
       });
       return;
@@ -336,13 +336,13 @@ export default function BillingSettingsPage() {
       setAiScreenshot(null);
 
       toast({
-        title: "AI top-up details received",
-        description: "Your AI credit request is now being reviewed.",
+        title: t("billing.ui.ai_topup_received"),
+        description: t("billing.ui.ai_request_reviewing"),
       });
     } catch (error) {
       toast({
-        title: "AI top-up submission failed",
-        description: error instanceof Error ? error.message : "Unable to submit AI payment request.",
+        title: t("billing.ui.ai_topup_submit_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.ai_payment_error"),
         variant: "error",
       });
     }
@@ -351,8 +351,8 @@ export default function BillingSettingsPage() {
   const onSubmitManualLifecycle = async () => {
     if (!manualLifecycleEffectiveAt) {
       toast({
-        title: "Effective date required",
-        description: "Choose when the change should take effect.",
+        title: t("billing.ui.effective_date_required"),
+        description: t("billing.ui.choose_effective_date"),
         variant: "error",
       });
       return;
@@ -367,13 +367,13 @@ export default function BillingSettingsPage() {
       });
 
       toast({
-        title: "Request submitted",
-        description: "The team will review your subscription update request.",
+        title: t("billing.ui.request_submitted"),
+        description: t("billing.ui.team_will_review_update"),
       });
     } catch (error) {
       toast({
-        title: "Request failed",
-        description: error instanceof Error ? error.message : "Unable to submit request.",
+        title: t("billing.ui.request_failed"),
+        description: error instanceof Error ? error.message : t("billing.ui.submit_error"),
         variant: "error",
       });
     }
@@ -383,25 +383,25 @@ export default function BillingSettingsPage() {
   const canManageLemonSubscription = isLemonBilling && Boolean(subscription?.status && subscription.status !== "expired");
   const trialEndsOn = manualMethods?.trial_ends_at ? new Date(manualMethods.trial_ends_at).toLocaleDateString() : null;
   const billingRouteLabel = manualOnlyLaunch
-    ? "bKash / Rocket beta flow"
+    ? t("billing.ui.mfs_beta_flow")
     : isLemonBilling
-      ? "Card billing"
+      ? t("billing.ui.card_billing")
       : manualEnabled
-        ? "bKash / Rocket available"
-        : "Trial access";
+        ? t("billing.ui.mfs_available")
+        : t("billing.ui.trial_access");
   const nextStepLabel = manualRequestStatus?.status === "pending"
-    ? "Review in progress"
+    ? t("billing.ui.next_review")
     : paidUntil
       ? paidAccessEnded
         ? t("billing.renew_to_restore")
         : `${t("billing.renew_by")} ${paidUntil}`
     : !manualCanSubmitNow
-      ? `Share details after trial${trialEndsOn ? ` on ${trialEndsOn}` : ""}`
+      ? `${t("billing.ui.share_after_trial")}${trialEndsOn ? ` (${trialEndsOn})` : ""}`
       : manualOnlyLaunch
-        ? "Choose a plan and share billing details"
+        ? t("billing.ui.next_choose_plan")
         : canManageLemonSubscription
-          ? "Manage your subscription"
-          : "Pick the plan that fits your team";
+          ? t("billing.ui.next_manage")
+          : t("billing.ui.next_pick_plan");
 
   return (
     <section className="space-y-6">
@@ -418,7 +418,7 @@ export default function BillingSettingsPage() {
             </CardDescription>
             {preferManual && (
               <div className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
-                bKash / Rocket was selected during registration. Complete your billing details below when you are ready.
+                {t("billing.ui.mfs_selected_at_registration")}
               </div>
             )}
           </CardHeader>
@@ -430,7 +430,7 @@ export default function BillingSettingsPage() {
           <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5 text-[var(--muted)]" />{t("billing.title")}</CardTitle>
           <CardDescription>
             {manualOnlyLaunch
-              ? "This private beta uses a guided bKash / Rocket flow for subscriptions and AI top-ups."
+              ? t("billing.ui.private_beta_desc")
               : t("billing.subtitle")}
           </CardDescription>
         </CardHeader>
@@ -439,7 +439,7 @@ export default function BillingSettingsPage() {
             <Badge variant="subtle">{planLabel(t, subscription?.plan)}</Badge>
             <Badge>{billingStatusLabel(t, subscription?.status ?? "on_trial")}</Badge>
             {subscription?.billing_source === "manual_mfs" && (
-              <Badge>bKash / Rocket</Badge>
+              <Badge>{t("billing.ui.mfs")}</Badge>
             )}
             {paidUntil ? (
               <span className="inline-flex items-center gap-1 text-xs text-[var(--muted-soft)]"><CalendarClock className="h-3.5 w-3.5" />{t("billing.paid_until")}: {paidUntil}</span>
@@ -449,15 +449,15 @@ export default function BillingSettingsPage() {
           </div>
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Current plan</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.current_plan")}</div>
               <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{planLabel(t, subscription?.plan)}</div>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Billing route</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.billing_route")}</div>
               <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{billingRouteLabel}</div>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">Next step</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.next_step")}</div>
               <div className="mt-1 text-sm font-semibold text-[var(--foreground)]">{nextStepLabel}</div>
             </div>
           </div>
@@ -481,8 +481,8 @@ export default function BillingSettingsPage() {
                       }
                     } catch (error) {
                       toast({
-                        title: "Portal unavailable",
-                        description: error instanceof Error ? error.message : "Unable to open billing portal.",
+                        title: t("billing.ui.portal_unavailable"),
+                        description: error instanceof Error ? error.message : t("billing.ui.portal_error"),
                         variant: "error",
                       });
                     }
@@ -508,17 +508,17 @@ export default function BillingSettingsPage() {
                 variant="outline"
                 onClick={scrollToManualSection}
               >
-                {manualOnlyLaunch ? "Open payment details" : "Open bKash / Rocket billing"}
+                {manualOnlyLaunch ? t("billing.ui.open_payment_details") : t("billing.ui.open_mfs_billing")}
               </Button>
             )}
           </div>
           {manualOnlyLaunch ? (
             <p className="text-xs text-[var(--muted-soft)]">
-              Subscription updates and AI top-ups are handled through the bKash / Rocket flow below during this beta.
+              {t("billing.ui.mfs_handled_below")}
             </p>
           ) : !isLemonBilling ? (
             <p className="text-xs text-[var(--muted-soft)]">
-              Subscription management actions are available for Lemon-managed subscriptions.
+              {t("billing.ui.card_only_actions")}
             </p>
           ) : null}
         </CardContent>
@@ -526,10 +526,10 @@ export default function BillingSettingsPage() {
 
       <Tabs value={activeSectionTab} onValueChange={(value) => setSectionTab(value as "plans" | "manual" | "ai" | "invoices")}>
         <TabsList className="h-auto flex w-full flex-wrap gap-2 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-2">
-          <TabsTrigger value="plans">Plans</TabsTrigger>
-          {manualEnabled && <TabsTrigger value="manual">Payment Details</TabsTrigger>}
-          <TabsTrigger value="ai">AI Credits</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
+          <TabsTrigger value="plans">{t("billing.ui.plans_tab")}</TabsTrigger>
+          {manualEnabled && <TabsTrigger value="manual">{t("billing.ui.payment_details_tab")}</TabsTrigger>}
+          <TabsTrigger value="ai">{t("billing.ui.ai_credits_tab")}</TabsTrigger>
+          <TabsTrigger value="invoices">{t("billing.ui.invoices")}</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -540,7 +540,7 @@ export default function BillingSettingsPage() {
               <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-[var(--muted)]" />{t("billing.change_plan")}</CardTitle>
               <CardDescription>
                 {manualOnlyLaunch
-                  ? "Choose the plan you want to activate with bKash / Rocket billing."
+                  ? t("billing.ui.choose_plan_to_activate")
                   : t("billing.choose_plan")}
               </CardDescription>
               <div className="flex gap-2 pt-2">
@@ -550,7 +550,7 @@ export default function BillingSettingsPage() {
                   variant={interval === "monthly" ? "default" : "outline"}
                   onClick={() => setInterval("monthly")}
                 >
-                  Monthly
+                  {t("billing.ui.monthly")}
                 </Button>
                 <Button
                   type="button"
@@ -558,7 +558,7 @@ export default function BillingSettingsPage() {
                   variant={interval === "yearly" ? "default" : "outline"}
                   onClick={() => setInterval("yearly")}
                 >
-                  Yearly
+                  {t("billing.ui.yearly")}
                 </Button>
               </div>
             </CardHeader>
@@ -572,11 +572,11 @@ export default function BillingSettingsPage() {
                   active={subscription?.plan === plan.id}
                   ctaLabel={
                     subscription?.plan === plan.id
-                      ? "Current plan"
+                      ? t("billing.ui.current_plan")
                       : manualOnlyLaunch
                         ? subscription?.billing_source === "manual_mfs" && !subscription?.on_trial
-                          ? "Request update"
-                          : "Choose this plan"
+                          ? t("billing.ui.request_update")
+                          : t("billing.ui.choose_this_plan")
                         : t("billing.upgrade")
                   }
                   onCta={() => onSelectPlan(plan.id)}
@@ -597,15 +597,15 @@ export default function BillingSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-2">
-                {STORAGE_ADDON_FEATURES.map((feature) => (
+                {STORAGE_ADDON_FEATURES.map((feature, index) => (
                   <div key={feature} className="rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]">
-                    {feature}
+                    {t(`plan.addon.feature.${index}`) === `plan.addon.feature.${index}` ? feature : t(`plan.addon.feature.${index}`)}
                   </div>
                 ))}
               </div>
               {manualOnlyLaunch ? (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                  Unlimited storage is not self-serve in this beta yet. Reach out to the team if you need it enabled for your workspace.
+                  {t("billing.ui.unlimited_storage_note")}
                 </div>
               ) : (
                 <Button
@@ -622,8 +622,8 @@ export default function BillingSettingsPage() {
                       }
                     } catch (error) {
                       toast({
-                        title: "Checkout failed",
-                        description: error instanceof Error ? error.message : "Unable to start checkout.",
+                        title: t("billing.ui.checkout_failed"),
+                        description: error instanceof Error ? error.message : t("billing.ui.checkout_error"),
                         variant: "error",
                       });
                     }
@@ -641,18 +641,18 @@ export default function BillingSettingsPage() {
       {manualEnabled && activeSectionTab === "manual" && (
         <Card ref={manualSectionRef}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-teal-700" />bKash / Rocket billing</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-teal-700" />{t("billing.ui.mfs_billing")}</CardTitle>
             <CardDescription>
-              Choose a channel, send the exact amount, then share the transfer details here so your workspace can be updated quickly.
+              {t("billing.ui.mfs_intro")}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <div className="space-y-5">
               {subscription?.billing_source === "manual_mfs" && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 space-y-3">
-                  <div className="text-sm font-semibold text-[var(--foreground)]">Subscription update request</div>
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{t("billing.ui.update_request_title")}</div>
                   <p className="text-xs text-[var(--muted)]">
-                    Schedule a cancellation or plan change. The selected update is applied after review on the date you choose.
+                    {t("billing.ui.lifecycle_desc")}
                   </p>
                   <div className="grid gap-3 md:grid-cols-2">
                     <select
@@ -660,8 +660,8 @@ export default function BillingSettingsPage() {
                       onChange={(event) => setManualLifecycleType(event.target.value as "cancel" | "plan_change")}
                       className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
-                      <option value="cancel">Cancel subscription</option>
-                      <option value="plan_change">Change plan</option>
+                      <option value="cancel">{t("billing.ui.cancel_subscription")}</option>
+                      <option value="plan_change">{t("billing.ui.change_plan")}</option>
                     </select>
                     <Input type="datetime-local" value={manualLifecycleEffectiveAt} onChange={(event) => setManualLifecycleEffectiveAt(event.target.value)} />
                     {manualLifecycleType === "plan_change" && (
@@ -672,7 +672,7 @@ export default function BillingSettingsPage() {
                           className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                         >
                           {PLAN_CATALOG.map((plan) => (
-                            <option key={plan.id} value={plan.id}>{plan.name}</option>
+                            <option key={plan.id} value={plan.id}>{planLabel(t, plan.id)}</option>
                           ))}
                         </select>
                         <select
@@ -680,29 +680,29 @@ export default function BillingSettingsPage() {
                           onChange={(event) => setManualLifecycleInterval(event.target.value as BillingInterval)}
                           className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                         >
-                          <option value="monthly">Monthly</option>
-                          <option value="yearly">Yearly</option>
+                          <option value="monthly">{t("billing.ui.monthly")}</option>
+                          <option value="yearly">{t("billing.ui.yearly")}</option>
                         </select>
                       </>
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Button onClick={onSubmitManualLifecycle} disabled={submitManualSubscriptionChange.isPending}>
-                      {submitManualSubscriptionChange.isPending ? "Sending..." : "Send update request"}
+                      {submitManualSubscriptionChange.isPending ? t("billing.ui.sending") : t("billing.ui.send_update_request")}
                     </Button>
-                    {manualChangeStatus && <Badge>Update status: {billingStatusLabel(t, manualChangeStatus.status)}</Badge>}
+                    {manualChangeStatus && <Badge>{t("billing.ui.update_status")}: {billingStatusLabel(t, manualChangeStatus.status)}</Badge>}
                   </div>
                   {manualChangeStatus?.rejection_reason && (
-                    <p className="text-xs text-rose-700">Update needed: {manualChangeStatus.rejection_reason}</p>
+                    <p className="text-xs text-rose-700">{t("billing.ui.update_needed")}: {manualChangeStatus.rejection_reason}</p>
                   )}
                 </div>
               )}
 
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--wash)] p-4 space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="subtle">1. Choose a channel</Badge>
-                  <Badge variant="subtle">2. Send the exact amount</Badge>
-                  <Badge variant="subtle">3. Share your details</Badge>
+                  <Badge variant="subtle">{t("billing.ui.step_choose_channel")}</Badge>
+                  <Badge variant="subtle">{t("billing.ui.step_send_amount")}</Badge>
+                  <Badge variant="subtle">{t("billing.ui.step_share_details")}</Badge>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   {manualMethods?.methods?.map((method) => (
@@ -752,7 +752,7 @@ export default function BillingSettingsPage() {
               {selectedManualMethod && (
                 <Alert variant="success">
                   <AlertTitle>
-                    Selected channel: {selectedManualMethod.channel.toUpperCase()} • {selectedManualMethod.receiver_number}
+                    {t("billing.ui.selected_channel")}: {selectedManualMethod.channel === "bkash" ? "bKash" : "Rocket"} • {selectedManualMethod.receiver_number}
                   </AlertTitle>
                   <AlertDescription>
                     {locale === "bn"
@@ -765,19 +765,19 @@ export default function BillingSettingsPage() {
               {manualRequestStatus && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="text-sm font-semibold text-[var(--foreground)]">Latest billing submission</div>
-                    <Badge>Status: {billingStatusLabel(t, manualRequestStatus.status)}</Badge>
+                    <div className="text-sm font-semibold text-[var(--foreground)]">{t("billing.ui.latest_submission")}</div>
+                    <Badge>{t("billing.ui.status")}: {billingStatusLabel(t, manualRequestStatus.status)}</Badge>
                   </div>
                   <div className="mt-3 grid gap-2 text-xs text-[var(--muted)] md:grid-cols-2">
-                    <div>Plan: {manualRequestStatus.plan} ({manualRequestStatus.interval})</div>
-                    <div>Amount: {manualRequestStatus.amount} {manualRequestStatus.currency}</div>
-                    <div>Transaction ID: {manualRequestStatus.transaction_id}</div>
-                    <div>Sent at: {new Date(manualRequestStatus.sent_at).toLocaleString()}</div>
+                    <div>{t("billing.ui.plan")}: {planLabel(t, manualRequestStatus.plan)} ({t(manualRequestStatus.interval === "yearly" ? "billing.ui.yearly" : "billing.ui.monthly")})</div>
+                    <div>{t("billing.ui.amount")}: {manualRequestStatus.amount} {manualRequestStatus.currency}</div>
+                    <div>{t("billing.ui.transaction_id")}: {manualRequestStatus.transaction_id}</div>
+                    <div>{t("billing.ui.sent_at")}: {new Date(manualRequestStatus.sent_at).toLocaleString()}</div>
                     {manualRequestStatus.temporary_access_expires_at && (
-                      <div>Temporary access until: {new Date(manualRequestStatus.temporary_access_expires_at).toLocaleString()}</div>
+                      <div>{t("billing.ui.temp_access_until")}: {new Date(manualRequestStatus.temporary_access_expires_at).toLocaleString()}</div>
                     )}
                     {manualRequestStatus.approved_ends_at && (
-                      <div>Approved access until: {new Date(manualRequestStatus.approved_ends_at).toLocaleString()}</div>
+                      <div>{t("billing.ui.approved_access_until")}: {new Date(manualRequestStatus.approved_ends_at).toLocaleString()}</div>
                     )}
                   </div>
                   {temporaryAccessText && manualRequestStatus.status === "pending" && (
@@ -790,80 +790,80 @@ export default function BillingSettingsPage() {
             <div className="space-y-5">
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 space-y-4">
                 <div>
-                  <div className="text-sm font-semibold text-[var(--foreground)]">Share billing details</div>
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{t("billing.ui.share_billing_details")}</div>
                   <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-                    We use these details to match your transfer and activate the selected plan for your workspace.
+                    {t("billing.ui.details_usage")}
                   </p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Plan</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.plan")}</label>
                     <select
                       value={manualPlan}
                       onChange={(event) => setManualPlan(event.target.value as PlanId)}
                       className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
                       {PLAN_CATALOG.map((plan) => (
-                        <option key={plan.id} value={plan.id}>{plan.name}</option>
+                        <option key={plan.id} value={plan.id}>{planLabel(t, plan.id)}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Exact amount</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.exact_amount")}</label>
                     <Input
-                      value={expectedAmount ? `${expectedAmount} ${manualMethods?.currency ?? "BDT"}` : "Not configured"}
+                      value={expectedAmount ? `${expectedAmount} ${manualMethods?.currency ?? "BDT"}` : t("billing.ui.not_configured")}
                       readOnly
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Sender number</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.sender_number")}</label>
                     <Input value={senderNumber} onChange={(event) => setSenderNumber(event.target.value)} placeholder="01XXXXXXXXX" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Transaction ID</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.transaction_id")}</label>
                     <Input value={transactionId} onChange={(event) => setTransactionId(event.target.value)} placeholder="TXN..." />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Sent at</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.sent_at")}</label>
                     <Input type="datetime-local" value={sentAt} onChange={(event) => setSentAt(event.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">Screenshot</label>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">{t("billing.ui.screenshot")}</label>
                     <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => setScreenshot(event.target.files?.[0] ?? null)} />
                   </div>
                 </div>
               </div>
 
               <Alert>
-                <AlertTitle>30-day trial included</AlertTitle>
+                <AlertTitle>{t("billing.ui.trial_included")}</AlertTitle>
                 <AlertDescription>
-                  Start with the included trial first. You only need to share billing details when you are ready to continue beyond the trial.
+                  {t("billing.ui.trial_first")}
                 </AlertDescription>
               </Alert>
 
               {!manualCanSubmitNow && (
                 <Alert variant="warning">
-                  <AlertTitle>Billing details are not needed yet</AlertTitle>
+                  <AlertTitle>{t("billing.ui.details_not_needed")}</AlertTitle>
                   <AlertDescription>
-                    Your trial is still active. Share your billing details after the trial ends{trialEndsOn ? ` (${trialEndsOn})` : ""}.
+                    {t("billing.ui.trial_still_active")}{trialEndsOn ? ` (${trialEndsOn})` : ""}.
                   </AlertDescription>
                 </Alert>
               )}
 
               {manualRequestStatus?.status === "rejected" && manualRequestStatus.rejection_reason && (
                 <Alert variant="destructive">
-                  <AlertTitle>Update needed</AlertTitle>
+                  <AlertTitle>{t("billing.ui.update_needed")}</AlertTitle>
                   <AlertDescription>{manualRequestStatus.rejection_reason}</AlertDescription>
                 </Alert>
               )}
 
               <div className="flex flex-wrap items-center gap-2">
                 <Button onClick={onSubmitManual} disabled={submitManualRequest.isPending || !expectedAmount || !selectedManualMethod || !manualCanSubmitNow}>
-                  {submitManualRequest.isPending ? "Sending..." : "Share payment details"}
+                  {submitManualRequest.isPending ? t("billing.ui.sending") : t("billing.ui.share_payment_details")}
                 </Button>
                 {manualRequestStatus && (
                   <Badge>
-                    Status: {billingStatusLabel(t, manualRequestStatus.status)}
+                    {t("billing.ui.status")}: {billingStatusLabel(t, manualRequestStatus.status)}
                   </Badge>
                 )}
               </div>
@@ -876,7 +876,7 @@ export default function BillingSettingsPage() {
         <Dialog open={paymentChoiceOpen} onOpenChange={setPaymentChoiceOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Choose payment method</DialogTitle>
+              <DialogTitle>{t("billing.ui.choose_payment_method")}</DialogTitle>
               <DialogDescription>
                 Select how you want to continue with the {pendingPlanChoice ?? "selected"} plan.
               </DialogDescription>
@@ -892,7 +892,7 @@ export default function BillingSettingsPage() {
                 }}
                 disabled={checkout.isPending}
               >
-                Continue with card checkout
+                {t("billing.ui.continue_card")}
               </Button>
               <Button
                 variant="outline"
@@ -903,7 +903,7 @@ export default function BillingSettingsPage() {
                   chooseManualPayment(pendingPlanChoice);
                 }}
               >
-                Pay with bKash / Rocket
+                {t("billing.ui.pay_with_mfs")}
               </Button>
             </div>
           </DialogContent>
@@ -1100,7 +1100,7 @@ export default function BillingSettingsPage() {
                     <span>{invoice.total / 100} {invoice.currency.toUpperCase()}</span>
                     {invoice.receipt_url && (
                       <Button asChild size="sm" variant="outline">
-                        <a href={invoice.receipt_url} target="_blank" rel="noreferrer">Receipt</a>
+                        <a href={invoice.receipt_url} target="_blank" rel="noreferrer">{t("billing.ui.receipt")}</a>
                       </Button>
                     )}
                   </div>

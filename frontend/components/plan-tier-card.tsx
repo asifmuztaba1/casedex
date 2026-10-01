@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale-provider";
 import { useIsBdtPricing } from "@/lib/use-locale-currency";
 import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
+import { planCopy } from "@/features/billing/labels";
 
 type PlanTierCardProps = {
   plan: PlanCatalogItem;
@@ -35,6 +36,7 @@ export default function PlanTierCard({
   className,
 }: PlanTierCardProps) {
   const { t } = useLocale();
+  const copy = planCopy(t, plan);
   const isBdt = useIsBdtPricing();
   const price = isBdt
     ? (interval === "monthly" ? plan.monthlyPriceBdt : plan.yearlyPriceBdt)
@@ -59,24 +61,24 @@ export default function PlanTierCard({
         <div className="absolute right-4 top-4">
           <Badge variant="subtle" className="gap-1">
             <Sparkles className="h-3 w-3" />
-            {active ? t("billing.current_plan_badge") : plan.badge ?? "Recommended"}
+            {active ? t("billing.current_plan_badge") : copy.badge ?? t("plan.recommended")}
           </Badge>
         </div>
       )}
       <CardHeader className="space-y-3 pb-4">
-        <CardTitle className="text-xl text-[var(--foreground)]">{plan.name}</CardTitle>
+        <CardTitle className="text-xl text-[var(--foreground)]">{copy.name}</CardTitle>
         <div className="flex items-end gap-2">
           <div className="text-3xl font-semibold text-[var(--foreground)]">{price}</div>
           <div className="pb-1 text-xs uppercase tracking-wide text-[var(--muted-soft)]">
-            {interval}
+            {t(interval === "yearly" ? "billing.ui.yearly" : "billing.ui.monthly")}
           </div>
         </div>
-        <CardDescription>{plan.summary}</CardDescription>
+        <CardDescription>{copy.summary}</CardDescription>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm font-medium text-[var(--muted)]">
-          {plan.storage}
+          {copy.storage}
         </div>
         <div className="text-xs font-medium text-[var(--muted-soft)]">
-          {t("billing.best_for")}: {plan.bestFor}
+          {t("billing.best_for")}: {copy.bestFor}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -87,7 +89,7 @@ export default function PlanTierCard({
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-[var(--muted)]">{t("billing.storage")}</span>
-              <span className="font-medium text-[var(--foreground)]">{plan.storage}</span>
+              <span className="font-medium text-[var(--foreground)]">{copy.storage}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[var(--muted)]">{t("billing.audit_export_label")}</span>
@@ -114,7 +116,7 @@ export default function PlanTierCard({
           </div>
         </div>
         <div className="space-y-2">
-          {plan.features.map((feature) => (
+          {copy.features.map((feature) => (
             <div key={feature} className="flex items-start gap-2 text-sm text-[var(--muted)]">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--foreground)]" />
               <span>{feature}</span>

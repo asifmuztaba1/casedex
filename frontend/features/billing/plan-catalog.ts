@@ -17,6 +17,9 @@ export type PlanCatalogItem = {
   features: string[];
 };
 
+// Card copy is translated via plan.<id>.summary / .best_for / .storage / .badge
+// and plan.<id>.feature.<index> in lib/i18n.ts (see planCopy in labels.ts).
+// When you edit or reorder text here, update both dictionaries to match.
 export const PLAN_CATALOG: PlanCatalogItem[] = [
   {
     id: "starter",
@@ -90,6 +93,7 @@ export const PLAN_CATALOG: PlanCatalogItem[] = [
   },
 ];
 
+// Translated via plan.addon.feature.<index> in lib/i18n.ts.
 export const STORAGE_ADDON_FEATURES = [
   "Add-on: unlimited storage",
   "Available on any plan",
