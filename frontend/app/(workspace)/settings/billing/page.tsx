@@ -597,9 +597,9 @@ export default function BillingSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-2">
-                {STORAGE_ADDON_FEATURES.map((feature) => (
+                {STORAGE_ADDON_FEATURES.map((feature, index) => (
                   <div key={feature} className="rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]">
-                    {feature}
+                    {t(`plan.addon.feature.${index}`) === `plan.addon.feature.${index}` ? feature : t(`plan.addon.feature.${index}`)}
                   </div>
                 ))}
               </div>
@@ -672,7 +672,7 @@ export default function BillingSettingsPage() {
                           className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                         >
                           {PLAN_CATALOG.map((plan) => (
-                            <option key={plan.id} value={plan.id}>{plan.name}</option>
+                            <option key={plan.id} value={plan.id}>{planLabel(t, plan.id)}</option>
                           ))}
                         </select>
                         <select
@@ -804,7 +804,7 @@ export default function BillingSettingsPage() {
                       className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm text-[var(--foreground)]"
                     >
                       {PLAN_CATALOG.map((plan) => (
-                        <option key={plan.id} value={plan.id}>{plan.name}</option>
+                        <option key={plan.id} value={plan.id}>{planLabel(t, plan.id)}</option>
                       ))}
                     </select>
                   </div>

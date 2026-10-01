@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale-provider";
 
 type StorageMeterProps = {
   usedBytes: number;
@@ -30,12 +31,13 @@ export default function StorageMeter({
   hasUnlimitedStorage = false,
   className,
 }: StorageMeterProps) {
+  const { t } = useLocale();
   if (hasUnlimitedStorage || limitBytes === null) {
     return (
       <div className={cn("space-y-2", className)}>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-[var(--muted)]">Storage</span>
-          <span className="font-medium text-[var(--foreground)]">Unlimited</span>
+          <span className="text-[var(--muted)]">{t("billing.storage")}</span>
+          <span className="font-medium text-[var(--foreground)]">{t("storage.unlimited")}</span>
         </div>
         <div className="h-2 rounded-full bg-emerald-100" />
       </div>
@@ -54,7 +56,7 @@ export default function StorageMeter({
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-[var(--muted)]">Storage</span>
+        <span className="text-[var(--muted)]">{t("billing.storage")}</span>
         <span className="font-medium text-[var(--foreground)]">
           {formatBytes(usedBytes)} / {formatBytes(limitBytes)}
         </span>
@@ -62,7 +64,7 @@ export default function StorageMeter({
       <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
         <div className={cn("h-full transition-all", tone)} style={{ width: `${percentage}%` }} />
       </div>
-      <div className="text-xs text-[var(--muted-soft)]">{percentage}% used</div>
+      <div className="text-xs text-[var(--muted-soft)]">{percentage}% {t("storage.used")}</div>
     </div>
   );
 }
