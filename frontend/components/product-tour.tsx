@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
 import { useProductTour } from "@/components/tour-provider";
 import { TOUR_STEPS } from "@/lib/tour-steps";
+import { useIsClient } from "@/lib/client-store";
 import { CheckCircle2, Compass, X } from "lucide-react";
 
 type Rect = { top: number; left: number; width: number; height: number };
@@ -82,11 +83,7 @@ export default function ProductTour() {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
   const [tooltipPos, setTooltipPos] = useState<TooltipPos>({ top: 0, left: 0 });
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   const step = TOUR_STEPS[currentStep];
   const isCenter = step?.center || isMobile();
