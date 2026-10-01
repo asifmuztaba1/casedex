@@ -21,9 +21,10 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import { useToast } from "@/components/ui/use-toast";
 import { billingStatusLabel } from "@/features/billing/labels";
+import { formatDate } from "@/lib/date-format";
 
 export default function AdminManualPaymentsPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { toast } = useToast();
   const [status, setStatus] = useState<"" | "pending" | "approved" | "rejected" | "expired">("pending");
   const [tenant, setTenant] = useState("");
@@ -76,8 +77,8 @@ export default function AdminManualPaymentsPage() {
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch (error) {
       toast({
-        title: "Unable to open screenshot",
-        description: error instanceof Error ? error.message : "Request failed.",
+        title: t("admin.mfs.screenshot_error"),
+        description: error instanceof Error ? error.message : t("admin.mfs.request_failed"),
         variant: "error",
       });
     }
@@ -87,13 +88,13 @@ export default function AdminManualPaymentsPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-soft)]">{t("admin.title")}</p>
-        <h1 className="text-2xl font-semibold text-[var(--foreground)]">Manual MFS payments</h1>
-        <p className="text-sm text-[var(--muted)]">Review bKash/Rocket requests and maintain receiver numbers.</p>
+        <h1 className="text-2xl font-semibold text-[var(--foreground)]">{t("admin.mfs.title")}</h1>
+        <p className="text-sm text-[var(--muted)]">{t("admin.mfs.subtitle")}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Review requests</CardTitle>
+          <CardTitle>{t("admin.mfs.review_requests")}</CardTitle>
           <CardDescription>Approve/reject pending requests. Approval starts from payment sent time.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -103,35 +104,35 @@ export default function AdminManualPaymentsPage() {
               onChange={(event) => setStatus(event.target.value as "" | "pending" | "approved" | "rejected" | "expired")}
               className="h-10 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 text-sm"
             >
-              <option value="">All statuses</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-              <option value="expired">Expired</option>
+              <option value="">{t("admin.mfs.all_statuses")}</option>
+              <option value="pending">{t("billing.status.pending")}</option>
+              <option value="approved">{t("billing.status.approved")}</option>
+              <option value="rejected">{t("billing.status.rejected")}</option>
+              <option value="expired">{t("billing.status.expired")}</option>
             </select>
-            <Input placeholder="Filter by tenant name/public id" value={tenant} onChange={(event) => setTenant(event.target.value)} />
+            <Input placeholder={t("admin.mfs.filter_placeholder")} value={tenant} onChange={(event) => setTenant(event.target.value)} />
           </div>
 
           <div className="space-y-3">
             {sortedPayments.length === 0 && (
-              <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">No manual requests found.</div>
+              <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">{t("admin.mfs.no_requests")}</div>
             )}
             {sortedPayments.map((item) => (
               <div key={item.public_id} className="rounded-xl border border-[var(--border)] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? "Tenant"}</div>
+                    <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? t("admin.mfs.tenant")}</div>
                     <div className="text-xs text-[var(--muted)]">{item.user_name} • {item.plan} • {item.interval}</div>
                     <div className="text-xs text-[var(--muted)]">
                       {item.amount} {item.currency} • TXN: {item.transaction_id}
                     </div>
                     <div className="text-xs text-[var(--muted)]">
-                      From: {item.sender_number}
+                      {t("admin.mfs.from")}: {item.sender_number}
                       {item.channel ? ` • ${item.channel === "bkash" ? "bKash" : item.channel === "rocket" ? "Rocket" : item.channel}` : ""}
                     </div>
-                    <div className="text-xs text-[var(--muted)]">Sent at: {new Date(item.sent_at).toLocaleString()}</div>
+                    <div className="text-xs text-[var(--muted)]">{t("billing.ui.sent_at")}: {formatDate(item.sent_at, "PPp", locale)}</div>
                     {item.temporary_access_expires_at && (
-                      <div className="text-xs text-amber-700">Temporary access until: {new Date(item.temporary_access_expires_at).toLocaleString()}</div>
+                      <div className="text-xs text-amber-700">{t("billing.ui.temp_access_until")}: {formatDate(item.temporary_access_expires_at, "PPp", locale)}</div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -142,7 +143,7 @@ export default function AdminManualPaymentsPage() {
                         variant="outline"
                         onClick={() => openScreenshot(item.screenshot_download_url as string)}
                       >
-                        Screenshot
+                        {t("billing.ui.screenshot")}
                       </Button>
                     )}
                   </div>
@@ -151,7 +152,7 @@ export default function AdminManualPaymentsPage() {
                 {item.status === "pending" && (
                   <div className="mt-3 grid gap-2 md:grid-cols-[1fr_auto_auto]">
                     <Textarea
-                      placeholder="Optional rejection reason"
+                      placeholder={t("admin.mfs.rejection_placeholder")}
                       value={rejectReason[item.public_id] ?? ""}
                       onChange={(event) =>
                         setRejectReason((prev) => ({ ...prev, [item.public_id]: event.target.value }))
@@ -161,7 +162,7 @@ export default function AdminManualPaymentsPage() {
                       onClick={() => approve.mutate(item.public_id)}
                       disabled={approve.isPending}
                     >
-                      Approve
+                      {t("admin.mfs.approve")}
                     </Button>
                     <Button
                       variant="outline"
@@ -173,13 +174,13 @@ export default function AdminManualPaymentsPage() {
                       }
                       disabled={reject.isPending}
                     >
-                      Reject
+                      {t("admin.mfs.reject")}
                     </Button>
                   </div>
                 )}
 
                 {item.status === "rejected" && item.rejection_reason && (
-                  <p className="mt-2 text-xs text-rose-700">Reason: {item.rejection_reason}</p>
+                  <p className="mt-2 text-xs text-rose-700">{t("admin.mfs.reason")}: {item.rejection_reason}</p>
                 )}
               </div>
             ))}
@@ -189,30 +190,30 @@ export default function AdminManualPaymentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Manual subscription lifecycle</CardTitle>
-          <CardDescription>Approve/reject MFS cancel or plan-change requests with effective date.</CardDescription>
+          <CardTitle>{t("admin.mfs.lifecycle_title")}</CardTitle>
+          <CardDescription>{t("admin.mfs.lifecycle_desc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {lifecycleRequests.length === 0 && (
-            <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">No lifecycle requests found.</div>
+            <div className="rounded-lg border border-[var(--border)] p-4 text-sm text-[var(--muted-soft)]">{t("admin.mfs.no_lifecycle")}</div>
           )}
           {lifecycleRequests.map((item) => (
             <div key={item.public_id} className="rounded-xl border border-[var(--border)] p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? "Tenant"}</div>
-                  <div className="text-xs text-[var(--muted)]">Requested by: {item.requested_by_name ?? "-"}</div>
-                  <div className="text-xs text-[var(--muted)]">Type: {item.type}</div>
-                  <div className="text-xs text-[var(--muted)]">Current: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? t("admin.mfs.tenant")}</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.requested_by")}: {item.requested_by_name ?? "-"}</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.type")}: {item.type}</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.current")}: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
                   {item.type === "plan_change" && (
-                    <div className="text-xs text-[var(--muted)]">Requested: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
+                    <div className="text-xs text-[var(--muted)]">{t("admin.mfs.requested")}: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
                   )}
-                  <div className="text-xs text-[var(--muted)]">Effective at: {new Date(item.effective_at).toLocaleString()}</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.effective_at")}: {formatDate(item.effective_at, "PPp", locale)}</div>
                   {item.applied_at && (
-                    <div className="text-xs text-emerald-700">Applied at: {new Date(item.applied_at).toLocaleString()}</div>
+                    <div className="text-xs text-emerald-700">{t("admin.mfs.applied_at")}: {formatDate(item.applied_at, "PPp", locale)}</div>
                   )}
                   {item.rejection_reason && (
-                    <div className="text-xs text-rose-700">Reason: {item.rejection_reason}</div>
+                    <div className="text-xs text-rose-700">{t("admin.mfs.reason")}: {item.rejection_reason}</div>
                   )}
                 </div>
                 <Badge>{billingStatusLabel(t, item.status)}</Badge>
@@ -224,7 +225,7 @@ export default function AdminManualPaymentsPage() {
                     onClick={() => approveLifecycle.mutate({ publicId: item.public_id })}
                     disabled={approveLifecycle.isPending}
                   >
-                    Approve
+                    {t("admin.mfs.approve")}
                   </Button>
                   <Button
                     size="sm"
@@ -232,7 +233,7 @@ export default function AdminManualPaymentsPage() {
                     onClick={() => rejectLifecycle.mutate({ publicId: item.public_id })}
                     disabled={rejectLifecycle.isPending}
                   >
-                    Reject
+                    {t("admin.mfs.reject")}
                   </Button>
                 </div>
               )}
@@ -243,8 +244,8 @@ export default function AdminManualPaymentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Receiver methods</CardTitle>
-          <CardDescription>Manage platform bKash/Rocket numbers and instructions.</CardDescription>
+          <CardTitle>{t("admin.mfs.receiver_methods")}</CardTitle>
+          <CardDescription>{t("admin.mfs.receiver_methods_desc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2">
@@ -259,22 +260,22 @@ export default function AdminManualPaymentsPage() {
               <option value="rocket">Rocket</option>
             </select>
             <Input
-              placeholder="Receiver number"
+              placeholder={t("admin.mfs.receiver_number")}
               value={newMethod.receiver_number}
               onChange={(event) => setNewMethod((prev) => ({ ...prev, receiver_number: event.target.value }))}
             />
             <Input
-              placeholder="Account name"
+              placeholder={t("admin.mfs.account_name")}
               value={newMethod.account_name}
               onChange={(event) => setNewMethod((prev) => ({ ...prev, account_name: event.target.value }))}
             />
             <Input
-              placeholder="Instructions (EN)"
+              placeholder={t("admin.mfs.instructions_en")}
               value={newMethod.instructions_en}
               onChange={(event) => setNewMethod((prev) => ({ ...prev, instructions_en: event.target.value }))}
             />
             <Input
-              placeholder="Instructions (BN)"
+              placeholder={t("admin.mfs.instructions_bn")}
               value={newMethod.instructions_bn}
               onChange={(event) => setNewMethod((prev) => ({ ...prev, instructions_bn: event.target.value }))}
             />
@@ -289,7 +290,7 @@ export default function AdminManualPaymentsPage() {
             }
             disabled={createMethod.isPending || !newMethod.receiver_number}
           >
-            Add method
+            {t("admin.mfs.add_method")}
           </Button>
 
           <div className="space-y-3">
@@ -307,24 +308,24 @@ export default function AdminManualPaymentsPage() {
                         <option value="rocket">Rocket</option>
                       </select>
                       <Input
-                        placeholder="Receiver number"
+                        placeholder={t("admin.mfs.receiver_number")}
                         value={editForm.receiver_number}
                         onChange={(event) => setEditForm((prev) => ({ ...prev, receiver_number: event.target.value }))}
                       />
                       <Input
-                        placeholder="Account name"
+                        placeholder={t("admin.mfs.account_name")}
                         value={editForm.account_name}
                         onChange={(event) => setEditForm((prev) => ({ ...prev, account_name: event.target.value }))}
                       />
                     </div>
                     <Textarea
-                      placeholder="Instructions (EN)"
+                      placeholder={t("admin.mfs.instructions_en")}
                       value={editForm.instructions_en}
                       onChange={(event) => setEditForm((prev) => ({ ...prev, instructions_en: event.target.value }))}
                       rows={3}
                     />
                     <Textarea
-                      placeholder="Instructions (BN)"
+                      placeholder={t("admin.mfs.instructions_bn")}
                       value={editForm.instructions_bn}
                       onChange={(event) => setEditForm((prev) => ({ ...prev, instructions_bn: event.target.value }))}
                       rows={3}
@@ -342,10 +343,10 @@ export default function AdminManualPaymentsPage() {
                         }}
                         disabled={updateMethod.isPending || !editForm.receiver_number}
                       >
-                        Save
+                        {t("common.save")}
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
-                        Cancel
+                        {t("common.cancel")}
                       </Button>
                     </div>
                   </div>
@@ -373,7 +374,7 @@ export default function AdminManualPaymentsPage() {
                             });
                           }}
                         >
-                          Edit
+                          {t("common.edit")}
                         </Button>
                         <Button
                           size="sm"
@@ -386,7 +387,7 @@ export default function AdminManualPaymentsPage() {
                           }
                           disabled={updateMethod.isPending}
                         >
-                          {method.active ? "Disable" : "Enable"}
+                          {method.active ? t("admin.mfs.disable") : t("admin.mfs.enable")}
                         </Button>
                         <Button
                           size="sm"
@@ -394,7 +395,7 @@ export default function AdminManualPaymentsPage() {
                           onClick={() => deleteMethod.mutate(method.public_id)}
                           disabled={deleteMethod.isPending}
                         >
-                          Delete
+                          {t("common.delete")}
                         </Button>
                       </div>
                     </div>
@@ -404,7 +405,7 @@ export default function AdminManualPaymentsPage() {
                     {method.instructions_bn && (
                       <div className="text-xs text-[var(--muted)]">BN: {method.instructions_bn}</div>
                     )}
-                    <Badge variant={method.active ? "default" : "subtle"}>{method.active ? "Active" : "Inactive"}</Badge>
+                    <Badge variant={method.active ? "default" : "subtle"}>{method.active ? t("admin.mfs.active") : t("admin.mfs.inactive")}</Badge>
                   </div>
                 )}
               </div>
