@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import EmptyState from "@/components/empty-state";
 import PageHeader from "@/components/page-header";

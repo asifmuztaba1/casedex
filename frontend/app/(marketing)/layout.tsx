@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/sheet";
 import { ArrowRight, Menu } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
-import CookieConsent from "@/components/cookie-consent";
 import ThemeToggle from "@/components/theme-toggle";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function MarketingLayout({
   children,
@@ -29,9 +29,12 @@ export default function MarketingLayout({
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-3 py-3 md:gap-6 md:px-6 md:py-4">
             <Link href="/" className="flex items-center gap-2 md:gap-3">
-              <img
+              <Image
                 src="/icons/icon-192.svg"
                 alt="CaseDex"
+                width={36}
+                height={36}
+                unoptimized
                 className="h-8 w-8 rounded-lg md:h-9 md:w-9"
               />
               <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
@@ -115,9 +118,12 @@ export default function MarketingLayout({
             <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <img
+                  <Image
                     src="/icons/icon-192.svg"
                     alt="CaseDex"
+                    width={28}
+                    height={28}
+                    unoptimized
                     className="h-7 w-7 rounded-md"
                   />
                   <div className="text-sm font-semibold text-[var(--foreground)]">
@@ -170,7 +176,6 @@ export default function MarketingLayout({
             </div>
           </div>
         </footer>
-        {/* <CookieConsent /> */}
       </div>
     </div>
   );

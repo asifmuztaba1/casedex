@@ -4,7 +4,6 @@ import type { AiRequest } from "@/features/ai/use-ai";
 import { useAiRequestStatus } from "@/features/ai/use-ai";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Copy, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLocale } from "@/components/locale-provider";

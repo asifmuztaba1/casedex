@@ -17,7 +17,6 @@ import {
   useAiDiarySummary,
   useAiResearchSummary,
   useAiDocumentQa,
-  type AiRequest,
 } from "@/features/ai/use-ai";
 import { useLocale } from "@/components/locale-provider";
 import { useAiCredits } from "@/features/billing/use-billing";

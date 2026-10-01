@@ -21,6 +21,7 @@ import {
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Form from "next/form";
 import { useEffect, useMemo, useState } from "react";
 import { useIsClient } from "@/lib/client-store";
 import { usePathname } from "next/navigation";
@@ -195,7 +196,15 @@ export default function WorkspaceLayout({
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3" />
             <div className="flex items-center gap-3">
-              <Input className="hidden w-[220px] md:block" placeholder={t("nav.search")} />
+              <Form action="/cases" role="search" className="hidden md:block">
+                <Input
+                  name="search"
+                  type="search"
+                  className="w-[220px]"
+                  placeholder={t("nav.search")}
+                  aria-label={t("nav.search")}
+                />
+              </Form>
               <Badge variant="subtle">
                 {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>
@@ -343,9 +352,6 @@ const ProductTour = dynamic(() => import("@/components/product-tour"), {
   ssr: false,
 });
 const SubscriptionWall = dynamic(() => import("@/components/subscription-wall"), {
-  ssr: false,
-});
-const FeedbackTriggerComponent = dynamic(() => import("@/components/feedback-trigger"), {
   ssr: false,
 });
 const FeedbackModal = dynamic(() => import("@/components/feedback-modal"), {

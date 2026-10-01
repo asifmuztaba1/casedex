@@ -155,7 +155,7 @@ function resolveSanctumBase(): string {
 
 async function ensureCsrfCookie(): Promise<void> {
   const base = resolveSanctumBase();
-  const response = await fetch(`${base}/sanctum/csrf-cookie`, {
+  await fetch(`${base}/sanctum/csrf-cookie`, {
     credentials: "include",
     headers: buildHeaders(),
   });
@@ -521,7 +521,9 @@ export function useCreateTenant() {
   return useMutation({
     mutationFn: async (payload: CreateTenantPayload) => {
       await ensureCsrfCookie();
-      const { skipToast, ...requestPayload } = payload;
+      // skipToast is a client-only option; don't send it to the API.
+      const requestPayload: Partial<CreateTenantPayload> = { ...payload };
+      delete requestPayload.skipToast;
       return postJson<AuthResponse>("/api/v1/tenants", requestPayload);
     },
     onSuccess: (_response, variables) => {

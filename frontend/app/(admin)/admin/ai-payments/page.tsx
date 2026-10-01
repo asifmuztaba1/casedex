@@ -28,7 +28,7 @@ import {
   useRejectAiPayment,
 } from "@/features/admin/use-admin-platform";
 import { useLocale } from "@/components/locale-provider";
-import { CheckCircle, XCircle, Image } from "lucide-react";
+import { CheckCircle, XCircle, Image as ImageIcon } from "lucide-react";
 
 const STATUS_OPTIONS = ["", "pending", "approved", "rejected", "expired"];
 
@@ -149,7 +149,7 @@ export default function AdminAiPaymentsPage() {
                               title={t("admin.ai_payments.view_screenshot")}
                               onClick={() => window.open(p.screenshot_download_url ?? undefined, "_blank")}
                             >
-                              <Image className="h-3.5 w-3.5" />
+                              <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
                             </Button>
                           )}
                           {p.status === "pending" && (

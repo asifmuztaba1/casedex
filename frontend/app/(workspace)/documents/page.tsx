@@ -42,7 +42,7 @@ const categoryOptions = [
 export default function DocumentsPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useDocuments();
-  const documents = data?.data ?? [];
+  const documents = useMemo(() => data?.data ?? [], [data?.data]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 

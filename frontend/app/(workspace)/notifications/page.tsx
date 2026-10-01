@@ -36,7 +36,7 @@ const statusOptions = ["all", "pending", "sent", "read"] as const;
 export default function NotificationsPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useNotifications();
-  const notifications = data?.data ?? [];
+  const notifications = useMemo(() => data?.data ?? [], [data?.data]);
   const updateNotification = useUpdateNotification();
   const [statusFilter, setStatusFilter] = useState("all");
 

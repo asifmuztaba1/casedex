@@ -20,7 +20,6 @@ export async function initSentry() {
 
   try {
     // Dynamic import — only resolves if @sentry/nextjs is installed
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     _sentry = await (Function('return import("@sentry/nextjs")')() as Promise<Record<string, unknown>>);
     _sentry.init({
       dsn: SENTRY_DSN,

@@ -66,7 +66,7 @@ export default function HearingsPage() {
 
   // List view data
   const { data: listData, isLoading: listLoading, isError: listError } = useHearings();
-  const hearings = listData?.data ?? [];
+  const hearings = useMemo(() => listData?.data ?? [], [listData?.data]);
 
   // Calendar view data
   const calFrom = format(startOfMonth(currentMonth), "yyyy-MM-dd");
@@ -75,7 +75,7 @@ export default function HearingsPage() {
     { from: calFrom, to: calTo, userPublicId: userFilter !== "all" ? userFilter : null },
     viewMode === "calendar"
   );
-  const calendarHearings = calData?.data ?? [];
+  const calendarHearings = useMemo(() => calData?.data ?? [], [calData?.data]);
 
   // List filtering
   const filtered = useMemo(() => {

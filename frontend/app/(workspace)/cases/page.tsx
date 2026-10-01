@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import EmptyState from "@/components/empty-state";
 import { useCases } from "@/features/cases/use-cases";
 import { Badge } from "@/components/ui/badge";
@@ -34,16 +35,24 @@ const statusOptions = [
 export default function CasesPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useCases();
-  const cases = data?.data ?? [];
-  const [search, setSearch] = useState("");
+  const cases = useMemo(() => data?.data ?? [], [data?.data]);
+  // The header search links here with ?search=. Typing locally overrides it
+  // until the URL term changes again.
+  const urlSearch = useSearchParams().get("search") ?? "";
+  const [searchState, setSearchState] = useState({ from: urlSearch, value: urlSearch });
+  const search = searchState.from === urlSearch ? searchState.value : urlSearch;
+  const setSearch = (value: string) => setSearchState({ from: urlSearch, value });
   const [statusFilter, setStatusFilter] = useState("all");
   const [courtFilter, setCourtFilter] = useState("");
 
   const filteredCases = useMemo(() => {
     return cases.filter((caseItem) => {
-      const matchesSearch = caseItem.title
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const term = search.trim().toLowerCase();
+      const matchesSearch =
+        !term ||
+        [caseItem.title, caseItem.case_number, caseItem.client?.name].some(
+          (field) => field?.toLowerCase().includes(term)
+        );
       const matchesStatus =
         statusFilter === "all" || caseItem.status === statusFilter;
       const matchesCourt = caseItem.court

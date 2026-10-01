@@ -129,7 +129,7 @@ export default function MorningGreetingModal() {
               <span>
                 {briefing.pending_outcomes_yesterday}
                 {locale === "bn" ? "টি " : " "}
-                {t("briefing.pending_outcomes")}
+                {t(briefing.pending_outcomes_yesterday === 1 ? "briefing.pending_outcomes_one" : "briefing.pending_outcomes")}
               </span>
             </li>
           )}
@@ -140,7 +140,7 @@ export default function MorningGreetingModal() {
               <span>
                 {briefing.cause_list_matches_today}
                 {locale === "bn" ? "টি " : " "}
-                {t("briefing.cause_list_matches")}
+                {t(briefing.cause_list_matches_today === 1 ? "briefing.cause_list_matches_one" : "briefing.cause_list_matches")}
               </span>
             </li>
           )}
@@ -151,7 +151,7 @@ export default function MorningGreetingModal() {
               <span>
                 {briefing.document_deadlines_today}
                 {locale === "bn" ? "টি " : " "}
-                {t("briefing.document_deadlines")}
+                {t(briefing.document_deadlines_today === 1 ? "briefing.document_deadlines_one" : "briefing.document_deadlines")}
               </span>
             </li>
           )}
