@@ -25,7 +25,11 @@ class SendHearingReminders extends Command
         $tomorrowStart = Carbon::now()->addDay()->startOfDay();
         $tomorrowEnd = Carbon::now()->addDay()->endOfDay();
 
+        // Runs from the scheduler with no request tenant, so scan all tenants
+        // explicitly; each hearing's tenant is set below before touching
+        // tenant-scoped models.
         $hearings = Hearing::query()
+            ->withoutGlobalScope('tenant')
             ->whereBetween('hearing_at', [$tomorrowStart, $tomorrowEnd])
             ->get();
 
