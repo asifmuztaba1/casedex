@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Support\TenantContext;
 
 class SendHearingReminderJob implements ShouldQueue
 {
@@ -23,6 +24,19 @@ class SendHearingReminderJob implements ShouldQueue
     }
 
     public function handle(): void
+    {
+        // Queue workers have no request tenant; scope this job to its own tenant
+        // so tenant-scoped models (case, hearing) used by mail views resolve.
+        TenantContext::set($this->tenantId);
+
+        try {
+            $this->process();
+        } finally {
+            TenantContext::clear();
+        }
+    }
+
+    private function process(): void
     {
         $notification = CaseNotification::query()
             ->withoutGlobalScopes()

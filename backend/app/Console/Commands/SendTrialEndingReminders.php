@@ -32,7 +32,8 @@ class SendTrialEndingReminders extends Command
                         continue;
                     }
 
-                    $daysLeft = now()->startOfDay()->diffInDays($tenant->trial_ends_at->copy()->startOfDay(), false);
+                    // Carbon 3 returns a float here; cast so the strict in_array matches.
+                    $daysLeft = (int) round(now()->startOfDay()->diffInDays($tenant->trial_ends_at->copy()->startOfDay(), false));
                     if (! in_array($daysLeft, $targetDays, true)) {
                         continue;
                     }
@@ -51,6 +52,7 @@ class SendTrialEndingReminders extends Command
                                     ->where('tenant_id', $tenant->id)
                                     ->where('user_id', $adminUser->id)
                                     ->where('notification_type', $notificationType)
+                                    ->where('channel', $channel)
                                     ->whereDate('created_at', now()->toDateString())
                                     ->exists();
 
