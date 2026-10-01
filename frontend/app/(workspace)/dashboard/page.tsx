@@ -42,17 +42,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/features/billing/use-billing";
 import { formatDate } from "@/lib/date-format";
 
-function formatLocalizedDate(
-  locale: "en" | "bn",
-  date: Date,
-  withTime = false
-) {
-  return new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-US", {
-    dateStyle: "medium",
-    ...(withTime ? { timeStyle: "short" } : {}),
-  }).format(date);
-}
-
 const DOCUMENT_CATEGORY_FILTERS = [
   "all",
   "petition",
@@ -168,10 +157,7 @@ export default function DashboardPage() {
         items.push({
           id: "trial-access",
           title: t("dashboard.deadlines.trial_title"),
-          detail: `${t("dashboard.deadlines.trial_desc")} ${formatLocalizedDate(
-            locale,
-            trialEndsAt
-          )}`,
+          detail: `${t("dashboard.deadlines.trial_desc")} ${formatDate(trialEndsAt, "PP", locale)}`,
           badge: resolveBadge(
             trialEndsAt,
             t("dashboard.deadlines.badge.billing")
@@ -192,11 +178,7 @@ export default function DashboardPage() {
         items.push({
           id: "billing-review",
           title: t("dashboard.deadlines.review_title"),
-          detail: `${t("dashboard.deadlines.review_desc")} ${formatLocalizedDate(
-            locale,
-            reviewEndsAt,
-            true
-          )}`,
+          detail: `${t("dashboard.deadlines.review_desc")} ${formatDate(reviewEndsAt, "PPp", locale)}`,
           badge: resolveBadge(
             reviewEndsAt,
             t("dashboard.deadlines.badge.billing")
@@ -224,11 +206,7 @@ export default function DashboardPage() {
       items.push({
         id: hearing.public_id,
         title: hearing.case_title ?? t("dashboard.deadlines.hearing_title"),
-        detail: `${hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")} · ${formatLocalizedDate(
-          locale,
-          hearingDate,
-          true
-        )}`,
+        detail: `${hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")} · ${formatDate(hearingDate, "PPp", locale)}`,
         badge: resolveBadge(hearingDate, t("dashboard.deadlines.badge.week")),
         href: hearing.case_public_id
           ? `/cases/${hearing.case_public_id}`
@@ -410,7 +388,7 @@ export default function DashboardPage() {
                         hearing.case_title ?? t("dashboard.table.case")
                       )}
                     </TableCell>
-                    <TableCell>{hearing.type ?? t("nav.hearings")}</TableCell>
+                    <TableCell>{hearing.type ? t(`hearing.type.${hearing.type}`) : t("hearing.type.hearing")}</TableCell>
                     <TableCell>{hearing.next_steps ?? "-"}</TableCell>
                   </TableRow>
                 ))}
