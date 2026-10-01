@@ -18,6 +18,15 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    // Web Push (VAPID). Generate once per environment:
+    // php -r "require 'vendor/autoload.php'; print_r(Minishlink\WebPush\VAPID::createVapidKeys());"
+    // The public key must also be set as NEXT_PUBLIC_VAPID_PUBLIC_KEY for the frontend build.
+    'webpush' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT', 'mailto:support@casedex.app'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

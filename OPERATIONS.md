@@ -25,6 +25,8 @@ File: `backend/.env.example`
 | Variable | Purpose |
 |----------|---------|
 | `MAIL_MAILER` | `resend`, `postmark`, `ses`, or `smtp` |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push signing keys. Without them no push is sent (in-app and email still work). |
+| `VAPID_SUBJECT` | Contact for push services, e.g. `mailto:support@casedex.app` |
 | `RESEND_API_KEY` | Get from https://resend.com/api-keys |
 | `POSTMARK_API_KEY` | Get from Postmark dashboard |
 | `MAIL_FROM_ADDRESS` | Must be verified with your provider |
@@ -116,7 +118,7 @@ File: `frontend/.env.production`
 |----------|---------|
 | `NEXT_PUBLIC_API_BASE_URL` | Backend URL (e.g. `https://api.casedex.app`) |
 | `NEXT_PUBLIC_APP_URL` | Frontend URL for meta tags (e.g. `https://casedex.app`) |
-| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Required for push notifications. Generate: `npx web-push generate-vapid-keys` |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Required for push notifications. Must equal the backend `VAPID_PUBLIC_KEY` (see below). |
 | `NEXT_PUBLIC_SENTRY_DSN` | Frontend error tracking (optional) |
 
 ---
@@ -257,7 +259,7 @@ Config: `backend/config/backup.php`. By default backs up to local disk. For prod
 - [ ] Run `php artisan optimize` (caches config, routes, events)
 - [ ] Start Horizon queue worker (supervised)
 - [ ] Start scheduler (`schedule:work` or system cron)
-- [ ] Generate VAPID keys and set `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- [ ] Generate VAPID keys once; set `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` in `backend/.env` and the same public key as `NEXT_PUBLIC_VAPID_PUBLIC_KEY` for the frontend build
 - [ ] Verify email delivery works (send a test)
 - [ ] Configure Lemon Squeezy webhook and test with a trial subscription
 - [ ] Create first admin account
@@ -313,8 +315,10 @@ docker compose exec backend php artisan horizon:status
 # Test hearing reminders manually
 docker compose exec backend php artisan hearings:send-reminders
 
-# Generate VAPID keys
-npx web-push generate-vapid-keys
+# Generate VAPID keys (keep them stable: changing them invalidates every browser subscription)
+docker compose exec backend php -r "require 'vendor/autoload.php'; print_r(Minishlink\\WebPush\\VAPID::createVapidKeys());"
+# backend/.env: VAPID_PUBLIC_KEY=<publicKey>  VAPID_PRIVATE_KEY=<privateKey>  VAPID_SUBJECT=mailto:support@casedex.app
+# frontend build: NEXT_PUBLIC_VAPID_PUBLIC_KEY=<publicKey>
 
 # Run tests
 docker compose exec backend php artisan test
