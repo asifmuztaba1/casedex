@@ -20,6 +20,7 @@ import {
 } from "@/features/admin/billing/use-admin-manual-payments";
 import { useLocale } from "@/components/locale-provider";
 import { useToast } from "@/components/ui/use-toast";
+import { billingStatusLabel } from "@/features/billing/labels";
 
 export default function AdminManualPaymentsPage() {
   const { t } = useLocale();
@@ -124,13 +125,17 @@ export default function AdminManualPaymentsPage() {
                     <div className="text-xs text-[var(--muted)]">
                       {item.amount} {item.currency} • TXN: {item.transaction_id}
                     </div>
+                    <div className="text-xs text-[var(--muted)]">
+                      From: {item.sender_number}
+                      {item.channel ? ` • ${item.channel === "bkash" ? "bKash" : item.channel === "rocket" ? "Rocket" : item.channel}` : ""}
+                    </div>
                     <div className="text-xs text-[var(--muted)]">Sent at: {new Date(item.sent_at).toLocaleString()}</div>
                     {item.temporary_access_expires_at && (
                       <div className="text-xs text-amber-700">Temporary access until: {new Date(item.temporary_access_expires_at).toLocaleString()}</div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge>{item.status}</Badge>
+                    <Badge>{billingStatusLabel(t, item.status)}</Badge>
                     {item.screenshot_download_url && (
                       <Button
                         size="sm"
@@ -210,7 +215,7 @@ export default function AdminManualPaymentsPage() {
                     <div className="text-xs text-rose-700">Reason: {item.rejection_reason}</div>
                   )}
                 </div>
-                <Badge>{item.status}</Badge>
+                <Badge>{billingStatusLabel(t, item.status)}</Badge>
               </div>
               {item.status === "pending" && (
                 <div className="mt-3 flex flex-wrap gap-2">

@@ -272,3 +272,35 @@ it('enforces platform role for admin endpoints', function (): void {
     $response = $this->postJson("/api/v1/admin/manual-payments/{$request->public_id}/approve", []);
     $response->assertStatus(403);
 });
+
+it('records which mfs channel the payment was sent through', function (): void {
+    Storage::fake('local');
+
+    [, $user] = createTenantUserForCountry('BD');
+    $this->actingAs($user);
+
+    $payload = [
+        'plan' => TenantPlan::Starter->value,
+        'interval' => 'monthly',
+        'amount' => 500,
+        'sender_number' => '01722222222',
+        'sent_at' => now()->toISOString(),
+    ];
+
+    $this->post('/api/v1/billing/manual-request', $payload + [
+        'channel' => 'paypal',
+        'transaction_id' => 'BD-TXN-CHANNEL-0',
+        'screenshot' => UploadedFile::fake()->image('proof.png'),
+    ], ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('channel');
+
+    $this->post('/api/v1/billing/manual-request', $payload + [
+        'channel' => 'rocket',
+        'transaction_id' => 'BD-TXN-CHANNEL-1',
+        'screenshot' => UploadedFile::fake()->image('proof.png'),
+    ], ['Accept' => 'application/json'])
+        ->assertStatus(201)
+        ->assertJsonPath('data.channel', 'rocket')
+        ->assertJsonPath('data.sender_number', '01722222222');
+});

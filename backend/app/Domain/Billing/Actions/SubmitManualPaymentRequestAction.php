@@ -89,6 +89,7 @@ class SubmitManualPaymentRequestAction
             'amount' => $submittedAmount,
             'currency' => (string) config('billing.manual_mfs.currency', 'BDT'),
             'sender_number' => $data['sender_number'],
+            'channel' => $data['channel'] ?? null,
             'transaction_id' => $data['transaction_id'],
             'sent_at' => $data['sent_at'],
             'screenshot_disk' => $disk,

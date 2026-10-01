@@ -161,6 +161,7 @@ export function useSubmitManualRequest() {
       interval: BillingInterval;
       amount: number;
       sender_number: string;
+      channel?: "bkash" | "rocket";
       transaction_id: string;
       sent_at: string;
       screenshot: File;
@@ -170,6 +171,9 @@ export function useSubmitManualRequest() {
       formData.append("interval", payload.interval);
       formData.append("amount", payload.amount.toString());
       formData.append("sender_number", payload.sender_number);
+      if (payload.channel) {
+        formData.append("channel", payload.channel);
+      }
       formData.append("transaction_id", payload.transaction_id);
       formData.append("sent_at", payload.sent_at);
       formData.append("screenshot", payload.screenshot);

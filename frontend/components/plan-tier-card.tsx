@@ -9,6 +9,7 @@ import type { PlanCatalogItem } from "@/features/billing/plan-catalog";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale-provider";
 import { useIsBdtPricing } from "@/lib/use-locale-currency";
+import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
 
 type PlanTierCardProps = {
   plan: PlanCatalogItem;
@@ -122,8 +123,17 @@ export default function PlanTierCard({
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--wash)] px-3 py-3 text-xs text-[var(--muted)]">
           <div>{t("billing.trial_notice_line1")}</div>
-          <div>{t("billing.trial_notice_line2")}</div>
-          <div>{t("billing.trial_notice_line3")}</div>
+          {isManualMfsOnlyLaunch() ? (
+            <>
+              <div>{t("billing.trial_notice_manual_line2")}</div>
+              <div>{t("billing.trial_notice_manual_line3")}</div>
+            </>
+          ) : (
+            <>
+              <div>{t("billing.trial_notice_line2")}</div>
+              <div>{t("billing.trial_notice_line3")}</div>
+            </>
+          )}
         </div>
 
         {ctaHref ? (
