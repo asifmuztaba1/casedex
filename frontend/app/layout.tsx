@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { IBM_Plex_Sans, Noto_Sans_Bengali, Spectral } from "next/font/google";
 import Providers from "./providers";
 import ServiceWorkerRegister from "@/pwa/sw-register";
-import InstallPrompt from "@/pwa/install-prompt";
 import { Toaster } from "@/components/ui/toaster";
 import type { Locale } from "@/lib/locale-constants";
 import { STORAGE_KEY } from "@/lib/locale-constants";
@@ -82,7 +81,6 @@ export default async function RootLayout({
       >
         <Providers initialLocale={initialLocale}>
           {children}
-          {/* <InstallPrompt /> */}
           <ServiceWorkerRegister />
         </Providers>
         <Toaster />

@@ -60,7 +60,7 @@ export default function SettingsPage() {
     usePushSubscriptions();
   const saveSubscription = useSavePushSubscription();
   const deleteSubscription = useDeletePushSubscription();
-  const subscriptions = subscriptionsData?.data ?? [];
+  const subscriptions = useMemo(() => subscriptionsData?.data ?? [], [subscriptionsData?.data]);
   const hasPushEnabled = subscriptions.length > 0;
   const isBusy = saveSubscription.isPending || deleteSubscription.isPending;
 

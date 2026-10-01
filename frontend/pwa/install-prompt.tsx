@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Download, X } from "lucide-react";
 import { useLocale } from "@/components/locale-provider";
@@ -75,9 +76,12 @@ export default function InstallPrompt({ delayMs = 0 }: { delayMs?: number }) {
   return (
     <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 mx-auto max-w-md animate-in slide-in-from-bottom-4 fade-in duration-300 lg:bottom-4">
       <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">
-        <img
+        <Image
           src="/icons/icon-192.svg"
           alt="CaseDex"
+          width={40}
+          height={40}
+          unoptimized
           className="h-10 w-10 shrink-0 rounded-lg"
         />
         <div className="min-w-0 flex-1">

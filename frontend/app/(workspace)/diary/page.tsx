@@ -31,7 +31,7 @@ import {
 export default function DiaryPage() {
   const { t } = useLocale();
   const { data, isLoading, isError } = useDiaryEntries();
-  const entries = data?.data ?? [];
+  const entries = useMemo(() => data?.data ?? [], [data?.data]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<DiaryEntrySummary | null>(null);
 

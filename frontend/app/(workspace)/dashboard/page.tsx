@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -53,6 +53,17 @@ function formatLocalizedDate(
   }).format(date);
 }
 
+const DOCUMENT_CATEGORY_FILTERS = [
+  "all",
+  "petition",
+  "evidence",
+  "order_sheet",
+  "client_id",
+  "notes",
+  "other",
+] as const;
+type DocumentCategoryFilter = (typeof DOCUMENT_CATEGORY_FILTERS)[number];
+
 export default function DashboardPage() {
   const { t, locale } = useLocale();
   const { toast } = useToast();
@@ -98,7 +109,22 @@ export default function DashboardPage() {
     diaryEntries,
   ]);
 
-  const recentDocuments = useMemo(() => documents.slice(0, 5), [documents]);
+  const [documentSearch, setDocumentSearch] = useState("");
+  const [documentCategory, setDocumentCategory] = useState<DocumentCategoryFilter>("all");
+  const recentDocuments = useMemo(() => {
+    const term = documentSearch.trim().toLowerCase();
+    return documents
+      .filter(
+        (doc) =>
+          (documentCategory === "all" || doc.category === documentCategory) &&
+          (!term ||
+            [doc.original_name, doc.case_title].some((field) =>
+              field?.toLowerCase().includes(term)
+            ))
+      )
+      .slice(0, 5);
+  }, [documents, documentSearch, documentCategory]);
+  const isFilteringDocuments = documentSearch.trim() !== "" || documentCategory !== "all";
 
   const casesMissingRegistry = useMemo(
     () =>
@@ -558,23 +584,36 @@ export default function DashboardPage() {
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--muted-soft)]" />
                 <Input
+                  type="search"
                   className="w-full pl-9 sm:w-[220px]"
                   placeholder={t("dashboard.search_documents")}
+                  aria-label={t("dashboard.search_documents")}
+                  value={documentSearch}
+                  onChange={(event) => setDocumentSearch(event.target.value)}
                 />
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <Filter className="h-4 w-4" />
-                    {t("dashboard.filter_type")}
+                    {documentCategory === "all"
+                      ? t("dashboard.filter_type")
+                      : t(`document.category.${documentCategory}`)}
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>{t("dashboard.filter_all")}</DropdownMenuItem>
-                  <DropdownMenuItem>{t("dashboard.filter_orders")}</DropdownMenuItem>
-                  <DropdownMenuItem>{t("dashboard.filter_transcripts")}</DropdownMenuItem>
-                  <DropdownMenuItem>{t("dashboard.filter_exhibits")}</DropdownMenuItem>
+                  {DOCUMENT_CATEGORY_FILTERS.map((category) => (
+                    <DropdownMenuItem
+                      key={category}
+                      onSelect={() => setDocumentCategory(category)}
+                      className={documentCategory === category ? "font-semibold" : ""}
+                    >
+                      {category === "all"
+                        ? t("dashboard.filter_all")
+                        : t(`document.category.${category}`)}
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -599,6 +638,13 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isFilteringDocuments && recentDocuments.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-sm text-[var(--muted)]">
+                    {t("dashboard.documents_no_match")}
+                  </TableCell>
+                </TableRow>
+              )}
               {recentDocuments.map((doc) => (
                 <TableRow key={doc.public_id}>
                   <TableCell>{doc.original_name ?? t("dashboard.table.document")}</TableCell>
@@ -609,7 +655,11 @@ export default function DashboardPage() {
                       </Link>
                     </Button>
                   </TableCell>
-                  <TableCell>{doc.category ?? t("case.detail.tabs.documents")}</TableCell>
+                  <TableCell>
+                    {doc.category
+                      ? t(`document.category.${doc.category}`)
+                      : t("case.detail.tabs.documents")}
+                  </TableCell>
                   <TableCell>
                     {doc.created_at
                       ? format(new Date(doc.created_at), "PP")

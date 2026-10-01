@@ -35,7 +35,7 @@ export default function CalendarPage() {
     to: calTo,
     userPublicId: userFilter !== "all" ? userFilter : null,
   });
-  const calendarHearings = calData?.data ?? [];
+  const calendarHearings = useMemo(() => calData?.data ?? [], [calData?.data]);
 
   const selectedDayHearings = useMemo(() => {
     if (!selectedDate) return [];
