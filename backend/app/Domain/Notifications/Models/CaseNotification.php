@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Domain\Notifications\Push\PushSender;
+use App\Jobs\SendWebPushJob;
 
 class CaseNotification extends Model
 {
@@ -43,6 +45,19 @@ class CaseNotification extends Model
             if ($notification->public_id === null) {
                 $notification->public_id = (string) Str::ulid();
             }
+        });
+
+        // Opt-in web push: in-app notifications also go to the recipient's
+        // subscribed browsers. Email/WhatsApp rows are separate deliveries.
+        static::created(function (self $notification): void {
+            if ($notification->channel !== 'in_app' || $notification->user_id === null) {
+                return;
+            }
+            if (! app(PushSender::class)->isConfigured()) {
+                return;
+            }
+
+            SendWebPushJob::dispatch($notification->tenant_id, $notification->id)->afterCommit();
         });
     }
 

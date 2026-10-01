@@ -55,6 +55,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(
+            \App\Domain\Notifications\Push\PushSender::class,
+            \App\Domain\Notifications\Push\WebPushSender::class,
+        );
         //
     }
 
