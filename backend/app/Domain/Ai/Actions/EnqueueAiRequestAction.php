@@ -36,6 +36,11 @@ class EnqueueAiRequestAction
             return $existing;
         }
 
+        // Answer in the requester's language unless the request picked one.
+        if (empty($payload['language'])) {
+            $payload['language'] = in_array($user->locale, ['en', 'bn'], true) ? $user->locale : 'en';
+        }
+
         $cost = $this->creditService->featureCost($feature);
 
         TenantContext::set($tenant->id);

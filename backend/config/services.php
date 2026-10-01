@@ -63,7 +63,9 @@ return [
             ?: env('GOOGLE_API_KEY')
             ?: env('AI_API_KEY'),
         'model' => env('AI_MODEL', 'gpt-4.1-mini'),
-        'gemini_model' => env('AI_GEMINI_MODEL', 'gemini-2.0-flash'),
+        // Google retires pinned versions (gemini-2.0-flash returns 404 now); the
+        // -latest alias tracks the current Flash model.
+        'gemini_model' => env('AI_GEMINI_MODEL', 'gemini-flash-latest'),
     ],
 
 ];

@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessAiRequestJob implements ShouldQueue
 {
@@ -95,9 +96,19 @@ class ProcessAiRequestJob implements ShouldQueue
                     ]
                 );
 
+                // Provider errors can contain URLs, response bodies or other
+                // internals; users get a plain message, details go to the log.
+                Log::warning('ai.request_failed', [
+                    'tenant_id' => $this->tenantId,
+                    'ai_request_public_id' => $request->public_id,
+                    'feature' => $feature->value,
+                    'exception' => get_class($throwable),
+                    'message' => mb_substr($throwable->getMessage(), 0, 500),
+                ]);
+
                 $request->status = AiRequestStatus::Failed->value;
                 $request->failed_at = now();
-                $request->error_message = $throwable->getMessage();
+                $request->error_message = __('messages.ai_request_failed', [], in_array($user?->locale, ['en', 'bn'], true) ? $user->locale : null);
                 $request->save();
             }
         } finally {

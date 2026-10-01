@@ -11,7 +11,7 @@ class GeminiProvider implements AiProviderInterface
     {
         $baseUrl = rtrim((string) config('services.ai.gemini_base_url', ''), '/');
         $apiKey = (string) config('services.ai.gemini_api_key', '');
-        $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-2.0-flash'));
+        $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-flash-latest'));
 
         if ($baseUrl === '' || $apiKey === '') {
             throw new \RuntimeException(
@@ -44,9 +44,12 @@ class GeminiProvider implements AiProviderInterface
             ];
         }
 
+        // Key goes in a header, never the URL: HTTP client errors include the
+        // full URL, and those messages can reach logs or users.
         $response = Http::acceptJson()
+            ->withHeaders(['x-goog-api-key' => $apiKey])
             ->post(
-                sprintf('%s/models/%s:generateContent?key=%s', $baseUrl, $model, urlencode($apiKey)),
+                sprintf('%s/models/%s:generateContent', $baseUrl, $model),
                 $payload
             )
             ->throw()

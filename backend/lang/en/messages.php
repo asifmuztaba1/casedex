@@ -27,4 +27,5 @@ return [
     'manual_payment_trial_not_ended' => 'Manual MFS payment can be submitted after your trial ends.',
     'manual_payment_not_found' => 'Manual payment request not found.',
     'manual_payment_not_pending' => 'Only pending manual payment requests can be reviewed.',
+    'ai_request_failed' => 'The AI service could not complete this request. No credits were charged. Please try again later.',
 ];

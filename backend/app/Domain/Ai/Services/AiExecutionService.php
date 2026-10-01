@@ -45,13 +45,13 @@ class AiExecutionService
                 : 'Respond in English.');
 
         return match ($feature) {
-            AiFeature::HearingSummary => 'You are an assistant for legal professionals. Summarize hearing notes in clear bullet points. No legal advice.',
+            AiFeature::HearingSummary => 'You are an assistant for legal professionals. Summarize hearing notes in clear bullet points. No legal advice. '.$lang,
 
-            AiFeature::DiarySummary => 'You are an assistant for legal professionals. Rewrite diary notes into concise structured summary. No legal advice.',
+            AiFeature::DiarySummary => 'You are an assistant for legal professionals. Rewrite diary notes into concise structured summary. No legal advice. '.$lang,
 
-            AiFeature::ResearchSummary => 'You summarize provided legal research notes without making legal recommendations.',
+            AiFeature::ResearchSummary => 'You summarize provided legal research notes without making legal recommendations. '.$lang,
 
-            AiFeature::DocumentQa => 'Answer strictly from provided document excerpts. If unknown, say not found in source.',
+            AiFeature::DocumentQa => 'Answer strictly from provided document excerpts. If unknown, say not found in source. '.$lang,
 
             AiFeature::PetitionDraft => <<<PROMPT
                 You are an expert legal document drafter specializing in Bangladesh law. Draft formal court petitions and applications following Bangladesh court format and conventions.

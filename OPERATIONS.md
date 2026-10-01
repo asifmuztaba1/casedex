@@ -99,6 +99,7 @@ File: `backend/.env.example`
 | `AI_API_KEY` | — | Provider API key |
 | `AI_MODEL` | `llama-3.1-8b-instant` | Model ID |
 | `AI_GEMINI_API_KEY` | — | Gemini key (if using Gemini) |
+| `AI_GEMINI_MODEL` | `gemini-flash-latest` | Gemini model. Avoid retired pins such as `gemini-2.0-flash` (now 404). If the account's prepaid credits run out, every AI request fails with 402 and users see a generic error; check `ai.request_failed` in the logs. |
 | `AI_MONTHLY_FREE_CREDITS` | `100` | Free credits per user/month |
 
 ### Monitoring (optional)
