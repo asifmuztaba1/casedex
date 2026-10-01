@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { getStoredLocale } from "@/lib/locale";
+import { apiFetch } from "@/lib/api-client";
+import { clearOfflineUserData } from "@/pwa/offline-cache";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
@@ -155,7 +157,7 @@ function resolveSanctumBase(): string {
 
 async function ensureCsrfCookie(): Promise<void> {
   const base = resolveSanctumBase();
-  await fetch(`${base}/sanctum/csrf-cookie`, {
+  await apiFetch(`${base}/sanctum/csrf-cookie`, {
     credentials: "include",
     headers: buildHeaders(),
   });
@@ -204,7 +206,7 @@ async function throwForResponse(response: Response): Promise<never> {
 }
 
 async function fetchMe(): Promise<AuthUser | null> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+  const response = await apiFetch(`${API_BASE_URL}/api/v1/auth/me`, {
     credentials: "include",
     headers: buildHeaders(),
   });
@@ -223,7 +225,7 @@ async function fetchMe(): Promise<AuthUser | null> {
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
   const xsrfToken = getXsrfToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -251,7 +253,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 
 async function putJson<T>(path: string, body: unknown): Promise<T> {
   const xsrfToken = getXsrfToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await apiFetch(`${API_BASE_URL}${path}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -288,7 +290,9 @@ export function useLogin() {
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
       await ensureCsrfCookie();
-      return postJson<AuthResponse>("/api/v1/auth/login", payload);
+      const result = await postJson<AuthResponse>("/api/v1/auth/login", payload);
+      await clearOfflineUserData();
+      return result;
     },
     onSuccess: (response) => {
       client.setQueryData(["auth-me"], response.data);
@@ -316,7 +320,9 @@ export function useRegister() {
   return useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       await ensureCsrfCookie();
-      return postJson<AuthResponse>("/api/v1/auth/register", payload);
+      const result = await postJson<AuthResponse>("/api/v1/auth/register", payload);
+      await clearOfflineUserData();
+      return result;
     },
     onSuccess: (response) => {
       client.setQueryData(["auth-me"], response.data);
@@ -419,7 +425,8 @@ export function useLogout() {
   return useMutation({
     mutationFn: async () => {
       await ensureCsrfCookie();
-      return postJson<void>("/api/v1/auth/logout", {});
+      await postJson<void>("/api/v1/auth/logout", {});
+      await clearOfflineUserData();
     },
     onSuccess: () => {
       client.setQueryData(["auth-me"], null);
@@ -444,7 +451,7 @@ export function useUsers(enabled: boolean) {
   return useQuery({
     queryKey: ["tenant-users"],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/v1/users`, {
         credentials: "include",
         headers: buildHeaders(),
       });

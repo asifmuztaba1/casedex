@@ -45,6 +45,7 @@ import {
   UserCircle,
   Users,
 } from "lucide-react";
+import OfflineIndicator from "@/components/offline-indicator";
 
 function notificationHref(notification: NotificationSummary): string {
   if (notification.case_public_id) {
@@ -205,6 +206,7 @@ export default function WorkspaceLayout({
                   aria-label={t("nav.search")}
                 />
               </Form>
+              <OfflineIndicator />
               <Badge variant="subtle">
                 {user?.tenant?.name ?? user?.tenant_name ?? "-"}
               </Badge>

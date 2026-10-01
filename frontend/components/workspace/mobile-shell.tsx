@@ -47,6 +47,7 @@ import {
 } from "@/features/notifications/use-notifications";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import OfflineIndicator from "@/components/offline-indicator";
 
 const LanguageSwitcher = dynamic(
   () => import("@/components/language-switcher"),
@@ -162,6 +163,7 @@ export function MobileTopBar({
             {title}
           </div>
         </div>
+        <OfflineIndicator />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
