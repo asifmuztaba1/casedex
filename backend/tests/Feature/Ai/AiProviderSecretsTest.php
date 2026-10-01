@@ -71,3 +71,31 @@ it('shows users a safe message and refunds credits when the provider fails', fun
 
     expect($this->getJson('/api/v1/billing/ai-credits')->json('data'))->toEqual($before);
 });
+
+it('answers in the requester language when the request does not choose one', function (string $locale, string $expected): void {
+    Http::fake(['https://gemini.test/*' => Http::response([
+        'candidates' => [['content' => ['parts' => [['text' => 'ok']]]]],
+    ])]);
+
+    [, $user] = createAiQaTenantUser(
+        countryCode: 'BD',
+        role: UserRole::Admin,
+        withActiveSubscription: true,
+        plan: TenantPlan::Starter,
+    );
+    $user->update(['locale' => $locale]);
+    $this->actingAs($user);
+
+    $this->postJson('/api/v1/ai/hearing-summary', [
+        'idempotency_key' => "ai-lang-{$locale}",
+        'content' => 'Court adjourned to 14 November.',
+    ])->assertSuccessful();
+
+    Http::assertSent(fn (Request $request): bool => str_contains(
+        (string) data_get($request->data(), 'systemInstruction.parts.0.text'),
+        $expected
+    ));
+})->with([
+    ['bn', 'Respond entirely in Bengali'],
+    ['en', 'Respond in English'],
+]);

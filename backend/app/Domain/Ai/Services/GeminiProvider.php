@@ -11,7 +11,7 @@ class GeminiProvider implements AiProviderInterface
     {
         $baseUrl = rtrim((string) config('services.ai.gemini_base_url', ''), '/');
         $apiKey = (string) config('services.ai.gemini_api_key', '');
-        $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-2.0-flash'));
+        $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-flash-latest'));
 
         if ($baseUrl === '' || $apiKey === '') {
             throw new \RuntimeException(
