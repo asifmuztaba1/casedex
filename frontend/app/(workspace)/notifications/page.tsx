@@ -8,7 +8,7 @@ import StatusBadge from "@/components/status-badge";
 import { useLocale } from "@/components/locale-provider";
 import {
   useNotifications,
-  useUpdateNotification,
+  useMarkNotificationRead,
 } from "@/features/notifications/use-notifications";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -37,7 +37,7 @@ export default function NotificationsPage() {
   const { t, locale } = useLocale();
   const { data, isLoading, isError } = useNotifications();
   const notifications = useMemo(() => data?.data ?? [], [data?.data]);
-  const updateNotification = useUpdateNotification();
+  const markRead = useMarkNotificationRead();
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filtered = useMemo(() => {
@@ -46,10 +46,7 @@ export default function NotificationsPage() {
   }, [notifications, statusFilter]);
 
   const markAsRead = (publicId: string) => {
-    updateNotification.mutate({
-      publicId,
-      data: { title: notifications.find((n) => n.public_id === publicId)?.title ?? "" },
-    });
+    markRead.mutate(publicId);
   };
 
   if (isLoading) {
@@ -153,14 +150,15 @@ export default function NotificationsPage() {
                           : "-"}
                     </TableCell>
                     <TableCell className="text-right">
-                      {note.status === "pending" && (
+                      {note.status !== "read" && (
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => markAsRead(note.public_id)}
+                          disabled={markRead.isPending}
                         >
                           <CheckCircle className="mr-1 h-3.5 w-3.5" />
-                          {t("notifications.mark_read") ?? t("notifications.mark_read")}
+                          {t("notifications.mark_read")}
                         </Button>
                       )}
                     </TableCell>
