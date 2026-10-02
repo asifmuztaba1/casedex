@@ -141,7 +141,7 @@ export default function ContactsPage() {
               </TableHeader>
               <TableBody>
                 {contacts.map((contact) => (
-                  <TableRow key={contact.id}>
+                  <TableRow key={contact.public_id}>
                     <TableCell className="font-medium">
                       {contact.name}
                     </TableCell>
@@ -166,7 +166,7 @@ export default function ContactsPage() {
                     <TableCell>{contact.case_parties_count}</TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/contacts/${contact.id}`}>
+                        <Link href={`/contacts/${contact.public_id}`}>
                           {t("common.view") ?? "View"}
                         </Link>
                       </Button>

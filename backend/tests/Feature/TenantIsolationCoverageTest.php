@@ -97,7 +97,7 @@ function seedTenantA(User $userA): array
     ])->assertCreated()->json('data');
 
     return compact('case', 'hearing', 'diary', 'document', 'note', 'contact', 'party') + [
-        'client_id' => test()->getJson("/api/v1/cases/{$case['public_id']}")->json('data.client.id'),
+        'client_public_id' => test()->getJson("/api/v1/cases/{$case['public_id']}")->json('data.client.public_id'),
         'user_public_id' => $userA->public_id,
     ];
 }
@@ -161,8 +161,8 @@ it('denies tenant B reading tenant A records by id', function (): void {
         "/api/v1/diary-entries/{$a['diary']['public_id']}",
         "/api/v1/documents/{$a['document']['public_id']}",
         "/api/v1/research-notes/{$a['note']['public_id']}",
-        "/api/v1/clients/{$a['client_id']}",
-        "/api/v1/clients/{$a['contact']['id']}",
+        "/api/v1/clients/{$a['client_public_id']}",
+        "/api/v1/clients/{$a['contact']['public_id']}",
     ] as $endpoint) {
         assertDenied($this->getJson($endpoint), "GET {$endpoint}");
     }
@@ -189,19 +189,19 @@ it('denies tenant B changing or deleting tenant A records', function (): void {
         ['putJson', "/api/v1/diary-entries/{$a['diary']['public_id']}", ['title' => 'hijacked', 'body' => 'x', 'entry_at' => now()->toDateTimeString()]],
         ['putJson', "/api/v1/documents/{$a['document']['public_id']}", ['category' => 'other']],
         ['putJson', "/api/v1/research-notes/{$a['note']['public_id']}", ['title' => 'hijacked']],
-        ['putJson', "/api/v1/clients/{$a['contact']['id']}", ['name' => 'hijacked']],
-        ['putJson', "/api/v1/cases/{$case}/parties/{$a['party']['id']}", ['name' => 'hijacked', 'type' => 'person', 'side' => 'opponent']],
+        ['putJson', "/api/v1/clients/{$a['contact']['public_id']}", ['name' => 'hijacked']],
+        ['putJson', "/api/v1/cases/{$case}/parties/{$a['party']['public_id']}", ['name' => 'hijacked', 'type' => 'person', 'side' => 'opponent']],
         ['putJson', "/api/v1/users/{$a['user_public_id']}", ['name' => 'hijacked']],
         ['postJson', "/api/v1/cases/{$case}/hearings", ['hearing_at' => now()->addDay()->toDateTimeString(), 'type' => 'mention']],
         ['postJson', "/api/v1/cases/{$case}/diary", ['case_public_id' => $case, 'entry_at' => now()->toDateTimeString(), 'title' => 'x', 'body' => 'x']],
         ['postJson', "/api/v1/cases/{$case}/parties", ['name' => 'x', 'type' => 'person', 'side' => 'opponent']],
         ['postJson', "/api/v1/cases/{$case}/participants", ['user_public_id' => $this->userB->public_id, 'role' => 'associate']],
-        ['deleteJson', "/api/v1/cases/{$case}/parties/{$a['party']['id']}", []],
+        ['deleteJson', "/api/v1/cases/{$case}/parties/{$a['party']['public_id']}", []],
         ['deleteJson', "/api/v1/research-notes/{$a['note']['public_id']}", []],
         ['deleteJson', "/api/v1/documents/{$a['document']['public_id']}", []],
         ['deleteJson', "/api/v1/diary-entries/{$a['diary']['public_id']}", []],
         ['deleteJson', "/api/v1/hearings/{$a['hearing']['public_id']}", []],
-        ['deleteJson', "/api/v1/clients/{$a['contact']['id']}", []],
+        ['deleteJson', "/api/v1/clients/{$a['contact']['public_id']}", []],
         ['deleteJson', "/api/v1/cases/{$case}", []],
     ];
 
@@ -218,7 +218,7 @@ it('denies tenant B changing or deleting tenant A records', function (): void {
     $this->getJson("/api/v1/research-notes/{$a['note']['public_id']}")->assertOk();
     $this->getJson("/api/v1/documents/{$a['document']['public_id']}")->assertOk();
     $this->getJson("/api/v1/hearings/{$a['hearing']['public_id']}")->assertOk();
-    $this->getJson("/api/v1/clients/{$a['contact']['id']}")->assertOk();
+    $this->getJson("/api/v1/clients/{$a['contact']['public_id']}")->assertOk();
 });
 
 it('rejects tenant B linking its own records to tenant A records', function (): void {
@@ -234,17 +234,17 @@ it('rejects tenant B linking its own records to tenant A records', function (): 
     $this->postJson('/api/v1/cases', [
         'title' => 'Tenant B case 2',
         'court' => 'District Court',
-        'client_id' => $a['client_id'],
-    ])->assertUnprocessable()->assertJsonValidationErrors('client_id');
+        'client_public_id' => $a['client_public_id'],
+    ])->assertUnprocessable()->assertJsonValidationErrors('client_public_id');
 
     // Re-point an existing case at tenant A's client.
     $this->putJson("/api/v1/cases/{$caseB}", [
         'title' => 'Tenant B case',
         'court' => 'District Court',
-        'client_id' => $a['contact']['id'],
-    ])->assertUnprocessable()->assertJsonValidationErrors('client_id');
+        'client_public_id' => $a['contact']['public_id'],
+    ])->assertUnprocessable()->assertJsonValidationErrors('client_public_id');
     expect(DB::table('cases')->where('public_id', $caseB)->value('client_id'))
-        ->not->toBe($a['contact']['id']);
+        ->not->toBe(DB::table('clients')->where('public_id', $a['contact']['public_id'])->value('id'));
     assertNoSecret($this->getJson("/api/v1/cases/{$caseB}"), 'GET own case after client_id update');
 
     // Add a party that references tenant A's contact.
@@ -252,8 +252,8 @@ it('rejects tenant B linking its own records to tenant A records', function (): 
         'name' => 'Linked party',
         'type' => 'person',
         'side' => 'opponent',
-        'client_id' => $a['contact']['id'],
-    ])->assertUnprocessable()->assertJsonValidationErrors('client_id');
+        'client_public_id' => $a['contact']['public_id'],
+    ])->assertUnprocessable()->assertJsonValidationErrors('client_public_id');
     expect(DB::table('case_parties')->where('name', 'Linked party')->exists())->toBeFalse();
 
     // Re-point an existing party at tenant A's contact.
@@ -261,14 +261,14 @@ it('rejects tenant B linking its own records to tenant A records', function (): 
         'name' => 'Own party',
         'type' => 'person',
         'side' => 'opponent',
-    ])->assertCreated()->json('data.id');
+    ])->assertCreated()->json('data.public_id');
     $this->putJson("/api/v1/cases/{$caseB}/parties/{$partyB}", [
         'name' => 'Own party',
         'type' => 'person',
         'side' => 'opponent',
-        'client_id' => $a['contact']['id'],
-    ])->assertUnprocessable()->assertJsonValidationErrors('client_id');
-    expect(DB::table('case_parties')->where('id', $partyB)->value('client_id'))->toBeNull();
+        'client_public_id' => $a['contact']['public_id'],
+    ])->assertUnprocessable()->assertJsonValidationErrors('client_public_id');
+    expect(DB::table('case_parties')->where('public_id', $partyB)->value('client_id'))->toBeNull();
     assertNoSecret($this->getJson("/api/v1/cases/{$caseB}/parties"), 'GET own parties after party client_id');
 
     // Add tenant A's user as a participant.
@@ -295,7 +295,7 @@ it('rejects tenant B linking its own records to tenant A records', function (): 
 
     // Tenant A's data is unchanged.
     $this->actingAs($this->userA);
-    $this->getJson("/api/v1/clients/{$a['contact']['id']}")
+    $this->getJson("/api/v1/clients/{$a['contact']['public_id']}")
         ->assertOk()
         ->assertJsonPath('data.name', 'SECRET-A Contact');
 });

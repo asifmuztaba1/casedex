@@ -13,7 +13,7 @@ class ClientResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'public_id' => $this->public_id,
             'name' => $this->name,
             'phone' => $this->phone,
             'email' => $this->email,

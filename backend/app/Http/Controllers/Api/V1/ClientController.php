@@ -42,9 +42,9 @@ class ClientController extends Controller
         return new ClientResource($client);
     }
 
-    public function show(int $id, FindClientWithCaseHistoryAction $action)
+    public function show(string $publicId, FindClientWithCaseHistoryAction $action)
     {
-        $client = $action->handle($id);
+        $client = $action->handle($publicId);
 
         $this->authorize('view', $client);
 
@@ -52,12 +52,12 @@ class ClientController extends Controller
     }
 
     public function update(
-        int $id,
+        string $publicId,
         UpdateClientRequest $request,
         FindClientAction $finder,
         UpdateClientAction $action
     ) {
-        $client = $finder->handle($id);
+        $client = $finder->handle($publicId);
 
         $this->authorize('update', $client);
 
@@ -67,12 +67,12 @@ class ClientController extends Controller
     }
 
     public function destroy(
-        int $id,
+        string $publicId,
         Request $request,
         FindClientAction $finder,
         DeleteClientAction $action
     ) {
-        $client = $finder->handle($id);
+        $client = $finder->handle($publicId);
 
         $this->authorize('delete', $client);
 

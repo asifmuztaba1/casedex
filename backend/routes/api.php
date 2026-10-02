@@ -177,18 +177,18 @@ Route::prefix('v1')
         Route::post('/cases/{casePublicId}/documents', [DocumentController::class, 'store']);
         Route::get('/cases/{casePublicId}/participants', [CaseParticipantController::class, 'index']);
         Route::post('/cases/{casePublicId}/participants', [CaseParticipantController::class, 'store']);
-        Route::delete('/cases/{casePublicId}/participants/{participantId}', [CaseParticipantController::class, 'destroy']);
+        Route::delete('/cases/{casePublicId}/participants/{participantPublicId}', [CaseParticipantController::class, 'destroy']);
         Route::get('/cases/{casePublicId}/parties', [CasePartyController::class, 'index']);
         Route::post('/cases/{casePublicId}/parties', [CasePartyController::class, 'store']);
-        Route::put('/cases/{casePublicId}/parties/{partyId}', [CasePartyController::class, 'update']);
-        Route::delete('/cases/{casePublicId}/parties/{partyId}', [CasePartyController::class, 'destroy']);
+        Route::put('/cases/{casePublicId}/parties/{partyPublicId}', [CasePartyController::class, 'update']);
+        Route::delete('/cases/{casePublicId}/parties/{partyPublicId}', [CasePartyController::class, 'destroy']);
 
         Route::get('/clients/search', [ClientController::class, 'search']);
         Route::get('/clients', [ClientController::class, 'index']);
         Route::post('/clients', [ClientController::class, 'store']);
-        Route::get('/clients/{id}', [ClientController::class, 'show']);
-        Route::put('/clients/{id}', [ClientController::class, 'update']);
-        Route::delete('/clients/{id}', [ClientController::class, 'destroy']);
+        Route::get('/clients/{publicId}', [ClientController::class, 'show']);
+        Route::put('/clients/{publicId}', [ClientController::class, 'update']);
+        Route::delete('/clients/{publicId}', [ClientController::class, 'destroy']);
 
         Route::get('/hearings/calendar', [HearingController::class, 'calendar']);
         Route::get('/hearings/daily-register', [HearingController::class, 'dailyRegister']);

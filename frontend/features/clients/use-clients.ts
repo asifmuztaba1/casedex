@@ -13,7 +13,7 @@ function getErrorMessage(error: unknown) {
 }
 
 export type ContactSummary = {
-  id: number;
+  public_id: string;
   name: string;
   phone: string | null;
   email: string | null;
@@ -68,12 +68,12 @@ export function useClients(params?: {
   });
 }
 
-export function useClientDetail(id: number) {
+export function useClientDetail(publicId: string) {
   return useQuery({
-    queryKey: ["clients", id],
+    queryKey: ["clients", publicId],
     queryFn: () =>
-      apiGet<ContactDetailResponse>(`/api/v1/clients/${id}`),
-    enabled: Boolean(id),
+      apiGet<ContactDetailResponse>(`/api/v1/clients/${publicId}`),
+    enabled: Boolean(publicId),
   });
 }
 
@@ -115,7 +115,7 @@ export function useCreateClient() {
 }
 
 type UpdateClientPayload = {
-  id: number;
+  publicId: string;
   data: Partial<CreateClientPayload>;
 };
 
@@ -125,11 +125,11 @@ export function useUpdateClient() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: ({ id, data }: UpdateClientPayload) =>
-      apiPut<ContactSummary>(`/api/v1/clients/${id}`, data),
+    mutationFn: ({ publicId, data }: UpdateClientPayload) =>
+      apiPut<ContactSummary>(`/api/v1/clients/${publicId}`, data),
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clients", payload.id] });
+      queryClient.invalidateQueries({ queryKey: ["clients", payload.publicId] });
       toast({
         title: t("toast.contact_updated"),
         description: t("cases.toast.updated_body"),
@@ -152,7 +152,7 @@ export function useDeleteClient() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/api/v1/clients/${id}`),
+    mutationFn: (publicId: string) => apiDelete(`/api/v1/clients/${publicId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
@@ -175,7 +175,7 @@ export function useSearchContacts(query: string) {
   return useQuery({
     queryKey: ["clients", "search", query],
     queryFn: () =>
-      apiGet<ContactListResponse>(`/api/v1/clients/search?q=${query}`),
+      apiGet<ContactListResponse>(`/api/v1/clients/search?q=${encodeURIComponent(query)}`),
     enabled: query.length >= 2,
   });
 }

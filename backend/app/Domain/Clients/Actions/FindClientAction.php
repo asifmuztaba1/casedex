@@ -6,8 +6,8 @@ use App\Domain\Clients\Models\Client;
 
 class FindClientAction
 {
-    public function handle(int $id): Client
+    public function handle(string $publicId): Client
     {
-        return Client::query()->findOrFail($id);
+        return Client::query()->where('public_id', $publicId)->firstOrFail();
     }
 }

@@ -13,9 +13,8 @@ function getErrorMessage(error: unknown) {
 }
 
 export type CasePartySummary = {
-  id: number;
-  case_id: number;
-  client_id: number | null;
+  public_id: string;
+  client_public_id: string | null;
   type: string | null;
   name: string;
   side: string | null;
@@ -51,7 +50,7 @@ type AddPartyPayload = {
   side: string;
   role?: string;
   is_client?: boolean;
-  client_id?: number;
+  client_public_id?: string;
   create_contact?: boolean;
   phone?: string;
   email?: string;
@@ -73,7 +72,7 @@ export function useAddCaseParty() {
         side: payload.side,
         role: payload.role,
         is_client: payload.is_client,
-        client_id: payload.client_id,
+        client_public_id: payload.client_public_id,
         create_contact: payload.create_contact,
         phone: payload.phone,
         email: payload.email,
@@ -106,7 +105,7 @@ export function useAddCaseParty() {
 
 type UpdatePartyPayload = {
   casePublicId: string;
-  partyId: number;
+  partyPublicId: string;
   data: Partial<Omit<AddPartyPayload, "casePublicId">>;
 };
 
@@ -116,9 +115,9 @@ export function useUpdateCaseParty() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: ({ casePublicId, partyId, data }: UpdatePartyPayload) =>
+    mutationFn: ({ casePublicId, partyPublicId, data }: UpdatePartyPayload) =>
       apiPut<CasePartySummary>(
-        `/api/v1/cases/${casePublicId}/parties/${partyId}`,
+        `/api/v1/cases/${casePublicId}/parties/${partyPublicId}`,
         data
       ),
     onSuccess: (_data, payload) => {
@@ -146,7 +145,7 @@ export function useUpdateCaseParty() {
 
 type RemovePartyPayload = {
   casePublicId: string;
-  partyId: number;
+  partyPublicId: string;
 };
 
 export function useRemoveCaseParty() {
@@ -155,8 +154,8 @@ export function useRemoveCaseParty() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: ({ casePublicId, partyId }: RemovePartyPayload) =>
-      apiDelete(`/api/v1/cases/${casePublicId}/parties/${partyId}`),
+    mutationFn: ({ casePublicId, partyPublicId }: RemovePartyPayload) =>
+      apiDelete(`/api/v1/cases/${casePublicId}/parties/${partyPublicId}`),
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "parties"],

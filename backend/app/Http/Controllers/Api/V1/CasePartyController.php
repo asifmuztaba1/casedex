@@ -47,7 +47,7 @@ class CasePartyController extends Controller
 
     public function update(
         string $casePublicId,
-        int $partyId,
+        string $partyPublicId,
         UpdateCasePartyRequest $request,
         FindCaseAction $findCase,
         UpdateCasePartyAction $action
@@ -56,7 +56,7 @@ class CasePartyController extends Controller
 
         $party = CaseParty::query()
             ->where('case_id', $case->id)
-            ->where('id', $partyId)
+            ->where('public_id', $partyPublicId)
             ->firstOrFail();
 
         $this->authorize('update', $party);
@@ -68,7 +68,7 @@ class CasePartyController extends Controller
 
     public function destroy(
         string $casePublicId,
-        int $partyId,
+        string $partyPublicId,
         Request $request,
         FindCaseAction $findCase,
         RemoveCasePartyAction $action
@@ -77,7 +77,7 @@ class CasePartyController extends Controller
 
         $party = CaseParty::query()
             ->where('case_id', $case->id)
-            ->where('id', $partyId)
+            ->where('public_id', $partyPublicId)
             ->firstOrFail();
 
         $this->authorize('delete', $party);

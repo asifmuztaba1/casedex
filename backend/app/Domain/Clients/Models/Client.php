@@ -6,15 +6,17 @@ use App\Domain\Cases\Models\CaseFile;
 use App\Domain\Cases\Models\CaseParty;
 use App\Domain\Clients\Enums\ContactType;
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
-    use HasFactory, SoftDeletes, BelongsToTenant;
+    use HasFactory, SoftDeletes, BelongsToTenant, HasPublicId;
 
     protected $fillable = [
+        'public_id',
         'tenant_id',
         'name',
         'phone',

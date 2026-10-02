@@ -13,7 +13,7 @@ function getErrorMessage(error: unknown) {
 }
 
 export type ClientSummary = {
-  id: number;
+  public_id: string;
   name: string;
   phone: string | null;
   email: string | null;
@@ -30,15 +30,14 @@ export type UserSummary = {
 };
 
 export type CaseParticipantSummary = {
-  id: number;
+  public_id: string;
   role: string | null;
   user: UserSummary | null;
 };
 
 export type CasePartySummary = {
-  id: number;
-  case_id: number;
-  client_id: number | null;
+  public_id: string;
+  client_public_id: string | null;
   type: string | null;
   name: string;
   side: string | null;
@@ -153,7 +152,7 @@ type CreateCasePayload = {
   story?: string;
   petition_draft?: string;
   opposite_lawyer_name?: string;
-  client_id?: number;
+  client_public_id?: string;
   client?: {
     name: string;
     phone?: string;

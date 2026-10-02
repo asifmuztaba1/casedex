@@ -117,7 +117,7 @@ export default function ClientsPage() {
               </TableHeader>
               <TableBody>
                 {clients.map((client) => (
-                  <TableRow key={client.id}>
+                  <TableRow key={client.public_id}>
                     <TableCell className="font-medium">
                       {client.name}
                     </TableCell>
@@ -131,7 +131,7 @@ export default function ClientsPage() {
                     <TableCell>{client.case_parties_count}</TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/clients/${client.id}`}>
+                        <Link href={`/clients/${client.public_id}`}>
                           {t("common.view") ?? "View"}
                         </Link>
                       </Button>

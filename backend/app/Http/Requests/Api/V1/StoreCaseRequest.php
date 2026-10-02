@@ -8,12 +8,15 @@ use App\Domain\Cases\Enums\PartyRole;
 use App\Domain\Cases\Enums\PartySide;
 use App\Domain\Cases\Enums\PartyType;
 use App\Domain\Hearings\Enums\HearingType;
+use App\Http\Requests\Api\V1\Concerns\ResolvesClientPublicId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Support\TenantContext;
 
 class StoreCaseRequest extends FormRequest
 {
+    use ResolvesClientPublicId;
+
     public function authorize(): bool
     {
         return true;
@@ -37,9 +40,9 @@ class StoreCaseRequest extends FormRequest
             'petition_draft' => ['nullable', 'string'],
             'opposite_lawyer_name' => ['nullable', 'string', 'max:200'],
 
-            'client_id' => ['nullable', 'integer', Rule::exists('clients', 'id')->where('tenant_id', TenantContext::id())],
+            'client_public_id' => ['nullable', 'string', $this->clientPublicIdExists()],
             'client' => ['nullable', 'array'],
-            'client.name' => ['required_without:client_id', 'string', 'max:200'],
+            'client.name' => ['required_without:client_public_id', 'string', 'max:200'],
             'client.phone' => ['nullable', 'string', 'max:50'],
             'client.email' => ['nullable', 'email', 'max:200'],
             'client.address' => ['nullable', 'string', 'max:255'],
