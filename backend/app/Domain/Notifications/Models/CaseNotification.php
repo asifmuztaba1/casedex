@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Domain\Notifications\Push\PushSender;
+use App\Domain\Notifications\Push\MobilePushSender;
+use App\Jobs\SendMobilePushJob;
 use App\Jobs\SendWebPushJob;
 
 class CaseNotification extends Model
@@ -47,17 +49,19 @@ class CaseNotification extends Model
             }
         });
 
-        // Opt-in web push: in-app notifications also go to the recipient's
-        // subscribed browsers. Email/WhatsApp rows are separate deliveries.
+        // Opt-in push: in-app notifications also go to the recipient's
+        // subscribed browsers and signed-in mobile devices. Email/WhatsApp
+        // rows are separate deliveries.
         static::created(function (self $notification): void {
             if ($notification->channel !== 'in_app' || $notification->user_id === null) {
                 return;
             }
-            if (! app(PushSender::class)->isConfigured()) {
-                return;
+            if (app(PushSender::class)->isConfigured()) {
+                SendWebPushJob::dispatch($notification->tenant_id, $notification->id)->afterCommit();
             }
-
-            SendWebPushJob::dispatch($notification->tenant_id, $notification->id)->afterCommit();
+            if (app(MobilePushSender::class)->isConfigured()) {
+                SendMobilePushJob::dispatch($notification->tenant_id, $notification->id)->afterCommit();
+            }
         });
     }
 

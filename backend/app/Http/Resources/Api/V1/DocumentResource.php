@@ -33,7 +33,6 @@ class DocumentResource extends JsonResource
             'original_name' => $this->original_name,
             'mime' => $this->mime,
             'size' => $this->size,
-            'storage_key' => $this->storage_key,
             'download_url' => $downloadUrl,
             'due_at' => WallClock::toJson($this->due_at),
             'created_at' => $this->created_at,

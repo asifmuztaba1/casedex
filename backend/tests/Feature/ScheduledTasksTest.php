@@ -71,6 +71,7 @@ it('registers every recurring job with the scheduler', function (): void {
         'billing:send-trial-ending-reminders',
         'billing:apply-manual-subscription-changes',
         'ai:grant-monthly-credits',
+        'sanctum:prune-expired',
         'backup:clean',
         'backup:run',
         'judiciary:scrape-causelist',

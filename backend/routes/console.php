@@ -39,5 +39,8 @@ Schedule::command('billing:apply-manual-subscription-changes')
     ->everyFifteenMinutes()
     ->withoutOverlapping();
 
+// Mobile device tokens past their expiry (refresh extends them).
+Schedule::command('sanctum:prune-expired --hours=24')->dailyAt('00:45');
+
 Schedule::command('backup:clean')->dailyAt('01:00');
 Schedule::command('backup:run --only-db')->dailyAt('01:30');

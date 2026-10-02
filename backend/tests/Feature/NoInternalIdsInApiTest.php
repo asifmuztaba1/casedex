@@ -114,4 +114,8 @@ it('exposes no internal ids in tenant API responses', function (): void {
     }
 
     expect($leaks)->toBe([]);
+
+    // Storage paths embed the internal tenant id.
+    $documents = $this->getJson("/api/v1/cases/{$case}/documents")->json('data');
+    expect($documents[0])->not->toHaveKey('storage_key');
 });
