@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { apiGetBlob } from "@/lib/api-client";
 import SignedInDevicesCard from "@/features/devices/signed-in-devices-card";
+import WorkspaceExportCard from "@/features/workspace/workspace-export-card";
 
 function filenameFromDisposition(disposition: string | null, fallback: string): string {
   if (!disposition) {
@@ -392,6 +393,8 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
+
+        {isAdmin && <WorkspaceExportCard />}
 
         <SignedInDevicesCard />
 

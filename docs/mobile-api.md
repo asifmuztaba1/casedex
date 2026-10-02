@@ -156,6 +156,7 @@ main ones:
 | Research notes | `GET/POST /research-notes`, `GET/PUT/DELETE /research-notes/{id}` |
 | Profile | `GET /auth/me`, `PUT /profile` |
 | Reference data | `GET /countries`, `GET /courts` |
+| Workspace export (admins) | `POST /workspace/exports` (`202`; the zip is emailed as a signed link), `GET /workspace/exports` (latest five, with `download_url` when ready) |
 | Support | `GET/POST /support/tickets`, `GET/POST /support/tickets/{id}/messages` |
 
 Rules that apply everywhere:

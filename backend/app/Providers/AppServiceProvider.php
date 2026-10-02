@@ -22,6 +22,7 @@ use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Notifications\Models\PushSubscription;
 use App\Domain\Research\Models\ResearchNote;
+use App\Domain\Auth\Enums\UserRole;
 use App\Domain\Auth\Models\DeviceToken;
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
@@ -80,6 +81,13 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('auth', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });
+
+        // Exports zip every document; a few per hour per workspace is plenty.
+        RateLimiter::for('workspace-exports', function (Request $request) {
+            return Limit::perHour(3)->by('tenant:'.$request->user()?->tenant_id);
+        });
+
+        Gate::define('manage-workspace', fn (User $user): bool => $user->role === UserRole::Admin);
 
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
