@@ -391,7 +391,7 @@ Native iOS/Android apps are allowed as companions to the PWA (decided 2026-10-03
 - Same `/api/v1/*` endpoints as the web app; no mobile-only copies of business endpoints
 - Auth: per-device Sanctum tokens from `/api/v1/mobile/login` and `/register`; refresh rotates, logout revokes
 - Tokens expire (`MOBILE_TOKEN_TTL_DAYS`); only hashes are stored; platform staff get no tokens
-- Users can list and revoke their devices
+- Users can list and revoke their devices, from the app or web Settings; any password change revokes all other device tokens
 - Push via FCM, opt-in per device; signing out removes the device's push registration
 - Same tenant isolation, rate limits, audit logs and signed downloads as the web app
 - Contract and app guidance: `docs/mobile-api.md`

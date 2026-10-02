@@ -97,7 +97,16 @@ stored token afterwards.
 | `GET /mobile/devices` | The user's signed-in devices: `public_id`, `name`, `platform`, `push_enabled`, `is_current`, `last_used_at`, `expires_at` |
 | `DELETE /mobile/devices/{public_id}` | Sign out another device, e.g. a lost phone (`204`) |
 
-The device endpoints accept only Bearer tokens; a browser session gets `403`.
+`DELETE /devices` signs out every other device and returns `{"data": {"revoked": n}}`.
+`GET /devices` and `DELETE /devices/{public_id}` are the same lists and actions,
+available to both the app and the web app; the web Settings page uses them to
+sign out a lost phone. The `/mobile/devices` and `/mobile/push-token` routes
+accept only Bearer tokens, so a browser session gets `403` there.
+
+**Password changes sign phones out.** A password reset, a password change in
+the profile, or an admin setting a member's password revokes every device
+token, except the device that made the change. The app then gets `401` and
+should show sign-in.
 
 ## 2. Handling errors
 

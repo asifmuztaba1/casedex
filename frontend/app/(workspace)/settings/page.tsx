@@ -14,6 +14,7 @@ import {
 } from "@/features/notifications/use-push-subscriptions";
 import { useToast } from "@/components/ui/use-toast";
 import { apiGetBlob } from "@/lib/api-client";
+import SignedInDevicesCard from "@/features/devices/signed-in-devices-card";
 
 function filenameFromDisposition(disposition: string | null, fallback: string): string {
   if (!disposition) {
@@ -391,6 +392,8 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
+
+        <SignedInDevicesCard />
 
         <Card>
           <CardHeader className="space-y-2">

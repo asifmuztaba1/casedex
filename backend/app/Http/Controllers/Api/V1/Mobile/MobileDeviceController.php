@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Api\V1\Mobile;
 
 use App\Domain\Auth\Actions\RevokeDeviceTokenAction;
+use App\Domain\Auth\Actions\RevokeDeviceTokensAction;
 use App\Domain\Auth\Actions\UpdateDevicePushTokenAction;
 use App\Domain\Auth\Models\DeviceToken;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\UpdatePushTokenRequest;
 use App\Http\Resources\Api\V1\DeviceTokenResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 /**
- * The signed-in user's mobile devices, and this device's push registration.
+ * The signed-in user's mobile devices (from the app or the web settings
+ * page), and this device's push registration.
  */
 class MobileDeviceController extends Controller
 {
@@ -37,6 +40,17 @@ class MobileDeviceController extends Controller
         $revoke->handle($device, $user, 'auth.device_revoked');
 
         return response()->noContent();
+    }
+
+    /** Sign out every mobile device except the one asking (if it is one). */
+    public function destroyAll(Request $request, RevokeDeviceTokensAction $revoke): JsonResponse
+    {
+        $user = $request->user();
+        $current = $user->currentAccessToken();
+
+        $revoked = $revoke->handle($user, $current instanceof DeviceToken ? $current : null, 'signed_out_everywhere');
+
+        return response()->json(['data' => ['revoked' => $revoked]]);
     }
 
     public function updatePushToken(UpdatePushTokenRequest $request, UpdateDevicePushTokenAction $action): DeviceTokenResource
