@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Domain\Auth\Actions\RevokeDeviceTokensAction;
 use App\Domain\Auth\Enums\UserRole;
+use App\Domain\Auth\Models\DeviceToken;
 use App\Domain\Tenancy\Models\Country;
 use App\Domain\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,6 +74,20 @@ class User extends Authenticatable implements MustVerifyEmailContract
             if ($user->public_id === null) {
                 $user->public_id = (string) Str::ulid();
             }
+        });
+
+        // Every password change path (reset link, profile, an admin editing a
+        // member) signs the user out of their phones, except the phone that
+        // made the change.
+        static::updated(function (self $user): void {
+            if (! $user->wasChanged('password')) {
+                return;
+            }
+
+            $current = auth()->user()?->currentAccessToken();
+            $keep = $current instanceof DeviceToken && (int) $current->tokenable_id === $user->id ? $current : null;
+
+            app(RevokeDeviceTokensAction::class)->handle($user, $keep, 'password_changed');
         });
     }
 

@@ -74,6 +74,14 @@ Route::prefix('v1')->group(function (): void {
     });
 
     Route::middleware('auth:sanctum')->group(function (): void {
+        // Mobile devices signed in to this account; usable from the web too,
+        // e.g. to sign out a lost phone.
+        Route::middleware('throttle:api')->group(function (): void {
+            Route::get('/devices', [MobileDeviceController::class, 'index']);
+            Route::delete('/devices', [MobileDeviceController::class, 'destroyAll']);
+            Route::delete('/devices/{publicId}', [MobileDeviceController::class, 'destroy']);
+        });
+
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::post('/auth/email/verification-notification', [AuthVerificationController::class, 'resend'])

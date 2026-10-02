@@ -19,13 +19,17 @@ export function createWrapper() {
 
 type MockRoute = { status: number; body?: unknown };
 
-/** Stubs fetch with one canned response per API path and records every call. */
+/**
+ * Stubs fetch with one canned response per API path and records every call.
+ * Keys are a path ("/api/v1/x") or a method and path ("DELETE /api/v1/x").
+ */
 export function mockApi(routes: Record<string, MockRoute>) {
-  const calls: { path: string; init?: RequestInit }[] = [];
+  const calls: { path: string; method: string; init?: RequestInit }[] = [];
   const fetchMock = vi.fn(async (input: string, init?: RequestInit) => {
     const path = new URL(input, "http://localhost").pathname;
-    calls.push({ path, init });
-    const route = routes[path];
+    const method = (init?.method ?? "GET").toUpperCase();
+    calls.push({ path, method, init });
+    const route = routes[`${method} ${path}`] ?? routes[path];
     if (!route) {
       throw new Error(`Unexpected request to ${path}`);
     }
