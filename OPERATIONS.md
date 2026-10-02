@@ -29,6 +29,8 @@ File: `backend/.env.example`
 | `VAPID_SUBJECT` | Contact for push services, e.g. `mailto:support@casedex.app` |
 | `FCM_PROJECT_ID` / `FCM_CREDENTIALS` | Mobile app push (Firebase Cloud Messaging). `FCM_CREDENTIALS` is the service-account JSON or a path to it. Without both, mobile push is off. |
 | `MOBILE_TOKEN_TTL_DAYS` | How long a mobile device token lasts before the app must refresh it (default 60). |
+
+Workspace exports (Settings → Export workspace data) are zipped by the queue into `exports/{workspace}/` on the default disk and emailed as a signed link built from `APP_URL`. Manual exports expire after 7 days; `workspace:prune-exports` deletes expired files daily.
 | `RESEND_API_KEY` | Get from https://resend.com/api-keys |
 | `POSTMARK_API_KEY` | Get from Postmark dashboard |
 | `MAIL_FROM_ADDRESS` | Must be verified with your provider |

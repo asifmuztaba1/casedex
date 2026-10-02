@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Mobile\MobileAuthController;
+use App\Http\Controllers\Api\V1\WorkspaceExportController;
 use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,10 @@ Route::prefix('v1')->group(function (): void {
         ->middleware('throttle:6,1');
     Route::post('/auth/reset-password', [AuthPasswordController::class, 'reset'])
         ->middleware('throttle:6,1');
+    // Signed link from the "export ready" email; no sign-in needed (see controller).
+    Route::get('/workspace-exports/{publicId}/download', [WorkspaceExportController::class, 'download'])
+        ->middleware(['signed:relative', 'throttle:20,1'])
+        ->name('api.v1.workspace-exports.download');
     Route::get('/auth/verify-email/{id}/{hash}', [AuthVerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('api.v1.auth.verify-email');
@@ -172,6 +177,9 @@ Route::prefix('v1')
         Route::get('/billing/invoices', [BillingController::class, 'invoices']);
         Route::get('/billing/plan-limits', [BillingController::class, 'planLimits']);
         Route::get('/billing/audit-export', [BillingController::class, 'auditExport']);
+        Route::get('/workspace/exports', [WorkspaceExportController::class, 'index']);
+        Route::post('/workspace/exports', [WorkspaceExportController::class, 'store'])
+            ->middleware('throttle:workspace-exports');
         Route::get('/billing/manual-methods', [BillingController::class, 'manualMethods']);
         Route::post('/billing/manual-request', [BillingController::class, 'submitManualRequest']);
         Route::get('/billing/manual-request/status', [BillingController::class, 'manualRequestStatus']);

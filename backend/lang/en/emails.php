@@ -47,4 +47,9 @@ return [
     'hearing_reminder_outro' => 'Review hearing notes and required next steps before session time.',
 
     'notification_subject_fallback' => 'CaseDex notification',
+    'export_ready_subject' => 'Your CaseDex™ workspace export is ready',
+    'export_ready_intro' => 'The export of :workspace is ready. It contains your cases, hearings, diary entries, contacts and uploaded documents.',
+    'export_ready_button' => 'Download export',
+    'export_ready_expires' => 'The link works until :date. Anyone with the link can download the file, so do not forward this email.',
+    'export_ready_outro' => 'If you did not ask for this export, tell your workspace admin and contact support.',
 ];

@@ -32,4 +32,5 @@ return [
     'mobile_token_required' => 'This endpoint needs a mobile device token.',
     'workspace_required' => 'Create or join a workspace first.',
     'calendar_range_too_long' => 'Choose a range of :days days or less.',
+    'export_unavailable' => 'This export link has expired or the export is no longer available. Ask your workspace admin for a new export.',
 ];

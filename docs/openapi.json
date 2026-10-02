@@ -3801,7 +3801,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_62",
+                "operationId": "v1.diaryEntry.store_65",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -3994,7 +3994,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_86",
+                "operationId": "v1.diaryEntry.store_89",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4310,7 +4310,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_64",
+                "operationId": "v1.document.store_67",
                 "tags": [
                     "Document"
                 ],
@@ -4503,7 +4503,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_91",
+                "operationId": "v1.document.store_94",
                 "tags": [
                     "Document"
                 ],
@@ -4911,7 +4911,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_60",
+                "operationId": "v1.hearing.store_63",
                 "tags": [
                     "Hearing"
                 ],
@@ -5227,7 +5227,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_81",
+                "operationId": "v1.hearing.store_84",
                 "tags": [
                     "Hearing"
                 ],
@@ -5613,7 +5613,7 @@
         },
         "/mobile/devices": {
             "get": {
-                "operationId": "v1.mobile.mobileDevice.index_10",
+                "operationId": "v1.mobile.mobileDevice.index_11",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5647,7 +5647,7 @@
         },
         "/mobile/devices/{publicId}": {
             "delete": {
-                "operationId": "v1.mobile.mobileDevice.destroy_11",
+                "operationId": "v1.mobile.mobileDevice.destroy_12",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5731,7 +5731,7 @@
         },
         "/devices": {
             "get": {
-                "operationId": "v1.mobile.mobileDevice.index_14",
+                "operationId": "v1.mobile.mobileDevice.index_15",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5803,7 +5803,7 @@
         },
         "/devices/{publicId}": {
             "delete": {
-                "operationId": "v1.mobile.mobileDevice.destroy_16",
+                "operationId": "v1.mobile.mobileDevice.destroy_17",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -7419,6 +7419,140 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/workspace-exports/{publicId}/download": {
+            "get": {
+                "operationId": "v1.workspace-exports.download",
+                "summary": "Signed link from the \"export ready\" email. Works without signing in, so\nthe last member of a workspace being deleted can still download it",
+                "tags": [
+                    "WorkspaceExport"
+                ],
+                "parameters": [
+                    {
+                        "name": "publicId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/zip": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "Transfer-Encoding": {
+                                "required": true,
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "chunked"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "410": {
+                        "description": "An error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Error overview.",
+                                            "examples": [
+                                                "This export link has expired or the export is no longer available. Ask your workspace admin for a new export."
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/workspace/exports": {
+            "get": {
+                "operationId": "workspaceExport.index",
+                "tags": [
+                    "WorkspaceExport"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `WorkspaceExportResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WorkspaceExportResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "workspaceExport.store",
+                "tags": [
+                    "WorkspaceExport"
+                ],
+                "responses": {
+                    "202": {
+                        "description": "`WorkspaceExportResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WorkspaceExportResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
                     }
                 }
             }
@@ -11503,6 +11637,69 @@
                     "pwa_installed_at"
                 ],
                 "title": "UserResource"
+            },
+            "WorkspaceExportResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "pending | ready | failed | expired"
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "size_bytes": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "requested_by": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "completed_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "expires_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "download_url": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "status",
+                    "reason",
+                    "size_bytes",
+                    "requested_by",
+                    "created_at",
+                    "completed_at",
+                    "expires_at",
+                    "download_url"
+                ],
+                "title": "WorkspaceExportResource"
             }
         },
         "responses": {
