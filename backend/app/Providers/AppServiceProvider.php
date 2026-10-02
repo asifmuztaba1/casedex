@@ -75,6 +75,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Sanctum::usePersonalAccessTokenModel(DeviceToken::class);
 
+        $this->configureApiDocs();
+
         RateLimiter::for('auth', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });
@@ -105,5 +107,24 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(SubscriptionExpired::class, SubscriptionExpiredListener::class);
         Event::listen(SubscriptionPaymentFailed::class, SubscriptionPaymentFailedListener::class);
         Event::listen(OrderCreated::class, LemonOrderCreatedListener::class);
+    }
+
+    /**
+     * OpenAPI export (docs/openapi.json). Scramble is a dev dependency, so
+     * production (composer --no-dev) skips this.
+     */
+    private function configureApiDocs(): void
+    {
+        if (! class_exists(\Dedoc\Scramble\Scramble::class)) {
+            return;
+        }
+
+        \Dedoc\Scramble\Scramble::configure()
+            ->routes(fn (\Illuminate\Routing\Route $route): bool => str_starts_with($route->uri, 'api/v1/')
+                && ! str_starts_with($route->uri, 'api/v1/admin/')
+                && ! str_contains($route->uri, 'webhook'))
+            ->withDocumentTransformers(function (\Dedoc\Scramble\Support\Generator\OpenApi $openApi): void {
+                $openApi->secure(\Dedoc\Scramble\Support\Generator\SecurityScheme::http('bearer'));
+            });
     }
 }

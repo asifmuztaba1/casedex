@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Support\WallClock;
 
+/** @mixin \App\Domain\Hearings\Models\Hearing */
 class DailyRegisterHearingResource extends JsonResource
 {
     /**

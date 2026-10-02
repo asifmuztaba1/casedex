@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 use App\Support\WallClock;
 
+/** @mixin \App\Domain\Documents\Models\Document */
 class DocumentResource extends JsonResource
 {
     /**
