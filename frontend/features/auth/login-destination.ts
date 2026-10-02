@@ -1,6 +1,6 @@
 import type { AuthUser } from "@/features/auth/use-auth";
 
-type LoginUser = Pick<AuthUser, "tenant_id" | "role"> & {
+type LoginUser = Pick<AuthUser, "tenant_public_id" | "role"> & {
   tenant?: Pick<NonNullable<AuthUser["tenant"]>, "has_workspace_access" | "has_active_subscription"> | null;
 };
 
@@ -9,7 +9,7 @@ export function loginDestination(user: LoginUser): string {
   if (user.role === "platform_admin" || user.role === "platform_editor") {
     return "/admin";
   }
-  if (!user.tenant_id) {
+  if (!user.tenant_public_id) {
     return "/onboarding";
   }
 

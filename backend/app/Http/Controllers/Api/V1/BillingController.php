@@ -142,7 +142,6 @@ class BillingController extends Controller
             ->limit(50)
             ->get()
             ->map(fn ($order) => [
-                'id' => $order->id,
                 'identifier' => $order->identifier,
                 'order_number' => $order->order_number,
                 'currency' => $order->currency,

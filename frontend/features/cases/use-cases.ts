@@ -53,7 +53,6 @@ export type CasePartySummary = {
 
 export type HearingSummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
   hearing_at: string | null;
   type: string | null;
@@ -66,9 +65,7 @@ export type HearingSummary = {
 
 export type DiaryEntrySummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
-  hearing_id: number | null;
   entry_at: string | null;
   title: string | null;
   body: string | null;
@@ -76,9 +73,7 @@ export type DiaryEntrySummary = {
 
 export type DocumentSummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
-  hearing_id: number | null;
   category: string | null;
   original_name: string | null;
   mime: string | null;

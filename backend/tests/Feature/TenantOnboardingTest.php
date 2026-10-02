@@ -31,7 +31,7 @@ it('creates a tenant on the selected plan while starting the 30-day trial', func
     ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.tenant_id', fn (mixed $tenantId): bool => is_int($tenantId) && $tenantId > 0);
+        ->assertJsonPath('data.tenant_public_id', fn (mixed $tenantId): bool => is_string($tenantId) && \Illuminate\Support\Str::isUlid($tenantId));
 
     $user->refresh();
     $tenant = Tenant::query()->findOrFail($user->tenant_id);

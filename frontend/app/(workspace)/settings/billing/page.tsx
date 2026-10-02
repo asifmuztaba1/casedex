@@ -1093,7 +1093,7 @@ export default function BillingSettingsPage() {
               <div className="text-sm text-[var(--muted-soft)]">{t("billing.no_invoices")}</div>
             ) : (
               invoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3 text-sm">
+                <div key={invoice.identifier} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3 text-sm">
                   <div>
                     <div className="font-medium">#{invoice.order_number}</div>
                     <div className="text-xs text-[var(--muted-soft)]">{formatDate(invoice.ordered_at, "PP", locale)}</div>

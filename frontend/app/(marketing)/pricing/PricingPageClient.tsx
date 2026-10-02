@@ -63,12 +63,12 @@ export default function PricingPageClient() {
             interval={interval}
             featured={plan.id === "professional"}
             ctaLabel={
-              user?.tenant_id
+              user?.tenant_public_id
                 ? (isManualMfsOnlyLaunch() ? t("pricing.open_billing") : t("billing.upgrade"))
                 : t("pricing.cta")
             }
             ctaHref={
-              user?.tenant_id
+              user?.tenant_public_id
                 ? (isManualMfsOnlyLaunch()
                     ? `/settings/billing?source=manual&plan=${plan.id}&interval=${interval}`
                     : `/settings/billing?plan=${plan.id}&interval=${interval}`)

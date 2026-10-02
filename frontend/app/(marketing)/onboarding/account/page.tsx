@@ -30,7 +30,7 @@ export default function OnboardingAccountPage() {
       return;
     }
 
-    if (user.tenant_id) {
+    if (user.tenant_public_id) {
       const hasWorkspaceAccess = user.tenant?.has_workspace_access ?? user.tenant?.has_active_subscription ?? false;
       router.replace(hasWorkspaceAccess ? "/dashboard" : "/settings/billing?onboarding=1");
       return;
@@ -53,7 +53,7 @@ export default function OnboardingAccountPage() {
     return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
   }
 
-  if (user.tenant_id) {
+  if (user.tenant_public_id) {
     return null;
   }
 

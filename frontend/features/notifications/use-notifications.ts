@@ -15,11 +15,8 @@ function getErrorMessage(error: unknown) {
 
 export type NotificationSummary = {
   public_id: string;
-  case_id: number | null;
   case_public_id?: string | null;
   case_title?: string | null;
-  hearing_id: number | null;
-  user_id: number | null;
   notification_type: string | null;
   channel: string | null;
   title: string;
@@ -37,7 +34,7 @@ type NotificationListResponse = {
 export function useNotifications() {
   const { data: user } = useAuth();
   // Without workspace access (expired trial) the API answers 403; don't ask.
-  const hasAccess = Boolean(user?.tenant_id) && user?.tenant?.has_workspace_access !== false;
+  const hasAccess = Boolean(user?.tenant_public_id) && user?.tenant?.has_workspace_access !== false;
 
   return useQuery({
     queryKey: ["notifications"],

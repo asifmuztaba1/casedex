@@ -54,7 +54,6 @@ export type SubscriptionState = {
 };
 
 export type BillingInvoice = {
-  id: number;
   identifier: string;
   order_number: number;
   currency: string;
@@ -148,7 +147,7 @@ export type AiWalletSummary = {
 
 export type AiLedgerEvent = {
   public_id: string;
-  user_id: string | null;
+  user_public_id: string | null;
   user_name: string | null;
   event_type: string;
   feature: string | null;

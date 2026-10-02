@@ -14,7 +14,6 @@ function getErrorMessage(error: unknown) {
 
 export type HearingSummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
   case_title?: string | null;
   hearing_at: string | null;

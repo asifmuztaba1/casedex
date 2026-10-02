@@ -14,11 +14,8 @@ class NotificationResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
-            'case_id' => $this->case_id,
             'case_public_id' => $this->case?->public_id,
             'case_title' => $this->case?->title,
-            'user_id' => $this->user_id,
-            'hearing_id' => $this->hearing_id,
             'notification_type' => $this->notification_type,
             'channel' => $this->channel,
             'title' => $this->title,

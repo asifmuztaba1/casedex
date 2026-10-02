@@ -14,10 +14,8 @@ function getErrorMessage(error: unknown) {
 
 export type DiaryEntrySummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
   case_title?: string | null;
-  hearing_id: number | null;
   entry_at: string | null;
   title: string | null;
   body: string | null;

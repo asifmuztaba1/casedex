@@ -23,14 +23,14 @@ export default function AuthGuard({
       router.replace("/login");
       return;
     }
-    if (!isLoading && user && !user.tenant_id) {
+    if (!isLoading && user && !user.tenant_public_id) {
       router.replace("/subscribe");
       return;
     }
 
     if (
       !isLoading &&
-      user?.tenant_id &&
+      user?.tenant_public_id &&
       hasWorkspaceAccess === false &&
       pathname !== "/settings/billing" &&
       !isBillingSuccessReturn
@@ -47,12 +47,12 @@ export default function AuthGuard({
     );
   }
 
-  if (!user || !user.tenant_id) {
+  if (!user || !user.tenant_public_id) {
     return null;
   }
 
   if (
-    user?.tenant_id &&
+    user?.tenant_public_id &&
     hasWorkspaceAccess === false &&
     pathname !== "/settings/billing" &&
     !isBillingSuccessReturn

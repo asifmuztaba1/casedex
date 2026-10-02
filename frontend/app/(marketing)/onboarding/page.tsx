@@ -18,7 +18,7 @@ export default function OnboardingIndexPage() {
       return;
     }
 
-    if (user.tenant_id) {
+    if (user.tenant_public_id) {
       const hasWorkspaceAccess = user.tenant?.has_workspace_access ?? user.tenant?.has_active_subscription ?? false;
       router.replace(hasWorkspaceAccess ? "/dashboard" : "/settings/billing?onboarding=1");
       return;
