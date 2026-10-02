@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\DeviceToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin \App\Domain\Auth\Models\DeviceToken */
 class DeviceTokenResource extends JsonResource
 {
     /**
@@ -20,8 +21,8 @@ class DeviceTokenResource extends JsonResource
             'name' => $this->name,
             'platform' => $this->platform,
             'push_enabled' => $this->push_token !== null,
-            // A browser session has no device token, so nothing is "current" there.
-            'is_current' => $current instanceof DeviceToken && $current->getKey() === $this->getKey(),
+            // True for the device making this request; always false from a browser session.
+            'is_current' => (bool) ($current instanceof DeviceToken && $current->getKey() === $this->getKey()),
             'last_used_at' => $this->last_used_at?->toISOString(),
             'expires_at' => $this->expires_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),

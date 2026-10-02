@@ -4,6 +4,7 @@ namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 
+/** @mixin \App\Domain\Clients\Models\Client */
 class ClientDetailResource extends ClientResource
 {
     /**

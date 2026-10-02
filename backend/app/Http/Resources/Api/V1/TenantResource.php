@@ -7,6 +7,7 @@ use App\Domain\Billing\Services\PlanFeatureService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin \App\Domain\Tenancy\Models\Tenant */
 class TenantResource extends JsonResource
 {
     /**
@@ -25,8 +26,8 @@ class TenantResource extends JsonResource
             'public_id' => $this->public_id,
             'name' => $this->name,
             'plan' => $this->plan?->value,
-            'has_active_subscription' => $planFeatures->hasPaidSubscription($this->resource),
-            'has_workspace_access' => $planFeatures->hasAccess($this->resource),
+            'has_active_subscription' => (bool) $planFeatures->hasPaidSubscription($this->resource),
+            'has_workspace_access' => (bool) $planFeatures->hasAccess($this->resource),
             'billing_source' => $planFeatures->billingSource($this->resource),
             'manual_status' => $planFeatures->manualStatus($this->resource),
             'temporary_access_expires_at' => $planFeatures->temporaryAccessExpiresAt($this->resource),

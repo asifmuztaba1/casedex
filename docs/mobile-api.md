@@ -8,6 +8,10 @@ web app uses cookie sessions, and the mobile app uses a Bearer token per device.
 - Format: JSON. Send `Accept: application/json` on every request.
 - Language: send `X-Locale: bn` or `X-Locale: en`. Validation messages and
   notification text follow it, and dates in responses are ISO 8601.
+- Machine-readable spec: [`docs/openapi.json`](openapi.json) (OpenAPI 3.1,
+  generated from the code). Use it to generate a typed client, e.g. with
+  openapi-generator for Dart, Kotlin or Swift. In local development the same
+  spec is browsable at `http://localhost:8000/docs/api`.
 
 ## 1. Signing in
 

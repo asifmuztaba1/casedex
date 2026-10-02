@@ -25,6 +25,7 @@
         "symfony/dom-crawler": "^8.0"
     },
     "require-dev": {
+        "dedoc/scramble": "^0.13",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.2",
