@@ -125,7 +125,7 @@ export default function DiaryPage() {
                       {entry.body ? entry.body.slice(0, 120) : "-"}
                     </TableCell>
                     <TableCell>
-                      <Button
+                      <Button aria-label={t("common.view")}
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelected(entry)}

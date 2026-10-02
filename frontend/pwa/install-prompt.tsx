@@ -97,7 +97,7 @@ export default function InstallPrompt({ delayMs = 0 }: { delayMs?: number }) {
             <Download className="mr-1 h-3 w-3" />
             {t("pwa.install")}
           </Button>
-          <button
+          <button aria-label={t("common.close")}
             onClick={handleDismiss}
             className="rounded-lg p-1.5 text-[var(--muted-soft)] hover:text-[var(--foreground)]"
           >

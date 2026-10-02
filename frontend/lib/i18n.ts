@@ -556,6 +556,11 @@ const en: Dictionary = {
   "admin.mfs.reason": "Reason",
   "admin.mfs.from": "From",
   "admin.mfs.type": "Type",
+  "common.previous": "Previous",
+  "common.next": "Next",
+  "common.close": "Close",
+  "nav.menu": "Menu",
+  "common.remove_attachment": "Remove attachment",
   "billing.addon_title": "Unlimited storage add-on",
   "billing.addon_desc":
     "Available on any tier when your team needs unrestricted uploads.",
@@ -2364,6 +2369,11 @@ const bn: Dictionary = {
   "admin.mfs.reason": "কারণ",
   "admin.mfs.from": "প্রেরক",
   "admin.mfs.type": "ধরন",
+  "common.previous": "আগের",
+  "common.next": "পরের",
+  "common.close": "বন্ধ করুন",
+  "nav.menu": "মেনু",
+  "common.remove_attachment": "সংযুক্তি সরান",
   "billing.addon_title": "আনলিমিটেড স্টোরেজ অ্যাড-অন",
   "billing.addon_desc":
     "যে কোনো প্ল্যানে নেওয়া যায়, যখন আপনার টিমের সীমাহীন আপলোড দরকার।",

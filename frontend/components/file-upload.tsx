@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "@/components/locale-provider";
 import * as React from "react";
 import { Upload, X, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export default function FileUpload({
   label = "Drop files here or click to browse",
   hint,
 }: FileUploadProps) {
+  const { t } = useLocale();
   const [dragOver, setDragOver] = React.useState(false);
   const [selected, setSelected] = React.useState<File[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -91,7 +93,7 @@ export default function FileUpload({
                   ({(file.size / 1024).toFixed(0)} KB)
                 </span>
               </span>
-              <Button
+              <Button aria-label={t("common.remove_attachment")}
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0"

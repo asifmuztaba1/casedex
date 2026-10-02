@@ -2,13 +2,15 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Domain\Auth\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTenantRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->role === 'admin';
+        // role is cast to the UserRole enum; comparing to the string 'admin' was always false.
+        return $this->user()?->role === UserRole::Admin;
     }
 
     /**

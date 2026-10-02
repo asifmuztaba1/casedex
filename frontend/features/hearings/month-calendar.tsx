@@ -71,7 +71,7 @@ export default function MonthCalendar({
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-2 md:p-4">
       <div className="mb-3 flex items-center justify-between md:mb-4">
-        <Button variant="outline" size="sm" onClick={() => onMonthChange(subMonths(currentMonth, 1))}>
+        <Button aria-label={t("common.previous")} variant="outline" size="sm" onClick={() => onMonthChange(subMonths(currentMonth, 1))}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <div className="flex items-center gap-2 md:gap-3">
@@ -84,7 +84,7 @@ export default function MonthCalendar({
             </Button>
           )}
         </div>
-        <Button variant="outline" size="sm" onClick={() => onMonthChange(addMonths(currentMonth, 1))}>
+        <Button aria-label={t("common.next")} variant="outline" size="sm" onClick={() => onMonthChange(addMonths(currentMonth, 1))}>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
