@@ -129,6 +129,41 @@ type EditFormState = {
   petition_draft: string;
 };
 
+const EMPTY_HEARING_FORM = {
+  hearing_at: "",
+  type: "hearing",
+  agenda: "",
+  location: "",
+  outcome: "",
+  minutes: "",
+  next_steps: "",
+};
+
+const EMPTY_DIARY_FORM = {
+  entry_at: "",
+  title: "",
+  body: "",
+  hearing_public_id: "",
+};
+
+const EMPTY_DOCUMENT_FORM: {
+  category: string;
+  file: File | null;
+  name_base: string;
+  extension: string;
+  hearing_public_id: string;
+  due_at: string;
+} = {
+  category: "petition",
+  file: null,
+  name_base: "",
+  extension: "",
+  hearing_public_id: "",
+  due_at: "",
+};
+
+type CaseSheet = "edit" | "hearing" | "diary" | "document";
+
 export default function CaseDetailPage() {
   const params = useParams();
   const casePublicId = String(params?.publicId ?? "");
@@ -176,40 +211,21 @@ export default function CaseDetailPage() {
   const recentDiaryEntries = caseDetail?.recent_diary_entries ?? [];
   const recentDocuments = caseDetail?.recent_documents ?? [];
 
-  const [hearingForm, setHearingForm] = useState({
-    hearing_at: "",
-    type: "hearing",
-    agenda: "",
-    location: "",
-    outcome: "",
-    minutes: "",
-    next_steps: "",
+  // Which action panel is open. Panels close after a successful save so a
+  // second tap can't create a duplicate hearing, diary entry or document.
+  const [openSheet, setOpenSheet] = useState<CaseSheet | null>(null);
+  const sheetProps = (name: CaseSheet) => ({
+    open: openSheet === name,
+    onOpenChange: (open: boolean) => setOpenSheet(open ? name : null),
   });
+
+  const [hearingForm, setHearingForm] = useState(EMPTY_HEARING_FORM);
   const [hearingSubmitted, setHearingSubmitted] = useState(false);
 
-  const [diaryForm, setDiaryForm] = useState({
-    entry_at: "",
-    title: "",
-    body: "",
-    hearing_public_id: "",
-  });
+  const [diaryForm, setDiaryForm] = useState(EMPTY_DIARY_FORM);
   const [diarySubmitted, setDiarySubmitted] = useState(false);
 
-  const [documentForm, setDocumentForm] = useState<{
-    category: string;
-    file: File | null;
-    name_base: string;
-    extension: string;
-    hearing_public_id: string;
-    due_at: string;
-  }>({
-    category: "petition",
-    file: null,
-    name_base: "",
-    extension: "",
-    hearing_public_id: "",
-    due_at: "",
-  });
+  const [documentForm, setDocumentForm] = useState(EMPTY_DOCUMENT_FORM);
   const [documentSubmitted, setDocumentSubmitted] = useState(false);
 
   const [participantForm, setParticipantForm] = useState({
@@ -471,7 +487,7 @@ export default function CaseDetailPage() {
           >
             {t("case.timeline.export")}
           </Button>
-          <Sheet>
+          <Sheet {...sheetProps("edit")}>
             <SheetTrigger asChild>
               <Button variant="outline">{t("case.detail.edit")}</Button>
             </SheetTrigger>
@@ -645,6 +661,7 @@ export default function CaseDetailPage() {
                         onSuccess: () => {
                           setEditFormDraft(null);
                           setSelectedCourt(null);
+                          setOpenSheet(null);
                         },
                       })
                     }
@@ -661,7 +678,7 @@ export default function CaseDetailPage() {
               </div>
             </SheetContent>
           </Sheet>
-          <Sheet>
+          <Sheet {...sheetProps("hearing")}>
             <SheetTrigger asChild>
               <Button>{t("case.detail.add_hearing")}</Button>
             </SheetTrigger>
@@ -826,6 +843,8 @@ export default function CaseDetailPage() {
                         {
                           onSuccess: () => {
                             setHearingSubmitted(false);
+                            setHearingForm(EMPTY_HEARING_FORM);
+                            setOpenSheet(null);
                           },
                         }
                       );
@@ -843,7 +862,7 @@ export default function CaseDetailPage() {
               </div>
             </SheetContent>
           </Sheet>
-          <Sheet>
+          <Sheet {...sheetProps("diary")}>
             <SheetTrigger asChild>
               <Button variant="outline">{t("case.detail.add_diary")}</Button>
             </SheetTrigger>
@@ -990,6 +1009,8 @@ export default function CaseDetailPage() {
                         {
                           onSuccess: () => {
                             setDiarySubmitted(false);
+                            setDiaryForm(EMPTY_DIARY_FORM);
+                            setOpenSheet(null);
                           },
                         }
                       );
@@ -1007,7 +1028,7 @@ export default function CaseDetailPage() {
               </div>
             </SheetContent>
           </Sheet>
-          <Sheet>
+          <Sheet {...sheetProps("document")}>
             <SheetTrigger asChild>
               <Button variant="outline">{t("case.detail.upload_document")}</Button>
             </SheetTrigger>
@@ -1154,6 +1175,8 @@ export default function CaseDetailPage() {
                         {
                           onSuccess: () => {
                             setDocumentSubmitted(false);
+                            setDocumentForm(EMPTY_DOCUMENT_FORM);
+                            setOpenSheet(null);
                           },
                         }
                       );
