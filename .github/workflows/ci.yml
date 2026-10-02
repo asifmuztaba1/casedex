@@ -100,6 +100,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Test
+        run: pnpm test
+
       - name: Build
         env:
           NEXT_PUBLIC_API_BASE_URL: https://casedex.app
