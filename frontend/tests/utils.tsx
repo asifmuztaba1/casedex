@@ -37,11 +37,10 @@ export function mockApi(routes: Record<string, MockRoute>) {
 }
 
 export const tenantUser = {
-  id: 1,
   public_id: "01USERPUBLICID",
   name: "Rahim Uddin",
   email: "rahim@example.test",
-  tenant_id: 7,
+  tenant_public_id: "01TENANTPUBLICID",
   country_id: 1,
   role: "admin" as const,
   tenant: { name: "Rahim Chambers", has_workspace_access: true },

@@ -14,7 +14,7 @@ class AiCreditLedgerResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
-            'user_id' => $this->user?->public_id,
+            'user_public_id' => $this->user?->public_id,
             'user_name' => $this->user?->name,
             'event_type' => $this->event_type,
             'feature' => $this->feature,

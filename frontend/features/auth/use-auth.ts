@@ -32,12 +32,11 @@ function buildHeaders(extra?: Record<string, string>) {
 }
 
 export type AuthUser = {
-  id: number;
   public_id: string;
   name: string;
   email: string;
   email_verified_at?: string | null;
-  tenant_id: number | null;
+  tenant_public_id: string | null;
   tenant?: {
     name?: string | null;
     plan?: "trial" | "starter" | "professional" | "chambers" | null;

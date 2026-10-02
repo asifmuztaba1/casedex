@@ -38,7 +38,7 @@ export default function OnboardingWorkspacePage() {
       return;
     }
 
-    if (user.tenant_id) {
+    if (user.tenant_public_id) {
       const hasWorkspaceAccess = user.tenant?.has_workspace_access ?? user.tenant?.has_active_subscription ?? false;
       router.replace(hasWorkspaceAccess ? "/dashboard" : "/settings/billing?onboarding=1");
       return;
@@ -50,7 +50,7 @@ export default function OnboardingWorkspacePage() {
     }
   }, [isLoading, router, user]);
 
-  if (isLoading || !user || user.tenant_id) {
+  if (isLoading || !user || user.tenant_public_id) {
     return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
   }
 

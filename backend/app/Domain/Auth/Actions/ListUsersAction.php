@@ -13,6 +13,7 @@ class ListUsersAction
     public function handle(User $actor): Collection
     {
         return User::query()
+            ->with(['tenant', 'country'])
             ->where('tenant_id', $actor->tenant_id)
             ->orderByDesc('created_at')
             ->get();

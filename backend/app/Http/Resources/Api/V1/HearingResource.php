@@ -15,7 +15,6 @@ class HearingResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
-            'case_id' => $this->case_id,
             'case_public_id' => $this->case?->public_id,
             'case_title' => $this->case?->title,
             'hearing_at' => WallClock::toJson($this->hearing_at),

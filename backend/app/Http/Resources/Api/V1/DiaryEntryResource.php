@@ -15,10 +15,8 @@ class DiaryEntryResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
-            'case_id' => $this->case_id,
             'case_public_id' => $this->case?->public_id,
             'case_title' => $this->case?->title,
-            'hearing_id' => $this->hearing_id,
             'entry_at' => WallClock::toJson($this->entry_at),
             'title' => $this->title,
             'body' => $this->body,

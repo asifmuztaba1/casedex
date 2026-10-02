@@ -86,7 +86,7 @@ export default function NewCasePage() {
   const createCase = useCreateCase();
   const { t, locale } = useLocale();
   const { data: user } = useAuth();
-  const { data: usersData } = useUsers(Boolean(user?.tenant_id));
+  const { data: usersData } = useUsers(Boolean(user?.tenant_public_id));
   const tenantUsers = usersData ?? [];
 
   const [step, setStep] = useState<1 | 2>(1);

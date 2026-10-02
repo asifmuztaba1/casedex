@@ -14,10 +14,8 @@ function getErrorMessage(error: unknown) {
 
 export type DocumentSummary = {
   public_id: string;
-  case_id: number;
   case_public_id?: string | null;
   case_title?: string | null;
-  hearing_id: number | null;
   category: string | null;
   original_name: string | null;
   mime: string | null;
