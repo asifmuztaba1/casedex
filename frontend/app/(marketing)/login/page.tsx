@@ -10,7 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useLogin } from "@/features/auth/use-auth";
+import { useLogin, type AuthUser } from "@/features/auth/use-auth";
+import { loginDestination } from "@/features/auth/login-destination";
+import { hardNavigate } from "@/lib/hard-navigate";
 import { useLocale } from "@/components/locale-provider";
 
 export default function LoginPage() {
@@ -21,34 +23,15 @@ export default function LoginPage() {
   const [submitted, setSubmitted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  const emailFormatValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const emailError = submitted && !email.trim();
-  const emailInvalid =
-    submitted && email.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const emailInvalid = submitted && email.trim().length > 0 && !emailFormatValid;
   const passwordError = submitted && !password.trim();
 
-  const handleLoginSuccess = async (loggedInUser: {
-    tenant_id: number | null;
-    role?: string;
-    tenant?: { has_workspace_access?: boolean; has_active_subscription?: boolean } | null;
-  }) => {
+  const handleLoginSuccess = async (loggedInUser: AuthUser) => {
     setRedirecting(true);
 
-    let dest = "/dashboard";
-
-    if (loggedInUser.role === "platform_admin" || loggedInUser.role === "platform_editor") {
-      dest = "/admin";
-    } else if (!loggedInUser.tenant_id) {
-      dest = "/onboarding";
-    } else {
-      const hasWorkspaceAccess =
-        loggedInUser.tenant?.has_workspace_access ??
-        loggedInUser.tenant?.has_active_subscription ??
-        false;
-
-      if (!hasWorkspaceAccess) {
-        dest = "/settings/billing?onboarding=1";
-      }
-    }
+    const dest = loginDestination(loggedInUser);
 
     // Use the Credential Management API to proactively store the
     // credential. This tells Chrome "we handled it" and suppresses
@@ -73,9 +56,7 @@ export default function LoginPage() {
       // sessionStorage unavailable (e.g. private browsing)
     }
 
-    // Full reload on purpose: resets client caches and service worker state for the new session.
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.href = dest;
+    hardNavigate(dest);
   };
 
   return (
@@ -98,7 +79,7 @@ export default function LoginPage() {
             onSubmit={(event) => {
               event.preventDefault();
               setSubmitted(true);
-              if (!email.trim() || !password.trim()) {
+              if (!email.trim() || !emailFormatValid || !password.trim()) {
                 return;
               }
               login.mutate(
@@ -112,10 +93,11 @@ export default function LoginPage() {
             }}
           >
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
+              <label htmlFor="login-email" className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("login.email")}
               </label>
               <Input
+                id="login-email"
                 name="email"
                 autoComplete="email"
                 placeholder="you@firm.com"
@@ -132,10 +114,11 @@ export default function LoginPage() {
               )}
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
+              <label htmlFor="login-password" className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
                 {t("login.password")}
               </label>
               <Input
+                id="login-password"
                 name="password"
                 autoComplete="current-password"
                 placeholder="********"
