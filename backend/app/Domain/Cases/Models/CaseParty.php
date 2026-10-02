@@ -7,15 +7,17 @@ use App\Domain\Cases\Enums\PartySide;
 use App\Domain\Cases\Enums\PartyType;
 use App\Domain\Clients\Models\Client;
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CaseParty extends Model
 {
-    use HasFactory, SoftDeletes, BelongsToTenant;
+    use HasFactory, SoftDeletes, BelongsToTenant, HasPublicId;
 
     protected $fillable = [
+        'public_id',
         'case_id',
         'client_id',
         'type',

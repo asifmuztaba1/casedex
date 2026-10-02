@@ -13,7 +13,7 @@ class CaseParticipantResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'public_id' => $this->public_id,
             'role' => $this->role?->value,
             'user' => new UserResource($this->whenLoaded('user')),
         ];

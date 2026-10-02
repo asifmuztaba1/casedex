@@ -5,12 +5,15 @@ namespace App\Http\Requests\Api\V1;
 use App\Domain\Cases\Enums\PartyRole;
 use App\Domain\Cases\Enums\PartySide;
 use App\Domain\Cases\Enums\PartyType;
+use App\Http\Requests\Api\V1\Concerns\ResolvesClientPublicId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Support\TenantContext;
 
 class StoreCasePartyRequest extends FormRequest
 {
+    use ResolvesClientPublicId;
+
     public function authorize(): bool
     {
         return true;
@@ -27,7 +30,7 @@ class StoreCasePartyRequest extends FormRequest
             'side' => ['required', Rule::in(array_column(PartySide::cases(), 'value'))],
             'role' => ['nullable', Rule::in(array_column(PartyRole::cases(), 'value'))],
             'is_client' => ['nullable', 'boolean'],
-            'client_id' => ['nullable', 'integer', Rule::exists('clients', 'id')->where('tenant_id', TenantContext::id())],
+            'client_public_id' => ['nullable', 'string', $this->clientPublicIdExists()],
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:200'],
             'address' => ['nullable', 'string', 'max:255'],

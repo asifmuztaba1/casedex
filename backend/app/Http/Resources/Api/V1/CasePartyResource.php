@@ -13,9 +13,8 @@ class CasePartyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'case_id' => $this->case_id,
-            'client_id' => $this->client_id,
+            'public_id' => $this->public_id,
+            'client_public_id' => $this->client_id === null ? null : $this->client?->public_id,
             'type' => $this->type?->value,
             'name' => $this->name,
             'side' => $this->side?->value,

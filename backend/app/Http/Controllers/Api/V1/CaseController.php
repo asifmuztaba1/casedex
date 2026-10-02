@@ -48,7 +48,7 @@ class CaseController extends Controller
             'client',
             'court',
             'participants.user',
-            'parties',
+            'parties.client',
             'upcomingHearings',
             'recentDiaryEntries',
             'recentDocuments',

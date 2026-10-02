@@ -73,7 +73,7 @@ export function useAddCaseParticipant() {
 
 type RemoveParticipantPayload = {
   casePublicId: string;
-  participantId: number;
+  participantPublicId: string;
 };
 
 export function useRemoveCaseParticipant() {
@@ -82,8 +82,8 @@ export function useRemoveCaseParticipant() {
   const { t } = useLocale();
 
   return useMutation({
-    mutationFn: ({ casePublicId, participantId }: RemoveParticipantPayload) =>
-      apiDelete(`/api/v1/cases/${casePublicId}/participants/${participantId}`),
+    mutationFn: ({ casePublicId, participantPublicId }: RemoveParticipantPayload) =>
+      apiDelete(`/api/v1/cases/${casePublicId}/participants/${participantPublicId}`),
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({
         queryKey: ["cases", payload.casePublicId, "participants"],

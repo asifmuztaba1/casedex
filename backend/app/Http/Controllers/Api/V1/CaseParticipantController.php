@@ -45,7 +45,7 @@ class CaseParticipantController extends Controller
 
     public function destroy(
         string $casePublicId,
-        int $participantId,
+        string $participantPublicId,
         Request $request,
         FindCaseAction $findCase,
         RemoveCaseParticipantAction $action
@@ -54,7 +54,7 @@ class CaseParticipantController extends Controller
 
         $participant = CaseParticipant::query()
             ->where('case_id', $case->id)
-            ->where('id', $participantId)
+            ->where('public_id', $participantPublicId)
             ->firstOrFail();
 
         $this->authorize('delete', $participant);

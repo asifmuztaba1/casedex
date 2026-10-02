@@ -13,6 +13,7 @@ class ListCasePartiesAction
     public function handle(int $caseId): Collection
     {
         return CaseParty::query()
+            ->with('client')
             ->where('case_id', $caseId)
             ->orderBy('side')
             ->orderBy('name')

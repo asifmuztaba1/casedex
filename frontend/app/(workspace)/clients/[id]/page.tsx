@@ -15,8 +15,8 @@ import { ArrowLeft } from "lucide-react";
 export default function ClientDetailPage() {
   const { t } = useLocale();
   const params = useParams();
-  const id = Number(params.id);
-  const { data, isLoading, isError } = useClientDetail(id);
+  const publicId = String(params.id ?? "");
+  const { data, isLoading, isError } = useClientDetail(publicId);
   const client = data?.data;
 
   if (isLoading) {

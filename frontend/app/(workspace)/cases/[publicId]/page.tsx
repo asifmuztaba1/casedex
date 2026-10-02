@@ -248,7 +248,7 @@ export default function CaseDetailPage() {
     address: string;
     identity_number: string;
     notes: string;
-    client_id: number | null;
+    client_public_id: string | null;
     create_contact: boolean;
   }>({
     name: "",
@@ -260,7 +260,7 @@ export default function CaseDetailPage() {
     address: "",
     identity_number: "",
     notes: "",
-    client_id: null,
+    client_public_id: null,
     create_contact: false,
   });
   const [partySubmitted, setPartySubmitted] = useState(false);
@@ -1750,7 +1750,7 @@ export default function CaseDetailPage() {
                   </TableHeader>
                   <TableBody>
                     {participants.map((participant) => (
-                      <TableRow key={participant.id}>
+                      <TableRow key={participant.public_id}>
                         <TableCell>
                           {participant.user?.name ?? t("common.user")}
                         </TableCell>
@@ -1765,7 +1765,7 @@ export default function CaseDetailPage() {
                               onClick={() =>
                                 removeParticipant.mutate({
                                   casePublicId,
-                                  participantId: participant.id,
+                                  participantPublicId: participant.public_id,
                                 })
                               }
                               disabled={removeParticipant.isPending}
@@ -1802,7 +1802,7 @@ export default function CaseDetailPage() {
                           setPartyForm((prev) => ({
                             ...prev,
                             name: val,
-                            client_id: null,
+                            client_public_id: null,
                           }));
                           setPartySearchQuery(val);
                           setShowContactSuggestions(val.length >= 2);
@@ -1815,7 +1815,7 @@ export default function CaseDetailPage() {
                         }}
                         aria-invalid={!!(partyNameError)}
                       />
-                      {partyForm.client_id && (
+                      {partyForm.client_public_id && (
                         <p className="text-xs text-emerald-600">
                           {t("contact.linked") ?? t("contact.linked")}
                         </p>
@@ -1824,7 +1824,7 @@ export default function CaseDetailPage() {
                         <div className="absolute left-0 top-full z-30 mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] shadow-lg">
                           {contactSearchResults!.data.map((c) => (
                             <button
-                              key={c.id}
+                              key={c.public_id}
                               type="button"
                               className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-[var(--paper-hover)]"
                               onMouseDown={(e) => e.preventDefault()}
@@ -1837,7 +1837,7 @@ export default function CaseDetailPage() {
                                   email: c.email ?? "",
                                   address: c.address ?? "",
                                   identity_number: c.identity_number ?? "",
-                                  client_id: c.id,
+                                  client_public_id: c.public_id,
                                   create_contact: false,
                                 }));
                                 setShowContactSuggestions(false);
@@ -1959,7 +1959,7 @@ export default function CaseDetailPage() {
                     }
                   />
                   <div className="flex items-center gap-3">
-                    {!partyForm.client_id && (
+                    {!partyForm.client_public_id && (
                       <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                         <input
                           type="checkbox"
@@ -1993,7 +1993,7 @@ export default function CaseDetailPage() {
                             address: partyForm.address,
                             identity_number: partyForm.identity_number,
                             notes: partyForm.notes,
-                            client_id: partyForm.client_id ?? undefined,
+                            client_public_id: partyForm.client_public_id ?? undefined,
                             create_contact: partyForm.create_contact || undefined,
                           },
                           {
@@ -2009,7 +2009,7 @@ export default function CaseDetailPage() {
                                 address: "",
                                 identity_number: "",
                                 notes: "",
-                                client_id: null,
+                                client_public_id: null,
                                 create_contact: false,
                               });
                             },
@@ -2052,7 +2052,7 @@ export default function CaseDetailPage() {
                           </TableHeader>
                           <TableBody>
                             {sideParties.map((party) => (
-                              <TableRow key={String(party.id)}>
+                              <TableRow key={party.public_id}>
                                 <TableCell>
                                   <div className="space-y-1">
                                     <div className="text-sm font-medium text-[var(--foreground)]">
@@ -2082,9 +2082,9 @@ export default function CaseDetailPage() {
                                 </TableCell>
                                 <TableCell>
                                   <div className="flex items-center gap-2">
-                                    {party.client_id && (
+                                    {party.client_public_id && (
                                       <Button variant="ghost" size="sm" asChild>
-                                        <Link href={`/contacts/${party.client_id}`}>
+                                        <Link href={`/contacts/${party.client_public_id}`}>
                                           {t("contact.view_history") ?? t("common.history")}
                                         </Link>
                                       </Button>
@@ -2096,7 +2096,7 @@ export default function CaseDetailPage() {
                                         onClick={() =>
                                           removeParty.mutate({
                                             casePublicId,
-                                            partyId: Number(party.id),
+                                            partyPublicId: party.public_id,
                                           })
                                         }
                                         disabled={removeParty.isPending}
