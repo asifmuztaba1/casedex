@@ -27,6 +27,8 @@ File: `backend/.env.example`
 | `MAIL_MAILER` | `resend`, `postmark`, `ses`, or `smtp` |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push signing keys. Without them no push is sent (in-app and email still work). |
 | `VAPID_SUBJECT` | Contact for push services, e.g. `mailto:support@casedex.app` |
+| `FCM_PROJECT_ID` / `FCM_CREDENTIALS` | Mobile app push (Firebase Cloud Messaging). `FCM_CREDENTIALS` is the service-account JSON or a path to it. Without both, mobile push is off. |
+| `MOBILE_TOKEN_TTL_DAYS` | How long a mobile device token lasts before the app must refresh it (default 60). |
 | `RESEND_API_KEY` | Get from https://resend.com/api-keys |
 | `POSTMARK_API_KEY` | Get from Postmark dashboard |
 | `MAIL_FROM_ADDRESS` | Must be verified with your provider |
@@ -261,6 +263,7 @@ Config: `backend/config/backup.php`. By default backs up to local disk. For prod
 - [ ] Start Horizon queue worker (supervised)
 - [ ] Start scheduler (`schedule:work` or system cron)
 - [ ] Generate VAPID keys once; set `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` in `backend/.env` and the same public key as `NEXT_PUBLIC_VAPID_PUBLIC_KEY` for the frontend build
+- [ ] Mobile push (when the app ships): create a Firebase project, add a service account with the "Firebase Cloud Messaging API Admin" role, set `FCM_PROJECT_ID` and `FCM_CREDENTIALS`
 - [ ] Verify email delivery works (send a test)
 - [ ] Configure Lemon Squeezy webhook and test with a trial subscription
 - [ ] Create first admin account

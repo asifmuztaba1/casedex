@@ -38,6 +38,8 @@ use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Api\V1\Mobile\MobileAuthController;
+use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -53,6 +55,24 @@ Route::prefix('v1')->group(function (): void {
     Route::get('/auth/verify-email/{id}/{hash}', [AuthVerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('api.v1.auth.verify-email');
+    // Native mobile apps: Bearer device tokens instead of cookie sessions.
+    // Every other /api/v1 endpoint accepts the same token. See docs/mobile-api.md.
+    Route::prefix('mobile')->group(function (): void {
+        Route::post('/login', [MobileAuthController::class, 'login'])
+            ->middleware('throttle:auth');
+        Route::post('/register', [MobileAuthController::class, 'register'])
+            ->middleware('throttle:auth');
+
+        Route::middleware(['auth:sanctum', 'device.token', 'throttle:api'])->group(function (): void {
+            Route::post('/token/refresh', [MobileAuthController::class, 'refresh']);
+            Route::post('/logout', [MobileAuthController::class, 'logout']);
+            Route::get('/devices', [MobileDeviceController::class, 'index']);
+            Route::delete('/devices/{publicId}', [MobileDeviceController::class, 'destroy']);
+            Route::put('/push-token', [MobileDeviceController::class, 'updatePushToken']);
+            Route::delete('/push-token', [MobileDeviceController::class, 'deletePushToken']);
+        });
+    });
+
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);

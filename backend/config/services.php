@@ -21,6 +21,19 @@ return [
     // Web Push (VAPID). Generate once per environment:
     // php -r "require 'vendor/autoload.php'; print_r(Minishlink\WebPush\VAPID::createVapidKeys());"
     // The public key must also be set as NEXT_PUBLIC_VAPID_PUBLIC_KEY for the frontend build.
+    // Native mobile apps: per-device Sanctum tokens. See docs/mobile-api.md.
+    'mobile' => [
+        'token_ttl_days' => (int) env('MOBILE_TOKEN_TTL_DAYS', 60),
+    ],
+
+    // Firebase Cloud Messaging (HTTP v1) for mobile push. FCM_CREDENTIALS is
+    // the service-account JSON itself or a path to it. Without both values
+    // nothing is sent.
+    'fcm' => [
+        'project_id' => env('FCM_PROJECT_ID'),
+        'credentials' => env('FCM_CREDENTIALS'),
+    ],
+
     'webpush' => [
         'public_key' => env('VAPID_PUBLIC_KEY'),
         'private_key' => env('VAPID_PRIVATE_KEY'),

@@ -16,8 +16,17 @@ class SetTenantContext
     {
         $user = $request->user();
 
-        if ($user === null || $user->tenant_id === null) {
+        if ($user === null) {
             abort(401, __('messages.tenant_context_missing'));
+        }
+
+        // Signed in but no workspace yet (mid-onboarding). Not a 401: clients
+        // treat 401 as "signed out" and would drop a valid session or token.
+        if ($user->tenant_id === null) {
+            return response()->json([
+                'message' => __('messages.workspace_required'),
+                'error' => 'workspace_required',
+            ], 403);
         }
 
         TenantContext::set($user->tenant_id);

@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant' => \App\Http\Middleware\SetTenantContext::class,
             'platform' => \App\Http\Middleware\EnsurePlatformAdmin::class,
             'subscription.active' => \App\Http\Middleware\EnsureActiveSubscription::class,
+            'device.token' => \App\Http\Middleware\EnsureDeviceToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

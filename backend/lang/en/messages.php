@@ -28,4 +28,7 @@ return [
     'manual_payment_not_found' => 'Manual payment request not found.',
     'manual_payment_not_pending' => 'Only pending manual payment requests can be reviewed.',
     'ai_request_failed' => 'The AI service could not complete this request. No credits were charged. Please try again later.',
+    'mobile_platform_staff' => 'Platform staff accounts sign in on the web console.',
+    'mobile_token_required' => 'This endpoint needs a mobile device token.',
+    'workspace_required' => 'Create or join a workspace first.',
 ];

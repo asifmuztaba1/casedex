@@ -22,7 +22,9 @@ use App\Domain\Hearings\Models\Hearing;
 use App\Domain\Notifications\Models\CaseNotification;
 use App\Domain\Notifications\Models\PushSubscription;
 use App\Domain\Research\Models\ResearchNote;
+use App\Domain\Auth\Models\DeviceToken;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 use App\Policies\CasePolicy;
 use App\Policies\CaseParticipantPolicy;
 use App\Policies\CasePartyPolicy;
@@ -59,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Notifications\Push\PushSender::class,
             \App\Domain\Notifications\Push\WebPushSender::class,
         );
+        $this->app->singleton(
+            \App\Domain\Notifications\Push\MobilePushSender::class,
+            \App\Domain\Notifications\Push\FcmSender::class,
+        );
         //
     }
 
@@ -67,6 +73,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Sanctum::usePersonalAccessTokenModel(DeviceToken::class);
+
         RateLimiter::for('auth', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });

@@ -205,8 +205,9 @@ Business logic MUST live in Actions / Services.
 
 # 9. SECURITY & COMPLIANCE
 
-- Sanctum cookie auth
-- CSRF enabled
+- Sanctum cookie auth for the web app
+- Sanctum per-device Bearer tokens for native mobile apps only (`/api/v1/mobile/*`, see §21)
+- CSRF enabled (cookie sessions)
 - Rate limit auth endpoints
 - Signed URLs for file downloads
 - Audit logs for:
@@ -356,7 +357,7 @@ CaseDex MUST support Progressive Web App (PWA) functionality.
 ## Explicit Constraints
 - No offline write or edit in MVP
 - No offline AI/OCR processing
-- No native app store dependency
+- The PWA must not depend on an app store (native apps are optional companions, §21)
 
 ## Frontend Responsibility
 - PWA implemented entirely in frontend (Next.js)
@@ -382,6 +383,18 @@ Public-facing pages must exist for SEO and compliance:
 SEO defaults:
 - robots.txt allowed for public pages only
 - sitemap.xml includes all public pages
+
+# 21. NATIVE MOBILE APPS (API)
+
+Native iOS/Android apps are allowed as companions to the PWA (decided 2026-10-03).
+
+- Same `/api/v1/*` endpoints as the web app; no mobile-only copies of business endpoints
+- Auth: per-device Sanctum tokens from `/api/v1/mobile/login` and `/register`; refresh rotates, logout revokes
+- Tokens expire (`MOBILE_TOKEN_TTL_DAYS`); only hashes are stored; platform staff get no tokens
+- Users can list and revoke their devices
+- Push via FCM, opt-in per device; signing out removes the device's push registration
+- Same tenant isolation, rate limits, audit logs and signed downloads as the web app
+- Contract and app guidance: `docs/mobile-api.md`
 
 # UI THEME & HOMEPAGE SPEC (LOCKED)
 
