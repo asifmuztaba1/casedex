@@ -143,7 +143,7 @@ export default function AdminFeedbackPage() {
 
       {meta && meta.last_page > 1 && (
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Button aria-label={t("common.previous")}
             variant="outline"
             size="sm"
             disabled={page <= 1}
@@ -154,7 +154,7 @@ export default function AdminFeedbackPage() {
           <span className="text-xs text-[var(--muted)]">
             {page} / {meta.last_page}
           </span>
-          <Button
+          <Button aria-label={t("common.next")}
             variant="outline"
             size="sm"
             disabled={page >= meta.last_page}

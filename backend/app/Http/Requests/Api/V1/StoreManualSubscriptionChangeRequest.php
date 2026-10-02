@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Domain\Auth\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Domain\Tenancy\Enums\TenantPlan;
@@ -10,7 +11,8 @@ class StoreManualSubscriptionChangeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->role === 'admin';
+        // role is cast to the UserRole enum; comparing to the string 'admin' was always false.
+        return $this->user()?->role === UserRole::Admin;
     }
 
     /**

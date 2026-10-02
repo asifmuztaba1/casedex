@@ -24,7 +24,7 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" disabled>
+      <Button aria-label={t("theme.toggle")} variant="outline" size="icon" disabled>
         <Sun className="h-4 w-4" />
       </Button>
     );

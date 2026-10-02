@@ -20,7 +20,7 @@ import {
 } from "@/features/admin/billing/use-admin-manual-payments";
 import { useLocale } from "@/components/locale-provider";
 import { useToast } from "@/components/ui/use-toast";
-import { billingStatusLabel } from "@/features/billing/labels";
+import { billingStatusLabel, planLabel } from "@/features/billing/labels";
 import { formatDate } from "@/lib/date-format";
 
 export default function AdminManualPaymentsPage() {
@@ -203,10 +203,10 @@ export default function AdminManualPaymentsPage() {
                 <div>
                   <div className="text-sm font-semibold text-[var(--foreground)]">{item.tenant_name ?? t("admin.mfs.tenant")}</div>
                   <div className="text-xs text-[var(--muted)]">{t("admin.mfs.requested_by")}: {item.requested_by_name ?? "-"}</div>
-                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.type")}: {item.type}</div>
-                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.current")}: {item.current_plan ?? "-"} ({item.current_interval ?? "-"})</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.type")}: {item.type === "cancel" ? t("billing.ui.cancel_subscription") : t("billing.ui.change_plan")}</div>
+                  <div className="text-xs text-[var(--muted)]">{t("admin.mfs.current")}: {item.current_plan ? planLabel(t, item.current_plan) : "-"} ({item.current_interval ? t(`billing.ui.${item.current_interval}`) : "-"})</div>
                   {item.type === "plan_change" && (
-                    <div className="text-xs text-[var(--muted)]">{t("admin.mfs.requested")}: {item.requested_plan ?? "-"} ({item.requested_interval ?? "-"})</div>
+                    <div className="text-xs text-[var(--muted)]">{t("admin.mfs.requested")}: {item.requested_plan ? planLabel(t, item.requested_plan) : "-"} ({item.requested_interval ? t(`billing.ui.${item.requested_interval}`) : "-"})</div>
                   )}
                   <div className="text-xs text-[var(--muted)]">{t("admin.mfs.effective_at")}: {formatDate(item.effective_at, "PPp", locale)}</div>
                   {item.applied_at && (

@@ -133,7 +133,7 @@ export default function ResearchPage() {
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  <Button
+                  <Button aria-label={t("common.edit")}
                     variant="ghost"
                     size="sm"
                     onClick={() => {
@@ -150,7 +150,7 @@ export default function ResearchPage() {
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button
+                  <Button aria-label={t("common.delete")}
                     variant="ghost"
                     size="sm"
                     onClick={() => setDeleteTarget(note.public_id)}

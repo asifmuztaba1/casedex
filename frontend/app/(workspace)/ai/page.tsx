@@ -526,7 +526,7 @@ function DocQaForm() {
             <div className="mb-2 flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--wash)] px-3 py-1.5 text-xs text-[var(--foreground)]">
               <FileText className="h-3.5 w-3.5 text-cyan-600" />
               {fileName}
-              <button onClick={clearFile} className="ml-auto text-[var(--muted)] hover:text-[var(--foreground)]">
+              <button aria-label={t("common.close")} onClick={clearFile} className="ml-auto text-[var(--muted)] hover:text-[var(--foreground)]">
                 <X className="h-3.5 w-3.5" />
               </button>
             </div>

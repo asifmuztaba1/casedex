@@ -178,7 +178,7 @@ export default function ProductTour() {
             <div className="flex items-center gap-2 text-xs text-[var(--muted-soft)]">
               {stepCounter}
             </div>
-            <button
+            <button aria-label={t("common.close")}
               onClick={skip}
               className="rounded-md p-1 text-[var(--muted-soft)] transition-colors hover:text-[var(--foreground)]"
             >
@@ -250,7 +250,7 @@ export default function ProductTour() {
       >
         <div className="flex items-center justify-between">
           <span className="text-xs text-[var(--muted-soft)]">{stepCounter}</span>
-          <button
+          <button aria-label={t("common.close")}
             onClick={skip}
             className="rounded-md p-1 text-[var(--muted-soft)] transition-colors hover:text-[var(--foreground)]"
           >

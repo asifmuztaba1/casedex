@@ -71,7 +71,7 @@ export default function MarketingLayout({
               </Button>
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden">
+                  <Button aria-label={t("nav.menu")} variant="outline" size="sm" className="md:hidden">
                     <Menu className="h-4 w-4" />
                   </Button>
                 </SheetTrigger>

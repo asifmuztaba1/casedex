@@ -163,7 +163,7 @@ export default function VoiceAssistant() {
                 {locale === "bn" ? "সহকারী" : "Assistant"}
               </span>
             </div>
-            <button
+            <button aria-label={t("common.close")}
               onClick={handleClose}
               className="rounded-md p-1 text-[var(--muted-soft)] transition-colors hover:text-[var(--foreground)]"
             >
@@ -213,7 +213,7 @@ export default function VoiceAssistant() {
           <span className="whitespace-nowrap">
             {locale === "bn" ? "গাইডেন্সের জন্য ক্লিক করুন" : t("assistant.click_for_guidance")}
           </span>
-          <button
+          <button aria-label={t("common.close")}
             onClick={() => {
               setShowTip(false);
               sessionStorage.setItem(TIP_DISMISSED_KEY, "true");

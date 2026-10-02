@@ -175,7 +175,7 @@ function AdminConversation({
 
           {meta && meta.last_page > 1 && (
             <div className="flex items-center justify-center gap-2">
-              <Button
+              <Button aria-label={t("common.previous")}
                 variant="outline"
                 size="sm"
                 disabled={page <= 1}
@@ -186,7 +186,7 @@ function AdminConversation({
               <span className="text-xs text-[var(--muted)]">
                 {page} / {meta.last_page}
               </span>
-              <Button
+              <Button aria-label={t("common.next")}
                 variant="outline"
                 size="sm"
                 disabled={page >= meta.last_page}
@@ -224,7 +224,7 @@ function AdminConversation({
                 {attachment && (
                   <span className="flex items-center gap-1 text-xs text-[var(--muted)]">
                     {attachment.name}
-                    <button onClick={() => setAttachment(null)}>
+                    <button aria-label={t("common.remove_attachment")} onClick={() => setAttachment(null)}>
                       <X className="h-3 w-3" />
                     </button>
                   </span>
@@ -364,7 +364,7 @@ export default function AdminSupportPage() {
 
       {meta && meta.last_page > 1 && (
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Button aria-label={t("common.previous")}
             variant="outline"
             size="sm"
             disabled={page <= 1}
@@ -375,7 +375,7 @@ export default function AdminSupportPage() {
           <span className="text-xs text-[var(--muted)]">
             {page} / {meta.last_page}
           </span>
-          <Button
+          <Button aria-label={t("common.next")}
             variant="outline"
             size="sm"
             disabled={page >= meta.last_page}

@@ -142,7 +142,7 @@ export default function DailyRegisterPage() {
 
       {/* Date navigation */}
       <div className="flex flex-wrap items-center gap-2 print:hidden">
-        <Button
+        <Button aria-label={t("common.previous")}
           variant="outline"
           size="sm"
           onClick={() =>
@@ -162,7 +162,7 @@ export default function DailyRegisterPage() {
           />
         </div>
 
-        <Button
+        <Button aria-label={t("common.next")}
           variant="outline"
           size="sm"
           onClick={() =>
