@@ -23,6 +23,7 @@ import {
 import { useAdminUsers, useUpdateUserRole } from "@/features/admin/use-admin-platform";
 import { useLocale } from "@/components/locale-provider";
 import { ChevronDown, Check, Shield } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 const ALL_ROLES = [
   "platform_admin",
@@ -37,7 +38,7 @@ const ALL_ROLES = [
 const ROLE_FILTER = ["", ...ALL_ROLES];
 
 export default function AdminUsersPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const { data, isLoading } = useAdminUsers({
@@ -82,7 +83,7 @@ export default function AdminUsersPage() {
             >
               <option value="">{t("admin.users.all_roles")}</option>
               {ROLE_FILTER.filter(Boolean).map((r) => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>{t(`roles.${r}`)}</option>
               ))}
             </select>
           </div>
@@ -125,7 +126,7 @@ export default function AdminUsersPage() {
                             <Button variant="ghost" size="sm" className="gap-1 px-2">
                               <Badge className={roleColors[user.role] ?? ""}>
                                 {user.role.includes("platform") && <Shield className="mr-1 h-3 w-3" />}
-                                {user.role}
+                                {t(`roles.${user.role}`)}
                               </Badge>
                               <ChevronDown className="h-3 w-3" />
                             </Button>
@@ -142,7 +143,7 @@ export default function AdminUsersPage() {
                               >
                                 <span className="flex items-center gap-2">
                                   {role === user.role && <Check className="h-3 w-3" />}
-                                  {role}
+                                  {t(`roles.${role}`)}
                                 </span>
                               </DropdownMenuItem>
                             ))}
@@ -158,7 +159,7 @@ export default function AdminUsersPage() {
                         )}
                       </TableCell>
                       <TableCell className="text-xs">
-                        {new Date(user.created_at).toLocaleDateString()}
+                        {formatDate(new Date(user.created_at), "PP", locale)}
                       </TableCell>
                     </TableRow>
                   ))}

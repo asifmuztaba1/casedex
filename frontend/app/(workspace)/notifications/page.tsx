@@ -33,6 +33,17 @@ import { formatDate } from "@/lib/date-format";
 
 const statusOptions = ["all", "pending", "sent", "read"] as const;
 
+function notificationTypeKey(type: string | null): string {
+  const value = type ?? "";
+  if (value === "hearing_reminder") return "notifications.type.hearing";
+  if (value === "cause_list_listing") return "notifications.type.cause_list";
+  if (value === "daily_briefing") return "notifications.type.briefing";
+  if (value.startsWith("billing_")) return "notifications.type.billing";
+  if (value.startsWith("support_")) return "notifications.type.support";
+  if (value.startsWith("ai_credit")) return "notifications.type.ai_credits";
+  return "notifications.type.general";
+}
+
 export default function NotificationsPage() {
   const { t, locale } = useLocale();
   const { data, isLoading, isError } = useNotifications();
@@ -123,7 +134,7 @@ export default function NotificationsPage() {
                             </div>
                           )}
                           <div className="text-xs text-[var(--muted-soft)]">
-                            {note.notification_type ?? "general"}
+                            {t(notificationTypeKey(note.notification_type))}
                           </div>
                         </div>
                       </div>

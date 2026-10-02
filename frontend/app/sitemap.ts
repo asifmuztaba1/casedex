@@ -1,15 +1,9 @@
 import type { MetadataRoute } from "next";
-
-const baseUrl = "https://casedex.app";
+import { PUBLIC_PATHS, SITE_URL } from "@/lib/public-pages";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: `${baseUrl}/`, lastModified: new Date() },
-    { url: `${baseUrl}/about`, lastModified: new Date() },
-    { url: `${baseUrl}/features`, lastModified: new Date() },
-    { url: `${baseUrl}/pricing`, lastModified: new Date() },
-    { url: `${baseUrl}/security`, lastModified: new Date() },
-    { url: `${baseUrl}/privacy`, lastModified: new Date() },
-    { url: `${baseUrl}/terms`, lastModified: new Date() },
-  ];
+  return PUBLIC_PATHS.map((path) => ({
+    url: path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`,
+    lastModified: new Date(),
+  }));
 }
