@@ -142,7 +142,7 @@ main ones:
 | Area | Endpoints |
 |---|---|
 | Cases | `GET/POST /cases`, `GET/PUT/DELETE /cases/{id}` (the detail includes the client, parties, participants, upcoming hearings, recent diary and documents) |
-| Hearings | `GET /hearings`, `GET /hearings/calendar?from=&to=`, `GET /hearings/daily-register?date=`, `GET/POST /cases/{id}/hearings`, `GET/PUT/DELETE /hearings/{id}` |
+| Hearings | `GET /hearings`, `GET /hearings/calendar?from=&to=` (`Y-m-d`, at most 92 days), `GET /hearings/daily-register?date=`, `GET/POST /cases/{id}/hearings`, `GET/PUT/DELETE /hearings/{id}` |
 | Diary | `GET /diary-entries`, `GET/POST /cases/{id}/diary`, `GET/PUT/DELETE /diary-entries/{id}` |
 | Documents | `GET /documents`, `GET/POST /cases/{id}/documents` (multipart: `file`, `category`), `GET/PUT/DELETE /documents/{id}` |
 | Parties and team | `GET/POST /cases/{id}/parties`, `PUT/DELETE /cases/{id}/parties/{party_id}`, `GET/POST /cases/{id}/participants`, `DELETE …/participants/{participant_id}` |
