@@ -51,7 +51,7 @@ export default function OnboardingWorkspacePage() {
   }, [isLoading, router, user]);
 
   if (isLoading || !user || user.tenant_public_id) {
-    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">{t("common.loading")}</div>;
   }
 
   const startTrial = async () => {

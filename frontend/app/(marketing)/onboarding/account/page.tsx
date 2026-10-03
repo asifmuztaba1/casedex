@@ -50,7 +50,7 @@ export default function OnboardingAccountPage() {
   }, [isLoading, router, searchParams, t, toast, user]);
 
   if (isLoading || !user) {
-    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">Loading...</div>;
+    return <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--muted)]">{t("common.loading")}</div>;
   }
 
   if (user.tenant_public_id) {
