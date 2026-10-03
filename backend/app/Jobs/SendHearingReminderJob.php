@@ -54,7 +54,8 @@ class SendHearingReminderJob implements ShouldQueue
 
         $user = $notification->user;
 
-        if ($user === null) {
+        // Nobody to email, or the account is being deleted.
+        if ($user === null || ! $user->canReceiveMessages()) {
             return;
         }
 

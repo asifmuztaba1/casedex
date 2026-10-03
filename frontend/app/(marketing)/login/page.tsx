@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +13,10 @@ import { Input } from "@/components/ui/input";
 import { useLogin, type AuthUser } from "@/features/auth/use-auth";
 import { loginDestination } from "@/features/auth/login-destination";
 import { hardNavigate } from "@/lib/hard-navigate";
+import { setFlashNotice } from "@/lib/flash-notice";
 import { useLocale } from "@/components/locale-provider";
+
+const noSubscription = () => () => {};
 
 export default function LoginPage() {
   const login = useLogin();
@@ -22,6 +25,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  // Arriving from Settings → Delete account (false during server render).
+  const accountDeleted = useSyncExternalStore(
+    noSubscription,
+    () => new URLSearchParams(window.location.search).get("account_deleted") === "1",
+    () => false
+  );
 
   const emailFormatValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const emailError = submitted && !email.trim();
@@ -74,6 +83,11 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {accountDeleted && (
+            <p role="status" className="mb-4 rounded-lg border border-[var(--border)] bg-[var(--wash)] px-3 py-2 text-sm text-[var(--muted)]">
+              {t("account_delete.login_notice")}
+            </p>
+          )}
           <form
             className="space-y-4"
             onSubmit={(event) => {
@@ -86,6 +100,9 @@ export default function LoginPage() {
                 { email, password },
                 {
                   onSuccess: (response) => {
+                    if (response.meta?.account_deletion_cancelled) {
+                      setFlashNotice("account_delete.cancelled_on_sign_in");
+                    }
                     void handleLoginSuccess(response.data);
                   },
                 }

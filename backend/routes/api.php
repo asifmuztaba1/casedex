@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Mobile\MobileAuthController;
+use App\Http\Controllers\Api\V1\AccountDeletionController;
 use App\Http\Controllers\Api\V1\WorkspaceExportController;
 use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
 use Illuminate\Support\Facades\Route;
@@ -86,6 +87,10 @@ Route::prefix('v1')->group(function (): void {
             Route::delete('/devices', [MobileDeviceController::class, 'destroyAll']);
             Route::delete('/devices/{publicId}', [MobileDeviceController::class, 'destroy']);
         });
+
+        // Account deletion (30-day grace; signing in again cancels it).
+        Route::get('/account/deletion', [AccountDeletionController::class, 'show'])->middleware('throttle:api');
+        Route::post('/account/deletion', [AccountDeletionController::class, 'store'])->middleware('throttle:6,1');
 
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);

@@ -1,6 +1,7 @@
 "use client";
 
 import AuthGuard from "@/components/auth-guard";
+import FlashNotice from "@/components/flash-notice";
 import { TourProvider } from "@/components/tour-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -325,6 +326,7 @@ export default function WorkspaceLayout({
         >
           <TourProvider>
             <AuthGuard>{children}</AuthGuard>
+            <FlashNotice />
             <ProductTour />
             <TourAutoStart delayMs={15_000} />
           </TourProvider>

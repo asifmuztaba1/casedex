@@ -53,6 +53,14 @@ class DispatchCaseNotificationJob implements ShouldQueue
             return;
         }
 
+        if ($notification->user !== null && ! $notification->user->canReceiveMessages()) {
+            // The recipient asked to delete their account.
+            $notification->status = 'failed';
+            $notification->save();
+
+            return;
+        }
+
         if ($notification->channel === 'email') {
             $user = $notification->user;
 

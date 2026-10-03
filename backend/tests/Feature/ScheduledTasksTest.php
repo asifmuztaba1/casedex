@@ -73,6 +73,7 @@ it('registers every recurring job with the scheduler', function (): void {
         'ai:grant-monthly-credits',
         'sanctum:prune-expired',
         'workspace:prune-exports',
+        'accounts:purge-deleted',
         'backup:clean',
         'backup:run',
         'judiciary:scrape-causelist',

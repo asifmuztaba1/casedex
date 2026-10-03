@@ -73,4 +73,28 @@ describe("login page", () => {
     expect(hardNavigate).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled();
   });
+
+  it("explains a pending account deletion when arriving from Settings", () => {
+    mockApi({});
+    window.history.pushState({}, "", "/login?account_deleted=1");
+    renderLogin();
+
+    expect(screen.getByRole("status")).toHaveTextContent("scheduled for deletion");
+    window.history.pushState({}, "", "/login");
+  });
+
+  it("leaves a notice for the next page when sign-in cancelled a pending deletion", async () => {
+    mockApi({
+      "/sanctum/csrf-cookie": { status: 204 },
+      "/api/v1/auth/login": { status: 200, body: { data: tenantUser, meta: { account_deletion_cancelled: true } } },
+      "/api/v1/auth/me": { status: 200, body: { data: tenantUser } },
+    });
+    renderLogin();
+
+    fillAndSubmit(tenantUser.email, "secret-pass");
+
+    await waitFor(() => expect(hardNavigate).toHaveBeenCalledWith("/dashboard"));
+    expect(sessionStorage.getItem("casedex_flash_notice")).toBe("account_delete.cancelled_on_sign_in");
+    sessionStorage.clear();
+  });
 });

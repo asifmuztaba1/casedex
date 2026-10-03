@@ -112,6 +112,29 @@ the profile, or an admin setting a member's password revokes every device
 token, except the device that made the change. The app then gets `401` and
 should show sign-in.
 
+### Deleting the account
+
+Both app stores require apps that create accounts to offer deletion in the
+app. CaseDex uses a 30-day grace period:
+
+| Request | Result |
+|---|---|
+| `GET /account/deletion` | `{can_delete, blocked_reason, workspace_will_be_deleted, grace_days}`. Show this before asking for confirmation. |
+| `POST /account/deletion` with `{"password": "…"}` | `202 {scheduled_for, workspace_will_be_deleted}`. Every token is revoked, push stops, and the user is emailed. |
+
+- `409 {"error": "handover_required"}`: the user is the only admin of a
+  workspace that still has members. They must make someone else admin first.
+- `422` on `password`: wrong password. The endpoint allows 6 attempts per
+  minute.
+- `workspace_will_be_deleted: true`: they are the last member, so the
+  workspace and all its cases and documents are deleted on the same date. An
+  export link is emailed first.
+- After a `202`, delete the stored token and show sign-in with a note that
+  signing in within 30 days keeps the account.
+- Signing in during the grace period (`/mobile/login` or the web) cancels the
+  deletion. The response then has `meta.account_deletion_cancelled: true`;
+  show "Your account will not be deleted".
+
 ## 2. Handling errors
 
 | Status | What the app should do |

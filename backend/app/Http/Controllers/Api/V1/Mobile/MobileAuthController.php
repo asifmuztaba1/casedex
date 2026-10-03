@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Mobile;
 
 use App\Domain\Auth\Actions\AuthenticateMobileDeviceAction;
+use App\Domain\Auth\Actions\CancelAccountDeletionAction;
 use App\Domain\Auth\Actions\IssueDeviceTokenAction;
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Auth\Actions\RefreshDeviceTokenAction;
@@ -27,7 +28,8 @@ class MobileAuthController extends Controller
     public function login(
         MobileLoginRequest $request,
         AuthenticateMobileDeviceAction $authenticate,
-        RecordAuditLogAction $auditLog
+        RecordAuditLogAction $auditLog,
+        CancelAccountDeletionAction $cancelDeletion
     ): JsonResponse {
         ['user' => $user, 'token' => $token] = $authenticate->handle(
             $request->string('email')->toString(),
@@ -37,8 +39,11 @@ class MobileAuthController extends Controller
         );
 
         $auditLog->handle('auth.login', $user, User::class, $user->public_id, $this->deviceMetadata($token->accessToken));
+        $deletionCancelled = $cancelDeletion->handle($user);
 
-        return (new MobileSessionResource($user, $token))->response();
+        return (new MobileSessionResource($user, $token))
+            ->additional(['meta' => ['account_deletion_cancelled' => $deletionCancelled]])
+            ->response();
     }
 
     public function register(

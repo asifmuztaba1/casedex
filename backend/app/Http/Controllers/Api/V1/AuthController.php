@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Domain\Auth\Actions\CancelAccountDeletionAction;
 use App\Domain\Auth\Actions\RecordAuditLogAction;
 use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request, RecordAuditLogAction $auditLog)
+    public function login(LoginRequest $request, RecordAuditLogAction $auditLog, CancelAccountDeletionAction $cancelDeletion)
     {
         $credentials = $request->validated();
 
@@ -27,8 +28,9 @@ class AuthController extends Controller
         $user = $request->user()?->loadMissing(['tenant', 'tenant.country', 'tenant.subscriptions', 'tenant.customer', 'country']);
 
         $auditLog->handle('auth.login', $user, User::class, $user?->public_id);
+        $deletionCancelled = $cancelDeletion->handle($user);
 
-        return new UserResource($user);
+        return (new UserResource($user))->additional(['meta' => ['account_deletion_cancelled' => $deletionCancelled]]);
     }
 
     public function me(Request $request)

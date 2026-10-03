@@ -33,4 +33,7 @@ return [
     'workspace_required' => 'Create or join a workspace first.',
     'calendar_range_too_long' => 'Choose a range of :days days or less.',
     'export_unavailable' => 'This export link has expired or the export is no longer available. Ask your workspace admin for a new export.',
+    'password_incorrect' => 'That password is not correct.',
+    'deletion_handover_required' => 'Make another member an admin before deleting your account, so the workspace is not left without one.',
+    'deletion_billing_failed' => 'We could not cancel your subscription, so your account was not scheduled for deletion. Please try again or contact support.',
 ];

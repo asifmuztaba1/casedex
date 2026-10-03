@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { apiGetBlob } from "@/lib/api-client";
 import SignedInDevicesCard from "@/features/devices/signed-in-devices-card";
 import WorkspaceExportCard from "@/features/workspace/workspace-export-card";
+import DeleteAccountCard from "@/features/account/delete-account-card";
 
 function filenameFromDisposition(disposition: string | null, fallback: string): string {
   if (!disposition) {
@@ -507,6 +508,8 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
+
+        <DeleteAccountCard />
       </div>
 
     </section>

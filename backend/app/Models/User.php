@@ -61,6 +61,9 @@ class User extends Authenticatable implements MustVerifyEmailContract
     protected function casts(): array
     {
         return [
+            'deletion_requested_at' => 'datetime',
+            'deletion_scheduled_for' => 'datetime',
+            'anonymised_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
@@ -89,6 +92,23 @@ class User extends Authenticatable implements MustVerifyEmailContract
 
             app(RevokeDeviceTokensAction::class)->handle($user, $keep, 'password_changed');
         });
+    }
+
+    /** Asked to delete the account; erased on deletion_scheduled_for unless they sign in first. */
+    public function isDeletionPending(): bool
+    {
+        return $this->deletion_requested_at !== null && $this->anonymised_at === null;
+    }
+
+    public function isAnonymised(): bool
+    {
+        return $this->anonymised_at !== null;
+    }
+
+    /** Whether notifications (email, WhatsApp) may still be sent to this person. */
+    public function canReceiveMessages(): bool
+    {
+        return ! $this->isDeletionPending() && ! $this->isAnonymised();
     }
 
     public function tenant()

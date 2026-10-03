@@ -21,6 +21,123 @@
         }
     ],
     "paths": {
+        "/account/deletion": {
+            "get": {
+                "operationId": "accountDeletion.show",
+                "summary": "What deleting would do: blocked until admin handover? workspace deleted too?",
+                "tags": [
+                    "AccountDeletion"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "can_delete": {
+                                                    "type": "boolean"
+                                                },
+                                                "blocked_reason": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "enum": [
+                                                        "handover_required",
+                                                        null
+                                                    ]
+                                                },
+                                                "workspace_will_be_deleted": {
+                                                    "type": "string"
+                                                },
+                                                "grace_days": {
+                                                    "type": "integer",
+                                                    "const": 30
+                                                }
+                                            },
+                                            "required": [
+                                                "can_delete",
+                                                "blocked_reason",
+                                                "workspace_will_be_deleted",
+                                                "grace_days"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "accountDeletion.store",
+                "tags": [
+                    "AccountDeletion"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RequestAccountDeletionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "scheduled_for": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "workspace_will_be_deleted": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "scheduled_for",
+                                                "workspace_will_be_deleted"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/ai/hearing-summary": {
             "post": {
                 "operationId": "ai.hearingSummary",
@@ -521,10 +638,22 @@
                                                     ]
                                                 }
                                             ]
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "account_deletion_cancelled": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "account_deletion_cancelled"
+                                            ]
                                         }
                                     },
                                     "required": [
-                                        "data"
+                                        "data",
+                                        "meta"
                                     ]
                                 }
                             }
@@ -3801,7 +3930,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_65",
+                "operationId": "v1.diaryEntry.store_67",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -3994,7 +4123,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_89",
+                "operationId": "v1.diaryEntry.store_91",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4310,7 +4439,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_67",
+                "operationId": "v1.document.store_69",
                 "tags": [
                     "Document"
                 ],
@@ -4503,7 +4632,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_94",
+                "operationId": "v1.document.store_96",
                 "tags": [
                     "Document"
                 ],
@@ -4911,7 +5040,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_63",
+                "operationId": "v1.hearing.store_65",
                 "tags": [
                     "Hearing"
                 ],
@@ -5227,7 +5356,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_84",
+                "operationId": "v1.hearing.store_86",
                 "tags": [
                     "Hearing"
                 ],
@@ -5508,10 +5637,22 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/components/schemas/MobileSessionResource"
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "account_deletion_cancelled": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "account_deletion_cancelled"
+                                            ]
                                         }
                                     },
                                     "required": [
-                                        "data"
+                                        "data",
+                                        "meta"
                                     ]
                                 }
                             }
@@ -9537,6 +9678,19 @@
                     "password_confirmation"
                 ],
                 "title": "RegisterUserRequest"
+            },
+            "RequestAccountDeletionRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "description": "Re-entered to confirm it is really the account owner."
+                    }
+                },
+                "required": [
+                    "password"
+                ],
+                "title": "RequestAccountDeletionRequest"
             },
             "ResearchNoteResource": {
                 "type": "object",

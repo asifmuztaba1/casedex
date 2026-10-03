@@ -15,6 +15,7 @@ class ListUsersAction
         return User::query()
             ->with(['tenant', 'country'])
             ->where('tenant_id', $actor->tenant_id)
+            ->whereNull('anonymised_at')
             ->orderByDesc('created_at')
             ->get();
     }
