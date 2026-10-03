@@ -46,6 +46,8 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent>
           <form
+            // Before the app has loaded, a native submit must never put the password in the URL.
+            method="post"
             className="space-y-4"
             onSubmit={async (event) => {
               event.preventDefault();

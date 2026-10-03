@@ -52,7 +52,7 @@ export default function DeleteAccountCard() {
             </Button>
           </>
         ) : (
-          <form className="space-y-3" onSubmit={submit}>
+          <form method="post" className="space-y-3" onSubmit={submit}>
             <p>{t("account_delete.desc").replace("{days}", String(preflight.grace_days))}</p>
             {preflight.workspace_will_be_deleted && (
               <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-rose-800">

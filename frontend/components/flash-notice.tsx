@@ -11,10 +11,17 @@ export default function FlashNotice() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const key = takeFlashNotice();
-    if (key) {
-      toast({ title: t(key), variant: "success" });
-    }
+    // Wait one tick: this effect runs before the root <Toaster> subscribes
+    // (child effects first), and a toast sent earlier is dropped. The key is
+    // only taken when the toast fires, so StrictMode's re-run can't lose it.
+    const timer = window.setTimeout(() => {
+      const key = takeFlashNotice();
+      if (key) {
+        toast({ title: t(key), variant: "success" });
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [t, toast]);
 
   return null;

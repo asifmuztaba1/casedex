@@ -47,6 +47,8 @@ export default function AdminLoginPage() {
         </div>
 
         <form
+          // Before the app has loaded, a native submit must never put the password in the URL.
+          method="post"
           className="mt-6 space-y-4"
           onSubmit={(event) => {
             event.preventDefault();
