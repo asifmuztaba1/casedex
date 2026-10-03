@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLocale } from "@/components/locale-provider";
+import AiVerifyNotice from "@/components/ai-verify-notice";
 
 type Props = {
   request: AiRequest | null;
@@ -64,6 +65,7 @@ export default function AiResultPanel({ request, isPending }: Props) {
                 <span className="text-xs">{copied ? t("ai.copied") : t("ai.copy")}</span>
               </Button>
             </div>
+            <AiVerifyNotice feature={current.feature} />
             <div className="whitespace-pre-wrap rounded-lg border border-[var(--border)] bg-[var(--paper)] p-4 text-sm leading-relaxed text-[var(--foreground)]">
               {current.result_text}
             </div>
