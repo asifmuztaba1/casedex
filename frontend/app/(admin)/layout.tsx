@@ -25,6 +25,7 @@ const adminNav = [
   { href: "/admin/ai-payments", key: "admin.nav.ai_payments" },
   { href: "/admin/support", key: "admin.nav.support" },
   { href: "/admin/feedback", key: "admin.nav.feedback" },
+  { href: "/admin/ai", key: "admin.nav.ai" },
 ];
 
 

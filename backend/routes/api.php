@@ -42,6 +42,8 @@ use App\Http\Controllers\Api\V1\Mobile\MobileAuthController;
 use App\Http\Controllers\Api\V1\AccountDeletionController;
 use App\Http\Controllers\Api\V1\WorkspaceExportController;
 use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
+use App\Domain\Ai\Services\AiProviderCatalog;
+use App\Http\Controllers\Api\V1\Admin\AiProviderController as AdminAiProviderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -116,6 +118,15 @@ Route::prefix('v1')
     ->middleware(['auth:sanctum', 'platform', 'throttle:api'])
     ->group(function (): void {
         Route::get('/admin/analytics', [AdminPlatformAnalyticsController::class, 'index']);
+
+        // Admin → AI: provider and model used by every workspace.
+        Route::get('/admin/ai-providers', [AdminAiProviderController::class, 'index']);
+        Route::post('/admin/ai-providers/deactivate', [AdminAiProviderController::class, 'deactivate']);
+        Route::put('/admin/ai-providers/{provider}', [AdminAiProviderController::class, 'update'])->whereIn('provider', AiProviderCatalog::keys());
+        Route::post('/admin/ai-providers/{provider}/test', [AdminAiProviderController::class, 'test'])
+            ->whereIn('provider', AiProviderCatalog::keys())
+            ->middleware('throttle:10,1');
+        Route::post('/admin/ai-providers/{provider}/activate', [AdminAiProviderController::class, 'activate'])->whereIn('provider', AiProviderCatalog::keys());
         Route::get('/admin/tenants', [AdminTenantController::class, 'index']);
         Route::get('/admin/users', [AdminUserController::class, 'index']);
         Route::patch('/admin/users/{publicId}/role', [AdminUserController::class, 'updateRole']);
