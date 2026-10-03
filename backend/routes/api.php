@@ -40,16 +40,20 @@ use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Mobile\MobileAuthController;
 use App\Http\Controllers\Api\V1\AccountDeletionController;
+use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\WorkspaceExportController;
 use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
 use App\Domain\Ai\Services\AiProviderCatalog;
 use App\Http\Controllers\Api\V1\Admin\AiProviderController as AdminAiProviderController;
+use App\Http\Controllers\Api\V1\Admin\InviteCodeController as AdminInviteCodeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/countries', [CountryController::class, 'index']);
     Route::post('/auth/login', [AuthController::class, 'login'])
         ->middleware('throttle:auth');
+    // Whether sign-up needs an invite code (private beta).
+    Route::get('/auth/registration', [RegistrationController::class, 'show']);
     Route::post('/auth/register', [AuthController::class, 'register'])
         ->middleware('throttle:auth');
     Route::post('/auth/forgot-password', [AuthPasswordController::class, 'sendResetLink'])
@@ -118,6 +122,12 @@ Route::prefix('v1')
     ->middleware(['auth:sanctum', 'platform', 'throttle:api'])
     ->group(function (): void {
         Route::get('/admin/analytics', [AdminPlatformAnalyticsController::class, 'index']);
+
+        // Admin → Invites: private-beta sign-up codes and registration mode.
+        Route::get('/admin/invite-codes', [AdminInviteCodeController::class, 'index']);
+        Route::post('/admin/invite-codes', [AdminInviteCodeController::class, 'store']);
+        Route::post('/admin/invite-codes/{publicId}/revoke', [AdminInviteCodeController::class, 'revoke']);
+        Route::put('/admin/registration-mode', [AdminInviteCodeController::class, 'updateRegistrationMode']);
 
         // Admin → AI: provider and model used by every workspace.
         Route::get('/admin/ai-providers', [AdminAiProviderController::class, 'index']);

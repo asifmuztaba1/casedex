@@ -37,4 +37,5 @@ return [
     'deletion_handover_required' => 'Make another member an admin before deleting your account, so the workspace is not left without one.',
     'deletion_billing_failed' => 'We could not cancel your subscription, so your account was not scheduled for deletion. Please try again or contact support.',
     'ai_provider_key_missing' => 'Save an API key for this provider first.',
+    'invite_code_invalid' => 'This invite code is not valid, has expired or has been used up.',
 ];
