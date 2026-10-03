@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { planLabel } from "@/features/billing/labels";
 import { useLocale } from "@/components/locale-provider";
 import { isManualMfsOnlyLaunch } from "@/lib/launch-config";
 
@@ -29,9 +30,9 @@ export default function SubscriptionWall() {
               : t("billing.wall_desc")}
           </p>
           <div className="grid gap-3 md:grid-cols-3">
-            <Button variant="outline" onClick={() => onSubscribe("starter")}>Starter</Button>
-            <Button onClick={() => onSubscribe("professional")}>Professional</Button>
-            <Button variant="outline" onClick={() => onSubscribe("chambers")}>Chambers</Button>
+            <Button variant="outline" onClick={() => onSubscribe("starter")}>{planLabel(t, "starter")}</Button>
+            <Button onClick={() => onSubscribe("professional")}>{planLabel(t, "professional")}</Button>
+            <Button variant="outline" onClick={() => onSubscribe("chambers")}>{planLabel(t, "chambers")}</Button>
           </div>
         </CardContent>
       </Card>

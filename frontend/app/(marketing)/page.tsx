@@ -279,9 +279,7 @@ export default function Home() {
           <CardTitle className="text-2xl font-semibold">
             {t("home.plans_title")}
           </CardTitle>
-          <CardDescription>
-            Unlimited cases and team members are included in every plan. Upgrade by storage and service level.
-          </CardDescription>
+          <CardDescription>{t("home.plans_desc")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 md:grid-cols-3">
           {PLAN_CATALOG.map((plan) => (
