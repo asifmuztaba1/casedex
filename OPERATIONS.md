@@ -98,6 +98,8 @@ Workspace exports (Settings → Export workspace data) are zipped by the queue i
 
 ### AI Integration
 
+**AI provider is chosen in the admin console (Admin → AI provider).** A platform admin saves a key and model for Gemini, Groq, OpenAI or OpenRouter, tests the connection, and makes one active. Keys are stored encrypted with `APP_KEY`, so rotating `APP_KEY` means re-entering them. The `AI_*` variables below are only the fallback used until a provider is active, or after "Use server settings instead".
+
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `AI_DRIVER` | `openai_compatible` | `openai_compatible` or `gemini` |

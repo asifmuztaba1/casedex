@@ -7,16 +7,20 @@ use Illuminate\Support\Facades\Http;
 
 class GeminiProvider implements AiProviderInterface
 {
+    /** Without a config (e.g. resolved from the container) the .env settings are used. */
+    public function __construct(private readonly ?AiProviderConfig $config = null)
+    {
+    }
+
     public function complete(array $messages, array $options = []): array
     {
-        $baseUrl = rtrim((string) config('services.ai.gemini_base_url', ''), '/');
-        $apiKey = (string) config('services.ai.gemini_api_key', '');
-        $model = (string) ($options['model'] ?? config('services.ai.gemini_model', 'gemini-flash-latest'));
+        $config = $this->config ?? AiProviderConfig::fromEnv();
+        $baseUrl = rtrim($config->baseUrl, '/');
+        $apiKey = $config->apiKey;
+        $model = (string) ($options['model'] ?? $config->model);
 
         if ($baseUrl === '' || $apiKey === '') {
-            throw new \RuntimeException(
-                'Gemini provider is not configured. Set AI_GEMINI_API_KEY, GEMINI_API_KEY, GOOGLE_API_KEY, or AI_API_KEY.'
-            );
+            throw new \RuntimeException('Gemini provider is not configured. Add an API key in Admin → AI.');
         }
 
         $systemText = $this->extractMessageByRole($messages, 'system');

@@ -7,14 +7,20 @@ use Illuminate\Support\Facades\Http;
 
 class OpenAiCompatibleProvider implements AiProviderInterface
 {
+    /** Without a config (e.g. resolved from the container) the .env settings are used. */
+    public function __construct(private readonly ?AiProviderConfig $config = null)
+    {
+    }
+
     public function complete(array $messages, array $options = []): array
     {
-        $baseUrl = rtrim((string) config('services.ai.base_url', ''), '/');
-        $apiKey = (string) config('services.ai.api_key', '');
-        $model = (string) ($options['model'] ?? config('services.ai.model', 'gpt-4.1-mini'));
+        $config = $this->config ?? AiProviderConfig::fromEnv();
+        $baseUrl = rtrim($config->baseUrl, '/');
+        $apiKey = $config->apiKey;
+        $model = (string) ($options['model'] ?? $config->model);
 
         if ($baseUrl === '' || $apiKey === '') {
-            throw new \RuntimeException('AI provider is not configured.');
+            throw new \RuntimeException('AI provider is not configured. Add an API key in Admin → AI.');
         }
 
         $response = Http::withToken($apiKey)
