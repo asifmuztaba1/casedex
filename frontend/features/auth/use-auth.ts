@@ -95,6 +95,7 @@ type RegisterPayload = {
   password_confirmation: string;
   country_id: number;
   locale?: "en" | "bn";
+  invite_code?: string;
 };
 
 type LoginPayload = {

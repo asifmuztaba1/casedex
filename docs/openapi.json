@@ -3930,7 +3930,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_67",
+                "operationId": "v1.diaryEntry.store_68",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4123,7 +4123,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_91",
+                "operationId": "v1.diaryEntry.store_92",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4439,7 +4439,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_69",
+                "operationId": "v1.document.store_70",
                 "tags": [
                     "Document"
                 ],
@@ -4632,7 +4632,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_96",
+                "operationId": "v1.document.store_97",
                 "tags": [
                     "Document"
                 ],
@@ -5040,7 +5040,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_65",
+                "operationId": "v1.hearing.store_66",
                 "tags": [
                     "Hearing"
                 ],
@@ -5356,7 +5356,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_86",
+                "operationId": "v1.hearing.store_87",
                 "tags": [
                     "Hearing"
                 ],
@@ -5754,7 +5754,7 @@
         },
         "/mobile/devices": {
             "get": {
-                "operationId": "v1.mobile.mobileDevice.index_11",
+                "operationId": "v1.mobile.mobileDevice.index_12",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5788,7 +5788,7 @@
         },
         "/mobile/devices/{publicId}": {
             "delete": {
-                "operationId": "v1.mobile.mobileDevice.destroy_12",
+                "operationId": "v1.mobile.mobileDevice.destroy_13",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5872,7 +5872,7 @@
         },
         "/devices": {
             "get": {
-                "operationId": "v1.mobile.mobileDevice.index_15",
+                "operationId": "v1.mobile.mobileDevice.index_16",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -5944,7 +5944,7 @@
         },
         "/devices/{publicId}": {
             "delete": {
-                "operationId": "v1.mobile.mobileDevice.destroy_17",
+                "operationId": "v1.mobile.mobileDevice.destroy_18",
                 "tags": [
                     "MobileDevice"
                 ],
@@ -6459,6 +6459,43 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/auth/registration": {
+            "get": {
+                "operationId": "registration.show",
+                "summary": "Whether sign-up needs an invite code (private beta), so the form can ask for one",
+                "tags": [
+                    "Registration"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "mode": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "mode"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -9439,6 +9476,14 @@
                             null
                         ]
                     },
+                    "invite_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Private beta: required while registration is invite-only (Admin \u2192 Invites).",
+                        "maxLength": 40
+                    },
                     "device_name": {
                         "type": "string",
                         "description": "Shown in the device list, e.g. \"Pixel 8\" or \"Rahim's iPhone\".",
@@ -9665,6 +9710,14 @@
                             "bn",
                             null
                         ]
+                    },
+                    "invite_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Private beta: required while registration is invite-only (Admin \u2192 Invites).",
+                        "maxLength": 40
                     },
                     "password_confirmation": {
                         "type": "string"

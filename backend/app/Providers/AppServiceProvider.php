@@ -90,6 +90,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-workspace', fn (User $user): bool => $user->role === UserRole::Admin);
         // Platform editors can see Admin → AI; only platform admins change it.
         Gate::define('manage-platform-ai', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
+        Gate::define('manage-platform-access', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
 
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());

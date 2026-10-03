@@ -64,7 +64,10 @@ Failures:
 
 `POST /mobile/register` takes `name`, `email`, `password`,
 `password_confirmation`, `country_id` (from `GET /countries`), and an optional
-`locale`, plus `device_name` and `platform`. It returns `201` with the same
+`locale`, plus `device_name` and `platform`. During the private beta it also
+needs `invite_code`: call `GET /auth/registration` first, and show the field when
+`mode` is `invite`. An invalid, expired or used-up code returns `422` on
+`invite_code`. It returns `201` with the same
 body as sign-in. The new user has no workspace yet (`tenant_public_id: null`).
 See section 3.
 

@@ -110,6 +110,10 @@ return [
     |
     */
 
+    // Private beta: 'invite' needs an invite code to sign up, 'open' does not.
+    // Platform admins override this in Admin → Invites.
+    'registration_mode' => env('REGISTRATION_MODE', 'invite'),
+
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
 ];

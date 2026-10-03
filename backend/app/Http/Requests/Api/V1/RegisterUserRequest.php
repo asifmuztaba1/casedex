@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Domain\Platform\Services\RegistrationPolicy;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterUserRequest extends FormRequest
@@ -23,6 +25,8 @@ class RegisterUserRequest extends FormRequest
             'password' => ['required', 'confirmed', Password::min(8)],
             'country_id' => ['required', 'integer', 'exists:countries,id'],
             'locale' => ['nullable', 'string', 'in:en,bn'],
+            // Private beta: required while registration is invite-only (Admin → Invites).
+            'invite_code' => [Rule::requiredIf(fn (): bool => app(RegistrationPolicy::class)->requiresInvite()), 'nullable', 'string', 'max:40'],
         ];
     }
 }
