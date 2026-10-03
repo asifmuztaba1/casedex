@@ -41,6 +41,9 @@ Schedule::command('billing:apply-manual-subscription-changes')
 
 Schedule::command('workspace:prune-exports')->dailyAt('00:50');
 
+// Accounts whose 30-day deletion grace period has ended.
+Schedule::command('accounts:purge-deleted')->dailyAt('01:10')->withoutOverlapping();
+
 // Mobile device tokens past their expiry (refresh extends them).
 Schedule::command('sanctum:prune-expired --hours=24')->dailyAt('00:45');
 

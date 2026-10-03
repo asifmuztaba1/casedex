@@ -85,6 +85,7 @@ export type AuthUser = {
 
 type AuthResponse = {
   data: AuthUser;
+  meta?: { account_deletion_cancelled?: boolean };
 };
 
 type RegisterPayload = {
@@ -301,7 +302,9 @@ export function useLogin() {
       client.invalidateQueries({ queryKey: ["auth-me"] });
       toast({
         title: t("toast.signed_in"),
-        description: t("toast.welcome_back"),
+        description: response.meta?.account_deletion_cancelled
+          ? t("account_delete.cancelled_on_sign_in")
+          : t("toast.welcome_back"),
         variant: "success",
       });
     },

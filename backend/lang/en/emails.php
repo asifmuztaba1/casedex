@@ -52,4 +52,13 @@ return [
     'export_ready_button' => 'Download export',
     'export_ready_expires' => 'The link works until :date. Anyone with the link can download the file, so do not forward this email.',
     'export_ready_outro' => 'If you did not ask for this export, tell your workspace admin and contact support.',
+    'deletion_scheduled_subject' => 'Your CaseDex™ account will be deleted',
+    'deletion_scheduled_intro' => 'We received your request to delete your account. It is now signed out on every device and will be permanently deleted on :date.',
+    'deletion_scheduled_workspace' => 'You are the last member of your workspace, so the workspace and all its cases, hearings, diary entries, contacts and documents will be deleted on the same date. We are preparing an export of everything and will email you a download link shortly.',
+    'deletion_scheduled_cancel' => 'Changed your mind? Sign in before that date and your account will be kept.',
+    'deletion_scheduled_button' => 'Sign in to keep my account',
+    'deletion_scheduled_outro' => 'If you did not ask for this, sign in now and change your password.',
+    'deletion_cancelled_subject' => 'Your CaseDex™ account deletion was cancelled',
+    'deletion_cancelled_intro' => 'You signed in, so your account will not be deleted. Everything stays as it was.',
+    'deletion_cancelled_outro' => 'If this was not you, change your password now. If a paid plan was cancelled with the deletion request, you can resume it from Billing.',
 ];

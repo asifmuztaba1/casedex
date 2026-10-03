@@ -30,6 +30,8 @@ File: `backend/.env.example`
 | `FCM_PROJECT_ID` / `FCM_CREDENTIALS` | Mobile app push (Firebase Cloud Messaging). `FCM_CREDENTIALS` is the service-account JSON or a path to it. Without both, mobile push is off. |
 | `MOBILE_TOKEN_TTL_DAYS` | How long a mobile device token lasts before the app must refresh it (default 60). |
 
+Account deletion (Settings → Delete account, or the app): the account is signed out and erased 30 days later by `accounts:purge-deleted` (daily, 01:10). Signing in before then cancels it. Erased users are anonymised in place ("Deleted user"). When the last member goes, the workspace's cases, documents and files are deleted. Accounting records (payments, plan changes, AI credit ledger and wallet) and the audit log, with its details cleared, are kept under a soft-deleted "Deleted workspace".
+
 Workspace exports (Settings → Export workspace data) are zipped by the queue into `exports/{workspace}/` on the default disk and emailed as a signed link built from `APP_URL`. Manual exports expire after 7 days; `workspace:prune-exports` deletes expired files daily.
 | `RESEND_API_KEY` | Get from https://resend.com/api-keys |
 | `POSTMARK_API_KEY` | Get from Postmark dashboard |
