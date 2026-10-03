@@ -6,6 +6,18 @@ use App\Domain\Ai\Enums\AiFeature;
 
 class AiExecutionService
 {
+    /**
+     * Added to every feature's instructions (AGENTS.md §11): CaseDex drafts
+     * for a lawyer's review and never decides for them.
+     */
+    public const GUARDRAILS = <<<'TEXT'
+        Ground rules for every answer:
+        - You assist a lawyer, who reviews and is responsible for everything. Your output is a draft, never legal advice to a client.
+        - Never predict the outcome of a case, a verdict, a sentence, or how a judge or court will rule, even if asked.
+        - Use only the facts provided. Do not invent facts, parties, dates, sections, cases or citations.
+        - When you are not sure a section, case or deadline is correct and current, say so plainly and tell the lawyer to verify it.
+        TEXT;
+
     public function __construct(
         private readonly AiProviderFactory $providerFactory,
     ) {
@@ -22,7 +34,7 @@ class AiExecutionService
         $messages = [
             [
                 'role' => 'system',
-                'content' => $this->systemPrompt($feature, $payload),
+                'content' => $this->systemPrompt($feature, $payload)."\n\n".self::GUARDRAILS,
             ],
             [
                 'role' => 'user',

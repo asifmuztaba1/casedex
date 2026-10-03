@@ -175,7 +175,6 @@ Business logic MUST live in Actions / Services.
 - Billing
 - Accounting
 - CRM
-- AI-assisted hearing summaries
 - Outcome prediction
 - Public case search
 
@@ -234,20 +233,29 @@ Jobs must be:
 
 # 11. AUTOMATION USAGE RULES (CRITICAL)
 
-Automation may ONLY:
-- summarize provided content
-- organize notes
-- assist structure
+Decided 2026-10-04: all nine AI features ship, as drafting help for a lawyer
+who reviews and owns the result.
 
-Automation must NEVER:
-- give legal advice
-- predict outcomes
-- suggest verdicts
+AI may:
+- summarize provided content (hearings, diary, research notes)
+- answer questions from the user's own documents
+- draft client messages and petitions from facts the user gives
+- suggest statutory sections, case law and procedural next steps, as leads
+  for the lawyer to verify
+
+AI must NEVER:
+- predict outcomes, verdicts, sentences or how a court will rule
+- present its output as legal advice to a client
+- invent facts, parties, sections, cases or citations (state uncertainty instead)
+- save or send anything without the user reviewing it
 - override user input
 
-For MVP:
-- AI-assisted features are out of scope
-- all summaries are user-reviewed before save
+Every AI result:
+- carries the "AI draft, not legal advice" notice
+  (`components/ai-verify-notice.tsx`), plus a specific check for case law,
+  sections, next steps and petitions
+- is generated with the shared guardrails (`AiExecutionService::GUARDRAILS`)
+- uses the provider an admin chose in Admin → AI provider
 
 ---
 
