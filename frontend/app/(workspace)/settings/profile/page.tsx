@@ -73,6 +73,8 @@ function ProfileSettingsForm({
         </CardHeader>
         <CardContent>
           <form
+            // Before the app has loaded, a native submit must never put the password in the URL.
+            method="post"
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
