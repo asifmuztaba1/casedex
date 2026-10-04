@@ -118,10 +118,11 @@ export default function OnboardingWorkspacePage() {
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
+            <label htmlFor="workspace-name" className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-soft)]">
               {t("onboarding.workspace_name")}
             </label>
             <Input
+              id="workspace-name"
               value={workspaceName}
               onChange={(e) => setWorkspaceName(e.target.value)}
               placeholder={t("onboarding.workspace_placeholder")}
