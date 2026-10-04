@@ -111,6 +111,13 @@ return [
             'next_steps' => (int) env('AI_COST_NEXT_STEPS', 4),
             'client_communication' => (int) env('AI_COST_CLIENT_COMMUNICATION', 3),
         ],
+        // Voice (ElevenLabs). A credit sells for about ৳10; dictation costs us
+        // about ৳0.80 a minute and a voice-associate minute about ৳11–15.
+        'voice' => [
+            'dictation_seconds_per_credit' => (int) env('AI_VOICE_DICTATION_SECONDS_PER_CREDIT', 120),
+            'dictation_max_seconds' => (int) env('AI_VOICE_DICTATION_MAX_SECONDS', 180),
+            'associate_credits_per_minute' => (int) env('AI_VOICE_ASSOCIATE_CREDITS_PER_MINUTE', 2),
+        ],
         'packs' => [
             'small' => [
                 'name' => env('AI_PACK_SMALL_NAME', 'Small AI Pack'),

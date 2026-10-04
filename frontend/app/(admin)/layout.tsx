@@ -27,6 +27,7 @@ const adminNav = [
   { href: "/admin/feedback", key: "admin.nav.feedback" },
   { href: "/admin/invites", key: "admin.nav.invites" },
   { href: "/admin/ai", key: "admin.nav.ai" },
+  { href: "/admin/voice", key: "admin.nav.voice" },
 ];
 
 

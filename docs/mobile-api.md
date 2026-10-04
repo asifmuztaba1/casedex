@@ -182,6 +182,7 @@ main ones:
 | Research notes | `GET/POST /research-notes`, `GET/PUT/DELETE /research-notes/{id}` |
 | Profile | `GET /auth/me`, `PUT /profile` |
 | Reference data | `GET /countries`, `GET /courts` |
+| Voice dictation | `GET /voice/status`, `POST /voice/consent` (once per user), `POST /voice/transcriptions` (multipart: `audio`, `duration_seconds` ≤ 180, optional `language` bn/en) returns `{text, duration_seconds, credits_charged}`. Put the text in the field for the user to edit before saving. Errors: `403 voice_consent_required`, `402 insufficient_credits`, `503 voice_unavailable`, `502 transcription_failed` |
 | Workspace export (admins) | `POST /workspace/exports` (`202`; the zip is emailed as a signed link), `GET /workspace/exports` (latest five, with `download_url` when ready) |
 | Support | `GET/POST /support/tickets`, `GET/POST /support/tickets/{id}/messages` |
 

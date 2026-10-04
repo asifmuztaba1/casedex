@@ -3930,7 +3930,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_68",
+                "operationId": "v1.diaryEntry.store_71",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4123,7 +4123,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_92",
+                "operationId": "v1.diaryEntry.store_95",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4439,7 +4439,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_70",
+                "operationId": "v1.document.store_73",
                 "tags": [
                     "Document"
                 ],
@@ -4632,7 +4632,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_97",
+                "operationId": "v1.document.store_100",
                 "tags": [
                     "Document"
                 ],
@@ -5040,7 +5040,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_66",
+                "operationId": "v1.hearing.store_69",
                 "tags": [
                     "Hearing"
                 ],
@@ -5356,7 +5356,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_87",
+                "operationId": "v1.hearing.store_90",
                 "tags": [
                     "Hearing"
                 ],
@@ -7591,6 +7591,162 @@
                     },
                     "403": {
                         "$ref": "#/components/responses/AuthorizationException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/voice/status": {
+            "get": {
+                "operationId": "voice.status",
+                "tags": [
+                    "Voice"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "dictation_available": {
+                                                    "type": "boolean"
+                                                },
+                                                "consent_given": {
+                                                    "type": "boolean"
+                                                },
+                                                "max_seconds": {
+                                                    "type": "integer"
+                                                },
+                                                "seconds_per_credit": {
+                                                    "type": "integer"
+                                                },
+                                                "zero_retention": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "dictation_available",
+                                                "consent_given",
+                                                "max_seconds",
+                                                "seconds_per_credit",
+                                                "zero_retention"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/voice/consent": {
+            "post": {
+                "operationId": "voice.consent",
+                "tags": [
+                    "Voice"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "consent_given": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "consent_given"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/voice/transcriptions": {
+            "post": {
+                "operationId": "voice.transcribe",
+                "tags": [
+                    "Voice"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TranscribeDictationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string"
+                                                },
+                                                "language_code": {},
+                                                "duration_seconds": {
+                                                    "type": "integer"
+                                                },
+                                                "credits_charged": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "text",
+                                                "language_code",
+                                                "duration_seconds",
+                                                "credits_charged"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
@@ -11202,6 +11358,39 @@
                     "locale"
                 ],
                 "title": "TenantResource"
+            },
+            "TranscribeDictationRequest": {
+                "type": "object",
+                "properties": {
+                    "audio": {
+                        "type": "string",
+                        "format": "binary",
+                        "contentMediaType": "application/octet-stream",
+                        "description": "Browsers record webm/ogg (Chrome, Firefox) or mp4 (Safari)."
+                    },
+                    "duration_seconds": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 180
+                    },
+                    "language": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Leave out to let Scribe detect Bangla, English or a mix.",
+                        "enum": [
+                            "bn",
+                            "en",
+                            null
+                        ]
+                    }
+                },
+                "required": [
+                    "audio",
+                    "duration_seconds"
+                ],
+                "title": "TranscribeDictationRequest"
             },
             "UpdateCasePartyRequest": {
                 "type": "object",
