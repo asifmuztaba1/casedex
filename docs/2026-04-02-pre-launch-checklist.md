@@ -1,6 +1,27 @@
 # CaseDex Pre-Launch Checklist
 
-Date: 2026-04-02
+Date: 2026-04-02 (status updated 2026-10-04)
+
+## Status on 2026-10-04
+
+The April baseline below is historical. Since then:
+
+- Laravel 13 is done (13.34, Horizon 5.50). Backend tests and frontend
+  lint, type check, unit tests and build all pass in CI, and CI blocks merges.
+- All three "Remaining Open Inputs" are decided (see that section).
+- Built since April: account deletion and workspace export, invite-only beta,
+  admin-chosen AI provider, AI guardrails, native-app API with push, web push,
+  Bangla emails and notifications, offline mode, tenant isolation and audit
+  tests, and public IDs everywhere.
+
+Still blocking launch:
+
+1. **Production is unreachable.** Every deploy since May times out at the SSH
+   step, so none of the above is live.
+2. **No working AI key.** Add one in Admin → AI provider once production is up.
+3. **Invite codes.** Create them in Admin → Invites before inviting firms.
+4. **Bangla legal terms** need native review (`docs/bangla-legal-terms-review.md`).
+5. **Firebase key** for phone push (optional for the web beta).
 
 ## Decision Locked
 
@@ -115,21 +136,16 @@ Date: 2026-04-02
 
 ## Remaining Open Inputs
 
-These are the only answers still missing or not concrete enough for implementation:
+All three are now answered:
 
-1. Exact final price values for:
-   - Starter monthly / yearly
-   - Professional monthly / yearly
-   - Chambers monthly / yearly
-
-2. AI provider choice.
-   - Recommended default for fastest beta: OpenAI only.
-   - If we want fallback routing, define the fallback provider now.
-
-3. Private beta access model.
-   - Open signup with manual approval,
-   - invite-only accounts,
-   - or direct onboarding only for pre-selected firms.
+1. **Prices:** set in the app (`frontend/features/billing/plan-catalog.ts`):
+   Starter ৳500 / ৳5,000, Practice ৳1,900 / ৳19,000, Chambers ৳4,900 / ৳49,000
+   (monthly / yearly).
+2. **AI provider:** chosen by a platform admin in Admin → AI provider (Gemini,
+   Groq, OpenAI or OpenRouter), with `.env` as the fallback. All nine AI
+   features ship with guardrails (decided 2026-10-04, AGENTS.md §11).
+3. **Beta access:** invite codes from Admin → Invites (decided 2026-10-04);
+   registration can be opened from the same page.
 
 ## Laravel 13 Review
 

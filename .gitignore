@@ -83,3 +83,6 @@ frontend/.pnpm-store/*
 backend/casedex
 *.sqlite
 *.sqlite-journal
+
+# Local browser-test logs
+.playwright-mcp/
