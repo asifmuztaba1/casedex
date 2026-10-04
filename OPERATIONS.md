@@ -32,6 +32,9 @@ File: `backend/.env.example`
 | `REGISTRATION_MODE` | `invite` (default: sign-up needs a code) or `open`. Platform admins override it in Admin → Invites, where codes are created and their sign-up links copied. |
 | `AI_VOICE_DICTATION_SECONDS_PER_CREDIT` / `AI_VOICE_DICTATION_MAX_SECONDS` | Dictation billing (default 1 AI credit per started 120 s) and the longest recording (default 180 s). The ElevenLabs key, on/off switch and zero retention are set in Admin → Voice, not in `.env`. |
 
+
+**Page-guide voice (optional, one-off).** The page guide plays recorded ElevenLabs audio when it exists, and otherwise the browser's voice (many devices have no Bangla voice). To generate it, run `ELEVENLABS_API_KEY=… node frontend/scripts/generate-guide-audio.mjs` from `frontend/`, then commit `public/voice-guide/` and `lib/voice-guide-manifest.json`. Only CaseDex's own help text is sent. Choose voices in the ElevenLabs Voice Library and pass them as `ELEVENLABS_VOICE_BN` / `ELEVENLABS_VOICE_EN`; a native Bangla voice sounds much better than the defaults. Re-run the script after editing `lib/assistant-scripts.json`; unchanged scripts are skipped, and stale audio is never played.
+
 Account deletion (Settings → Delete account, or the app): the account is signed out and erased 30 days later by `accounts:purge-deleted` (daily, 01:10). Signing in before then cancels it. Erased users are anonymised in place ("Deleted user"). When the last member goes, the workspace's cases, documents and files are deleted. Accounting records (payments, plan changes, AI credit ledger and wallet) and the audit log, with its details cleared, are kept under a soft-deleted "Deleted workspace".
 
 Workspace exports (Settings → Export workspace data) are zipped by the queue into `exports/{workspace}/` on the default disk and emailed as a signed link built from `APP_URL`. Manual exports expire after 7 days; `workspace:prune-exports` deletes expired files daily.

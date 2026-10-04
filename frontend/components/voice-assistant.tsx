@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/locale-provider";
-import { getAssistantScript } from "@/lib/assistant-scripts";
+import { getAssistantScriptEntry } from "@/lib/assistant-scripts";
+import { guideAudioUrl } from "@/lib/voice-guide";
 import { useLocalStorageValue, writeLocalStorage } from "@/lib/client-store";
 
 const FIRST_VISIT_PREFIX = "casedex_assistant_visited_";
@@ -35,6 +36,7 @@ export default function VoiceAssistant() {
   const [currentText, setCurrentText] = useState("");
   const [showTip, setShowTip] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const hasAutoPlayedRef = useRef<string | null>(null);
 
   // Show tip every session until user dismisses it
@@ -46,14 +48,16 @@ export default function VoiceAssistant() {
   }, []);
 
   const stop = useCallback(() => {
-    window.speechSynthesis.cancel();
+    audioRef.current?.pause();
+    audioRef.current = null;
+    window.speechSynthesis?.cancel();
     setSpeaking(false);
   }, []);
 
-  const speak = useCallback(
+  /** The browser's built-in voice; many devices have no Bangla voice installed. */
+  const speakWithBrowser = useCallback(
     (text: string) => {
       if (!window.speechSynthesis) return;
-      stop();
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = locale === "bn" ? "bn-BD" : "en-US";
@@ -76,11 +80,39 @@ export default function VoiceAssistant() {
       utterance.onerror = () => setSpeaking(false);
 
       utteranceRef.current = utterance;
-      setCurrentText(text);
-      setExpanded(true);
       window.speechSynthesis.speak(utterance);
     },
-    [locale, stop],
+    [locale],
+  );
+
+  /** Recorded audio when it matches the script (natural Bangla), else the browser voice. */
+  const speak = useCallback(
+    (text: string, routeKey: string) => {
+      stop();
+      setCurrentText(text);
+      setExpanded(true);
+
+      const url = guideAudioUrl(routeKey, locale === "bn" ? "bn" : "en", text);
+      if (!url) {
+        speakWithBrowser(text);
+        return;
+      }
+
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onplay = () => setSpeaking(true);
+      audio.onended = () => setSpeaking(false);
+      audio.onerror = () => {
+        audioRef.current = null;
+        speakWithBrowser(text);
+      };
+      audio.play().catch(() => {
+        // Autoplay blocked or file missing: fall back rather than stay silent.
+        audioRef.current = null;
+        speakWithBrowser(text);
+      });
+    },
+    [locale, stop, speakWithBrowser],
   );
 
   // Auto-play on first visit to a page
@@ -88,8 +120,8 @@ export default function VoiceAssistant() {
     if (!enabled) return;
     if (hasAutoPlayedRef.current === pathname) return;
 
-    const script = getAssistantScript(pathname);
-    if (!script) return;
+    const entry = getAssistantScriptEntry(pathname);
+    if (!entry) return;
     if (!isFirstVisit(pathname)) return;
 
     hasAutoPlayedRef.current = pathname;
@@ -97,7 +129,7 @@ export default function VoiceAssistant() {
 
     // Small delay to let the page render
     const timer = setTimeout(() => {
-      speak(locale === "bn" ? script.bn : script.en);
+      speak(locale === "bn" ? entry.script.bn : entry.script.en, entry.key);
     }, 1500);
     return () => clearTimeout(timer);
   }, [pathname, locale, enabled, speak]);
@@ -115,7 +147,9 @@ export default function VoiceAssistant() {
   // Stop speaking on route change
   useEffect(() => {
     return () => {
-      window.speechSynthesis.cancel();
+      audioRef.current?.pause();
+      audioRef.current = null;
+      window.speechSynthesis?.cancel();
     };
   }, [pathname]);
 
@@ -124,9 +158,9 @@ export default function VoiceAssistant() {
       stop();
       return;
     }
-    const script = getAssistantScript(pathname);
-    if (script) {
-      speak(locale === "bn" ? script.bn : script.en);
+    const entry = getAssistantScriptEntry(pathname);
+    if (entry) {
+      speak(locale === "bn" ? entry.script.bn : entry.script.en, entry.key);
     }
   };
 
@@ -144,7 +178,7 @@ export default function VoiceAssistant() {
     setExpanded(false);
   };
 
-  const script = getAssistantScript(pathname);
+  const script = getAssistantScriptEntry(pathname)?.script;
   if (!script) return null;
 
   return (
