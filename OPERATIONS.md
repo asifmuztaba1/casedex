@@ -31,7 +31,11 @@ File: `backend/.env.example`
 | `MOBILE_TOKEN_TTL_DAYS` | How long a mobile device token lasts before the app must refresh it (default 60). |
 | `REGISTRATION_MODE` | `invite` (default: sign-up needs a code) or `open`. Platform admins override it in Admin → Invites, where codes are created and their sign-up links copied. |
 | `AI_VOICE_DICTATION_SECONDS_PER_CREDIT` / `AI_VOICE_DICTATION_MAX_SECONDS` | Dictation billing (default 1 AI credit per started 120 s) and the longest recording (default 180 s). The ElevenLabs key, on/off switch and zero retention are set in Admin → Voice, not in `.env`. |
+| `AI_VOICE_ASSOCIATE_CREDITS_PER_MINUTE` | Junior associate calls: AI credits per started minute (default 2), charged from the call length ElevenLabs reports. |
+| `ELEVENLABS_ASSOCIATE_LLM` / `ELEVENLABS_ASSOCIATE_VOICE_ID` / `ELEVENLABS_ASSOCIATE_MAX_SECONDS` | The associate agent's language model (default `gemini-2.5-flash`), its voice (pick a native Bangla voice from the Voice Library), and the longest call (default 600 s). Press **Update the associate** in Admin → Voice after changing them. |
 
+
+**Junior associate (beta).** A spoken assistant that reads a lawyer's hearings and cases and prepares diary notes and hearing updates, which save only when the lawyer confirms them on screen. To switch it on: save the ElevenLabs key in Admin → Voice, press **Set up the associate** (this creates the agent and its six tools in ElevenLabs, with the shared AI guardrails in its prompt), then tick **In beta** for each firm. Calls are billed by the scheduler's `voice:finalize-sessions` (every 10 minutes) when a tab closes mid-call, so the scheduler must be running.
 
 **Page-guide voice (optional, one-off).** The page guide plays recorded ElevenLabs audio when it exists, and otherwise the browser's voice (many devices have no Bangla voice). To generate it, run `ELEVENLABS_API_KEY=… node frontend/scripts/generate-guide-audio.mjs` from `frontend/`, then commit `public/voice-guide/` and `lib/voice-guide-manifest.json`. Only CaseDex's own help text is sent. Choose voices in the ElevenLabs Voice Library and pass them as `ELEVENLABS_VOICE_BN` / `ELEVENLABS_VOICE_EN`; a native Bangla voice sounds much better than the defaults. Re-run the script after editing `lib/assistant-scripts.json`; unchanged scripts are skipped, and stale audio is never played.
 

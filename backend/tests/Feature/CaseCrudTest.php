@@ -205,3 +205,30 @@ it('rejects a malformed email when one is provided', function (): void {
     $response->assertUnprocessable()
         ->assertJsonValidationErrors(['client.email']);
 });
+
+it('searches cases by title, number, court, client or party, within the workspace', function (): void {
+    $user = createAuthenticatedUser();
+    $this->actingAs($user);
+    $make = fn (array $data) => $this->postJson('/api/v1/cases', array_merge([
+        'court' => 'District Court',
+        'client' => ['name' => 'Some Client'],
+    ], $data))->assertCreated()->json('data.public_id');
+
+    $byTitle = $make(['title' => 'State v. Rahman']);
+    $byClient = $make(['title' => 'Land dispute', 'client' => ['name' => 'Salma Begum']]);
+    $byParty = $make(['title' => 'Bail matter']);
+    $this->postJson("/api/v1/cases/{$byParty}/parties", ['name' => 'Kamal Hossain', 'type' => 'person', 'side' => 'opponent'])->assertCreated();
+    $make(['title' => 'Unrelated', 'case_number' => 'CR-99']);
+
+    $find = fn (string $term): array => collect($this->getJson('/api/v1/cases?search='.urlencode($term))->assertOk()->json('data'))->pluck('public_id')->all();
+
+    expect($find('rahman'))->toBe([$byTitle]);
+    expect($find('Salma'))->toBe([$byClient]);
+    expect($find('Kamal'))->toBe([$byParty]);
+    expect($find('CR-99'))->toHaveCount(1);
+    expect($find('100%'))->toBe([]);
+
+    // Another firm's cases never match.
+    $this->actingAs(createAuthenticatedUser());
+    expect(collect($this->getJson('/api/v1/cases?search=rahman')->json('data')))->toBeEmpty();
+});

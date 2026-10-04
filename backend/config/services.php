@@ -26,6 +26,14 @@ return [
         'token_ttl_days' => (int) env('MOBILE_TOKEN_TTL_DAYS', 60),
     ],
 
+    // Voice junior associate (ElevenLabs Agents). The key lives in Admin → Voice.
+    'elevenlabs' => [
+        'associate_llm' => env('ELEVENLABS_ASSOCIATE_LLM', 'gemini-2.5-flash'),
+        'associate_voice_id' => env('ELEVENLABS_ASSOCIATE_VOICE_ID', 'JBFqnCBsd6RMkjVDRZzb'),
+        // Hard cap per conversation, to bound cost (2 credits per started minute).
+        'associate_max_seconds' => (int) env('ELEVENLABS_ASSOCIATE_MAX_SECONDS', 600),
+    ],
+
     // Firebase Cloud Messaging (HTTP v1) for mobile push. FCM_CREDENTIALS is
     // the service-account JSON itself or a path to it. Without both values
     // nothing is sent.

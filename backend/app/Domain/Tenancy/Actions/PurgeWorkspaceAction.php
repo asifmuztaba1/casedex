@@ -25,6 +25,7 @@ class PurgeWorkspaceAction
     /** Tenant tables emptied, children before parents (foreign keys restrict deletes). */
     public const DELETED_TABLES = [
         'workspace_exports',
+        'voice_sessions',
         'case_notifications',
         'documents',
         'diary_entries',

@@ -43,4 +43,6 @@ return [
     'voice_insufficient_credits' => 'Not enough AI credits for this recording. Buy credits in Billing.',
     'voice_transcription_failed' => 'The recording could not be turned into text. No credits were charged. Please try again.',
     'voice_key_missing' => 'Save an ElevenLabs API key first.',
+    'voice_associate_unavailable' => 'The voice associate is not switched on for your firm yet.',
+    'voice_associate_failed' => 'The voice associate could not start. No credits were charged. Please try again.',
 ];

@@ -24,7 +24,7 @@ class CaseController extends Controller
 
         $perPage = (int) ($request->input('per_page', 25));
 
-        $cases = $action->handle($perPage, $request->input('cursor'));
+        $cases = $action->handle($perPage, $request->input('cursor'), $request->validated('search'));
 
         return CaseResource::collection($cases);
     }

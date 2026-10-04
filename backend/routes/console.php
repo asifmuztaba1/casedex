@@ -41,6 +41,9 @@ Schedule::command('billing:apply-manual-subscription-changes')
 
 Schedule::command('workspace:prune-exports')->dailyAt('00:50');
 
+// Voice associate calls whose browser never reported the end (tab closed).
+Schedule::command('voice:finalize-sessions')->everyTenMinutes()->withoutOverlapping();
+
 // Accounts whose 30-day deletion grace period has ended.
 Schedule::command('accounts:purge-deleted')->dailyAt('01:10')->withoutOverlapping();
 

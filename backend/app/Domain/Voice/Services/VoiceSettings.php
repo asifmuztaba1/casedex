@@ -15,6 +15,8 @@ class VoiceSettings
     private const ENABLED = 'voice.enabled';
     private const API_KEY = 'voice.elevenlabs_api_key';
     private const ZERO_RETENTION = 'voice.zero_retention';
+    private const ASSOCIATE_AGENT = 'voice.associate_agent_id';
+    private const ASSOCIATE_TOOLS = 'voice.associate_tool_ids';
 
     public function enabled(): bool
     {
@@ -54,6 +56,33 @@ class VoiceSettings
         if ($apiKey !== null && $apiKey !== '') {
             $this->put(self::API_KEY, Crypt::encryptString($apiKey), $adminUserId);
         }
+    }
+
+    /** The ElevenLabs agent for the junior associate, once set up from Admin → Voice. */
+    public function associateAgentId(): ?string
+    {
+        $id = $this->value(self::ASSOCIATE_AGENT);
+
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function associateToolIds(): array
+    {
+        $ids = $this->value(self::ASSOCIATE_TOOLS);
+
+        return is_array($ids) ? array_values(array_filter($ids, 'is_string')) : [];
+    }
+
+    /**
+     * @param  array<int, string>  $toolIds
+     */
+    public function saveAssociate(string $agentId, array $toolIds, int $adminUserId): void
+    {
+        $this->put(self::ASSOCIATE_AGENT, $agentId, $adminUserId);
+        $this->put(self::ASSOCIATE_TOOLS, array_values($toolIds), $adminUserId);
     }
 
     private function value(string $key): mixed
