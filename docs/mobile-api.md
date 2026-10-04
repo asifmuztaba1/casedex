@@ -171,7 +171,7 @@ main ones:
 
 | Area | Endpoints |
 |---|---|
-| Cases | `GET/POST /cases`, `GET/PUT/DELETE /cases/{id}` (the detail includes the client, parties, participants, upcoming hearings, recent diary and documents) |
+| Cases | `GET/POST /cases` (`?search=` matches title, case number, court, client or party name), `GET/PUT/DELETE /cases/{id}` (the detail includes the client, parties, participants, upcoming hearings, recent diary and documents) |
 | Hearings | `GET /hearings`, `GET /hearings/calendar?from=&to=` (`Y-m-d`, at most 92 days), `GET /hearings/daily-register?date=`, `GET/POST /cases/{id}/hearings`, `GET/PUT/DELETE /hearings/{id}` |
 | Diary | `GET /diary-entries`, `GET/POST /cases/{id}/diary`, `GET/PUT/DELETE /diary-entries/{id}` |
 | Documents | `GET /documents`, `GET/POST /cases/{id}/documents` (multipart: `file`, `category`), `GET/PUT/DELETE /documents/{id}` |
@@ -183,6 +183,7 @@ main ones:
 | Profile | `GET /auth/me`, `PUT /profile` |
 | Reference data | `GET /countries`, `GET /courts` |
 | Voice dictation | `GET /voice/status`, `POST /voice/consent` (once per user), `POST /voice/transcriptions` (multipart: `audio`, `duration_seconds` ≤ 180, optional `language` bn/en) returns `{text, duration_seconds, credits_charged}`. Put the text in the field for the user to edit before saving. Errors: `403 voice_consent_required`, `402 insufficient_credits`, `503 voice_unavailable`, `502 transcription_failed` |
+| Voice associate (beta firms) | `GET /voice/status` says `associate_available` and `associate_credits_per_minute`. `POST /voice/associate/sessions` (`201`) returns a one-time `conversation_token` for the ElevenLabs agents SDK, `max_seconds` and `dynamic_variables`; `POST /voice/associate/sessions/{id}/end` when the call ends. The call is billed from its real length after it ends. The app must implement the six client tools (see `AssociateAgentDefinition::tools()`) with the normal API, and save drafts only after the user confirms them on screen. Errors: `403 associate_unavailable`, `403 voice_consent_required`, `402 insufficient_credits`, `502 associate_failed` |
 | Workspace export (admins) | `POST /workspace/exports` (`202`; the zip is emailed as a signed link), `GET /workspace/exports` (latest five, with `download_url` when ready) |
 | Support | `GET/POST /support/tickets`, `GET/POST /support/tickets/{id}/messages` |
 

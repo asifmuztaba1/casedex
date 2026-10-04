@@ -257,6 +257,12 @@ Every AI result:
 - is generated with the shared guardrails (`AiExecutionService::GUARDRAILS`)
 - uses the provider an admin chose in Admin → AI provider
 
+Voice (ElevenLabs, set up in Admin → Voice) follows the same rules: dictated
+text and the junior associate's drafts are shown for the user to edit and
+confirm, and the associate's tools can read but never save. The associate is
+for beta firms only, needs the user's voice consent, and bills AI credits
+from the real call length.
+
 ---
 
 # 12. UI / UX RULES

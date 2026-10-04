@@ -7,6 +7,8 @@ export type VoiceStatus = {
   max_seconds: number;
   seconds_per_credit: number;
   zero_retention: boolean;
+  associate_available?: boolean;
+  associate_credits_per_minute?: number;
 };
 
 export type Transcription = {
@@ -44,6 +46,24 @@ export function useTranscribe() {
       return apiPostForm<{ data: Transcription }>("/api/v1/voice/transcriptions", form);
     },
   });
+}
+
+export type AssociateSession = {
+  session_public_id: string;
+  conversation_token: string;
+  max_seconds: number;
+  dynamic_variables: Record<string, string>;
+};
+
+export function useStartAssociate() {
+  return useMutation({
+    mutationFn: () => apiPost<{ data: AssociateSession }>("/api/v1/voice/associate/sessions", {}),
+  });
+}
+
+/** Tells CaseDex the call is over so it can bill the real call length. */
+export function endAssociateSession(sessionPublicId: string) {
+  return apiPost(`/api/v1/voice/associate/sessions/${sessionPublicId}/end`, {});
 }
 
 /** Adds dictated text after what is already in a field. */

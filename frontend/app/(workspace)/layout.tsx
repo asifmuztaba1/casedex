@@ -346,6 +346,7 @@ export default function WorkspaceLayout({
       <LanguagePickerModal />
       <MorningGreetingModal />
       <VoiceAssistant />
+      <VoiceAssociate />
     </div>
   );
 }
@@ -366,6 +367,9 @@ const LanguagePickerModal = dynamic(() => import("@/components/language-picker-m
   ssr: false,
 });
 const VoiceAssistant = dynamic(() => import("@/components/voice-assistant"), {
+  ssr: false,
+});
+const VoiceAssociate = dynamic(() => import("@/components/voice-associate"), {
   ssr: false,
 });
 const MorningGreetingModal = dynamic(

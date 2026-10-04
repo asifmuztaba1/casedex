@@ -135,6 +135,9 @@ Route::prefix('v1')
         Route::get('/admin/voice', [AdminVoiceSettingsController::class, 'show']);
         Route::put('/admin/voice', [AdminVoiceSettingsController::class, 'update']);
         Route::post('/admin/voice/test', [AdminVoiceSettingsController::class, 'test'])->middleware('throttle:10,1');
+        Route::post('/admin/voice/associate/sync', [AdminVoiceSettingsController::class, 'syncAssociate'])->middleware('throttle:5,1');
+        Route::get('/admin/voice/associate-tenants', [AdminVoiceSettingsController::class, 'associateTenants']);
+        Route::put('/admin/voice/associate-tenants/{publicId}', [AdminVoiceSettingsController::class, 'setAssociateTenant']);
 
         // Admin → AI: provider and model used by every workspace.
         Route::get('/admin/ai-providers', [AdminAiProviderController::class, 'index']);
@@ -237,6 +240,9 @@ Route::prefix('v1')
         Route::get('/cases', [CaseController::class, 'index']);
         // Dictation: billed from AI credits, so it needs an active plan.
         Route::post('/voice/transcriptions', [VoiceController::class, 'transcribe'])->middleware('throttle:20,1');
+        // Voice junior associate (beta firms): billed by call length from AI credits.
+        Route::post('/voice/associate/sessions', [VoiceController::class, 'startAssociate'])->middleware('throttle:10,1');
+        Route::post('/voice/associate/sessions/{publicId}/end', [VoiceController::class, 'endAssociate']);
         Route::post('/cases', [CaseController::class, 'store']);
         Route::get('/cases/{publicId}', [CaseController::class, 'show']);
         Route::put('/cases/{publicId}', [CaseController::class, 'update']);

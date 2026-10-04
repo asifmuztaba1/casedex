@@ -32,6 +32,7 @@ class Tenant extends Model
     protected $casts = [
         'plan' => TenantPlan::class,
         'trial_ends_at' => 'datetime',
+        'voice_associate_enabled' => 'boolean',
     ];
 
     public function country()

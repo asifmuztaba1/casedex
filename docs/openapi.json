@@ -2542,6 +2542,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -3302,6 +3313,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -3820,6 +3842,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -3930,7 +3963,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_71",
+                "operationId": "v1.diaryEntry.store_73",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4013,6 +4046,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -4123,7 +4167,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.diaryEntry.store_95",
+                "operationId": "v1.diaryEntry.store_97",
                 "tags": [
                     "DiaryEntry"
                 ],
@@ -4329,6 +4373,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -4439,7 +4494,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_73",
+                "operationId": "v1.document.store_75",
                 "tags": [
                     "Document"
                 ],
@@ -4522,6 +4577,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -4632,7 +4698,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.document.store_100",
+                "operationId": "v1.document.store_102",
                 "tags": [
                     "Document"
                 ],
@@ -4930,6 +4996,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -5040,7 +5117,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_69",
+                "operationId": "v1.hearing.store_71",
                 "tags": [
                     "Hearing"
                 ],
@@ -5246,6 +5323,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -5356,7 +5444,7 @@
                 }
             },
             "post": {
-                "operationId": "v1.hearing.store_90",
+                "operationId": "v1.hearing.store_92",
                 "tags": [
                     "Hearing"
                 ],
@@ -5996,6 +6084,17 @@
                             "minimum": 1,
                             "maximum": 100
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
                     }
                 ],
                 "responses": {
@@ -6527,6 +6626,17 @@
                             ],
                             "minimum": 1,
                             "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
                         }
                     }
                 ],
@@ -7621,6 +7731,9 @@
                                                 "dictation_available": {
                                                     "type": "boolean"
                                                 },
+                                                "associate_available": {
+                                                    "type": "string"
+                                                },
                                                 "consent_given": {
                                                     "type": "boolean"
                                                 },
@@ -7632,14 +7745,19 @@
                                                 },
                                                 "zero_retention": {
                                                     "type": "boolean"
+                                                },
+                                                "associate_credits_per_minute": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "required": [
                                                 "dictation_available",
+                                                "associate_available",
                                                 "consent_given",
                                                 "max_seconds",
                                                 "seconds_per_credit",
-                                                "zero_retention"
+                                                "zero_retention",
+                                                "associate_credits_per_minute"
                                             ]
                                         }
                                     },
@@ -7753,6 +7871,127 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/voice/associate/sessions": {
+            "post": {
+                "operationId": "voice.startAssociate",
+                "tags": [
+                    "Voice"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "session_public_id": {
+                                                    "type": "string"
+                                                },
+                                                "conversation_token": {
+                                                    "type": "string"
+                                                },
+                                                "max_seconds": {
+                                                    "type": "integer"
+                                                },
+                                                "dynamic_variables": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "user_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "firm_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "today": {
+                                                            "type": "string"
+                                                        },
+                                                        "greeting": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "user_name",
+                                                        "firm_name",
+                                                        "today",
+                                                        "greeting"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "session_public_id",
+                                                "conversation_token",
+                                                "max_seconds",
+                                                "dynamic_variables"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/voice/associate/sessions/{publicId}/end": {
+            "post": {
+                "operationId": "voice.endAssociate",
+                "summary": "The app reports the end; billing reads the real length from ElevenLabs",
+                "tags": [
+                    "Voice"
+                ],
+                "parameters": [
+                    {
+                        "name": "publicId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "status": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "status"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
                     }
                 }
             }
