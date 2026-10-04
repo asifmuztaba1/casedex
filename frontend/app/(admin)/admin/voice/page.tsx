@@ -129,7 +129,10 @@ function AssociateSettings({ settings }: { settings: VoiceSettings }) {
           <ul className="divide-y divide-[var(--border)] rounded-lg border border-[var(--border)]">
             {firms.map((firm) => (
               <li key={firm.public_id} className="flex items-center justify-between gap-3 px-3 py-2">
-                <span>{firm.name}</span>
+                <span>
+                  {firm.name}
+                  {firm.admin_email && <span className="block text-xs text-[var(--muted-soft)]">{firm.admin_email}</span>}
+                </span>
                 <label className="flex items-center gap-2 text-xs">
                   <input
                     type="checkbox"

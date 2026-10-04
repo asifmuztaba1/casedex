@@ -258,7 +258,7 @@ function AssociatePanel({ status }: { status: VoiceStatus }) {
       <Button
         type="button"
         variant={live ? "default" : "outline"}
-        className="rounded-full shadow-md"
+        className={`rounded-full shadow-md ${live ? "" : "bg-[var(--paper)]"}`}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >

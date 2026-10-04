@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Domain\Auth\Enums\UserRole;
 use App\Domain\Tenancy\Models\Tenant;
+use App\Models\User;
 use App\Domain\Voice\Actions\SyncAssociateAgentAction;
 use App\Domain\Voice\Services\ElevenLabsClient;
 use App\Domain\Voice\Services\VoiceSettings;
@@ -86,11 +88,19 @@ class VoiceSettingsController extends Controller
             ->orderByDesc('voice_associate_enabled')
             ->orderBy('name')
             ->limit(50)
-            ->get(['public_id', 'name', 'voice_associate_enabled']);
+            ->select(['public_id', 'name', 'voice_associate_enabled'])
+            // Firms can share a name; the admin's email tells them apart.
+            ->addSelect(['admin_email' => User::query()->select('email')
+                ->whereColumn('users.tenant_id', 'tenants.id')
+                ->where('role', UserRole::Admin->value)
+                ->orderBy('id')
+                ->limit(1)])
+            ->get();
 
         return response()->json(['data' => $tenants->map(fn (Tenant $tenant): array => [
             'public_id' => $tenant->public_id,
             'name' => $tenant->name,
+            'admin_email' => $tenant->getAttribute('admin_email'),
             'associate_enabled' => (bool) $tenant->voice_associate_enabled,
         ])->values()]);
     }

@@ -13,7 +13,7 @@ export type VoiceSettings = {
   can_edit: boolean;
 };
 
-export type AssociateTenant = { public_id: string; name: string; associate_enabled: boolean };
+export type AssociateTenant = { public_id: string; name: string; admin_email: string | null; associate_enabled: boolean };
 
 const KEY = ["admin", "voice"];
 

@@ -123,7 +123,9 @@ describe('setting up the associate', function (): void {
         $this->putJson("/api/v1/admin/voice/associate-tenants/{$tenant->public_id}", ['enabled' => true])
             ->assertOk()->assertJsonPath('data.associate_enabled', true);
         expect($tenant->fresh()->voice_associate_enabled)->toBeTrue();
-        expect(collect($this->getJson('/api/v1/admin/voice/associate-tenants')->json('data'))->firstWhere('public_id', $tenant->public_id)['associate_enabled'])->toBeTrue();
+        $row = collect($this->getJson('/api/v1/admin/voice/associate-tenants')->json('data'))->firstWhere('public_id', $tenant->public_id);
+        expect($row['associate_enabled'])->toBeTrue();
+        expect($row)->toHaveKey('admin_email');
     });
 });
 
