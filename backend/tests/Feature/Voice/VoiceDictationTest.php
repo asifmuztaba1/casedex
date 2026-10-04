@@ -163,7 +163,7 @@ describe('dictation', function (): void {
             && collect($request->data())->contains(fn ($part): bool => ($part['name'] ?? null) === 'model_id' && $part['contents'] === 'scribe_v2'));
 
         $audit = AuditLog::query()->withoutGlobalScopes()->where('action', 'voice.transcribed')->sole();
-        expect($audit->metadata)->toBe(['seconds' => 95, 'credits' => 1]);
+        expect($audit->metadata)->toEqual(['seconds' => 95, 'credits' => 1]); // key order differs between SQLite and MySQL JSON
         expect(json_encode($audit->metadata))->not->toContain('শুনানি');
     });
 
