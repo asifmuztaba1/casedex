@@ -21,7 +21,7 @@ function tsxFiles(dir: string): string[] {
 const files = ["app", "components", "features"].flatMap((dir) => tsxFiles(join(ROOT, dir)));
 
 /** Names that stay as they are in every language. */
-const ALLOWED = new Set(["CaseDex", "Rocket", "bKash", "Nagad", "TXN..."]);
+const ALLOWED = new Set(["CaseDex", "Rocket", "bKash", "Nagad", "TXN...", "ElevenLabs"]);
 
 describe("translations", () => {
   it("has the same keys in English and Bangla", () => {

@@ -38,4 +38,9 @@ return [
     'deletion_billing_failed' => 'We could not cancel your subscription, so your account was not scheduled for deletion. Please try again or contact support.',
     'ai_provider_key_missing' => 'Save an API key for this provider first.',
     'invite_code_invalid' => 'This invite code is not valid, has expired or has been used up.',
+    'voice_unavailable' => 'Voice is not switched on for CaseDex yet.',
+    'voice_consent_required' => 'Please agree to the voice notice before recording.',
+    'voice_insufficient_credits' => 'Not enough AI credits for this recording. Buy credits in Billing.',
+    'voice_transcription_failed' => 'The recording could not be turned into text. No credits were charged. Please try again.',
+    'voice_key_missing' => 'Save an ElevenLabs API key first.',
 ];

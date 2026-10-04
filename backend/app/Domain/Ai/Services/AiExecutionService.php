@@ -148,6 +148,8 @@ class AiExecutionService
                 - Do NOT include any legal advice — only update on case status and next steps.
                 {$lang}
                 PROMPT,
+
+            AiFeature::VoiceDictation, AiFeature::VoiceAssociate => throw new \LogicException('Voice features do not run text prompts.'),
         };
     }
 
@@ -193,6 +195,8 @@ class AiExecutionService
                 $s('tone') ? "Tone: ".$s('tone') : null,
                 "\nUpdate to communicate:\n".$s('content'),
             ])),
+
+            AiFeature::VoiceDictation, AiFeature::VoiceAssociate => throw new \LogicException('Voice features do not run text prompts.'),
         };
     }
 }

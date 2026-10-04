@@ -29,4 +29,4 @@ it('sends the guardrails with every AI feature', function (AiFeature $feature): 
             && str_contains($system, 'Do not invent facts, parties, dates, sections, cases or citations')
             && str_contains($system, 'never legal advice to a client');
     });
-})->with(fn (): array => array_map(fn (AiFeature $f): array => [$f], AiFeature::cases()));
+})->with(fn (): array => array_map(fn (AiFeature $f): array => [$f], AiFeature::textFeatures()));

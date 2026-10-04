@@ -89,6 +89,8 @@ import {
   PETITION_TEMPLATES,
 } from "@/features/templates/legal-templates";
 import { formatDate } from "@/lib/date-format";
+import DictationButton from "@/components/dictation-button";
+import { appendDictation } from "@/features/voice/use-voice";
 
 // Make option arrays literal so we can derive union types from them.
 const statusOptions = ["open", "active", "closed", "archived"] as const;
@@ -810,6 +812,10 @@ export default function CaseDetailPage() {
                       }))
                     }
                   />
+                  <DictationButton
+                    label={t("voice.dictate_minutes")}
+                    onText={(text) => setHearingForm((prev) => ({ ...prev, minutes: appendDictation(prev.minutes, text) }))}
+                  />
                   <textarea
                     className="h-24 w-full rounded-lg border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--foreground)]"
                     placeholder={t("hearing.next_steps")}
@@ -951,6 +957,10 @@ export default function CaseDetailPage() {
                         body: event.target.value,
                       }))
                     }
+                  />
+                  <DictationButton
+                    label={t("voice.dictate_note")}
+                    onText={(text) => setDiaryForm((prev) => ({ ...prev, body: appendDictation(prev.body, text) }))}
                   />
                   <Button
                     type="button"

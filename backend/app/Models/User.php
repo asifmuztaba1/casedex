@@ -64,6 +64,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'deletion_requested_at' => 'datetime',
             'deletion_scheduled_for' => 'datetime',
             'anonymised_at' => 'datetime',
+            'voice_consent_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,

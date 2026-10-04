@@ -46,6 +46,8 @@ use App\Http\Controllers\Api\V1\Mobile\MobileDeviceController;
 use App\Domain\Ai\Services\AiProviderCatalog;
 use App\Http\Controllers\Api\V1\Admin\AiProviderController as AdminAiProviderController;
 use App\Http\Controllers\Api\V1\Admin\InviteCodeController as AdminInviteCodeController;
+use App\Http\Controllers\Api\V1\Admin\VoiceSettingsController as AdminVoiceSettingsController;
+use App\Http\Controllers\Api\V1\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -129,6 +131,11 @@ Route::prefix('v1')
         Route::post('/admin/invite-codes/{publicId}/revoke', [AdminInviteCodeController::class, 'revoke']);
         Route::put('/admin/registration-mode', [AdminInviteCodeController::class, 'updateRegistrationMode']);
 
+        // Admin → Voice: ElevenLabs key, on/off, zero retention.
+        Route::get('/admin/voice', [AdminVoiceSettingsController::class, 'show']);
+        Route::put('/admin/voice', [AdminVoiceSettingsController::class, 'update']);
+        Route::post('/admin/voice/test', [AdminVoiceSettingsController::class, 'test'])->middleware('throttle:10,1');
+
         // Admin → AI: provider and model used by every workspace.
         Route::get('/admin/ai-providers', [AdminAiProviderController::class, 'index']);
         Route::post('/admin/ai-providers/deactivate', [AdminAiProviderController::class, 'deactivate']);
@@ -203,6 +210,8 @@ Route::prefix('v1')
         Route::get('/billing/invoices', [BillingController::class, 'invoices']);
         Route::get('/billing/plan-limits', [BillingController::class, 'planLimits']);
         Route::get('/billing/audit-export', [BillingController::class, 'auditExport']);
+        Route::get('/voice/status', [VoiceController::class, 'status']);
+        Route::post('/voice/consent', [VoiceController::class, 'consent']);
         Route::get('/workspace/exports', [WorkspaceExportController::class, 'index']);
         Route::post('/workspace/exports', [WorkspaceExportController::class, 'store'])
             ->middleware('throttle:workspace-exports');
@@ -226,6 +235,8 @@ Route::prefix('v1')
     ->group(function (): void {
         Route::get('/courts', [CourtLookupController::class, 'index']);
         Route::get('/cases', [CaseController::class, 'index']);
+        // Dictation: billed from AI credits, so it needs an active plan.
+        Route::post('/voice/transcriptions', [VoiceController::class, 'transcribe'])->middleware('throttle:20,1');
         Route::post('/cases', [CaseController::class, 'store']);
         Route::get('/cases/{publicId}', [CaseController::class, 'show']);
         Route::put('/cases/{publicId}', [CaseController::class, 'update']);
