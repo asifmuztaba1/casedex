@@ -50,7 +50,16 @@ export default function ServiceWorkerRegister() {
       })
       .catch(() => {});
 
+    // On a first visit there is no controller yet: the new worker claims the
+    // page right after installing, which also fires controllerchange. Reloading
+    // then would wipe whatever the visitor had started typing. Only reload when
+    // an existing worker is replaced, i.e. an update the user applied (here or
+    // in another tab).
+    const hadController = navigator.serviceWorker.controller !== null;
+    let reloading = false;
     const onControllerChange = () => {
+      if (!hadController || reloading) return;
+      reloading = true;
       window.location.reload();
     };
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);

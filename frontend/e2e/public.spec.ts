@@ -30,4 +30,14 @@ test.describe("public site", () => {
     expect(page.url()).not.toContain("Secret");
     await context.close();
   });
+
+  test("does not reload the page on a first visit while someone is typing", async ({ page }) => {
+    // The service worker installs on the first visit; it used to trigger a reload
+    // a moment later that wiped the form.
+    await page.goto("/register", { waitUntil: "domcontentloaded" });
+    await page.getByLabel("Full name").fill("Nusrat Jahan");
+    await page.waitForFunction(() => navigator.serviceWorker?.controller !== null, null, { timeout: 15_000 }).catch(() => {});
+    await page.waitForTimeout(1_500);
+    await expect(page.getByLabel("Full name")).toHaveValue("Nusrat Jahan");
+  });
 });

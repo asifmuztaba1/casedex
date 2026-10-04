@@ -116,5 +116,5 @@ test("deletes the account, then keeps it by signing in again", async () => {
   await page.waitForURL(/login/);
 
   await signIn(page, email, password);
-  await expect(page.getByText("Welcome back. Your account will not be deleted.")).toBeVisible();
+  await expect(page.getByText("Welcome back. Your account will not be deleted.", { exact: true })).toBeVisible();
 });
