@@ -86,3 +86,5 @@ backend/casedex
 
 # Local browser-test logs
 .playwright-mcp/
+frontend/playwright-report/
+frontend/test-results/

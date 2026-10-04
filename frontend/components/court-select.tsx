@@ -15,6 +15,8 @@ type CourtSelectProps = {
   onSelect: (court: CourtLookup | null) => void;
   selectedCourt?: CourtLookup | null;
   invalid?: boolean;
+  /** Lets a <label htmlFor> point at the search input. */
+  id?: string;
 };
 
 function formatCourtLabel(court: CourtLookup, locale: "en" | "bn") {
@@ -47,6 +49,7 @@ export default function CourtSelect({
   onSelect,
   selectedCourt,
   invalid,
+  id,
 }: CourtSelectProps) {
   const { data: user } = useAuth();
   const { locale, t } = useLocale();
@@ -91,6 +94,7 @@ export default function CourtSelect({
     <div className="relative" ref={wrapperRef}>
       <div className="flex items-center gap-2">
         <Input
+          id={id}
           value={value}
           placeholder={t("courts.select_placeholder")}
           onChange={(event) => {

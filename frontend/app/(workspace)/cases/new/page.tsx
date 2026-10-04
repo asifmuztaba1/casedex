@@ -301,10 +301,11 @@ export default function NewCasePage() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-[var(--muted)]">
+                  <label htmlFor="case-plaintiff" className="text-xs font-medium text-[var(--muted)]">
                     {t("cases.wizard.plaintiff")}
                   </label>
                   <Input
+                    id="case-plaintiff"
                     placeholder={t("cases.wizard.plaintiff_placeholder")}
                     {...register("plaintiff_name")}
                     aria-invalid={Boolean(formState.errors.plaintiff_name)}
@@ -316,10 +317,11 @@ export default function NewCasePage() {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-[var(--muted)]">
+                  <label htmlFor="case-defendant" className="text-xs font-medium text-[var(--muted)]">
                     {t("cases.wizard.defendant")}
                   </label>
                   <Input
+                    id="case-defendant"
                     placeholder={t("cases.wizard.defendant_placeholder")}
                     {...register("defendant_name")}
                     aria-invalid={Boolean(formState.errors.defendant_name)}
@@ -333,15 +335,16 @@ export default function NewCasePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[var(--muted)]">
+                <p id="case-represent-label" className="text-xs font-medium text-[var(--muted)]">
                   {t("cases.wizard.represent_label")}
-                </label>
-                <div className="inline-flex rounded-lg border border-[var(--border)] p-1">
+                </p>
+                <div role="group" aria-labelledby="case-represent-label" className="inline-flex rounded-lg border border-[var(--border)] p-1">
                   {(["plaintiff", "defendant"] as const).map((side) => (
                     <button
                       key={side}
                       type="button"
                       onClick={() => setRepresentSide(side)}
+                      aria-pressed={representSide === side}
                       className={cn(
                         "rounded-md px-3 py-1.5 text-sm transition-colors",
                         representSide === side
@@ -360,10 +363,11 @@ export default function NewCasePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[var(--muted)]">
+                <label htmlFor="case-opposite-lawyer" className="text-xs font-medium text-[var(--muted)]">
                   {oppositeLawyerLabel}
                 </label>
                 <Input
+                  id="case-opposite-lawyer"
                   placeholder={oppositeLawyerLabel}
                   {...register("opposite_lawyer_name")}
                   aria-invalid={Boolean(formState.errors.opposite_lawyer_name)}
@@ -377,10 +381,11 @@ export default function NewCasePage() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-[var(--muted)]">
+                  <label htmlFor="case-court" className="text-xs font-medium text-[var(--muted)]">
                     {t("cases.case.court")}
                   </label>
                   <CourtSelect
+                    id="case-court"
                     value={courtValue}
                     selectedCourt={selectedCourt}
                     invalid={Boolean(formState.errors.court)}
@@ -406,10 +411,11 @@ export default function NewCasePage() {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-[var(--muted)]">
+                  <label htmlFor="case-next-hearing" className="text-xs font-medium text-[var(--muted)]">
                     {t("cases.wizard.next_date")}
                   </label>
                   <Input
+                    id="case-next-hearing"
                     type="datetime-local"
                     {...register("next_hearing_at")}
                     aria-invalid={Boolean(formState.errors.next_hearing_at)}
