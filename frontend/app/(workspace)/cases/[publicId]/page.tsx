@@ -1109,6 +1109,8 @@ export default function CaseDetailPage() {
                   />
                   <Input
                     type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                    aria-describedby="document-file-hint"
                     onChange={(event) =>
                       setDocumentForm((prev) => ({
                         ...prev,
@@ -1127,8 +1129,12 @@ export default function CaseDetailPage() {
                     }
                     aria-invalid={!!(documentFileError)}
                   />
-                  {documentFileError && (
+                  {documentFileError ? (
                     <p className="text-xs text-rose-600">{t("common.required")}</p>
+                  ) : (
+                    <p id="document-file-hint" className="text-xs text-[var(--muted-soft)]">
+                      {t("documents.file_types_hint")}
+                    </p>
                   )}
                   <div className="flex items-center gap-2">
                     <Input
