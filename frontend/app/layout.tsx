@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { IBM_Plex_Sans, Noto_Sans_Bengali, Spectral } from "next/font/google";
+import localFont from "next/font/local";
 import Providers from "./providers";
 import ServiceWorkerRegister from "@/pwa/sw-register";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,22 +8,25 @@ import type { Locale } from "@/lib/locale-constants";
 import { STORAGE_KEY } from "@/lib/locale-constants";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
+// Fonts are served from app/fonts (the same files Google Fonts serves), so builds
+// never depend on downloading them. Licences: app/fonts/OFL-*.txt
+const plexSans = localFont({
   variable: "--font-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  src: [{ path: "./fonts/ibm-plex-sans-latin.woff2", weight: "100 700", style: "normal" }],
 });
 
-const spectral = Spectral({
+const spectral = localFont({
   variable: "--font-spectral",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  src: [
+    { path: "./fonts/spectral-400-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/spectral-600-latin.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/spectral-700-latin.woff2", weight: "700", style: "normal" },
+  ],
 });
 
-const bengaliSans = Noto_Sans_Bengali({
+const bengaliSans = localFont({
   variable: "--font-bengali",
-  subsets: ["bengali"],
-  weight: ["400", "500", "600"],
+  src: [{ path: "./fonts/noto-sans-bengali.woff2", weight: "100 900", style: "normal" }],
 });
 
 export const metadata: Metadata = {
