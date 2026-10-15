@@ -17,6 +17,7 @@ return [
     'auth_forbidden' => 'You are not authorized to perform this action.',
     'subscription_required' => 'An active subscription is required to continue.',
     'storage_limit_reached' => 'Storage limit reached for your current plan.',
+    'document_file_type' => 'Upload a PDF, JPG or PNG file.',
     'billing_variant_missing' => 'Billing variant is not configured.',
     'billing_invalid_plan' => 'Selected billing plan is not valid.',
     'billing_subscription_missing' => 'No active subscription found for this tenant.',

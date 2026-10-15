@@ -199,7 +199,9 @@ Rules that apply everywhere:
   (`hearing_at`), diary `entry_at` and document `due_at` are Bangladesh local
   time with no `Z`. Show them as they are, without converting time zones.
 - **Uploads.** Use `multipart/form-data`. Allowed types and size limits match
-  the web app; a rejected file returns `422`.
+  the web app; a rejected file returns `422`. Case documents must be PDF, JPG
+  or PNG. The server checks the file's content, not its name, so convert
+  photos (for example HEIC from an iPhone camera) to JPEG before uploading.
 
 ### Downloading a document
 

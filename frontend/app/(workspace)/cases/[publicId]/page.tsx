@@ -1109,6 +1109,7 @@ export default function CaseDetailPage() {
                   />
                   <Input
                     type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                     onChange={(event) =>
                       setDocumentForm((prev) => ({
                         ...prev,

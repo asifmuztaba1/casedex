@@ -23,7 +23,17 @@ class UpdateDocumentRequest extends FormRequest
             'hearing_public_id' => ['nullable', 'string'],
             'category' => ['sometimes', 'required', Rule::in(array_column(DocumentCategory::cases(), 'value'))],
             'due_at' => ['nullable', 'date'],
-            'file' => ['sometimes', 'file'],
+            'file' => ['sometimes', 'file', 'mimes:'.StoreDocumentRequest::ALLOWED_TYPES],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'file.mimes' => __('messages.document_file_type'),
         ];
     }
 }
