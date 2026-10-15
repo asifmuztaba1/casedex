@@ -13,7 +13,7 @@ import { useLocale } from "@/components/locale-provider";
 import ThemeToggle from "@/components/theme-toggle";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 
 export default function MarketingLayout({
   children,
@@ -28,18 +28,11 @@ export default function MarketingLayout({
       <div className="relative">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-3 py-3 md:gap-6 md:px-6 md:py-4">
-            <Link href="/" className="flex items-center gap-2 md:gap-3">
-              <Image
-                src="/icons/icon-192.svg"
-                alt="CaseDex"
-                width={36}
-                height={36}
-                unoptimized
-                className="h-8 w-8 rounded-lg md:h-9 md:w-9"
-              />
-              <div className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
-                {"CaseDex\u2122"}
-              </div>
+            <Link href="/" className="flex items-start gap-0.5 text-[var(--brand)]">
+              <BrandLogo className="h-7 w-auto md:h-8" />
+              <span aria-hidden="true" className="text-[10px] font-semibold leading-none">
+                {"\u2122"}
+              </span>
             </Link>
             <nav className="hidden items-center gap-6 text-sm text-[var(--muted)] md:flex">
               <a className="hover:text-[var(--foreground)]" href="/about">
@@ -117,19 +110,7 @@ export default function MarketingLayout({
           <div className="mx-auto w-full max-w-[1200px] px-3 py-8 md:px-6 md:py-12">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Image
-                    src="/icons/icon-192.svg"
-                    alt="CaseDex"
-                    width={28}
-                    height={28}
-                    unoptimized
-                    className="h-7 w-7 rounded-md"
-                  />
-                  <div className="text-sm font-semibold text-[var(--foreground)]">
-                    CaseDex
-                  </div>
-                </div>
+                <BrandLogo className="h-6 w-auto text-[var(--brand)]" />
                 <p className="text-sm text-[var(--muted)]">
                   {t("footer.tagline")}
                 </p>

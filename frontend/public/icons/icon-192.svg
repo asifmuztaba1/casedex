@@ -1,20 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
-  <!-- Rounded square background -->
-  <rect width="192" height="192" rx="40" fill="#1D4ED8"/>
-
-  <!-- Index card with folded corner -->
-  <g transform="translate(42, 30)">
-    <!-- Card body -->
-    <path d="M0 12 C0 5.4 5.4 0 12 0 L76 0 L108 32 L108 120 C108 126.6 102.6 132 96 132 L12 132 C5.4 132 0 126.6 0 120 Z" fill="#FFFFFF" opacity="0.95"/>
-
-    <!-- Folded corner -->
-    <path d="M76 0 L76 20 C76 26.6 81.4 32 88 32 L108 32 Z" fill="#93C5FD"/>
-
-    <!-- Line details -->
-    <rect x="16" y="50" width="52" height="3" rx="1.5" fill="#1D4ED8" opacity="0.25"/>
-    <rect x="16" y="62" width="76" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
-    <rect x="16" y="74" width="64" height="3" rx="1.5" fill="#1D4ED8" opacity="0.15"/>
-    <rect x="16" y="86" width="76" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
-    <rect x="16" y="98" width="44" height="3" rx="1.5" fill="#1D4ED8" opacity="0.10"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="192" height="192">
+<rect width="192" height="192" rx="112.6" fill="#0D253C"/>
+<g transform="translate(81.9 122.4) scale(0.54400)">
+  <mask id="cdx-cut" maskUnits="userSpaceOnUse" x="-10" y="-10" width="660" height="540">
+    <rect x="-10" y="-10" width="660" height="540" fill="#fff"/>
+    <g fill="#000">
+  <circle cx="320" cy="221" r="23"/>
+  <path d="M165 256Q320 232 475 256" fill="none" stroke="#000" stroke-width="19" stroke-linecap="round"/>
+  <circle cx="165" cy="256" r="13.5"/>
+  <circle cx="475" cy="256" r="13.5"/>
+  <rect x="298" y="222" width="44" height="252"/>
+  <path d="M298 464C298 480 288 486 274 489C256 493 246 504 246 522H394C394 504 384 493 366 489C352 486 342 480 342 464Z"/>
+  <path d="M165 263L98 390H232Z" fill="none" stroke="#000" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M475 263L408 390H542Z" fill="none" stroke="#000" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M80 389H250A85 64 0 0 1 80 389Z"/>
+  <path d="M390 389H560A85 64 0 0 1 390 389Z"/>
+</g>
+  </mask>
+  <path d="M270 31Q268 26 274 26H410Q416 26 419 31L438 63Q441 68 435 68H296Q290 68 288 63Z" fill="#3A7C82"/>
+  <g fill="#FFFFFF" mask="url(#cdx-cut)">
+    <path d="M0 14Q0 0 14 0H208Q216 0 220 7L262 78Q266 85 274 85H550Q558 85 562 92L596 142H232L196 97H0Z"/>
+    <path d="M0 139Q0 125 14 125H192Q199 125 203 131L233 170H624Q640 170 640 186V494Q640 510 624 510H16Q0 510 0 494Z"/>
   </g>
+</g>
 </svg>

@@ -1,6 +1,7 @@
 "use client";
 
 import AuthGuard from "@/components/auth-guard";
+import { BrandLogo } from "@/components/brand-logo";
 import FlashNotice from "@/components/flash-notice";
 import { TourProvider } from "@/components/tour-provider";
 import { Badge } from "@/components/ui/badge";
@@ -145,11 +146,11 @@ export default function WorkspaceLayout({
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--paper)] px-5 py-6 lg:flex print:!hidden">
-        <div className="space-y-2">
+        <div className="space-y-3">
+          <BrandLogo className="h-7 w-auto text-[var(--brand)]" />
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted-soft)]">
             {t("nav.workspace")}
           </div>
-          <div className="text-lg font-semibold text-[var(--foreground)]">CaseDex</div>
         </div>
         <nav className="mt-8 space-y-1" data-tour="sidebar-nav">
           {navItems.map((item) => {

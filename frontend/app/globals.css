@@ -19,6 +19,7 @@
   --overlay: rgba(0, 0, 0, 0.5);
   --success: #059669;
   --error: #e11d48;
+  --brand: #0d253c;
 }
 
 .dark {
@@ -40,6 +41,7 @@
   --overlay: rgba(0, 0, 0, 0.7);
   --success: #34d399;
   --error: #fb7185;
+  --brand: #e8eaed;
 }
 
 @theme inline {

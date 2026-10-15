@@ -12,7 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ExternalLink, Settings, ShieldCheck } from "lucide-react";
+import { ExternalLink, Settings } from "lucide-react";
+import { BrandMark } from "@/components/brand-logo";
 import { useLocale } from "@/components/locale-provider";
 import dynamic from "next/dynamic";
 
@@ -47,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="mx-auto flex min-h-screen w-full max-w-[1400px]">
           <aside className="hidden w-[260px] flex-col border-r border-[var(--border)] bg-[var(--paper)] px-6 py-6 lg:flex">
             <div className="flex items-center gap-2 text-lg font-semibold">
-              <ShieldCheck className="h-5 w-5 text-[var(--muted)]" />
+              <BrandMark className="h-6 w-6 text-[var(--brand)]" />
               <span>{t("admin.title")}</span>
             </div>
             <div className="mt-6 space-y-1 text-sm">

@@ -77,7 +77,7 @@ export default function InstallPrompt({ delayMs = 0 }: { delayMs?: number }) {
     <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 mx-auto max-w-md animate-in slide-in-from-bottom-4 fade-in duration-300 lg:bottom-4">
       <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-lg">
         <Image
-          src="/icons/icon-192.svg"
+          src="/icons/icon-192.png"
           alt="CaseDex"
           width={40}
           height={40}

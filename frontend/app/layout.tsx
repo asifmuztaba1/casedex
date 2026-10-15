@@ -43,25 +43,25 @@ export const metadata: Metadata = {
     title: "CaseDex — Every case, every hearing — in one place.",
     description:
       "A structured case workspace for legal professionals and law students. Track hearings, documents, and diary entries with clarity.",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CaseDex — Every case, every hearing — in one place.",
     description:
       "A structured case workspace for legal professionals and law students.",
-    images: ["/og-image.svg"],
+    images: ["/og-image.png"],
   },
   icons: {
     icon: [
-      { url: "/icons/icon-32.svg", sizes: "32x32", type: "image/svg+xml" },
-      { url: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
+      { url: "/icons/icon-32.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: [
       {
-        url: "/icons/apple-touch-icon.svg",
+        url: "/icons/apple-touch-icon.png",
         sizes: "180x180",
-        type: "image/svg+xml",
+        type: "image/png",
       },
     ],
   },
