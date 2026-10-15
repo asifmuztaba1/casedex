@@ -12,8 +12,8 @@
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;">
             <tr>
               <td style="padding:20px 24px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
-                <div style="font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#64748b;font-weight:700;">{{ __('emails.brand_kicker') }}</div>
-                <div style="font-size:22px;font-weight:700;color:#0f172a;margin-top:6px;">CaseDex</div>
+                <img src="{{ rtrim(config('app.frontend_url'), '/') }}/logo-email.png" width="180" height="38" alt="CaseDex" style="display:block;border:0;outline:none;font-size:22px;font-weight:700;color:#0d253c;">
+                <div style="font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#64748b;font-weight:700;margin-top:10px;">{{ __('emails.brand_kicker') }}</div>
               </td>
             </tr>
             <tr>

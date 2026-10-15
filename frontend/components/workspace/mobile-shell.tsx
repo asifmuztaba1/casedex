@@ -48,6 +48,7 @@ import {
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import OfflineIndicator from "@/components/offline-indicator";
+import { BrandMark } from "@/components/brand-logo";
 import { formatDate } from "@/lib/date-format";
 
 const LanguageSwitcher = dynamic(
@@ -144,8 +145,8 @@ export function MobileTopBar({
     >
       <div className="flex h-14 items-center gap-2 px-3">
         {isRootTab ? (
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--wash)] text-sm font-bold text-[var(--foreground)]">
-            CD
+          <div className="flex h-9 w-9 items-center justify-center text-[var(--brand)]">
+            <BrandMark className="h-7 w-7" />
           </div>
         ) : (
           <Button
